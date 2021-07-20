@@ -7,6 +7,9 @@
         <element id="directory" name="classes">
           <element id="module-output" name="Chikaboom" />
         </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="Maven: log4j:log4j:1.2.12" />
+        </element>
       </element>
     </root>
   </artifact>
