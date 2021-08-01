@@ -1,4 +1,4 @@
-package net.chikaboom.servlet;
+package main.java.net.chikaboom.servlet;
 
 import org.apache.log4j.Logger;
 
