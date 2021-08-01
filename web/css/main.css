@@ -1,0 +1,95 @@
+
+.wrapper {
+    font-family: Century Gothic;
+    font-size: 14px;
+}
+
+.p1 {
+    font-size: 22px;
+    text-align: center;
+}
+
+.logo {
+    width: 200px;
+}
+
+.headmenu {
+    height: 10px;
+    padding: 0% 20% 1% 20%;
+    display: flex;
+}
+
+.mainhead a {
+    margin: 0% 4% 0% 0%;
+    display: inline-block;
+    color: #000000;
+    line-height: 1;
+    text-decoration: none;
+    cursor: pointer;
+    position: relative;
+}
+
+.mainhead a:after {
+    display: block;
+    content: "";
+    background-color: #000000;
+    height: 1px;
+    width: 0%;
+    left: 50%;
+    position: absolute;
+    -webkit-transition: width .3s ease-in-out;
+    -moz--transition: width .3s ease-in-out;
+    transition: width .3s ease-in-out;
+    -webkit-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    transform: translateX(-50%);
+}
+
+.mainhead a:hover:after,
+.mainhead a:focus:after {
+    width: 100%;
+}
+
+.content {
+    padding: 0.2% 0% 1% 0%;
+    display: flex;
+}
+
+.leftbar {
+    opacity: 0.7;
+    width: 20%;
+    padding: 3% 0 3% 0;
+    height: 186px;
+    display: grid;
+    align-content: space-between;
+}
+
+
+.leftbar input {
+    opacity: 1;
+    margin: 5% 20% 5% 20%;
+    padding: 3% 0 3% 0;
+    width: 60%;
+    font-family: Century Gothic;
+    font-size: 14px;
+    background-color: #fcf390;
+    border-bottom-color: #fcf390;
+    border-color: #fcf390;
+    border-style: solid;
+}
+
+.rightbar {
+    padding: 1%;
+    width: 60%;
+}
+
+.rightbar h1 {
+    font-size: 18px;
+    font-weight: normal;
+    width: 100%;
+}
+
+.rightbar img {
+    width: 18%;
+    padding: 2% 2% 2% 0;
+}
