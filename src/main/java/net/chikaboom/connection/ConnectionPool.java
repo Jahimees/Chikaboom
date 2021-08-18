@@ -1,4 +1,4 @@
-package main.java.net.chikaboom.connection;
+package net.chikaboom.connection;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -7,6 +7,9 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * Стандартный пул соединений
+ */
 public class ConnectionPool {
 
     private static ConnectionPool instance = null;
