@@ -208,8 +208,10 @@ public class QueryBuilder {
      */
     public String build() {
         queryString.append(";");
+        String result = queryString.toString();
+        clear();
 
-        return queryString.toString();
+        return result;
     }
 
     /**
