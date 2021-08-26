@@ -15,7 +15,7 @@
     <!-- SERVLET -->
     <servlet>
         <servlet-name>ControllerServlet</servlet-name>
-        <servlet-class>main.java.net.chikaboom.servlet.ControllerServlet</servlet-class>
+        <servlet-class>net.chikaboom.servlet.ControllerServlet</servlet-class>
     </servlet>
 
     <!-- MAPPING -->
