@@ -3,7 +3,7 @@ package net.chikaboom.model;
 /**
  * Определяет модель таблицы ServiceType в базе данных
  */
-public class ServiceType {
+public class ServiceType implements Entity {
     private String idServiceType;
     private String name;
 

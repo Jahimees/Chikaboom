@@ -3,7 +3,7 @@ package net.chikaboom.model;
 /**
  * Определяет модель таблицы Work в базе данных
  */
-public class Work {
+public class Work implements Entity {
     private String idWork;
     private String idMaster;
     private byte[] image;

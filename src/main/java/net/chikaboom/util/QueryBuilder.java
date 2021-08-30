@@ -79,6 +79,7 @@ public class QueryBuilder {
      * @param key наименование столюца-фильтра
      * @param value значение, которому должен быть равен столбец
      */
+    @Deprecated
     public QueryBuilder where(String key, String value) {
         queryString.append("WHERE ").append(key).append("='").append(value).append("' ");
 

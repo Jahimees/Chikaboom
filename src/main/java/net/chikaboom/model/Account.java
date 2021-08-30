@@ -1,15 +1,21 @@
 package net.chikaboom.model;
 
+import java.util.UUID;
+
 /**
  * Определяет модель таблицы Account в базе данных
  */
-public class Account {
+public class Account implements Entity {
     private String idAccount;
     private String name;
     private String surname;
     private String login;
     private String password;
     private String phone;
+
+    public Account() {
+        idAccount = UUID.randomUUID().toString();
+    }
 
     public String getIdAccount() {
         return idAccount;
@@ -57,5 +63,17 @@ public class Account {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "idAccount='" + idAccount + '\'' +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", login='" + login + '\'' +
+                ", password='" + password + '\'' +
+                ", phone='" + phone + '\'' +
+                '}';
     }
 }

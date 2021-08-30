@@ -1,6 +1,7 @@
 package net.chikaboom.servlet;
 
-import net.chikaboom.util.*;
+import net.chikaboom.dao.AccountDAO;
+import net.chikaboom.model.Account;
 import org.apache.log4j.Logger;
 
 import javax.servlet.RequestDispatcher;
@@ -9,7 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
 
 /**
  * Принимает сообщение от клиента и выполняет действия, заложенные в это сообщение
@@ -36,36 +37,37 @@ public class ControllerServlet extends HttpServlet {
      * @throws ServletException
      */
     public void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        QueryBuilder builder = new QueryBuilder();
-        SqlWhereEntity sqlWhereEntity = new SqlWhereEntity();
+        AccountDAO accountDAO = new AccountDAO();
+        Account account = new Account();
+        account.setName("Alexander");
+        account.setSurname("Anton");
+        account.setLogin("Log In");
+        account.setPassword("Psss word");
+        account.setPhone("+4132124124124");
 
-        Map<String, SqlComparatorType> fields = new LinkedHashMap<>();
-        fields.put("field1", SqlComparatorType.EQUAL);
-        fields.put("field2", SqlComparatorType.IS_NOT_NULL);
-        fields.put("field3", SqlComparatorType.IS_NULL);
-        sqlWhereEntity.setFields(fields);
-        Queue<SqlOperandType> queue = new LinkedList<>();
-        queue.add(SqlOperandType.AND);
-        queue.add(SqlOperandType.OR);
-        sqlWhereEntity.setOperands(queue);
+        accountDAO.create(account);
+        logger.info("Account " + account.getIdAccount() + " created!");
 
-        String result = builder.delete().from("table1").where(sqlWhereEntity)
-                .join(SqlJoinType.INNER_JOIN, "table1", "table2", "id1", "id2").build();
+        List<Account> accountList = accountDAO.findAll();
+        logger.info("Found accs:");
+        for (Account acc : accountList) {
+            logger.info(acc.toString());
+        }
 
-        logger.info(result);
+        logger.info("\n\n");
+        logger.info("Finding acc with id " + account.getIdAccount() + "...");
+        logger.info("Found  account: " + accountDAO.findEntity(account.getIdAccount()).toString() + "\n");
 
-        builder.clear();
+        logger.info("Updating account " + account.getIdAccount() + "...");
+        account.setLogin("Logggen");
+        accountDAO.update(account);
+        logger.info("Checking for updates: " + accountDAO.findEntity(account.getIdAccount()).toString() + "\n\n");
 
-        List<String> fieldNames = new ArrayList<>();
-        fieldNames.add("feidl1");
-        fieldNames.add("feidl2");
-        fieldNames.add("feidl3");
+        logger.info("Deleting account " + account.getIdAccount() + "...");
+        accountDAO.delete(account.getIdAccount());
+        logger.info("Trying to find account after deleteng...");
+        logger.info("Must be null: " + accountDAO.findEntity(account.getIdAccount()));
 
-        queue.add(SqlOperandType.AND);
-        queue.add(SqlOperandType.OR);
-        result = builder.insert("table1", fieldNames).where(sqlWhereEntity).build();
-
-        logger.info(result);
 
         logger.info("Приложение запущено!");
         logger.info("Открываю главную страницу...");

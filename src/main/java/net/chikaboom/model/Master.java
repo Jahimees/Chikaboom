@@ -3,7 +3,7 @@ package net.chikaboom.model;
 /**
  * Определяет модель таблицы Master в базе данных
  */
-public class Master {
+public class Master implements Entity {
     private String idMaster;
     private String idAccount;
     private String address;

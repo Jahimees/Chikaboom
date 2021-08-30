@@ -3,7 +3,7 @@ package net.chikaboom.model;
 /**
  * Определяет модель таблицы Client в базе данных
  */
-public class Client {
+public class Client implements Entity {
     private String idClient;
     private String idAccount;
 

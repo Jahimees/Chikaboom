@@ -3,7 +3,7 @@ package net.chikaboom.model;
 /**
  * Определяет модель таблицы Comment в базе данных
  */
-public class Comment {
+public class Comment implements Entity {
     private String idComment;
     private String idMaster;
     private String idClient;
