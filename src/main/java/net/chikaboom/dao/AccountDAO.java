@@ -4,15 +4,13 @@ import net.chikaboom.connection.ConnectionPool;
 import net.chikaboom.model.Account;
 import net.chikaboom.util.QueryBuilder;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import static net.chikaboom.constant.FieldConstant.*;
-import static net.chikaboom.constant.TableConstant.ACCOUNT;
+import static net.chikaboom.constant.TableConstant.*;
+
 
 public class AccountDAO extends AbstractDAO<Account> {
     private final QueryBuilder queryBuilder;
@@ -148,6 +146,7 @@ public class AccountDAO extends AbstractDAO<Account> {
         fieldNames.add(LOGIN);
         fieldNames.add(PASSWORD);
         fieldNames.add(PHONE);
+        fieldNames.add(REGISTRATION_DATE);
 
         return fieldNames;
     }
@@ -161,6 +160,7 @@ public class AccountDAO extends AbstractDAO<Account> {
             preparedStatement.setString(4, entity.getLogin());
             preparedStatement.setString(5, entity.getPassword());
             preparedStatement.setString(6, entity.getPhone());
+            preparedStatement.setTimestamp(7, entity.getRegistrationDate());
         } catch (SQLException sqlException) {
             sqlException.printStackTrace(); //TODO обработка
         }
@@ -175,5 +175,6 @@ public class AccountDAO extends AbstractDAO<Account> {
         account.setLogin(resultSet.getString(LOGIN));
         account.setPassword(resultSet.getString(PASSWORD));
         account.setPhone(resultSet.getString(PHONE));
+        account.setRegistrationDate(resultSet.getTimestamp(REGISTRATION_DATE));
     }
 }
