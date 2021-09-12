@@ -43,31 +43,30 @@ public class ControllerServlet extends HttpServlet {
      * @throws ServletException
      */
     public void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        AccountDAO accountDAO = new AccountDAO();
-        Account account = new Account();
-        account.setName("Alexander");
-        account.setSurname("Anton");
-        account.setLogin("Log In");
-        account.setPassword("Psss word");
-        account.setPhone("+4132124124124");
-        account.setIdAccount("508748ef-f33b-4040-8d89-56b5b46a789b");
-
-        SqlWhereEntity ewe = new SqlWhereEntity();
-        Map<String, SqlComparatorType> fields = new LinkedHashMap<>();
-
-        fields.put("login", SqlComparatorType.EQUAL);
-        fields.put("password", SqlComparatorType.EQUAL);
-        fields.put("cost", SqlComparatorType.GRATER);
-
-//        where login=? AND password=? OR cost>?
-
-        Queue<SqlOperandType> operandTypes = new LinkedList<>();
-        operandTypes.add(SqlOperandType.AND);
-        operandTypes.add(SqlOperandType.OR);
-
-        ewe.setFields(fields);
-        ewe.setOperands(operandTypes);
-
+//        AccountDAO accountDAO = new AccountDAO();
+//        Account account = new Account();
+//        account.setName("Alexander");
+//        account.setSurname("Anton");
+//        account.setLogin("Log In");
+//        account.setPassword("Psss word");
+//        account.setPhone("+4132124124124");
+//        account.setIdAccount("508748ef-f33b-4040-8d89-56b5b46a789b");
+//
+//        SqlWhereEntity ewe = new SqlWhereEntity();
+//        Map<String, SqlComparatorType> fields = new LinkedHashMap<>();
+//
+//        fields.put("login", SqlComparatorType.EQUAL);
+//        fields.put("password", SqlComparatorType.EQUAL);
+//        fields.put("cost", SqlComparatorType.GRATER);
+//
+//
+//        Queue<SqlOperandType> operandTypes = new LinkedList<>();
+//        operandTypes.add(SqlOperandType.AND);
+//        operandTypes.add(SqlOperandType.OR);
+//
+//        ewe.setFields(fields);
+//        ewe.setOperands(operandTypes);
+//~~~~~~~~~~
 
 //        accountDAO.create(account);
 //        logger.info("Account " + account.getIdAccount() + " created!");
@@ -78,9 +77,12 @@ public class ControllerServlet extends HttpServlet {
 //            logger.info(acc.toString());
 //        }
 
-        logger.info("\n\n");
-        logger.info("Finding acc with id " + account.getIdAccount() + "...");
-        logger.info("Found  account: " + accountDAO.findEntity(account.getIdAccount()).toString() + "\n");
+
+//~~~~~~~~~~~~~~~~~~~~~~~~
+//        logger.info("\n\n");
+//        logger.info("Finding acc with id " + account.getIdAccount() + "...");
+//        logger.info("Found  account: " + accountDAO.findEntity(account.getIdAccount()).toString() + "\n");
+        //~~~~~~~~~~~~~~~~~~~~~
 //
 //        logger.info("Updating account " + account.getIdAccount() + "...");
 //        account.setLogin("Logggen");

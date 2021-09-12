@@ -11,7 +11,6 @@ public abstract class AbstractDAO<E> {
     abstract boolean delete(String id);
     abstract boolean update(E entity);
     abstract boolean create(E entity);
-    abstract List<String> getFieldNames();
 
     abstract void setFieldsToPreparedStatement(PreparedStatement preparedStatement, E entity);
     abstract void setFieldsToEntity(E entity, ResultSet resultSet) throws SQLException;

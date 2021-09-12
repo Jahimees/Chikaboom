@@ -102,7 +102,7 @@ public class AccountDAO extends AbstractDAO<Account> {
 
     @Override
     public boolean update(Account entity) {
-        String query = queryBuilder.update(ACCOUNT, getFieldNames()).where(ID_ACCOUNT).build();
+        String query = queryBuilder.update(ACCOUNT, ACCOUNT_FIELDS).where(ID_ACCOUNT).build();
         Connection connection = ConnectionPool.getInstance().getConnection();
 
         try {
@@ -114,6 +114,12 @@ public class AccountDAO extends AbstractDAO<Account> {
 
         } catch (SQLException sqlException) {
             sqlException.printStackTrace(); //TODO обработка
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace(); //TODO обработка
+            }
         }
 
         return false;
@@ -121,7 +127,7 @@ public class AccountDAO extends AbstractDAO<Account> {
 
     @Override
     public boolean create(Account entity) {
-        String query = queryBuilder.insert(ACCOUNT, getFieldNames()).build();
+        String query = queryBuilder.insert(ACCOUNT, ACCOUNT_FIELDS).build();
         Connection connection = ConnectionPool.getInstance().getConnection();
 
         try {
@@ -131,24 +137,15 @@ public class AccountDAO extends AbstractDAO<Account> {
             return preparedStatement.execute();
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();
+        } finally {
+            try {
+                connection.close(); //TODO обработка
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
         return false;
-    }
-
-    @Override
-    public List<String> getFieldNames() {
-        List<String> fieldNames = new ArrayList<>();
-
-        fieldNames.add(ID_ACCOUNT);
-        fieldNames.add(NAME);
-        fieldNames.add(SURNAME);
-        fieldNames.add(LOGIN);
-        fieldNames.add(PASSWORD);
-        fieldNames.add(PHONE);
-        fieldNames.add(REGISTRATION_DATE);
-
-        return fieldNames;
     }
 
     @Override
