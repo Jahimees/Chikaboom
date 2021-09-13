@@ -7,6 +7,8 @@ public class Master implements Entity {
     private String idMaster;
     private String idAccount;
     private String address;
+    private String description;
+
 
     public String getIdMaster() {
         return idMaster;
@@ -39,8 +41,6 @@ public class Master implements Entity {
     public void setDescription(String description) {
         this.description = description;
     }
-
-    private String description;
 
 
 }

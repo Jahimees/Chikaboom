@@ -52,7 +52,7 @@ public class FieldConstant {
     public static final List<String> ACCOUNT_FIELDS = Arrays.asList(ID_ACCOUNT, NAME, SURNAME, LOGIN,
             PASSWORD, PHONE, REGISTRATION_DATE);
     public static final List<String> CLIENT_FIELDS = Arrays.asList(ID_CLIENT, ID_ACCOUNT);
-    public static final List<String> COMMENT_FIELDS = Arrays.asList(ID_COMMENT, ID_CLIENT, MESSAGE,
+    public static final List<String> COMMENT_FIELDS = Arrays.asList(ID_COMMENT, ID_CLIENT, ID_MASTER, MESSAGE,
             IS_CLIENT_MESSAGE, RATE);
     public static final List<String> MASTER_FIELDS = Arrays.asList(ID_MASTER, ID_ACCOUNT, ADDRESS);
     public static final List<String> SERVICE_FIELDS = Arrays.asList(ID_SERVICE,ID_MASTER,
