@@ -71,6 +71,9 @@ public class ControllerServlet extends HttpServlet {
         logger.info("Открываю главную страницу...");
         RequestDispatcher requestDispatcher = request.getRequestDispatcher("view/main.jsp");
         requestDispatcher.forward(request, response);
+
+        //TODO realize CommandFactory usage
+
         logger.info("Открыл главную страницу!");
     }
 }
