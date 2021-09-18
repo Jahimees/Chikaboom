@@ -1,12 +1,19 @@
 package net.chikaboom.model;
 
+import java.util.UUID;
+
 /**
  * Определяет модель таблицы Master в базе данных
  */
-public class Master {
+public class Master implements Entity {
     private String idMaster;
     private String idAccount;
     private String address;
+    private String description;
+
+    public Master() {
+        idMaster = UUID.randomUUID().toString();
+    }
 
     public String getIdMaster() {
         return idMaster;
@@ -39,8 +46,6 @@ public class Master {
     public void setDescription(String description) {
         this.description = description;
     }
-
-    private String description;
 
 
 }

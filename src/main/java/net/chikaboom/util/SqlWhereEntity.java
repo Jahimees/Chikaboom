@@ -6,16 +6,19 @@ import java.util.Queue;
 /**
  * Класс-сущность, которая помогает решить проблему построения Sql-where-запросов
  */
+@Deprecated
 public class SqlWhereEntity {
     /**
      * Набор полей и тип их сравнения в запросе.
      * Ключом является название поля, а значением - метод сравнения:
      * Пример: ключ - login, значение - EQUAL (преобразуется в запись "=?")
+     * login password cost
      */
     private Map<String, SqlComparatorType> fields;
 
     /**
      * Переменная, определяющее нужное количество операндов (AND, OR) для запроса
+     * Where idAccount=? AND login=? AND password=?
      */
     private int operandCount = -1;
 

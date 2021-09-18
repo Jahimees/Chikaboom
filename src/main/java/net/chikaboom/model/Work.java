@@ -1,13 +1,19 @@
 package net.chikaboom.model;
 
+import java.util.UUID;
+
 /**
  * Определяет модель таблицы Work в базе данных
  */
-public class Work {
+public class Work implements Entity {
     private String idWork;
     private String idMaster;
     private byte[] image;
     private String comment;
+
+    public Work() {
+        idWork = UUID.randomUUID().toString();
+    }
 
     public String getIdWork() {
         return idWork;

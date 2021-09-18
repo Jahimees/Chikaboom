@@ -1,5 +1,7 @@
 package net.chikaboom.connection;
 
+import org.apache.log4j.Logger;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -13,18 +15,21 @@ import java.sql.SQLException;
 public class ConnectionPool {
 
     private static ConnectionPool instance = null;
+    private static final Logger logger = Logger.getLogger(ConnectionPool.class);
 
     private ConnectionPool() {}
 
     public static ConnectionPool getInstance() {
         if (instance == null) {
             instance = new ConnectionPool();
+            logger.info("Connection pool created.");
         }
 
         return instance;
     }
 
     public Connection getConnection() {
+        logger.info("Getting connection...");
         Context ctx;
         Connection connection = null;
         try {
@@ -36,6 +41,7 @@ public class ConnectionPool {
             e.printStackTrace();
         }
 
+        logger.info("Got connection.");
         return connection;
     }
 }

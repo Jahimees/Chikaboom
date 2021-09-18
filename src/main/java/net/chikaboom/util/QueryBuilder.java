@@ -9,7 +9,6 @@ import java.util.*;
  *
  * С помощью данного класса запросы можно собирать как конструктор.
  * Ответственность за неправильную последовательность вызвов методов несет программист.
- *
  */
 //TODO проверки на пустые коллекции. Необходима серъезная доработка по безопасности и исключительным ситуациям
 public class QueryBuilder {
@@ -31,6 +30,7 @@ public class QueryBuilder {
 
     /**
      * Добавляет к исходной строке выбор определенного перечня полей в таблице.
+     *
      * @param columnNames имена полей, которые необходимо выбрать в запросе
      */
     public QueryBuilder select(List<String> columnNames) {
@@ -49,6 +49,7 @@ public class QueryBuilder {
 
     /**
      * Добавляет к исходной строке выбор из конкретной таблицы.
+     *
      * @param tableName наименование таблицы, из которой будет делаться выборка
      */
     public QueryBuilder from(String tableName) {
@@ -59,6 +60,7 @@ public class QueryBuilder {
 
     /**
      * Добавляет в исходную строку перечень таблиц из которых будет делаться выборка.
+     *
      * @param tableNames наименование таблиц из которых будет делаться выборка
      */
     public QueryBuilder from(List<String> tableNames) {
@@ -76,9 +78,11 @@ public class QueryBuilder {
 
     /**
      * Добавляет к исходной строке одно условие фильтрации результатов выборки.
-     * @param key наименование столюца-фильтра
+     *
+     * @param key   наименование столюца-фильтра
      * @param value значение, которому должен быть равен столбец
      */
+    @Deprecated
     public QueryBuilder where(String key, String value) {
         queryString.append("WHERE ").append(key).append("='").append(value).append("' ");
 
@@ -87,6 +91,7 @@ public class QueryBuilder {
 
     /**
      * Добавляет к исходной строке одно условие фильтрации результатов выборки.
+     *
      * @param key наименование столюца-фильтра
      */
     public QueryBuilder where(String key) {
@@ -95,12 +100,15 @@ public class QueryBuilder {
         return this;
     }
 
+//    TODO DELETE
     /**
      * Добавляет к исходной строке множество условий фильтрации результатов выборки.
      * В передаваемой сущности содержится информация о полях-фильтрах, их типах сравнения и о том, какие операнды
      * использовать между сравнениями (Or или And).
+     *
      * @param whereEntity сущность, в которой хранится информация о полях, операциях и операндах
      */
+    @Deprecated
     public QueryBuilder where(SqlWhereEntity whereEntity) {
         queryString.append("WHERE ");
 
@@ -123,8 +131,36 @@ public class QueryBuilder {
         return this;
     }
 
+    public QueryBuilder where() {
+        queryString.append("WHERE ");
+
+        return this;
+    }
+
+    //    TODO NAMING
+    public QueryBuilder compare(String fieldName, SqlComparatorType comparatorType) {
+        queryString.append(fieldName).append(comparatorType.getValue()).append(" ");
+
+        return this;
+    }
+
+    //    TODO NAMING
+    public QueryBuilder and() {
+        queryString.append(SqlOperandType.AND.getValue());
+
+        return this;
+    }
+
+    //    TODO NAMING
+    public QueryBuilder or() {
+        queryString.append(SqlOperandType.OR.getValue());
+
+        return this;
+    }
+
     /**
      * Добавляет к исходной строке значение создания новой записи в указанной таблице.
+     *
      * @param tableName таблица, в которой необходимо создать новую запись
      * @param fieldName заполняет указанное поле значением пользователя
      */
@@ -136,7 +172,8 @@ public class QueryBuilder {
 
     /**
      * Добавляет к исходной строке значение создания новой записи в указанной таблице.
-     * @param tableName таблица, в которой необходимо создать новую запись
+     *
+     * @param tableName  таблица, в которой необходимо создать новую запись
      * @param fieldNames заполняет указанные поля значениями пользователя
      */
     public QueryBuilder insert(String tableName, List<String> fieldNames) {
@@ -154,11 +191,12 @@ public class QueryBuilder {
 
     /**
      * Добавляет к исходной строке значения объединения таблиц
-     * @param joinType тип соединения
-     * @param firstTable имя таблицы с которой идет присоединения
+     *
+     * @param joinType     тип соединения
+     * @param firstTable   имя таблицы с которой идет присоединения
      * @param joiningTable имя присоединяемой таблицы
-     * @param key1 первый ключ по которому происходит присоединение
-     * @param key2 второй ключ по которому происходит присоединение
+     * @param key1         первый ключ по которому происходит присоединение
+     * @param key2         второй ключ по которому происходит присоединение
      */
     public QueryBuilder join(SqlJoinType joinType, String firstTable, String joiningTable, String key1, String key2) {
         queryString.append(joinType.getValue());
@@ -179,6 +217,7 @@ public class QueryBuilder {
 
     /**
      * Добавляет к исходной строке значение изменения одного поля в записи(ях) в определенной таблице.
+     *
      * @param tableName имя таблицы, в которой происходят изменения
      * @param fieldName имя изменяемого поля
      * @return
@@ -191,7 +230,8 @@ public class QueryBuilder {
 
     /**
      * Добавляет к исходной строке значение изменения нескольких полей в записи(ях) в определенной таблице.
-     * @param tableName имя таблицы, в которой происходят изменения
+     *
+     * @param tableName  имя таблицы, в которой происходят изменения
      * @param fieldNames имена изменяемых полей
      */
     public QueryBuilder update(String tableName, List<String> fieldNames) {
@@ -204,6 +244,7 @@ public class QueryBuilder {
 
     /**
      * Операция, завершающая построение запроса, добавляя точку с запятой в конце строки.
+     *
      * @return полную строку-запрос
      */
     public String build() {
