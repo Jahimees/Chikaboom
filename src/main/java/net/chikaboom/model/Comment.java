@@ -1,5 +1,7 @@
 package net.chikaboom.model;
 
+import java.util.UUID;
+
 /**
  * Определяет модель таблицы Comment в базе данных
  */
@@ -10,6 +12,10 @@ public class Comment implements Entity {
     private String message;
     private boolean isClientMessage;
     private int rate;
+
+    public Comment() {
+        idComment = UUID.randomUUID().toString();
+    }
 
     public String getIdComment() {
         return idComment;

@@ -108,7 +108,7 @@ public class AccountDAO extends AbstractDAO<Account> {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             setFieldsToPreparedStatement(preparedStatement, entity);
-            preparedStatement.setString(7, entity.getIdAccount());
+            preparedStatement.setString(8, entity.getIdAccount());
 
             return preparedStatement.execute();
 
@@ -162,7 +162,6 @@ public class AccountDAO extends AbstractDAO<Account> {
             sqlException.printStackTrace(); //TODO обработка
         }
     }
-
 
     @Override
     public void setFieldsToEntity(Account account, ResultSet resultSet) throws SQLException {

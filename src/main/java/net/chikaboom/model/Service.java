@@ -1,5 +1,7 @@
 package net.chikaboom.model;
 
+import java.util.UUID;
+
 /**
  * Определяет модель таблицы Service в базе данных
  */
@@ -10,6 +12,10 @@ public class Service implements Entity {
     private String name;
     private String description;
     private double cost; //TODO заменить на decimal
+
+    public Service() {
+        idService = UUID.randomUUID().toString();
+    }
 
     public String getIdService() {
         return idService;
