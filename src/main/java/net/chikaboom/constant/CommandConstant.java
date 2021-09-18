@@ -1,7 +1,6 @@
 package net.chikaboom.constant;
 
 public class CommandConstant {
-    public static final String COMMAND = "command";
     public static final String LOGIN = "login";
     public static final String LOGOUT = "logout";
     public static final String SERVICES = "services"; //услуги

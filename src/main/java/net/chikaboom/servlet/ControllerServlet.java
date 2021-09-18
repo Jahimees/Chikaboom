@@ -1,5 +1,7 @@
 package net.chikaboom.servlet;
 
+import net.chikaboom.commands.ActionCommand;
+import net.chikaboom.commands.CommandFactory;
 import net.chikaboom.util.*;
 import org.apache.log4j.Logger;
 
@@ -10,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
+
+import static net.chikaboom.constant.PageConstant.MAIN_PAGE;
 
 /**
  * Принимает сообщение от клиента и выполняет действия, заложенные в это сообщение
@@ -72,8 +76,19 @@ public class ControllerServlet extends HttpServlet {
         RequestDispatcher requestDispatcher = request.getRequestDispatcher("view/main.jsp");
         requestDispatcher.forward(request, response);
 
-        //TODO realize CommandFactory usage
-
         logger.info("Открыл главную страницу!");
+
+        String page = null;
+        CommandFactory commandFactory = new CommandFactory();
+        ActionCommand command = commandFactory.defineCommand(request);
+        page = command.execute(request, response);
+
+        if (page != null) {
+            RequestDispatcher dispatcher = request.getRequestDispatcher(page);
+            dispatcher.forward(request, response);
+        } else {
+            page = MAIN_PAGE;
+            response.sendRedirect(request.getContextPath() + page);
+        }
     }
 }
