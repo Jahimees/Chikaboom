@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
 
+import static net.chikaboom.constant.AttributeConstant.COMMAND;
 import static net.chikaboom.constant.PageConstant.MAIN_PAGE;
 
 /**
@@ -79,8 +80,11 @@ public class ControllerServlet extends HttpServlet {
         logger.info("Открыл главную страницу!");
 
         String page = null;
+        String currentCommand = request.getParameter(COMMAND);
+
         CommandFactory commandFactory = new CommandFactory();
-        ActionCommand command = commandFactory.defineCommand(request);
+
+        ActionCommand command = commandFactory.defineCommand(currentCommand);
         page = command.execute(request, response);
 
         if (page != null) {

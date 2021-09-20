@@ -11,10 +11,16 @@ import static net.chikaboom.constant.LoggerMessages.ILLEGAL_COMMAND;
 
 public class CommandFactory {
 
+    /**
+     * Класс, отвечающий за определение команд, поступивших на сервлет
+     * Возвращает конкретную команду в соответствии с параметром, принятым из сессии "COMMAND"
+     *
+     * Реализован с помощью паттерна "Фабричный метод" (Method Factory)
+     */
+
     private static final Logger logger = Logger.getLogger(CommandFactory.class);
 
-    public ActionCommand defineCommand(HttpServletRequest request) {
-        String currentCommand = request.getParameter(COMMAND);
+    public ActionCommand defineCommand(String currentCommand) {
 
         logger.info(currentCommand + GOT);
 
