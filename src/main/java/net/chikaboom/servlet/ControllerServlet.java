@@ -79,11 +79,16 @@ public class ControllerServlet extends HttpServlet {
 
         logger.info("Открыл главную страницу!");
 
-        String page = null;
+        String page = null; //Можно не присваивать null. Т.к. page итак будет равен null.
+        //Что-то осенило. Давай заменим название currentCommand на commandName, чтобы было логичнее и понятнее
         String currentCommand = request.getParameter(COMMAND);
 
         CommandFactory commandFactory = new CommandFactory();
+        //По сути, можно избавиться от создания переменной и бахнуть
+        //ActionCommand command = new CommandFactory().defineCommand(currentCommand);
 
+        //4*) Облачить в try-catch (две нижние строчки) и поймать кастомный Exception
+        //5*) в блоке catch залогать ошибку + сделать "page = new EmptyCommand().execute(); "
         ActionCommand command = commandFactory.defineCommand(currentCommand);
         page = command.execute(request, response);
 
