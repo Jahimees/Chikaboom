@@ -2,6 +2,8 @@ package net.chikaboom.servlet;
 
 import net.chikaboom.commands.ActionCommand;
 import net.chikaboom.commands.CommandFactory;
+import net.chikaboom.commands.EmptyCommand;
+import net.chikaboom.exception.UnknownCommandException;
 import net.chikaboom.util.*;
 import org.apache.log4j.Logger;
 
@@ -79,18 +81,19 @@ public class ControllerServlet extends HttpServlet {
 
         logger.info("Открыл главную страницу!");
 
-        String page = null; //Можно не присваивать null. Т.к. page итак будет равен null.
-        //Что-то осенило. Давай заменим название currentCommand на commandName, чтобы было логичнее и понятнее
-        String currentCommand = request.getParameter(COMMAND);
-
-        CommandFactory commandFactory = new CommandFactory();
-        //По сути, можно избавиться от создания переменной и бахнуть
-        //ActionCommand command = new CommandFactory().defineCommand(currentCommand);
+        String page;
+        String commandName = request.getParameter(COMMAND);
 
         //4*) Облачить в try-catch (две нижние строчки) и поймать кастомный Exception
         //5*) в блоке catch залогать ошибку + сделать "page = new EmptyCommand().execute(); "
-        ActionCommand command = commandFactory.defineCommand(currentCommand);
-        page = command.execute(request, response);
+
+        try {
+            ActionCommand command = new CommandFactory().defineCommand(commandName);
+            page = command.execute(request, response);
+        } catch (IllegalArgumentException ex) {
+            logger.error("Unknown command");
+            page = new EmptyCommand().execute(request, response);
+        }
 
         if (page != null) {
             RequestDispatcher dispatcher = request.getRequestDispatcher(page);
