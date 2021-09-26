@@ -3,17 +3,20 @@ package net.chikaboom.dao;
 import net.chikaboom.connection.ConnectionPool;
 import net.chikaboom.model.Account;
 import net.chikaboom.util.QueryBuilder;
+import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import static net.chikaboom.constant.FieldConstant.*;
+import static net.chikaboom.constant.LoggerMessageConstant.*;
 import static net.chikaboom.constant.TableConstant.*;
 
 
 public class AccountDAO extends AbstractDAO<Account> {
     private final QueryBuilder queryBuilder;
+    private static final Logger logger = Logger.getLogger(AccountDAO.class);
 
     public AccountDAO() {
         queryBuilder = new QueryBuilder();
@@ -33,13 +36,13 @@ public class AccountDAO extends AbstractDAO<Account> {
                 setFieldsToEntity(account, resultSet);
                 accountList.add(account);
             }
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace(); //TODO обработка
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
                 connection.close();
-            } catch (SQLException sqlException) {
-                sqlException.printStackTrace(); //TODO обработка
+            } catch (SQLException e) {
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -57,15 +60,15 @@ public class AccountDAO extends AbstractDAO<Account> {
             ResultSet resultSet = findEntityStatement.executeQuery();
 
             if (resultSet.next()) {
-                setFieldsToEntity(account, resultSet); //TODO обработка
+                setFieldsToEntity(account, resultSet);
             }
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace();
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
                 connection.close();
-            } catch (SQLException sqlException) {
-                sqlException.printStackTrace(); //TODO обработка
+            } catch (SQLException e) {
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -87,13 +90,13 @@ public class AccountDAO extends AbstractDAO<Account> {
 
             return preparedStatement.execute();
 
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace(); //TODO обработка
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
                 connection.close();
-            } catch (SQLException sqlException) {
-                sqlException.printStackTrace(); //TODO обработка
+            } catch (SQLException e) {
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -112,13 +115,13 @@ public class AccountDAO extends AbstractDAO<Account> {
 
             return preparedStatement.execute();
 
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace(); //TODO обработка
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
                 connection.close();
             } catch (SQLException e) {
-                e.printStackTrace(); //TODO обработка
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -135,13 +138,13 @@ public class AccountDAO extends AbstractDAO<Account> {
             setFieldsToPreparedStatement(preparedStatement, entity);
 
             return preparedStatement.execute();
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace();
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
-                connection.close(); //TODO обработка
+                connection.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -158,19 +161,23 @@ public class AccountDAO extends AbstractDAO<Account> {
             preparedStatement.setString(5, entity.getPassword());
             preparedStatement.setString(6, entity.getPhone());
             preparedStatement.setTimestamp(7, entity.getRegistrationDate());
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace(); //TODO обработка
+        } catch (SQLException e) {
+            logger.error(SETTING_PARAMETER_ERROR, e);
         }
     }
 
     @Override
-    public void setFieldsToEntity(Account account, ResultSet resultSet) throws SQLException {
-        account.setIdAccount(resultSet.getString(ID_ACCOUNT));
-        account.setName(resultSet.getString(NAME));
-        account.setSurname(resultSet.getString(SURNAME));
-        account.setLogin(resultSet.getString(LOGIN));
-        account.setPassword(resultSet.getString(PASSWORD));
-        account.setPhone(resultSet.getString(PHONE));
-        account.setRegistrationDate(resultSet.getTimestamp(REGISTRATION_DATE));
+    public void setFieldsToEntity(Account account, ResultSet resultSet) {
+        try {
+            account.setIdAccount(resultSet.getString(ID_ACCOUNT));
+            account.setName(resultSet.getString(NAME));
+            account.setSurname(resultSet.getString(SURNAME));
+            account.setLogin(resultSet.getString(LOGIN));
+            account.setPassword(resultSet.getString(PASSWORD));
+            account.setPhone(resultSet.getString(PHONE));
+            account.setRegistrationDate(resultSet.getTimestamp(REGISTRATION_DATE));
+        } catch (SQLException e) {
+            logger.error(GETTING_PARAMETER_ERROR, e);
+        }
     }
 }

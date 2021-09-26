@@ -3,6 +3,7 @@ package net.chikaboom.dao;
 import net.chikaboom.connection.ConnectionPool;
 import net.chikaboom.model.Client;
 import net.chikaboom.util.QueryBuilder;
+import org.apache.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,11 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static net.chikaboom.constant.FieldConstant.*;
+import static net.chikaboom.constant.LoggerMessageConstant.*;
 import static net.chikaboom.constant.TableConstant.CLIENT;
 
 
 public class ClientDAO extends AbstractDAO<Client> {
     private final QueryBuilder queryBuilder;
+    private static final Logger logger = Logger.getLogger(ClientDAO.class);
 
     public ClientDAO() {
         queryBuilder = new QueryBuilder();
@@ -26,8 +29,7 @@ public class ClientDAO extends AbstractDAO<Client> {
     public List<Client> findAll() {
         String query = queryBuilder.select().from(CLIENT).build();
         Connection connection = ConnectionPool.getInstance().getConnection();
-        List<Client
-                > clientList = new ArrayList<>();
+        List<Client> clientList = new ArrayList<>();
         try {
             PreparedStatement findAllStatement = connection.prepareStatement(query);
             ResultSet resultSet = findAllStatement.executeQuery();
@@ -37,13 +39,13 @@ public class ClientDAO extends AbstractDAO<Client> {
                 setFieldsToEntity(client, resultSet);
                 clientList.add(client);
             }
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace(); //TODO обработка
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
                 connection.close();
-            } catch (SQLException sqlException) {
-                sqlException.printStackTrace(); //TODO обработка
+            } catch (SQLException e) {
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -61,15 +63,15 @@ public class ClientDAO extends AbstractDAO<Client> {
             ResultSet resultSet = findEntityStatement.executeQuery();
 
             if (resultSet.next()) {
-                setFieldsToEntity(client, resultSet); //TODO обработка
+                setFieldsToEntity(client, resultSet);
             }
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace();
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
                 connection.close();
-            } catch (SQLException sqlException) {
-                sqlException.printStackTrace(); //TODO обработка
+            } catch (SQLException e) {
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -91,13 +93,13 @@ public class ClientDAO extends AbstractDAO<Client> {
 
             return preparedStatement.execute();
 
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace(); //TODO обработка
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
                 connection.close();
-            } catch (SQLException sqlException) {
-                sqlException.printStackTrace(); //TODO обработка
+            } catch (SQLException e) {
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -116,13 +118,13 @@ public class ClientDAO extends AbstractDAO<Client> {
 
             return preparedStatement.execute();
 
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace(); //TODO обработка
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
                 connection.close();
             } catch (SQLException e) {
-                e.printStackTrace(); //TODO обработка
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -139,13 +141,13 @@ public class ClientDAO extends AbstractDAO<Client> {
             setFieldsToPreparedStatement(preparedStatement, entity);
 
             return preparedStatement.execute();
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace();
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
-                connection.close(); //TODO обработка
+                connection.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -157,15 +159,19 @@ public class ClientDAO extends AbstractDAO<Client> {
         try {
             preparedStatement.setString(1, entity.getIdClient());
             preparedStatement.setString(2, entity.getIdAccount());
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace(); //TODO обработка
+        } catch (SQLException e) {
+            logger.error(SETTING_PARAMETER_ERROR, e);
         }
     }
 
 
     @Override
-    public void setFieldsToEntity(Client client, ResultSet resultSet) throws SQLException {
-        client.setIdClient(resultSet.getString(ID_CLIENT));
-        client.setIdAccount(resultSet.getString(ID_ACCOUNT));
+    public void setFieldsToEntity(Client client, ResultSet resultSet) {
+        try {
+            client.setIdClient(resultSet.getString(ID_CLIENT));
+            client.setIdAccount(resultSet.getString(ID_ACCOUNT));
+        } catch (SQLException e) {
+            logger.error(GETTING_PARAMETER_ERROR, e);
+        }
     }
 }

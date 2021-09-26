@@ -59,7 +59,6 @@ public abstract class AbstractDAO<E extends Entity> {
      * Заполняет поля объекта из полученных результатов
      * @param entity заполняемый объект
      * @param resultSet полученные результаты поиска
-     * @throws SQLException
      */
-    abstract void setFieldsToEntity(E entity, ResultSet resultSet) throws SQLException;
+    abstract void setFieldsToEntity(E entity, ResultSet resultSet);
 }

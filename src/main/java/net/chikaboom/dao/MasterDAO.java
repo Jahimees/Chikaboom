@@ -3,6 +3,7 @@ package net.chikaboom.dao;
 import net.chikaboom.connection.ConnectionPool;
 import net.chikaboom.model.Master;
 import net.chikaboom.util.QueryBuilder;
+import org.apache.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,11 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static net.chikaboom.constant.FieldConstant.*;
+import static net.chikaboom.constant.LoggerMessageConstant.*;
 import static net.chikaboom.constant.TableConstant.MASTER;
 
 public class MasterDAO extends AbstractDAO<Master> {
-
     private final QueryBuilder queryBuilder;
+    private static final Logger logger = Logger.getLogger(MasterDAO.class);
 
     public MasterDAO() {
         queryBuilder = new QueryBuilder();
@@ -36,13 +38,13 @@ public class MasterDAO extends AbstractDAO<Master> {
                 setFieldsToEntity(master, resultSet);
                 masterList.add(master);
             }
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace(); //TODO обработка
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
                 connection.close();
-            } catch (SQLException sqlException) {
-                sqlException.printStackTrace(); //TODO обработка
+            } catch (SQLException e) {
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -60,15 +62,15 @@ public class MasterDAO extends AbstractDAO<Master> {
             ResultSet resultSet = findEntityStatement.executeQuery();
 
             if (resultSet.next()) {
-                setFieldsToEntity(master, resultSet); //TODO обработка
+                setFieldsToEntity(master, resultSet);
             }
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace();
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
                 connection.close();
-            } catch (SQLException sqlException) {
-                sqlException.printStackTrace(); //TODO обработка
+            } catch (SQLException e) {
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -90,13 +92,13 @@ public class MasterDAO extends AbstractDAO<Master> {
 
             return preparedStatement.execute();
 
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace(); //TODO обработка
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
                 connection.close();
-            } catch (SQLException sqlException) {
-                sqlException.printStackTrace(); //TODO обработка
+            } catch (SQLException e) {
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -115,13 +117,13 @@ public class MasterDAO extends AbstractDAO<Master> {
 
             return preparedStatement.execute();
 
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace(); //TODO обработка
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
                 connection.close();
             } catch (SQLException e) {
-                e.printStackTrace(); //TODO обработка
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -138,13 +140,13 @@ public class MasterDAO extends AbstractDAO<Master> {
             setFieldsToPreparedStatement(preparedStatement, entity);
 
             return preparedStatement.execute();
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace();
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
-                connection.close(); //TODO обработка
+                connection.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -158,16 +160,20 @@ public class MasterDAO extends AbstractDAO<Master> {
             preparedStatement.setString(2, entity.getIdAccount());
             preparedStatement.setString(3, entity.getAddress());
             preparedStatement.setString(4, entity.getDescription());
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace(); //TODO обработка
+        } catch (SQLException e) {
+            logger.error(GETTING_PARAMETER_ERROR, e);
         }
     }
 
     @Override
-    public void setFieldsToEntity(Master entity, ResultSet resultSet) throws SQLException {
-        entity.setIdMaster(resultSet.getString(ID_MASTER));
-        entity.setIdAccount(resultSet.getString(ID_ACCOUNT));
-        entity.setAddress(resultSet.getString(ADDRESS));
-        entity.setDescription(resultSet.getString(DESCRIPTION));
+    public void setFieldsToEntity(Master entity, ResultSet resultSet) {
+        try {
+            entity.setIdMaster(resultSet.getString(ID_MASTER));
+            entity.setIdAccount(resultSet.getString(ID_ACCOUNT));
+            entity.setAddress(resultSet.getString(ADDRESS));
+            entity.setDescription(resultSet.getString(DESCRIPTION));
+        } catch (SQLException e) {
+            logger.error(SETTING_PARAMETER_ERROR, e);
+        }
     }
 }
