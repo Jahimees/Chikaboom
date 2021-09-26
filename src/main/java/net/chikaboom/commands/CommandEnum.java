@@ -1,5 +1,6 @@
 package net.chikaboom.commands;
 
+//доки
 public enum CommandEnum {
     EMPTY{
         {

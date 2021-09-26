@@ -90,7 +90,8 @@ public class ControllerServlet extends HttpServlet {
         try {
             ActionCommand command = new CommandFactory().defineCommand(commandName);
             page = command.execute(request, response);
-        } catch (IllegalArgumentException ex) {
+        } catch (IllegalArgumentException ex) { //и поймать кастомный Exception. Тобишь ты тут и ловишь свой UnknownCommandException.
+            // Именнно его.. Потому что ты его и выбрасываешь из метода defineCommand (throw UnknownCommandException())
             logger.error("Unknown command");
             page = new EmptyCommand().execute(request, response);
         }
