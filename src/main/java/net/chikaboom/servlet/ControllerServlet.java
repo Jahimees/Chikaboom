@@ -5,6 +5,8 @@ import net.chikaboom.commands.CommandFactory;
 import net.chikaboom.commands.EmptyCommand;
 import net.chikaboom.exception.UnknownCommandException;
 import net.chikaboom.util.*;
+import net.chikaboom.dao.AccountDAO;
+import net.chikaboom.model.Account;
 import org.apache.log4j.Logger;
 
 import javax.servlet.RequestDispatcher;
@@ -13,7 +15,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
 
 import static net.chikaboom.constant.AttributeConstant.COMMAND;
 import static net.chikaboom.constant.PageConstant.MAIN_PAGE;
@@ -43,36 +44,37 @@ public class ControllerServlet extends HttpServlet {
      * @throws ServletException
      */
     public void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        QueryBuilder builder = new QueryBuilder();
-        SqlWhereEntity sqlWhereEntity = new SqlWhereEntity();
+        AccountDAO accountDAO = new AccountDAO();
 
-        Map<String, SqlComparatorType> fields = new LinkedHashMap<>();
-        fields.put("field1", SqlComparatorType.EQUAL);
-        fields.put("field2", SqlComparatorType.IS_NOT_NULL);
-        fields.put("field3", SqlComparatorType.IS_NULL);
-        sqlWhereEntity.setFields(fields);
-        Queue<SqlOperandType> queue = new LinkedList<>();
-        queue.add(SqlOperandType.AND);
-        queue.add(SqlOperandType.OR);
-        sqlWhereEntity.setOperands(queue);
+        Account account = new Account();
+        account.setName("Alexander");
+        account.setSurname("Anton");
+        account.setLogin("Log In");
+        account.setPassword("Psss word");
+        account.setPhone("+4132124124144424");
 
-        String result = builder.delete().from("table1").where(sqlWhereEntity)
-                .join(SqlJoinType.INNER_JOIN, "table1", "table2", "id1", "id2").build();
+        logger.info("TEST. Creating account...");
+        accountDAO.create(account);
+        logger.info("TEST. Account created");
 
-        logger.info(result);
+        logger.info("TEST. Searching account...");
+        Account foundAcc = accountDAO.findEntity(account.getIdAccount());
+        logger.info("TEST. Account found");
+        logger.info("TEST. Account: " + foundAcc.toString());
 
-        builder.clear();
+        logger.info("TEST. Updating account...");
+        account.setPassword("fsdafa");
+        accountDAO.update(account);
+        logger.info("TEST. Account updated.");
 
-        List<String> fieldNames = new ArrayList<>();
-        fieldNames.add("feidl1");
-        fieldNames.add("feidl2");
-        fieldNames.add("feidl3");
+        foundAcc = accountDAO.findEntity(account.getIdAccount());
+        logger.info("TEST. Account: " + foundAcc);
 
-        queue.add(SqlOperandType.AND);
-        queue.add(SqlOperandType.OR);
-        result = builder.insert("table1", fieldNames).where(sqlWhereEntity).build();
+        logger.info("TEST. Deleting account...");
+        accountDAO.delete(account.getIdAccount());
+        logger.info("TEST. Account deleted");
+        logger.info("TEST. Account must be null = " + accountDAO.findEntity(account.getIdAccount()));
 
-        logger.info(result);
 
         logger.info("Приложение запущено!");
         logger.info("Открываю главную страницу...");

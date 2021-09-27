@@ -1,11 +1,18 @@
 package net.chikaboom.model;
 
+import java.util.UUID;
+
 /**
  * Определяет модель таблицы Client в базе данных
  */
-public class Client {
+public class Client implements Entity {
+    //    TODO DOCUMENTATION
     private String idClient;
     private String idAccount;
+
+    public Client() {
+        idClient = UUID.randomUUID().toString();
+    }
 
     public String getIdClient() {
         return idClient;
