@@ -3,9 +3,8 @@ package net.chikaboom.servlet;
 import net.chikaboom.commands.ActionCommand;
 import net.chikaboom.commands.CommandFactory;
 import net.chikaboom.commands.EmptyCommand;
-import net.chikaboom.exception.UnknownCommandException;
-import net.chikaboom.util.*;
 import net.chikaboom.dao.AccountDAO;
+import net.chikaboom.exception.UnknownCommandException;
 import net.chikaboom.model.Account;
 import org.apache.log4j.Logger;
 
@@ -86,15 +85,11 @@ public class ControllerServlet extends HttpServlet {
         String page;
         String commandName = request.getParameter(COMMAND);
 
-        //4*) Облачить в try-catch (две нижние строчки) и поймать кастомный Exception
-        //5*) в блоке catch залогать ошибку + сделать "page = new EmptyCommand().execute(); "
-
         try {
             ActionCommand command = new CommandFactory().defineCommand(commandName);
             page = command.execute(request, response);
-        } catch (IllegalArgumentException ex) { //и поймать кастомный Exception. Тобишь ты тут и ловишь свой UnknownCommandException.
-            // Именнно его.. Потому что ты его и выбрасываешь из метода defineCommand (throw UnknownCommandException())
-            logger.error("Unknown command");
+        } catch (UnknownCommandException e) {
+            logger.error("Unknown command", e);
             page = new EmptyCommand().execute(request, response);
         }
 

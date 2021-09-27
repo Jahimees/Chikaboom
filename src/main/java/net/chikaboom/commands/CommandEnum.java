@@ -1,6 +1,12 @@
 package net.chikaboom.commands;
 
-//доки
+/**
+ * Класс-enum, состоящий из всех возможных команд, поступающих на CommandFactory
+ *
+ * В зависимости от принятой String из HttpServletRequest в поле command
+ * осуществляется поиск команды из нижеприведенного enum и возврат соответствующей комманды,
+ * "понятной" для ControllerServlet
+ */
 public enum CommandEnum {
     EMPTY{
         {
@@ -10,6 +16,10 @@ public enum CommandEnum {
 
     ActionCommand command;
 
+    /**
+     * Метод возращает конкретную команду, в зависимоти от поступившей String на CommandFactory
+     * @return конкретную команду, в зависимости от поступившей String на CommandFactory
+     */
     public ActionCommand getCommand() {
         return command;
     }
