@@ -8,6 +8,7 @@ import java.util.UUID;
  * Определяет модель таблицы Account в базе данных
  */
 public class Account implements Entity {
+    //    TODO DOCUMENTATION
     private String idAccount;
     private String name;
     private String surname;

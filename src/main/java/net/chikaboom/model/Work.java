@@ -6,6 +6,7 @@ import java.util.UUID;
  * Определяет модель таблицы Work в базе данных
  */
 public class Work implements Entity {
+    //    TODO DOCUMENTATION
     private String idWork;
     private String idMaster;
     private byte[] image;

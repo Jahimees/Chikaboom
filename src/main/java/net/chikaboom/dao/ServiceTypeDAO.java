@@ -3,6 +3,7 @@ package net.chikaboom.dao;
 import net.chikaboom.connection.ConnectionPool;
 import net.chikaboom.model.ServiceType;
 import net.chikaboom.util.QueryBuilder;
+import org.apache.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,11 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static net.chikaboom.constant.FieldConstant.*;
+import static net.chikaboom.constant.LoggerMessageConstant.*;
 import static net.chikaboom.constant.TableConstant.SERVICE_TYPE;
 
+//    TODO DOCUMENTATION
 public class ServiceTypeDAO extends AbstractDAO<ServiceType> {
-
     private final QueryBuilder queryBuilder;
+    private static final Logger logger = Logger.getLogger(ServiceTypeDAO.class);
 
     public ServiceTypeDAO() {
         queryBuilder = new QueryBuilder();
@@ -36,13 +39,13 @@ public class ServiceTypeDAO extends AbstractDAO<ServiceType> {
                 setFieldsToEntity(serviceType, resultSet);
                 serviceTypeList.add(serviceType);
             }
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace(); //TODO обработка
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
                 connection.close();
-            } catch (SQLException sqlException) {
-                sqlException.printStackTrace(); //TODO обработка
+            } catch (SQLException e) {
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -60,15 +63,15 @@ public class ServiceTypeDAO extends AbstractDAO<ServiceType> {
             ResultSet resultSet = findEntityStatement.executeQuery();
 
             if (resultSet.next()) {
-                setFieldsToEntity(serviceType, resultSet); //TODO обработка
+                setFieldsToEntity(serviceType, resultSet);
             }
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace();
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
                 connection.close();
-            } catch (SQLException sqlException) {
-                sqlException.printStackTrace(); //TODO обработка
+            } catch (SQLException e) {
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -90,13 +93,13 @@ public class ServiceTypeDAO extends AbstractDAO<ServiceType> {
 
             return preparedStatement.execute();
 
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace(); //TODO обработка
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
                 connection.close();
-            } catch (SQLException sqlException) {
-                sqlException.printStackTrace(); //TODO обработка
+            } catch (SQLException e) {
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -115,13 +118,13 @@ public class ServiceTypeDAO extends AbstractDAO<ServiceType> {
 
             return preparedStatement.execute();
 
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace(); //TODO обработка
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
                 connection.close();
             } catch (SQLException e) {
-                e.printStackTrace(); //TODO обработка
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -138,13 +141,13 @@ public class ServiceTypeDAO extends AbstractDAO<ServiceType> {
             setFieldsToPreparedStatement(preparedStatement, entity);
 
             return preparedStatement.execute();
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace();
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
-                connection.close(); //TODO обработка
+                connection.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -156,14 +159,18 @@ public class ServiceTypeDAO extends AbstractDAO<ServiceType> {
         try {
             preparedStatement.setString(1, entity.getIdServiceType());
             preparedStatement.setString(2, entity.getName());
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace(); //TODO обработка
+        } catch (SQLException e) {
+            logger.error(SETTING_PARAMETER_ERROR, e);
         }
     }
 
     @Override
-    public void setFieldsToEntity(ServiceType entity, ResultSet resultSet) throws SQLException {
-        entity.setIdServiceType(resultSet.getString(ID_SERVICE_TYPE));
-        entity.setName(resultSet.getString(NAME));
+    public void setFieldsToEntity(ServiceType entity, ResultSet resultSet) {
+        try {
+            entity.setIdServiceType(resultSet.getString(ID_SERVICE_TYPE));
+            entity.setName(resultSet.getString(NAME));
+        } catch (SQLException e) {
+            logger.error(GETTING_PARAMETER_ERROR, e);
+        }
     }
 }

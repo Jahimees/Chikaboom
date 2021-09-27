@@ -6,6 +6,7 @@ import java.util.UUID;
  * Определяет модель таблицы Comment в базе данных
  */
 public class Comment implements Entity {
+    //    TODO DOCUMENTATION
     private String idComment;
     private String idMaster;
     private String idClient;

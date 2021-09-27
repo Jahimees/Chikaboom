@@ -6,6 +6,7 @@ import java.util.UUID;
  * Определяет модель таблицы Client в базе данных
  */
 public class Client implements Entity {
+    //    TODO DOCUMENTATION
     private String idClient;
     private String idAccount;
 

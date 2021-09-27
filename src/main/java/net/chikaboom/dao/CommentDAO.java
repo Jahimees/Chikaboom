@@ -3,6 +3,7 @@ package net.chikaboom.dao;
 import net.chikaboom.connection.ConnectionPool;
 import net.chikaboom.model.Comment;
 import net.chikaboom.util.QueryBuilder;
+import org.apache.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,10 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static net.chikaboom.constant.FieldConstant.*;
+import static net.chikaboom.constant.LoggerMessageConstant.*;
 
+//    TODO DOCUMENTATION
 public class CommentDAO extends AbstractDAO<Comment> {
-
     private final QueryBuilder queryBuilder;
+    private static final Logger logger = Logger.getLogger(CommentDAO.class);
 
     public CommentDAO() {
         queryBuilder = new QueryBuilder();
@@ -35,13 +38,13 @@ public class CommentDAO extends AbstractDAO<Comment> {
                 setFieldsToEntity(comment, resultSet);
                 commentList.add(comment);
             }
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace(); //TODO обработка
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
                 connection.close();
-            } catch (SQLException sqlException) {
-                sqlException.printStackTrace(); //TODO обработка
+            } catch (SQLException e) {
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -59,15 +62,15 @@ public class CommentDAO extends AbstractDAO<Comment> {
             ResultSet resultSet = findEntityStatement.executeQuery();
 
             if (resultSet.next()) {
-                setFieldsToEntity(comment, resultSet); //TODO обработка
+                setFieldsToEntity(comment, resultSet);
             }
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace();
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
                 connection.close();
-            } catch (SQLException sqlException) {
-                sqlException.printStackTrace(); //TODO обработка
+            } catch (SQLException e) {
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -89,13 +92,13 @@ public class CommentDAO extends AbstractDAO<Comment> {
 
             return preparedStatement.execute();
 
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace(); //TODO обработка
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
                 connection.close();
-            } catch (SQLException sqlException) {
-                sqlException.printStackTrace(); //TODO обработка
+            } catch (SQLException e) {
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -114,13 +117,13 @@ public class CommentDAO extends AbstractDAO<Comment> {
 
             return preparedStatement.execute();
 
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace(); //TODO обработка
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
                 connection.close();
             } catch (SQLException e) {
-                e.printStackTrace(); //TODO обработка
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -137,13 +140,13 @@ public class CommentDAO extends AbstractDAO<Comment> {
             setFieldsToPreparedStatement(preparedStatement, entity);
 
             return preparedStatement.execute();
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace();
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
-                connection.close(); //TODO обработка
+                connection.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -159,20 +162,24 @@ public class CommentDAO extends AbstractDAO<Comment> {
             preparedStatement.setString(4, entity.getMessage());
             preparedStatement.setBoolean(5, entity.isClientMessage());
             preparedStatement.setInt(6, entity.getRate());
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace(); //TODO обработка
+        } catch (SQLException e) {
+            logger.error(SETTING_PARAMETER_ERROR, e);
         }
     }
 
 
     @Override
-    public void setFieldsToEntity(Comment entity, ResultSet resultSet) throws SQLException {
-        entity.setIdComment(resultSet.getString(ID_COMMENT));
-        entity.setIdClient(resultSet.getString(ID_CLIENT));
-        entity.setIdMaster(resultSet.getString(ID_MASTER));
-        entity.setMessage(resultSet.getString(MESSAGE));
-        entity.setClientMessage(resultSet.getBoolean(IS_CLIENT_MESSAGE));
-        entity.setRate(resultSet.getInt(RATE));
+    public void setFieldsToEntity(Comment entity, ResultSet resultSet) {
+        try {
+            entity.setIdComment(resultSet.getString(ID_COMMENT));
+            entity.setIdClient(resultSet.getString(ID_CLIENT));
+            entity.setIdMaster(resultSet.getString(ID_MASTER));
+            entity.setMessage(resultSet.getString(MESSAGE));
+            entity.setClientMessage(resultSet.getBoolean(IS_CLIENT_MESSAGE));
+            entity.setRate(resultSet.getInt(RATE));
+        } catch (SQLException e) {
+            logger.error(GETTING_PARAMETER_ERROR, e);
+        }
     }
 
 }

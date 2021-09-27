@@ -1,8 +1,11 @@
 package net.chikaboom.util;
 
+import net.chikaboom.exception.EmptyListException;
 import org.apache.log4j.Logger;
 
 import java.util.*;
+
+import static net.chikaboom.constant.LoggerMessageConstant.*;
 
 /**
  * Упрощает создание строки запросов к базе данных путем использования паттерна Byilder
@@ -30,7 +33,6 @@ public class QueryBuilder {
 
     /**
      * Добавляет к исходной строке выбор определенного перечня полей в таблице.
-     *
      * @param columnNames имена полей, которые необходимо выбрать в запросе
      */
     public QueryBuilder select(List<String> columnNames) {
@@ -40,7 +42,7 @@ public class QueryBuilder {
             queryString.deleteCharAt(queryString.length() - 1);
             queryString.append(") ");
         } else {
-            logger.warn("Got empty ArrayList of columnNames to queryBuilder");
+            logger.warn(GOT_EMPTY_LIST_QB_WARN);
             queryString.append("SELECT * ");
         }
 
@@ -49,7 +51,6 @@ public class QueryBuilder {
 
     /**
      * Добавляет к исходной строке выбор из конкретной таблицы.
-     *
      * @param tableName наименование таблицы, из которой будет делаться выборка
      */
     public QueryBuilder from(String tableName) {
@@ -60,17 +61,16 @@ public class QueryBuilder {
 
     /**
      * Добавляет в исходную строку перечень таблиц из которых будет делаться выборка.
-     *
      * @param tableNames наименование таблиц из которых будет делаться выборка
      */
-    public QueryBuilder from(List<String> tableNames) {
+    public QueryBuilder from(List<String> tableNames) throws EmptyListException {
         if (!tableNames.isEmpty()) {
             queryString.append("FROM ");
             tableNames.forEach(tableName -> queryString.append(tableName).append(","));
             queryString.deleteCharAt(queryString.length() - 1).append(" ");
         } else {
-            logger.error("Got empty ArrayList of tableNames to queryBuilder");
-            //TODO Exception
+            logger.error(GOT_EMPTY_LIST_QB_ERROR);
+            throw new EmptyListException(GOT_EMPTY_LIST_ERROR);
         }
 
         return this;
@@ -78,8 +78,7 @@ public class QueryBuilder {
 
     /**
      * Добавляет к исходной строке одно условие фильтрации результатов выборки.
-     *
-     * @param key   наименование столюца-фильтра
+     * @param key наименование столюца-фильтра
      * @param value значение, которому должен быть равен столбец
      */
     @Deprecated
@@ -91,7 +90,6 @@ public class QueryBuilder {
 
     /**
      * Добавляет к исходной строке одно условие фильтрации результатов выборки.
-     *
      * @param key наименование столюца-фильтра
      */
     public QueryBuilder where(String key) {
@@ -100,58 +98,28 @@ public class QueryBuilder {
         return this;
     }
 
-//    TODO DELETE
-    /**
-     * Добавляет к исходной строке множество условий фильтрации результатов выборки.
-     * В передаваемой сущности содержится информация о полях-фильтрах, их типах сравнения и о том, какие операнды
-     * использовать между сравнениями (Or или And).
-     *
-     * @param whereEntity сущность, в которой хранится информация о полях, операциях и операндах
-     */
-    @Deprecated
-    public QueryBuilder where(SqlWhereEntity whereEntity) {
-        queryString.append("WHERE ");
-
-        try {
-
-            Map<String, SqlComparatorType> fields = whereEntity.getFields();
-            Queue<SqlOperandType> operands = whereEntity.getOperands();
-
-            fields.forEach((fieldName, comparatorType) -> {
-                queryString.append(fieldName).append(comparatorType.getValue());
-                if (!operands.isEmpty()) {
-                    queryString.append(operands.poll().getValue());
-                }
-            });
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return this;
-    }
-
+    //    TODO DOCUMENTATION
     public QueryBuilder where() {
         queryString.append("WHERE ");
 
         return this;
     }
 
-    //    TODO NAMING
+    //    TODO DOCUMENTATION
     public QueryBuilder compare(String fieldName, SqlComparatorType comparatorType) {
         queryString.append(fieldName).append(comparatorType.getValue()).append(" ");
 
         return this;
     }
 
-    //    TODO NAMING
+    //    TODO DOCUMENTATION
     public QueryBuilder and() {
         queryString.append(SqlOperandType.AND.getValue());
 
         return this;
     }
 
-    //    TODO NAMING
+    //    TODO DOCUMENTATION
     public QueryBuilder or() {
         queryString.append(SqlOperandType.OR.getValue());
 
@@ -160,7 +128,6 @@ public class QueryBuilder {
 
     /**
      * Добавляет к исходной строке значение создания новой записи в указанной таблице.
-     *
      * @param tableName таблица, в которой необходимо создать новую запись
      * @param fieldName заполняет указанное поле значением пользователя
      */
@@ -172,7 +139,6 @@ public class QueryBuilder {
 
     /**
      * Добавляет к исходной строке значение создания новой записи в указанной таблице.
-     *
      * @param tableName  таблица, в которой необходимо создать новую запись
      * @param fieldNames заполняет указанные поля значениями пользователя
      */
@@ -191,7 +157,6 @@ public class QueryBuilder {
 
     /**
      * Добавляет к исходной строке значения объединения таблиц
-     *
      * @param joinType     тип соединения
      * @param firstTable   имя таблицы с которой идет присоединения
      * @param joiningTable имя присоединяемой таблицы
@@ -217,7 +182,6 @@ public class QueryBuilder {
 
     /**
      * Добавляет к исходной строке значение изменения одного поля в записи(ях) в определенной таблице.
-     *
      * @param tableName имя таблицы, в которой происходят изменения
      * @param fieldName имя изменяемого поля
      * @return
@@ -230,7 +194,6 @@ public class QueryBuilder {
 
     /**
      * Добавляет к исходной строке значение изменения нескольких полей в записи(ях) в определенной таблице.
-     *
      * @param tableName  имя таблицы, в которой происходят изменения
      * @param fieldNames имена изменяемых полей
      */
@@ -244,7 +207,6 @@ public class QueryBuilder {
 
     /**
      * Операция, завершающая построение запроса, добавляя точку с запятой в конце строки.
-     *
      * @return полную строку-запрос
      */
     public String build() {

@@ -3,6 +3,7 @@ package net.chikaboom.dao;
 import net.chikaboom.connection.ConnectionPool;
 import net.chikaboom.model.Work;
 import net.chikaboom.util.QueryBuilder;
+import org.apache.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,12 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static net.chikaboom.constant.FieldConstant.*;
+import static net.chikaboom.constant.LoggerMessageConstant.*;
 import static net.chikaboom.constant.TableConstant.SERVICE_TYPE;
 import static net.chikaboom.constant.TableConstant.WORK;
 
+//    TODO DOCUMENTATION
 public class WorkDAO extends AbstractDAO<Work> {
-
     private final QueryBuilder queryBuilder;
+    private static final Logger logger = Logger.getLogger(WorkDAO.class);
 
     public WorkDAO() {
         queryBuilder = new QueryBuilder();
@@ -37,13 +40,13 @@ public class WorkDAO extends AbstractDAO<Work> {
                 setFieldsToEntity(work, resultSet);
                 workList.add(work);
             }
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace(); //TODO обработка
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
                 connection.close();
-            } catch (SQLException sqlException) {
-                sqlException.printStackTrace(); //TODO обработка
+            } catch (SQLException e) {
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -61,15 +64,15 @@ public class WorkDAO extends AbstractDAO<Work> {
             ResultSet resultSet = findEntityStatement.executeQuery();
 
             if (resultSet.next()) {
-                setFieldsToEntity(work, resultSet); //TODO обработка
+                setFieldsToEntity(work, resultSet);
             }
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace();
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
                 connection.close();
-            } catch (SQLException sqlException) {
-                sqlException.printStackTrace(); //TODO обработка
+            } catch (SQLException e) {
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -91,13 +94,13 @@ public class WorkDAO extends AbstractDAO<Work> {
 
             return preparedStatement.execute();
 
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace(); //TODO обработка
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
                 connection.close();
-            } catch (SQLException sqlException) {
-                sqlException.printStackTrace(); //TODO обработка
+            } catch (SQLException e) {
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -116,13 +119,13 @@ public class WorkDAO extends AbstractDAO<Work> {
 
             return preparedStatement.execute();
 
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace(); //TODO обработка
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
                 connection.close();
             } catch (SQLException e) {
-                e.printStackTrace(); //TODO обработка
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -139,13 +142,13 @@ public class WorkDAO extends AbstractDAO<Work> {
             setFieldsToPreparedStatement(preparedStatement, entity);
 
             return preparedStatement.execute();
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace();
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
             try {
-                connection.close(); //TODO обработка
+                connection.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                logger.error(CONNECTION_CLOSING_ERROR, e);
             }
         }
 
@@ -159,16 +162,20 @@ public class WorkDAO extends AbstractDAO<Work> {
             preparedStatement.setString(2, entity.getIdMaster());
             preparedStatement.setBytes(3, entity.getImage());
             preparedStatement.setString(4, entity.getComment());
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace(); //TODO обработка
+        } catch (SQLException e) {
+            logger.error(SETTING_PARAMETER_ERROR, e);
         }
     }
 
     @Override
-    public void setFieldsToEntity(Work entity, ResultSet resultSet) throws SQLException {
-        entity.setIdWork(resultSet.getString(ID_WORK));
-        entity.setIdMaster(resultSet.getString(ID_MASTER));
-        entity.setImage(resultSet.getBytes(IMAGE));
-        entity.setComment(resultSet.getString(COMMENT));
+    public void setFieldsToEntity(Work entity, ResultSet resultSet) {
+        try {
+            entity.setIdWork(resultSet.getString(ID_WORK));
+            entity.setIdMaster(resultSet.getString(ID_MASTER));
+            entity.setImage(resultSet.getBytes(IMAGE));
+            entity.setComment(resultSet.getString(COMMENT));
+        } catch (SQLException e) {
+            logger.error(GETTING_PARAMETER_ERROR, e);
+        }
     }
 }
