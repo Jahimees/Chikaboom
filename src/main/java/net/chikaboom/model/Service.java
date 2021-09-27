@@ -6,6 +6,7 @@ import java.util.UUID;
  * Определяет модель таблицы Service в базе данных
  */
 public class Service implements Entity {
+    //    TODO DOCUMENTATION
     private String idService;
     private String idMaster;
     private String idServiceType;

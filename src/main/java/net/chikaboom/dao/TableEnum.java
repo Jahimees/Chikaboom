@@ -3,6 +3,7 @@ package net.chikaboom.dao;
 import net.chikaboom.constant.TableConstant;
 import net.chikaboom.model.*;
 
+//    TODO DOCUMENTATION
 public enum TableEnum {
 
     ACCOUNT {{

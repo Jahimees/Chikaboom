@@ -15,6 +15,7 @@ import static net.chikaboom.constant.LoggerMessageConstant.*;
  * Стандартный пул соединений
  */
 public class ConnectionPool {
+    //    TODO DOCUMENTATION
     private static ConnectionPool instance = null;
     private static final Logger logger = Logger.getLogger(ConnectionPool.class);
 
