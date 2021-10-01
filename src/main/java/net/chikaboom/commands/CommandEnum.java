@@ -7,8 +7,9 @@ package net.chikaboom.commands;
  * осуществляется поиск команды из нижеприведенного enum и возврат соответствующей комманды,
  * "понятной" для ControllerServlet
  */
+//Убрать последний абзац
 public enum CommandEnum {
-    EMPTY{
+    EMPTY{ //пробел после EMPTY
         {
             this.command = new EmptyCommand();
         }
