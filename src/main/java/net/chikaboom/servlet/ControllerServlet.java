@@ -1,6 +1,10 @@
 package net.chikaboom.servlet;
 
+import net.chikaboom.commands.ActionCommand;
+import net.chikaboom.commands.CommandFactory;
+import net.chikaboom.commands.EmptyCommand;
 import net.chikaboom.dao.AccountDAO;
+import net.chikaboom.exception.UnknownCommandException;
 import net.chikaboom.model.Account;
 import org.apache.log4j.Logger;
 
@@ -10,6 +14,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
+import static net.chikaboom.constant.AttributeConstant.COMMAND;
+import static net.chikaboom.constant.PageConstant.MAIN_PAGE;
 
 /**
  * Принимает сообщение от клиента и выполняет действия, заложенные в это сообщение
@@ -72,6 +79,26 @@ public class ControllerServlet extends HttpServlet {
         logger.info("Открываю главную страницу...");
         RequestDispatcher requestDispatcher = request.getRequestDispatcher("view/main.jsp");
         requestDispatcher.forward(request, response);
+
         logger.info("Открыл главную страницу!");
+
+        String page;
+        String commandName = request.getParameter(COMMAND);
+
+        try {
+            ActionCommand command = new CommandFactory().defineCommand(commandName);
+            page = command.execute(request, response);
+        } catch (UnknownCommandException e) {
+            logger.error("Unknown command", e);
+            page = new EmptyCommand().execute(request, response);
+        }
+
+        if (page != null) {
+            RequestDispatcher dispatcher = request.getRequestDispatcher(page);
+            dispatcher.forward(request, response);
+        } else {
+            page = MAIN_PAGE;
+            response.sendRedirect(request.getContextPath() + page);
+        }
     }
 }

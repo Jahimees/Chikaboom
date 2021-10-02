@@ -92,7 +92,6 @@ public class ClientDAO extends AbstractDAO<Client> {
             preparedStatement.setString(1, id);
 
             return preparedStatement.execute();
-
         } catch (SQLException e) {
             logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
