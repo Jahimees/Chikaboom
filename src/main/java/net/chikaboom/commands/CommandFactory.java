@@ -3,6 +3,7 @@ package net.chikaboom.commands;
 import net.chikaboom.exception.UnknownCommandException;
 import org.apache.log4j.Logger;
 
+import static net.chikaboom.constant.CommandConstant.EMPTY_COMMAND;
 import static net.chikaboom.constant.LoggerMessageConstant.COMMAND_GOT;
 import static net.chikaboom.constant.LoggerMessageConstant.COMMAND_IS_NOT_EXISTS;
 
@@ -25,7 +26,7 @@ public class CommandFactory {
         logger.info(currentCommand + COMMAND_GOT);
 
         try {
-            if (currentCommand == null || currentCommand.isEmpty()) {
+            if (currentCommand == null || currentCommand.equals(EMPTY_COMMAND) || currentCommand.isEmpty()) {
                 return new EmptyCommand();
             } else {
                 return CommandEnum.valueOf(currentCommand.toUpperCase()).getCommand();

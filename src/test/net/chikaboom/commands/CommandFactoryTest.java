@@ -10,18 +10,17 @@ class CommandFactoryTest {
 
         String testCommandNone = "";
         String testCommandNull = null;
-        // + String testCommandEmptyCommand = "Empty_command";
+        String testCommandEmptyCommand = "empty_command";
 
         CommandFactory commandFactory = new CommandFactory();
 
-        Class actual = commandFactory.defineCommand(testCommandNone).getClass(); //переименуй actual1
-        Class expected = new EmptyCommand().getClass(); //переименуй expected1
+        Class actual1 = commandFactory.defineCommand(testCommandNone).getClass();
+        Class actual2 = commandFactory.defineCommand(testCommandNull).getClass();
+        Class actual3 = commandFactory.defineCommand(testCommandEmptyCommand).getClass();
+        Class expected = EmptyCommand.class;
 
-        Class actual1 = commandFactory.defineCommand(testCommandNull).getClass(); //переименуй actual2
-        Class expected1 = new EmptyCommand().getClass(); //переименуй expected2
-
-        Assertions.assertEquals(expected, actual);
-        Assertions.assertEquals(expected1, actual1);
-// лишняя строка
+        Assertions.assertEquals(expected, actual1);
+        Assertions.assertEquals(expected, actual2);
+        Assertions.assertEquals(expected, actual3);
     }
 }
