@@ -6,7 +6,7 @@
 
     <groupId>t-and-j-team</groupId>
     <artifactId>Chikaboom</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1.1-ALPHA</version>
     <packaging>war</packaging>
 
     <build>
