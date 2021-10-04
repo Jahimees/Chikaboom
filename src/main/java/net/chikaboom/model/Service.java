@@ -1,10 +1,15 @@
 package net.chikaboom.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.UUID;
 
 /**
  * Определяет модель таблицы Service в базе данных
  */
+@Getter
+@Setter
 public class Service implements Entity {
     //    TODO DOCUMENTATION
     private String idService;
@@ -16,53 +21,5 @@ public class Service implements Entity {
 
     public Service() {
         idService = UUID.randomUUID().toString();
-    }
-
-    public String getIdService() {
-        return idService;
-    }
-
-    public void setIdService(String idService) {
-        this.idService = idService;
-    }
-
-    public String getIdMaster() {
-        return idMaster;
-    }
-
-    public void setIdMaster(String idMaster) {
-        this.idMaster = idMaster;
-    }
-
-    public String getIdServiceType() {
-        return idServiceType;
-    }
-
-    public void setIdServiceType(String idServiceType) {
-        this.idServiceType = idServiceType;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public double getCost() {
-        return cost;
-    }
-
-    public void setCost(double cost) {
-        this.cost = cost;
     }
 }

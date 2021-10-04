@@ -1,10 +1,15 @@
 package net.chikaboom.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.UUID;
 
 /**
  * Определяет модель таблицы ServiceType в базе данных
  */
+@Getter
+@Setter
 public class ServiceType implements Entity {
     //    TODO DOCUMENTATION
     private String idServiceType;
@@ -12,21 +17,5 @@ public class ServiceType implements Entity {
 
     public ServiceType() {
         idServiceType = UUID.randomUUID().toString();
-    }
-
-    public String getIdServiceType() {
-        return idServiceType;
-    }
-
-    public void setIdServiceType(String idServiceType) {
-        this.idServiceType = idServiceType;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 }

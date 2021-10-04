@@ -1,10 +1,16 @@
 package net.chikaboom.model;
 
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.UUID;
 
 /**
  * Определяет модель таблицы Client в базе данных
  */
+@Getter
+@Setter
 public class Client implements Entity {
     //    TODO DOCUMENTATION
     private String idClient;
@@ -12,21 +18,5 @@ public class Client implements Entity {
 
     public Client() {
         idClient = UUID.randomUUID().toString();
-    }
-
-    public String getIdClient() {
-        return idClient;
-    }
-
-    public void setIdClient(String idClient) {
-        this.idClient = idClient;
-    }
-
-    public String getIdAccount() {
-        return idAccount;
-    }
-
-    public void setIdAccount(String idAccount) {
-        this.idAccount = idAccount;
     }
 }
