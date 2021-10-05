@@ -6,7 +6,7 @@ package net.chikaboom.util;
 public enum SqlComparatorType {
     EQUAL {{ setValue("=?");}},
     NOT_EQUAL {{ setValue("!=?");}},
-    GRATER {{ setValue(">?");}},
+    GREATER {{ setValue(">?");}},
     LESS {{ setValue("<?");}},
     GREATER_OR_EQUAL {{ setValue(">=?");}},
     LESS_OR_EQUAL {{ setValue("<=?");}},
