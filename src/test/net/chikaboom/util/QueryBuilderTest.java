@@ -1,18 +1,21 @@
 package net.chikaboom.util;
 
+import net.chikaboom.exception.EmptyListException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static net.chikaboom.constant.LoggerMessageConstant.GOT_EMPTY_LIST_ERROR;
 
 public class QueryBuilderTest {
 
     static QueryBuilder queryBuilder;
     static List<String> fieldNames;
     static List<String> tableNames;
-    static SqlWhereEntity sqlWhereEntity;
 
     @BeforeAll
     public static void initialize() {
@@ -26,29 +29,6 @@ public class QueryBuilderTest {
         tableNames = new ArrayList<>();
         tableNames.add("table1");
         tableNames.add("table2");
-
-        sqlWhereEntity = new SqlWhereEntity();
-        Map<String, SqlComparatorType> fields = new LinkedHashMap<>();
-        fields.put("field1", SqlComparatorType.EQUAL);
-        fields.put("field2", SqlComparatorType.NOT_EQUAL);
-        fields.put("field3", SqlComparatorType.GRATER);
-        fields.put("field4", SqlComparatorType.LESS);
-        fields.put("field5", SqlComparatorType.GREATER_OR_EQUAL);
-        fields.put("field6", SqlComparatorType.LESS_OR_EQUAL);
-        fields.put("field7", SqlComparatorType.IS_NULL);
-        fields.put("field8", SqlComparatorType.IS_NOT_NULL);
-
-        Queue<SqlOperandType> operandTypes = new LinkedList<>();
-        operandTypes.add(SqlOperandType.AND);
-        operandTypes.add(SqlOperandType.OR);
-        operandTypes.add(SqlOperandType.AND);
-        operandTypes.add(SqlOperandType.OR);
-        operandTypes.add(SqlOperandType.AND);
-        operandTypes.add(SqlOperandType.OR);
-        operandTypes.add(SqlOperandType.AND);
-
-        sqlWhereEntity.setFields(fields);
-        sqlWhereEntity.setOperands(operandTypes);
     }
 
     @AfterEach
@@ -58,7 +38,6 @@ public class QueryBuilderTest {
 
     @Test
     public void selectTest() {
-        //        TODO проверка на NULL
         String actual1 = queryBuilder.select().build();
         String expected1 = "SELECT * ;";
 
@@ -66,22 +45,41 @@ public class QueryBuilderTest {
         String actual2 = queryBuilder.select(fieldNames).build();
         String expected2 = "SELECT (field1,field2,field3) ;";
 
+        queryBuilder.clear();
+        String actual3 = queryBuilder.select(new ArrayList<>()).build();
+        String expected3 = "SELECT * ;";
+
         Assertions.assertEquals(expected1, actual1);
         Assertions.assertEquals(expected2, actual2);
+        Assertions.assertEquals(expected3, actual3);
     }
 
     @Test
     public void fromTest() {
-        //        TODO проверка на NULL
         String actual1 = queryBuilder.from("table1").build();
         String expected1 = "FROM table1 ;";
 
         queryBuilder.clear();
-        String actual2 = queryBuilder.from(tableNames).build();
+        String actual2 = null;
+        try {
+            actual2 = queryBuilder.from(tableNames).build();
+        } catch (EmptyListException e) {
+            e.printStackTrace();
+        }
         String expected2 = "FROM table1,table2 ;";
+
+        queryBuilder.clear();
+        Exception actual3 = null;
+        try {
+            queryBuilder.from(new ArrayList<>()).build();
+        } catch (EmptyListException e) {
+            actual3 = e;
+        }
+        Exception expected3 = new EmptyListException(GOT_EMPTY_LIST_ERROR);
 
         Assertions.assertEquals(expected1, actual1);
         Assertions.assertEquals(expected2, actual2);
+        Assertions.assertEquals(expected3.getClass(), actual3.getClass());
     }
 
     @Test
@@ -95,13 +93,26 @@ public class QueryBuilderTest {
         String expected2 = "WHERE field1='5' ;";
 
         queryBuilder.clear();
-        String actual3 = queryBuilder.where(sqlWhereEntity).build();
-        String expected3 = "WHERE field1=? AND field2!=? OR field3>? " +
-                "AND field4<? OR field5>=? AND field6<=? OR field7 IS NULL AND field8 IS NOT NULL;";
+        String actual3 = queryBuilder.where().build();
+        String expected3 = "WHERE ;";
+
+        queryBuilder.clear();
+        String actual4 = queryBuilder.where()
+                .compare("field1", SqlComparatorType.EQUAL).and()
+                .compare("field2", SqlComparatorType.GREATER_OR_EQUAL).or()
+                .compare("field3", SqlComparatorType.IS_NOT_NULL).or()
+                .compare("field4", SqlComparatorType.GREATER).and()
+                .compare("field5", SqlComparatorType.IS_NULL).and()
+                .compare("field6", SqlComparatorType.LESS).or()
+                .compare("field7", SqlComparatorType.LESS_OR_EQUAL).and()
+                .compare("field8", SqlComparatorType.NOT_EQUAL).build();
+        String expected4 = "WHERE field1=? AND field2>=? OR field3 IS NOT NULL " +
+                "OR field4>? AND field5 IS NULL AND field6<? OR field7<=? AND field8!=?;";
 
         Assertions.assertEquals(expected1, actual1);
         Assertions.assertEquals(expected2, actual2);
         Assertions.assertEquals(expected3, actual3);
+        Assertions.assertEquals(expected4, actual4);
     }
 
     @Test
@@ -155,5 +166,4 @@ public class QueryBuilderTest {
 
         Assertions.assertEquals(expected1, actual1);
     }
-
 }

@@ -107,7 +107,7 @@ public class QueryBuilder {
 
     //    TODO DOCUMENTATION
     public QueryBuilder compare(String fieldName, SqlComparatorType comparatorType) {
-        queryString.append(fieldName).append(comparatorType.getValue()).append(" ");
+        queryString.append(fieldName).append(comparatorType.getValue());
 
         return this;
     }
