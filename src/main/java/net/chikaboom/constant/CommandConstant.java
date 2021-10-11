@@ -11,6 +11,6 @@ public class CommandConstant {
     public static final String QUICK = "quick"; //быстрая запись
     public static final String MASTER = "master"; //я мастер
     public static final String COURSES = "courses"; //курсы
-    public static final String EMPTY_COMMAND = "empty_command"; //пустая команда
-    public static final String REGISTRATION_COMMAND = "registration"; //регистрация
+    public static final String EMPTY = "empty"; //пустая команда
+    public static final String REGISTRATION = "registration"; //регистрация
 }

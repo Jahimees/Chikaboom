@@ -4,7 +4,7 @@ package net.chikaboom.commands;
  * Класс-enum, состоящий из всех возможных команд, поступающих на CommandFactory
  */
 public enum CommandEnum {
-    EMPTY_COMMAND {
+    EMPTY {
         {
             this.command = new EmptyCommand();
         }
