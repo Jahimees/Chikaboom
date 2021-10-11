@@ -27,7 +27,8 @@
     <script src="https://kit.fontawesome.com/4be5e8b664.js" crossorigin="anonymous"></script>
 </head>
 <body>
-<jsp:include page="common/popup.jsp"/>
+<jsp:include page="common/login_popup.jsp"/>
+<jsp:include page="common/register_popup.jsp"/>
 <div class="content">
     <div>
         <div class="menuontop">
@@ -62,7 +63,8 @@
             </c:forTokens>
         </div>
 
-        <a href="#" class="open-popup service-block-button">Оставить заявку</a>
+        <a href="#" class="open-login-popup service-block-button">Оставить заявку</a>
+        <a href="#" class="open-register-popup service-block-button">Оставить заявку</a>
 
         <div class="service-block-button">
             <a href="https://i.ytimg.com/vi/lAqf71knZF8/maxresdefault.jpg">ВСЕ УСЛУГИ</a>
