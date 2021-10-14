@@ -13,6 +13,11 @@ public enum CommandEnum {
         {
             this.command = new RegistrationCommand();
         }
+    },
+    AUTHORIZATION {
+        {
+            this.command = new AuthorizationCommand();
+        }
     };
 
     ActionCommand command;
