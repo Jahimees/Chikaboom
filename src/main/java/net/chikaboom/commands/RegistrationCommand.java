@@ -6,21 +6,29 @@ import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import static net.chikaboom.constant.PageConstant.ACCOUNT_PAGE;
 
-public class RegistrationCommand implements ActionCommand{
+/**
+ * Класс реализует команду создания нового аккаунта
+ */
+public class RegistrationCommand implements ActionCommand {
 
     Logger logger = Logger.getLogger(RegistrationCommand.class);
 
+    /**
+     * Реализация команды регистрации нового аккаунта
+     * @param request запрос, пришедший со стороны клиента
+     * @param response не используется
+     * @return возвращает страницу аккаунта (страницу заполнения личных данных?)
+     */
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
 
-        logger.info("Creating new account.");
+        logger.info("Регистрация ного аккаунта.");
 
-        logger.info("attr login: " + request.getParameter("login"));
-        logger.info("attr password: " + request.getParameter("password"));
+        logger.info("Атрибут login: " + request.getParameter("login"));
+        logger.info("Атрибут password: " + request.getParameter("password"));
 
         Account account = new Account();
 
@@ -30,6 +38,8 @@ public class RegistrationCommand implements ActionCommand{
         AccountDAO accountDAO = new AccountDAO();
 
         accountDAO.create(account);
+
+        logger.info("Новый аккаунт создан");
 
         return ACCOUNT_PAGE;
     }
