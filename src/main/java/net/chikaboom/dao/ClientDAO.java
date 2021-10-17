@@ -1,6 +1,7 @@
 package net.chikaboom.dao;
 
 import net.chikaboom.connection.ConnectionPool;
+import net.chikaboom.model.Account;
 import net.chikaboom.model.Client;
 import net.chikaboom.util.QueryBuilder;
 import org.apache.log4j.Logger;
@@ -11,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.chikaboom.constant.FieldConstant.*;
 import static net.chikaboom.constant.LoggerMessageConstant.*;
@@ -23,6 +25,39 @@ public class ClientDAO extends AbstractDAO<Client> {
 
     public ClientDAO() {
         queryBuilder = new QueryBuilder();
+    }
+
+    //    @Override
+    public List<Client> executeQuery(String query, List<String> parameters) {
+        Connection connection = ConnectionPool.getInstance().getConnection();
+        List<Client> clientList = new ArrayList<>();
+        try {
+            PreparedStatement customStatement = connection.prepareStatement(query);
+            AtomicInteger iterator = new AtomicInteger(1);
+            parameters.forEach(param -> {
+                try {
+                    customStatement.setString(iterator.getAndIncrement(), param);
+                } catch (SQLException e) {
+                    logger.error(QUERY_EXECUTION_ERROR, e);
+                }
+            });
+            ResultSet resultSet = customStatement.executeQuery();
+
+            while (resultSet.next()) {
+                Client client = new Client();
+                setFieldsToEntity(client, resultSet);
+                clientList.add(client);
+            }
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                logger.error(CONNECTION_CLOSING_ERROR, e);
+            }
+        }
+        return clientList;
     }
 
     @Override

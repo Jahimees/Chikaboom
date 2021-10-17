@@ -5,13 +5,16 @@ import net.chikaboom.model.Account;
 import net.chikaboom.util.QueryBuilder;
 import org.apache.log4j.Logger;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.chikaboom.constant.FieldConstant.*;
 import static net.chikaboom.constant.LoggerMessageConstant.*;
-import static net.chikaboom.constant.TableConstant.*;
+import static net.chikaboom.constant.TableConstant.ACCOUNT;
 
 //    TODO DOCUMENTATION
 public class AccountDAO extends AbstractDAO<Account> {
@@ -20,6 +23,39 @@ public class AccountDAO extends AbstractDAO<Account> {
 
     public AccountDAO() {
         queryBuilder = new QueryBuilder();
+    }
+
+//    @Override
+    public List<Account> executeQuery(String query, List<String> parameters) {
+        Connection connection = ConnectionPool.getInstance().getConnection();
+        List<Account> accountList = new ArrayList<>();
+        try {
+            PreparedStatement customStatement = connection.prepareStatement(query);
+            AtomicInteger iterator = new AtomicInteger(1);
+            parameters.forEach(param -> {
+                try {
+                    customStatement.setString(iterator.getAndIncrement(), param);
+                } catch (SQLException e) {
+                    logger.error(QUERY_EXECUTION_ERROR, e);
+                }
+            });
+            ResultSet resultSet = customStatement.executeQuery();
+
+            while (resultSet.next()) {
+                Account account = new Account();
+                setFieldsToEntity(account, resultSet);
+                accountList.add(account);
+            }
+        } catch (SQLException e) {
+            logger.error(QUERY_EXECUTION_ERROR, e);
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                logger.error(CONNECTION_CLOSING_ERROR, e);
+            }
+        }
+        return accountList;
     }
 
     @Override

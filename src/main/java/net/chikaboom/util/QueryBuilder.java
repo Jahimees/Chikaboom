@@ -35,6 +35,7 @@ public class QueryBuilder {
      * Добавляет к исходной строке выбор определенного перечня полей в таблице.
      * @param columnNames имена полей, которые необходимо выбрать в запросе
      */
+    @Deprecated
     public QueryBuilder select(List<String> columnNames) {
         if (!columnNames.isEmpty()) {
             queryString.append("SELECT (");

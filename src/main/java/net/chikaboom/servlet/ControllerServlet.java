@@ -3,9 +3,13 @@ package net.chikaboom.servlet;
 import net.chikaboom.commands.ActionCommand;
 import net.chikaboom.commands.CommandFactory;
 import net.chikaboom.commands.EmptyCommand;
+import net.chikaboom.constant.FieldConstant;
+import net.chikaboom.constant.TableConstant;
 import net.chikaboom.dao.AccountDAO;
 import net.chikaboom.exception.UnknownCommandException;
 import net.chikaboom.model.Account;
+import net.chikaboom.util.QueryBuilder;
+import net.chikaboom.util.SqlComparatorType;
 import org.apache.log4j.Logger;
 
 import javax.servlet.RequestDispatcher;
@@ -14,6 +18,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.AccessControlContext;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static net.chikaboom.constant.AttributeConstant.COMMAND;
 import static net.chikaboom.constant.PageConstant.MAIN_PAGE;
@@ -56,18 +64,11 @@ public class ControllerServlet extends HttpServlet {
         accountDAO.create(account);
         logger.info("TEST. Account created");
 
-        logger.info("TEST. Searching account...");
-        Account foundAcc = accountDAO.findEntity(account.getIdAccount());
-        logger.info("TEST. Account found");
-        logger.info("TEST. Account: " + foundAcc.toString());
+        QueryBuilder queryBuilder = new QueryBuilder();
+        String login = "Log in";
 
-        logger.info("TEST. Updating account...");
-        account.setPassword("fsdafa");
-        accountDAO.update(account);
-        logger.info("TEST. Account updated.");
+        List<Account> accountList = accountDAO.executeQuery(query, Arrays.asList(login));
 
-        foundAcc = accountDAO.findEntity(account.getIdAccount());
-        logger.info("TEST. Account: " + foundAcc);
 
         logger.info("TEST. Deleting account...");
         accountDAO.delete(account.getIdAccount());
