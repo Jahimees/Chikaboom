@@ -34,7 +34,7 @@ public class ControllerServlet extends HttpServlet {
     }
 
     /**
-     * Пока куча грязи для тестов
+     * Принимает абсолютно все запросы пользователя и выдает ему ответ
      *
      * @param request
      * @param response
@@ -42,34 +42,6 @@ public class ControllerServlet extends HttpServlet {
      * @throws ServletException
      */
     public void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-//        AccountDAO accountDAO = new AccountDAO();
-//
-//        Account account = new Account();
-//        account.setName("Alexander");
-//        account.setSurname("Anton");
-//        account.setLogin("Log In");
-//        account.setPassword("Psss word");
-//        account.setPhone("+4132124124144424");
-//
-//        logger.info("TEST. Creating account...");
-//        accountDAO.create(account);
-//        logger.info("TEST. Account created");
-//
-//        QueryBuilder queryBuilder = new QueryBuilder();
-//        String query = queryBuilder.select().from(TableConstant.ACCOUNT).where().compare(FieldConstant.LOGIN, SqlComparatorType.EQUAL).build();
-//        String login = "Log in";
-//
-//        List<Account> accountList = accountDAO.executeQuery(query, Arrays.asList(login));
-//
-//        logger.info("Полученные штуки: ");
-//        accountList.forEach(account1 -> logger.info(account1.toString()));
-//
-//
-//        logger.info("TEST. Deleting account...");
-//        accountDAO.delete(account.getIdAccount());
-//        logger.info("TEST. Account deleted");
-//        logger.info("TEST. Account must be null = " + accountDAO.findEntity(account.getIdAccount()));
-
         String page;
         String commandName = request.getParameter(COMMAND);
 
