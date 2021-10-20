@@ -1,7 +1,6 @@
 package net.chikaboom.dao;
 
 import net.chikaboom.connection.ConnectionPool;
-import net.chikaboom.model.Account;
 import net.chikaboom.model.Entity;
 import org.apache.log4j.Logger;
 
@@ -11,7 +10,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.chikaboom.constant.LoggerMessageConstant.CONNECTION_CLOSING_ERROR;
@@ -23,7 +21,7 @@ import static net.chikaboom.constant.LoggerMessageConstant.QUERY_EXECUTION_ERROR
  * @param <E> класс-entity, соответствующий одной из таблиц модели
  */
 public abstract class AbstractDAO<E extends Entity> {
-//    TODO кастомное исполнение команды
+//    TODO кастомное исполнение команды с возвращением смешанного объекта (например Account + Service), чтобы найти все услуги определенного пользователя
 
     private static final Logger logger = Logger.getLogger(AbstractDAO.class);
 
@@ -51,7 +49,7 @@ public abstract class AbstractDAO<E extends Entity> {
             ResultSet resultSet = customStatement.executeQuery();
 
             while (resultSet.next()) {
-                E entity = new E();
+                E entity = createEntity();
                 setFieldsToEntity(entity, resultSet);
                 entityList.add(entity);
             }
@@ -121,4 +119,12 @@ public abstract class AbstractDAO<E extends Entity> {
      * @param resultSet полученные результаты поиска
      */
     abstract void setFieldsToEntity(E entity, ResultSet resultSet);
+
+    //TODO не самое элегантное решение. Этот метод вообще не имеет ничего общего по смыслу с DAO
+    /**
+     * Создает новый пустой объект, соответствующий реализации
+     *
+     * @return новый объект
+     */
+    abstract E createEntity();
 }

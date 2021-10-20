@@ -173,4 +173,9 @@ public class ServiceTypeDAO extends AbstractDAO<ServiceType> {
             logger.error(GETTING_PARAMETER_ERROR, e);
         }
     }
+
+    @Override
+    protected ServiceType createEntity() {
+        return new ServiceType();
+    }
 }

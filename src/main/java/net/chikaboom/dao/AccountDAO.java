@@ -9,8 +9,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 import static net.chikaboom.constant.FieldConstant.*;
 import static net.chikaboom.constant.LoggerMessageConstant.*;
@@ -23,39 +23,6 @@ public class AccountDAO extends AbstractDAO<Account> {
 
     public AccountDAO() {
         queryBuilder = new QueryBuilder();
-    }
-
-//    @Override
-    public List<Account> executeQuery(String query, List<String> parameters) {
-        Connection connection = ConnectionPool.getInstance().getConnection();
-        List<Account> accountList = new ArrayList<>();
-        try {
-            PreparedStatement customStatement = connection.prepareStatement(query);
-            AtomicInteger iterator = new AtomicInteger(1);
-            parameters.forEach(param -> {
-                try {
-                    customStatement.setString(iterator.getAndIncrement(), param);
-                } catch (SQLException e) {
-                    logger.error(QUERY_EXECUTION_ERROR, e);
-                }
-            });
-            ResultSet resultSet = customStatement.executeQuery();
-
-            while (resultSet.next()) {
-                Account account = new Account();
-                setFieldsToEntity(account, resultSet);
-                accountList.add(account);
-            }
-        } catch (SQLException e) {
-            logger.error(QUERY_EXECUTION_ERROR, e);
-        } finally {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                logger.error(CONNECTION_CLOSING_ERROR, e);
-            }
-        }
-        return accountList;
     }
 
     @Override
@@ -215,5 +182,10 @@ public class AccountDAO extends AbstractDAO<Account> {
         } catch (SQLException e) {
             logger.error(GETTING_PARAMETER_ERROR, e);
         }
+    }
+
+    @Override
+    protected Account createEntity() {
+        return new Account();
     }
 }

@@ -177,4 +177,9 @@ public class MasterDAO extends AbstractDAO<Master> {
             logger.error(SETTING_PARAMETER_ERROR, e);
         }
     }
+
+    @Override
+    protected Master createEntity() {
+        return new Master();
+    }
 }
