@@ -182,4 +182,8 @@ public class CommentDAO extends AbstractDAO<Comment> {
         }
     }
 
+    @Override
+    protected Comment createEntity() {
+        return new Comment();
+    }
 }

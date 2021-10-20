@@ -5,13 +5,16 @@ import net.chikaboom.model.Account;
 import net.chikaboom.util.QueryBuilder;
 import org.apache.log4j.Logger;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static net.chikaboom.constant.FieldConstant.*;
 import static net.chikaboom.constant.LoggerMessageConstant.*;
-import static net.chikaboom.constant.TableConstant.*;
+import static net.chikaboom.constant.TableConstant.ACCOUNT;
 
 //    TODO DOCUMENTATION
 public class AccountDAO extends AbstractDAO<Account> {
@@ -179,5 +182,10 @@ public class AccountDAO extends AbstractDAO<Account> {
         } catch (SQLException e) {
             logger.error(GETTING_PARAMETER_ERROR, e);
         }
+    }
+
+    @Override
+    protected Account createEntity() {
+        return new Account();
     }
 }

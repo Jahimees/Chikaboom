@@ -25,8 +25,8 @@ public class ClientDAO extends AbstractDAO<Client> {
         queryBuilder = new QueryBuilder();
     }
 
-    @Override
-    public List<Client> findAll() {
+
+    @Override    public List<Client> findAll() {
         String query = queryBuilder.select().from(CLIENT).build();
         Connection connection = ConnectionPool.getInstance().getConnection();
         List<Client> clientList = new ArrayList<>();
@@ -172,5 +172,10 @@ public class ClientDAO extends AbstractDAO<Client> {
         } catch (SQLException e) {
             logger.error(GETTING_PARAMETER_ERROR, e);
         }
+    }
+
+    @Override
+    protected Client createEntity() {
+        return new Client();
     }
 }
