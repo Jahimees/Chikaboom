@@ -15,7 +15,7 @@ public class Account implements Entity {
     private String idAccount;
     private String name;
     private String surname;
-    private String login;
+    private String email;
     private String password;
     private String phone;
     private Timestamp registrationDate;
