@@ -5,13 +5,16 @@ import net.chikaboom.model.Account;
 import net.chikaboom.util.QueryBuilder;
 import org.apache.log4j.Logger;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static net.chikaboom.constant.FieldConstant.*;
 import static net.chikaboom.constant.LoggerMessageConstant.*;
-import static net.chikaboom.constant.TableConstant.*;
+import static net.chikaboom.constant.TableConstant.ACCOUNT;
 
 //    TODO DOCUMENTATION
 public class AccountDAO extends AbstractDAO<Account> {
@@ -157,7 +160,7 @@ public class AccountDAO extends AbstractDAO<Account> {
             preparedStatement.setString(1, entity.getIdAccount());
             preparedStatement.setString(2, entity.getName());
             preparedStatement.setString(3, entity.getSurname());
-            preparedStatement.setString(4, entity.getLogin());
+            preparedStatement.setString(4, entity.getEmail());
             preparedStatement.setString(5, entity.getPassword());
             preparedStatement.setString(6, entity.getPhone());
             preparedStatement.setTimestamp(7, entity.getRegistrationDate());
@@ -172,12 +175,17 @@ public class AccountDAO extends AbstractDAO<Account> {
             account.setIdAccount(resultSet.getString(ID_ACCOUNT));
             account.setName(resultSet.getString(NAME));
             account.setSurname(resultSet.getString(SURNAME));
-            account.setLogin(resultSet.getString(LOGIN));
+            account.setEmail(resultSet.getString(EMAIL));
             account.setPassword(resultSet.getString(PASSWORD));
             account.setPhone(resultSet.getString(PHONE));
             account.setRegistrationDate(resultSet.getTimestamp(REGISTRATION_DATE));
         } catch (SQLException e) {
             logger.error(GETTING_PARAMETER_ERROR, e);
         }
+    }
+
+    @Override
+    protected Account createEntity() {
+        return new Account();
     }
 }

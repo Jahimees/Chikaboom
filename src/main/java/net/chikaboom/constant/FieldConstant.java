@@ -8,7 +8,7 @@ public class FieldConstant {
     public static final String ID_ACCOUNT = "idAccount";
     public static final String NAME = "name";
     public static final String SURNAME = "surname";
-    public static final String LOGIN = "login";
+    public static final String EMAIL = "email";
     public static final String PASSWORD = "password";
     public static final String PHONE = "phone";
     public static final String REGISTRATION_DATE = "registrationDate";
@@ -48,7 +48,7 @@ public class FieldConstant {
     //WORK TABLE
     public static final String ID_WORK = "idWork";
 
-    public static final List<String> ACCOUNT_FIELDS = Arrays.asList(ID_ACCOUNT, NAME, SURNAME, LOGIN,
+    public static final List<String> ACCOUNT_FIELDS = Arrays.asList(ID_ACCOUNT, NAME, SURNAME, EMAIL,
             PASSWORD, PHONE, REGISTRATION_DATE);
     public static final List<String> CLIENT_FIELDS = Arrays.asList(ID_CLIENT, ID_ACCOUNT);
     public static final List<String> COMMENT_FIELDS = Arrays.asList(ID_COMMENT, ID_MASTER, ID_CLIENT, MESSAGE,

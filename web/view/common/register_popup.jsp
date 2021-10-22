@@ -9,11 +9,32 @@
         <h3>Регистрация</h3>
     </div>
     <div class="popup-body">
-        <form action="/chikaboom" method="post">
-            <div class="image-input"><img class="small-icon" src="../../image/login_icon.png"><input name="login" placeholder="Введите логин" required></div>
-            <div class="image-input"><img class="small-icon" src="../../image/password_icon.png"><input type="password" name="password" placeholder="Введите пароль" required></div>
-            <div class="image-input"><img class="small-icon" src="../../image/password_icon.png"><input type="password" name="repeat_password" placeholder="Подтвердите пароль" required></div>
-            <button type="submit" name="command" value="registration" class="btn btn-dark confirm-btn">Зарегистрироваться</button>
+        <form action="/chikaboom?command=registration" method="post">
+            <label class="invalid-field-label" id="r-input-email-incorrect">Некорректный email</label>
+            <label class="invalid-field-label" id="r-input-email-empty">Поле не может быть пустым</label>
+            <label class="invalid-field-label" id="r-input-email-short">Email должен быть длиннее 5 символов</label>
+            <div class="image-input">
+                <img class="small-icon" src="../../image/login_icon.png">
+                <input id="r-input-email" required placeholder="Введите email">
+            </div>
+
+            <label class="invalid-field-label" id="r-input-password-empty">Поле не может быть пустым</label>
+            <label class="invalid-field-label" id="r-input-password-short">Пароль должен быть длиннее 5 символов</label>
+            <div class="image-input">
+                <img class="small-icon" src="../../image/password_icon.png">
+                <input id="r-input-password" type="password" required placeholder="Введите пароль">
+            </div>
+
+            <label class="invalid-field-label" id="r-input-confirm-password-empty">Поле не может быть пустым</label>
+            <label class="invalid-field-label" id="r-input-confirm-password-different">Пароли не совпадают</label>
+            <div class="image-input">
+                <img class="small-icon" src="../../image/password_icon.png">
+                <input id="r-input-confirm-password" type="password" required placeholder="Подтвердите пароль">
+            </div>
+
+            <button type="submit" id="confirm-register" class="btn btn-dark confirm-btn" disabled="true">
+                Зарегистрироваться
+            </button>
         </form>
     </div>
 </div>
