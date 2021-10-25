@@ -33,7 +33,7 @@
 
 .popup-body {
     text-align: center;
-    padding: 11% 5% 5% 5%;
+    padding: 7% 5% 5% 5%;
 }
 
 .close-login-popup, .close-register-popup {
@@ -82,4 +82,10 @@
     margin: 5% 0 0 25%;
     display: block !important;
     width: 50%;
+}
+
+.invalid-field-label {
+    display: none;
+    font-family: Manrope, serif;
+    color: red;
 }

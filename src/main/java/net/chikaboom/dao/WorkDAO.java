@@ -14,10 +14,8 @@ import java.util.List;
 
 import static net.chikaboom.constant.FieldConstant.*;
 import static net.chikaboom.constant.LoggerMessageConstant.*;
-import static net.chikaboom.constant.TableConstant.SERVICE_TYPE;
 import static net.chikaboom.constant.TableConstant.WORK;
 
-//    TODO DOCUMENTATION
 public class WorkDAO extends AbstractDAO<Work> {
     private final QueryBuilder queryBuilder;
     private static final Logger logger = Logger.getLogger(WorkDAO.class);
@@ -177,5 +175,10 @@ public class WorkDAO extends AbstractDAO<Work> {
         } catch (SQLException e) {
             logger.error(GETTING_PARAMETER_ERROR, e);
         }
+    }
+
+    @Override
+    protected Work createEntity() {
+        return new Work();
     }
 }

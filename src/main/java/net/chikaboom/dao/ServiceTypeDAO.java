@@ -16,7 +16,6 @@ import static net.chikaboom.constant.FieldConstant.*;
 import static net.chikaboom.constant.LoggerMessageConstant.*;
 import static net.chikaboom.constant.TableConstant.SERVICE_TYPE;
 
-//    TODO DOCUMENTATION
 public class ServiceTypeDAO extends AbstractDAO<ServiceType> {
     private final QueryBuilder queryBuilder;
     private static final Logger logger = Logger.getLogger(ServiceTypeDAO.class);
@@ -172,5 +171,10 @@ public class ServiceTypeDAO extends AbstractDAO<ServiceType> {
         } catch (SQLException e) {
             logger.error(GETTING_PARAMETER_ERROR, e);
         }
+    }
+
+    @Override
+    protected ServiceType createEntity() {
+        return new ServiceType();
     }
 }

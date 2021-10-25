@@ -11,13 +11,39 @@ import java.util.UUID;
  */
 @Data
 public class Account implements Entity {
-    //    TODO DOCUMENTATION
+    /**
+     * id аккаунта
+     */
     private String idAccount;
+
+    /**
+     * Имя владельца аккаунта
+     */
     private String name;
+
+    /**
+     * Фамилия владельца аккаунта
+     */
     private String surname;
-    private String login;
+
+    /**
+     * Электронная почта владельца. Также является логином
+     */
+    private String email;
+
+    /**
+     * Пароль от аккаунта
+     */
     private String password;
+
+    /**
+     * Номер телефона владельца аккаунта
+     */
     private String phone;
+
+    /**
+     * Дата регистрации аккаунта
+     */
     private Timestamp registrationDate;
 
     public Account() {

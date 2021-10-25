@@ -9,7 +9,7 @@ import static net.chikaboom.constant.LoggerMessageConstant.*;
 
 /**
  * Упрощает создание строки запросов к базе данных путем использования паттерна Byilder
- *
+ * <p>
  * С помощью данного класса запросы можно собирать как конструктор.
  * Ответственность за неправильную последовательность вызвов методов несет программист.
  */
@@ -33,8 +33,10 @@ public class QueryBuilder {
 
     /**
      * Добавляет к исходной строке выбор определенного перечня полей в таблице.
+     *
      * @param columnNames имена полей, которые необходимо выбрать в запросе
      */
+    @Deprecated
     public QueryBuilder select(List<String> columnNames) {
         if (!columnNames.isEmpty()) {
             queryString.append("SELECT (");
@@ -51,6 +53,7 @@ public class QueryBuilder {
 
     /**
      * Добавляет к исходной строке выбор из конкретной таблицы.
+     *
      * @param tableName наименование таблицы, из которой будет делаться выборка
      */
     public QueryBuilder from(String tableName) {
@@ -61,6 +64,7 @@ public class QueryBuilder {
 
     /**
      * Добавляет в исходную строку перечень таблиц из которых будет делаться выборка.
+     *
      * @param tableNames наименование таблиц из которых будет делаться выборка
      */
     public QueryBuilder from(List<String> tableNames) throws EmptyListException {
@@ -78,19 +82,8 @@ public class QueryBuilder {
 
     /**
      * Добавляет к исходной строке одно условие фильтрации результатов выборки.
-     * @param key наименование столюца-фильтра
-     * @param value значение, которому должен быть равен столбец
-     */
-    @Deprecated
-    public QueryBuilder where(String key, String value) {
-        queryString.append("WHERE ").append(key).append("='").append(value).append("' ");
-
-        return this;
-    }
-
-    /**
-     * Добавляет к исходной строке одно условие фильтрации результатов выборки.
-     * @param key наименование столюца-фильтра
+     *
+     * @param key наименование столбца-фильтра
      */
     public QueryBuilder where(String key) {
         queryString.append("WHERE ").append(key).append("=? ");
@@ -98,28 +91,39 @@ public class QueryBuilder {
         return this;
     }
 
-    //    TODO DOCUMENTATION
+    /**
+     * Добавляет к исходной строке ключевое слово WHERE
+     */
     public QueryBuilder where() {
         queryString.append("WHERE ");
 
         return this;
     }
 
-    //    TODO DOCUMENTATION
+    /**
+     * Добавляет к исходной строке условие сравнения значения. Например: "name=?", "age IS NOT NULL"
+     *
+     * @param fieldName      имя столбца
+     * @param comparatorType тип сравнения
+     */
     public QueryBuilder compare(String fieldName, SqlComparatorType comparatorType) {
         queryString.append(fieldName).append(comparatorType.getValue());
 
         return this;
     }
 
-    //    TODO DOCUMENTATION
+    /**
+     * Добавляет к исходной строке операнд AND
+     */
     public QueryBuilder and() {
         queryString.append(SqlOperandType.AND.getValue());
 
         return this;
     }
 
-    //    TODO DOCUMENTATION
+    /**
+     * Добавляет к исходной строке операнд OR
+     */
     public QueryBuilder or() {
         queryString.append(SqlOperandType.OR.getValue());
 
@@ -128,6 +132,7 @@ public class QueryBuilder {
 
     /**
      * Добавляет к исходной строке значение создания новой записи в указанной таблице.
+     *
      * @param tableName таблица, в которой необходимо создать новую запись
      * @param fieldName заполняет указанное поле значением пользователя
      */
@@ -139,6 +144,7 @@ public class QueryBuilder {
 
     /**
      * Добавляет к исходной строке значение создания новой записи в указанной таблице.
+     *
      * @param tableName  таблица, в которой необходимо создать новую запись
      * @param fieldNames заполняет указанные поля значениями пользователя
      */
@@ -157,6 +163,7 @@ public class QueryBuilder {
 
     /**
      * Добавляет к исходной строке значения объединения таблиц
+     *
      * @param joinType     тип соединения
      * @param firstTable   имя таблицы с которой идет присоединения
      * @param joiningTable имя присоединяемой таблицы
@@ -182,6 +189,7 @@ public class QueryBuilder {
 
     /**
      * Добавляет к исходной строке значение изменения одного поля в записи(ях) в определенной таблице.
+     *
      * @param tableName имя таблицы, в которой происходят изменения
      * @param fieldName имя изменяемого поля
      * @return
@@ -194,6 +202,7 @@ public class QueryBuilder {
 
     /**
      * Добавляет к исходной строке значение изменения нескольких полей в записи(ях) в определенной таблице.
+     *
      * @param tableName  имя таблицы, в которой происходят изменения
      * @param fieldNames имена изменяемых полей
      */
@@ -207,6 +216,7 @@ public class QueryBuilder {
 
     /**
      * Операция, завершающая построение запроса, добавляя точку с запятой в конце строки.
+     *
      * @return полную строку-запрос
      */
     public String build() {
