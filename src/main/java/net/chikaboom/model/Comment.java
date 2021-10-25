@@ -11,12 +11,34 @@ import java.util.UUID;
 @Getter
 @Setter
 public class Comment implements Entity {
-    //    TODO DOCUMENTATION
+    /**
+     * Id комментария
+     */
     private String idComment;
+
+    /**
+     * Id мастера. Внешний ключ
+     */
     private String idMaster;
+
+    /**
+     * Id клиента. Внешний ключ
+     */
     private String idClient;
+
+    /**
+     * Текст комментария
+     */
     private String message;
+
+    /**
+     * Булево значение. True - сообщение от клиента мастеру. False - от мастера клиенту
+     */
     private boolean isClientMessage;
+
+    /**
+     * Оценка работы мастера
+     */
     private int rate;
 
     public Comment() {

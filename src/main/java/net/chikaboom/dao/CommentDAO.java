@@ -15,7 +15,6 @@ import java.util.List;
 import static net.chikaboom.constant.FieldConstant.*;
 import static net.chikaboom.constant.LoggerMessageConstant.*;
 
-//    TODO DOCUMENTATION
 public class CommentDAO extends AbstractDAO<Comment> {
     private final QueryBuilder queryBuilder;
     private static final Logger logger = Logger.getLogger(CommentDAO.class);

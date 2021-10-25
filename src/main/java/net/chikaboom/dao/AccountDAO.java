@@ -16,7 +16,6 @@ import static net.chikaboom.constant.FieldConstant.*;
 import static net.chikaboom.constant.LoggerMessageConstant.*;
 import static net.chikaboom.constant.TableConstant.ACCOUNT;
 
-//    TODO DOCUMENTATION
 public class AccountDAO extends AbstractDAO<Account> {
     private final QueryBuilder queryBuilder;
     private static final Logger logger = Logger.getLogger(AccountDAO.class);
