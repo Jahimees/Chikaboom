@@ -32,7 +32,7 @@ public class RegistrationCommand implements ActionCommand {
 
         Account account = new Account();
 
-        account.setLogin(request.getParameter("login"));
+        account.setEmail(request.getParameter("login"));
         account.setPassword(request.getParameter("password"));
 
         AccountDAO accountDAO = new AccountDAO();
