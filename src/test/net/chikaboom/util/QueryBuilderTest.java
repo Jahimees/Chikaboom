@@ -89,15 +89,11 @@ public class QueryBuilderTest {
         String expected1 = "WHERE field1=? ;";
 
         queryBuilder.clear();
-        String actual2 = queryBuilder.where("field1", "5").build();
-        String expected2 = "WHERE field1='5' ;";
+        String actual2 = queryBuilder.where().build();
+        String expected2 = "WHERE ;";
 
         queryBuilder.clear();
-        String actual3 = queryBuilder.where().build();
-        String expected3 = "WHERE ;";
-
-        queryBuilder.clear();
-        String actual4 = queryBuilder.where()
+        String actual3 = queryBuilder.where()
                 .compare("field1", SqlComparatorType.EQUAL).and()
                 .compare("field2", SqlComparatorType.GREATER_OR_EQUAL).or()
                 .compare("field3", SqlComparatorType.IS_NOT_NULL).or()
@@ -106,13 +102,12 @@ public class QueryBuilderTest {
                 .compare("field6", SqlComparatorType.LESS).or()
                 .compare("field7", SqlComparatorType.LESS_OR_EQUAL).and()
                 .compare("field8", SqlComparatorType.NOT_EQUAL).build();
-        String expected4 = "WHERE field1=? AND field2>=? OR field3 IS NOT NULL " +
+        String expected3 = "WHERE field1=? AND field2>=? OR field3 IS NOT NULL " +
                 "OR field4>? AND field5 IS NULL AND field6<? OR field7<=? AND field8!=?;";
 
         Assertions.assertEquals(expected1, actual1);
         Assertions.assertEquals(expected2, actual2);
         Assertions.assertEquals(expected3, actual3);
-        Assertions.assertEquals(expected4, actual4);
     }
 
     @Test
