@@ -12,8 +12,14 @@ import java.util.UUID;
 @Getter
 @Setter
 public class Client implements Entity {
-    //    TODO DOCUMENTATION
+    /**
+     * Id клиента
+     */
     private String idClient;
+
+    /**
+     * Id аккаунта. Внешний ключ
+     */
     private String idAccount;
 
     public Client() {

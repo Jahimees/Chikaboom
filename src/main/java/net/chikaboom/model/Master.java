@@ -11,10 +11,24 @@ import java.util.UUID;
 @Getter
 @Setter
 public class Master implements Entity {
-    //    TODO DOCUMENTATION
+    /**
+     * Id мастера
+     */
     private String idMaster;
+
+    /**
+     * Id соответствующего аккаунта. Внешний ключ
+     */
     private String idAccount;
+
+    /**
+     * Адрес мастера, где он работает
+     */
     private String address;
+
+    /**
+     * Краткое описание мастера о себе
+     */
     private String description;
 
     public Master() {

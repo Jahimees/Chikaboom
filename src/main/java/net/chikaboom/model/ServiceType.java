@@ -11,8 +11,14 @@ import java.util.UUID;
 @Getter
 @Setter
 public class ServiceType implements Entity {
-    //    TODO DOCUMENTATION
+    /**
+     * Id типа услуги
+     */
     private String idServiceType;
+
+    /**
+     * Наименование типа услуги
+     */
     private String name;
 
     public ServiceType() {

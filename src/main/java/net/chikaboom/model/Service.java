@@ -11,12 +11,34 @@ import java.util.UUID;
 @Getter
 @Setter
 public class Service implements Entity {
-    //    TODO DOCUMENTATION
+    /**
+     * Id услуги
+     */
     private String idService;
+
+    /**
+     * Id мастера. Внешний ключ
+     */
     private String idMaster;
+
+    /**
+     * Id вида услуги. Внешний ключ
+     */
     private String idServiceType;
+
+    /**
+     * Наименование услуги
+     */
     private String name;
+
+    /**
+     * Описание услуги
+     */
     private String description;
+
+    /**
+     * Стоимость услуги
+     */
     private double cost; //TODO заменить на decimal
 
     public Service() {
