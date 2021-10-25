@@ -10,7 +10,7 @@ class CommandFactoryTest {
 
         String testCommandNone = "";
         String testCommandNull = null;
-        String testCommandEmptyCommand = "empty_command";
+        String testCommandEmptyCommand = "empty";
 
         CommandFactory commandFactory = new CommandFactory();
 
