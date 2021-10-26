@@ -24,6 +24,7 @@ public enum CommandEnum {
 
     /**
      * Метод возращает конкретную команду, в зависимоти от поступившей String на CommandFactory
+     *
      * @return конкретную команду, в зависимости от поступившей String на CommandFactory
      */
     public ActionCommand getCommand() {

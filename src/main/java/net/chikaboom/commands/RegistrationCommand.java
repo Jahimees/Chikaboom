@@ -27,12 +27,12 @@ public class RegistrationCommand implements ActionCommand {
 
         logger.info("Регистрация ного аккаунта.");
 
-        logger.info("Атрибут login: " + request.getParameter("login"));
+        logger.info("Атрибут email: " + request.getParameter("email"));
         logger.info("Атрибут password: " + request.getParameter("password"));
 
         Account account = new Account();
 
-        account.setEmail(request.getParameter("login"));
+        account.setEmail(request.getParameter("email"));
         account.setPassword(request.getParameter("password"));
 
         AccountDAO accountDAO = new AccountDAO();
