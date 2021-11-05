@@ -27,16 +27,13 @@
     <script src="https://kit.fontawesome.com/4be5e8b664.js" crossorigin="anonymous"></script>
 </head>
 <body>
-<jsp:include page="common/login_popup.jsp"/>
-<jsp:include page="common/register_popup.jsp"/>
 <div class="content">
-    <div>
-        <div class="menuontop">
-            <div><a href="https://i.ytimg.com/vi/lAqf71knZF8/maxresdefault.jpg">Акции</a></div>
-            <div class="imaster"><a href="https://i.ytimg.com/vi/lAqf71knZF8/maxresdefault.jpg">Я мастер/салон</a></div>
+
+    <div class="header">
+        <div class="menu-top">
             <div><a href="https://i.ytimg.com/vi/lAqf71knZF8/maxresdefault.jpg">▸Личный кабинет◂</a></div>
         </div>
-        <div class="menuright">
+        <div class="menu-right">
             <div><a href="https://i.ytimg.com/vi/lAqf71knZF8/maxresdefault.jpg">Быстрая запись</a></div>
             <div><a href="https://i.ytimg.com/vi/lAqf71knZF8/maxresdefault.jpg">Мои записи</a></div>
             <div><a href="https://i.ytimg.com/vi/lAqf71knZF8/maxresdefault.jpg">Избранное</a></div>
@@ -49,19 +46,24 @@
             <div>популярные бьюти услуги</div>
         </div>
         <div class="service-block-all row">
+            <c:set var="counter" value="1"/>
             <c:forTokens var="i"
-                         items="Ногтевой сервис,Уход за волосами,Брови,Уход за кожей лица,Ресницы,Ногтевой сервис,Ногтевой сервис,Ногтевой сервис"
+                         items="Визаж/Брови,Парикмахерские услуги,Депиляция/Эпиляция,Массаж,Ресницы,Татуаж/Тату,Ногтевой сервис,Косметология/Уход за телом,Барбершоп"
                          delims=",">
-                <div class="col-xl-3 col-4">
-                    <a href="https://i.ytimg.com/vi/lAqf71knZF8/maxresdefault.jpg">
+                <div class="col-xl-4 service-outer-image">
+                    <a style="display: inline-flex" href="https://i.ytimg.com/vi/lAqf71knZF8/maxresdefault.jpg">
+                        <img class="service-image" src="../image/service/service_icon_${counter}.png">
                         <div class="service-item">
-                            <img src="../image/service_icon_1.png">
                             <p><c:out value="${i}"/></p>
                         </div>
                     </a>
                 </div>
+                <c:set var="counter" value="${counter + 1}"/>
             </c:forTokens>
         </div>
+
+        <jsp:include page="common/login_popup.jsp"/>
+        <jsp:include page="common/register_popup.jsp"/>
 
         <a href="#" class="open-login-popup service-block-button">Оставить заявку</a>
         <a href="#" class="open-register-popup service-block-button">Оставить заявку</a>

@@ -44,6 +44,7 @@ public class ControllerServlet extends HttpServlet {
     public void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String page;
         String commandName = request.getParameter(COMMAND);
+        String noredirect = request.getParameter(NO_REDIRECT);
 
         try {
             ActionCommand command = new CommandFactory().defineCommand(commandName);
@@ -53,12 +54,16 @@ public class ControllerServlet extends HttpServlet {
             page = new EmptyCommand().execute(request, response);
         }
 
+        if (!noredirect) {
+
         if (page != null) {
             RequestDispatcher dispatcher = request.getRequestDispatcher(page);
             dispatcher.forward(request, response);
         } else {
-            page = MAIN_PAGE;
-            response.sendRedirect(request.getContextPath() + page);
+                page = MAIN_PAGE;
+                response.sendRedirect(request.getContextPath() + page);
         }
+        }
+
     }
 }
