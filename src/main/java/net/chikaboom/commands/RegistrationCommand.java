@@ -25,8 +25,8 @@ public class RegistrationCommand implements ActionCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
 
-        logger.info("New account creating has been started.");
-        logger.info("Attribute email: " + request.getParameter("email"));
+        logger.info("New account creating has been started."); //Почему у тебя везде в логах past perfect?
+        logger.info("Attribute email: " + request.getParameter("email")); //Не стоит такие данные записывать в лог дату
 
         Account account = new Account();
 

@@ -23,6 +23,7 @@ public class AuthorizationCommand implements ActionCommand {
 
     Logger logger = Logger.getLogger(ActionCommand.class);
 
+    //Убрать многоточие после "неудачи"
     /**
      * Реализация команды авторизации
      *
@@ -41,7 +42,7 @@ public class AuthorizationCommand implements ActionCommand {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        List<String> emailList = new ArrayList<>();
+        List<String> emailList = new ArrayList<>(); //Переименовать на parameters
         AccountDAO accountDAO = new AccountDAO();
 
         emailList.add(email);
@@ -56,7 +57,7 @@ public class AuthorizationCommand implements ActionCommand {
             initSession(request, account);
             return ACCOUNT_PAGE;
         } else {
-            logger.info("User has NOT logged in. Password is incorrect.");
+            logger.info("User has NOT logged in. Password is incorrect."); //Password or email
             return MAIN_PAGE;
         }
     }
