@@ -23,41 +23,40 @@ public class AuthorizationCommand implements ActionCommand {
 
     Logger logger = Logger.getLogger(ActionCommand.class);
 
-    //Убрать многоточие после "неудачи"
     /**
      * Реализация команды авторизации
      *
      * @param request  запрос, получаемый со стороны клиента
      * @param response не используется
      * @return возвращает страницу пользователя в случае совпадения паролей,
-     * возвращает стартовую страницу в случае нудачи...
+     * возвращает стартовую страницу в случае нудачи.
      */
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
 
-        logger.info("Login procedure has been started");
+        logger.info("Login procedure started");
 
         QueryBuilder builder = new QueryBuilder();
 
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        List<String> emailList = new ArrayList<>(); //Переименовать на parameters
+        List<String> parameters = new ArrayList<>();
         AccountDAO accountDAO = new AccountDAO();
 
-        emailList.add(email);
+        parameters.add(email);
 
         String query = builder.select().from("account").where("email").build();
-        List<Account> accountList = accountDAO.executeQuery(query, emailList);
+        List<Account> accountList = accountDAO.executeQuery(query, parameters);
 
         Account account = accountList.get(0);
 
         if (account.getPassword().equals(password)) {
-            logger.info("User has logged in");
+            logger.info("User logged in");
             initSession(request, account);
             return ACCOUNT_PAGE;
         } else {
-            logger.info("User has NOT logged in. Password is incorrect."); //Password or email
+            logger.info("User has NOT logged in. Password or email is incorrect.");
             return MAIN_PAGE;
         }
     }

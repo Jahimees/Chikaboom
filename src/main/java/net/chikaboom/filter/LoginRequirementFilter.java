@@ -13,13 +13,12 @@ import static net.chikaboom.constant.CommandConstant.AUTHORIZATION;
 import static net.chikaboom.constant.CommandConstant.REGISTRATION;
 import static net.chikaboom.constant.PageConstant.*;
 
-//ctrl + alt + l
 /**
  * Класс-фильтр. Предназанчен для проверки запрашиваемой страницы на необходимость авторизации со стороны пользователя.
  * Если страница не требует авторизации - передаем управление ServletController;
  * Если страница требует авторизации:
  * - если пользователь авторизован - передаем управление ServletController;
- * - если пользователь НЕ авторизован - перенаправляем на страницу (вызываем попап) авторизации. //ПОПАП звучит слишком по-житейски
+ * - если пользователь НЕ авторизован - перенаправляем на страницу авторизации.
  */
 public class LoginRequirementFilter implements Filter {
 
@@ -27,23 +26,24 @@ public class LoginRequirementFilter implements Filter {
 
     /**
      * Метод инициализации фильтра перед запуском приложения
+     *
      * @param filterConfig передаваемая уконфигурация
-     * @throws ServletException //Зачем?
      */
-    //Аннотация Override?
-    public void init(FilterConfig filterConfig) throws ServletException {
+    @Override
+    public void init(FilterConfig filterConfig) {
         logger.info("Filter initiated");
     }
 
     /**
      * Метод реализации фильтра. Проверяет страницу на необходимость авторизации со стороны пользователя
-     * @param request запрос от клиента
-     * @param response не используется
-     * @param filterChain цепочка вильтров? (так что ли?)
+     *
+     * @param request     запрос от клиента
+     * @param response    не используется
+     * @param filterChain цепочка фильтров
      * @throws IOException
      * @throws ServletException
      */
-    //Аннотация Override?
+    @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 
         logger.info("Filtration started");
@@ -56,14 +56,11 @@ public class LoginRequirementFilter implements Filter {
         String id = session.getId();
         String command = servletRequest.getParameter(COMMAND);
 
-        logger.info("\'" + command + "\' has been got"); // символ ' можно не экранировать
+        logger.info("'" + command + "' has been got");
 
-        boolean isCommonPath = checkPath(path);
-
-        //Представим id != null id != "" command == authorization/registration. Почему меня снова кидает на авторизацию?
-        if (!isCommonPath && (id == null || id == "" || checkCommand(command))) { //при проверке со строками используем equals
+        if (!isCommonPath(path) && (id.equals("") || isAllowedCommand(command))) {
             logger.info("Restricted page. User need to authorize.");
-            logger.info("User is redirecting to loin popup.");
+            logger.info("User is redirecting to login page.");
 
             servletResponse.sendRedirect(AUTHORIZATION_POPUP);
         } else {
@@ -76,42 +73,46 @@ public class LoginRequirementFilter implements Filter {
     /**
      * Выводит фильтр из эксплуатации
      */
+    @Override
     public void destroy() {
 
     }
 
     /**
-     * Метод для проверки передаваемого клиентом пути
+     * Метод для проверки передаваемого клиентом пути. Если путь в спиве разрешенных без авторизации - возвращает TRUE
+     *
      * @param path путь передаваемый клиентом
-     * @return true или false в зависимости от условия //Какого условия?
+     * @return true или false в зависимости от того, какой был получен путь
      *
      * TODO необходимо дополнить страницы
      */
-    //Account Page разве не требует авторизации?
-    private boolean checkPath(String path) {
+    private boolean isCommonPath(String path) {
         switch (path) {
             case MAIN_PAGE:
-            case ACCOUNT_PAGE:
                 return true;
-            default: return false;
+            default:
+                return false;
         }
     }
 
     /**
-     * Метод для проверки передаваемой клиентом команды
+     * Метод для проверки передаваемой клиентом команды. Если команда в списке разрешенных без авторизации -
+     * возвращает TRUE.
+     *
      * @param command передаваемая клиентом команда
-     * @return true или false в зависимости от условия //Какого условия?
+     * @return true или false в зависимости от того, какая была получена команда
      *
      * TODO необходимо дополнить команды
      */
     //Название метода не отражает сути. Проверка команды на что? Либо дополнить документацию, либо переименовать метод
     //и дополнить документацию
-    private boolean checkCommand(String command) {
+    private boolean isAllowedCommand(String command) {
         switch (command) {
             case REGISTRATION:
             case AUTHORIZATION:
                 return true;
-            default: return false;
+            default:
+                return false;
         }
     }
 }
