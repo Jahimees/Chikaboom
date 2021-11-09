@@ -79,7 +79,7 @@ public class LoginRequirementFilter implements Filter {
     }
 
     /**
-     * Метод для проверки передаваемого клиентом пути. Если путь в спиве разрешенных без авторизации - возвращает TRUE
+     * Метод для проверки передаваемого клиентом пути. Если путь в списке разрешенных без авторизации - возвращает TRUE
      *
      * @param path путь передаваемый клиентом
      * @return true или false в зависимости от того, какой был получен путь
@@ -104,8 +104,6 @@ public class LoginRequirementFilter implements Filter {
      *
      * TODO необходимо дополнить команды
      */
-    //Название метода не отражает сути. Проверка команды на что? Либо дополнить документацию, либо переименовать метод
-    //и дополнить документацию
     private boolean isAllowedCommand(String command) {
         switch (command) {
             case REGISTRATION:
