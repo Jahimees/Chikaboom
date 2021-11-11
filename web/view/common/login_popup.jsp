@@ -14,12 +14,12 @@
             <label class="invalid-field-label" id="l-input-email-empty">Поле не может быть пустым</label>
             <div class="image-input">
                 <img class="small-icon" src="../../image/login_icon.png">
-                <input id="l-input-email" required placeholder="Введите email">
+                <input id="l-input-email" name="email" required placeholder="Введите email">
             </div>
             <label class="invalid-field-label" id="l-input-password-empty">Поле не может быть пустым</label>
             <div class="image-input">
                 <img class="small-icon" src="../../image/password_icon.png">
-                <input id="l-input-password" type="password" required placeholder="Введите пароль">
+                <input id="l-input-password" name="password" type="password" required placeholder="Введите пароль">
             </div>
 
             <hr>
