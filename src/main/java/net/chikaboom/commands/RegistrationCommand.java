@@ -25,21 +25,18 @@ public class RegistrationCommand implements ActionCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
 
-        logger.info("Регистрация ного аккаунта.");
-
-        logger.info("Атрибут login: " + request.getParameter("login"));
-        logger.info("Атрибут password: " + request.getParameter("password"));
+        logger.info("New account creating started.");
 
         Account account = new Account();
 
-        account.setEmail(request.getParameter("login"));
+        account.setEmail(request.getParameter("email"));
         account.setPassword(request.getParameter("password"));
 
         AccountDAO accountDAO = new AccountDAO();
 
         accountDAO.create(account);
 
-        logger.info("Новый аккаунт создан");
+        logger.info("New account created");
 
         return ACCOUNT_PAGE;
     }

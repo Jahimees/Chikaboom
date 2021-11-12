@@ -23,4 +23,15 @@
         <servlet-name>ControllerServlet</servlet-name>
         <url-pattern>/chikaboom</url-pattern>
     </servlet-mapping>
+    
+    <!-- LOGIN REQUIREMENT FILTER -->
+    <filter>
+        <filter-name>LoginRequirementFilter</filter-name>
+        <filter-class>net.chikaboom.filter.LoginRequirementFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>LoginRequirementFilter</filter-name>
+        <url-pattern>*.jsp</url-pattern>
+    </filter-mapping>
 </web-app>
