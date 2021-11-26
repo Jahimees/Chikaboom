@@ -10,15 +10,16 @@
     <title>Extra Milieux</title>
 
     <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/main_media.css">
     <link rel="stylesheet" href="../css/popup.css">
 
-<%--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"--%>
-<%--          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">--%>
+    <%--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"--%>
+    <%--          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">--%>
     <link rel="stylesheet" href="../css/bootstrap/bootstrap.css">
     <link rel="script" href="../js/bootstrap/bootstrap.bundle.js">
-<%--    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"--%>
-<%--            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"--%>
-<%--            crossorigin="anonymous"></script>--%>
+    <%--    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"--%>
+    <%--            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"--%>
+    <%--            crossorigin="anonymous"></script>--%>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,9 +32,11 @@
 
     <div class="header">
         <div class="menu-top">
-            <div><a href="https://i.ytimg.com/vi/lAqf71knZF8/maxresdefault.jpg">▸Личный кабинет◂</a></div>
+            <div><a href="#" class="open-login-popup">▸Личный кабинет◂</a></div>
         </div>
         <div class="menu-right">
+            <div class="open-login-popup"><a href="#">Вход</a></div>
+            <div class="open-register-popup"><a href="#">Регистрация</a></div>
             <div><a href="https://i.ytimg.com/vi/lAqf71knZF8/maxresdefault.jpg">Быстрая запись</a></div>
             <div><a href="https://i.ytimg.com/vi/lAqf71knZF8/maxresdefault.jpg">Мои записи</a></div>
             <div><a href="https://i.ytimg.com/vi/lAqf71knZF8/maxresdefault.jpg">Избранное</a></div>
@@ -48,7 +51,7 @@
         <div class="service-block-all row">
             <c:set var="counter" value="1"/>
             <c:forTokens var="i"
-                         items="Визаж/Брови,Парикмахерские услуги,Депиляция/Эпиляция,Массаж,Ресницы,Татуаж/Тату,Ногтевой сервис,Косметология/Уход за телом,Барбершоп"
+                         items="Визаж/Брови,Парикмахерские услуги,Ресницы,Татуаж/Тату,Ногтевой сервис,Косметология/Уход за телом"
                          delims=",">
                 <div class="col-xl-4 service-outer-image">
                     <a style="display: inline-flex" href="https://i.ytimg.com/vi/lAqf71knZF8/maxresdefault.jpg">
@@ -65,32 +68,35 @@
         <jsp:include page="common/login_popup.jsp"/>
         <jsp:include page="common/register_popup.jsp"/>
 
-        <a href="#" class="open-login-popup service-block-button">Оставить заявку</a>
-        <a href="#" class="open-register-popup service-block-button">Оставить заявку</a>
-
-        <div class="service-block-button">
-            <a href="https://i.ytimg.com/vi/lAqf71knZF8/maxresdefault.jpg">ВСЕ УСЛУГИ</a>
+        <div style="display: flex">
+            <a class="service-block-button" href="https://i.ytimg.com/vi/lAqf71knZF8/maxresdefault.jpg">ВСЕ УСЛУГИ</a>
         </div>
+
     </div>
     <div class="block-map">
         <div class="img-block"><img src="../image/map.png"></div>
         <div class="block-big-part">
             <div class="block-title">Найдите мастера близко к дому</div>
             <div class="block-text">Все мастера Минска на одной карте!</div>
-            <div class="block-button">СМОТРЕТЬ</div>
+            <div class="service-block-button">СМОТРЕТЬ</div>
         </div>
     </div>
 
-    <div class="block-master-class">
-        <div class="block-map">
-            <div class="block-big-part">
-                <div class="block-title">Обучение у лучших мастеров Минска</div>
-                <div class="block-text">Не пропустите ни один курс или мастер-класс!</div>
-                <div class="block-button">УЗНАТЬ БОЛЬШЕ</div>
-            </div>
-            <div class="img-block"><img src="../image/map.png"></div>
+    <div class="block-map">
+        <div class="block-big-part">
+            <div class="block-title">Обучение у лучших мастеров Минска</div>
+            <div class="block-text">Не пропустите ни один курс или мастер-класс!</div>
+            <div class="service-block-button">УЗНАТЬ БОЛЬШЕ</div>
         </div>
+        <div class="img-block"><img src="../image/course.png"></div>
     </div>
+
+    <div class="block-title">Топ-мастера в городе Минск</div>
+    <div class="top_masters_block">
+        <img src="../image/top_master_template.png" class="top_master_block"/>
+        <img src="../image/top_master_template.png" class="top_master_block"/>
+    </div>
+
 </div>
 </body>
 </html>
