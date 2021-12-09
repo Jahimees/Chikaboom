@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <div class="register-popup-bg"></div>
 
 <div class="register-popup">
@@ -32,7 +32,7 @@
                 <input id="r-input-confirm-password" type="password" required placeholder="Подтвердите пароль">
             </div>
 
-            <button type="submit" id="confirm-register" class="btn btn-dark confirm-btn" disabled="true">
+            <button type="submit" class="btn btn-dark confirm-btn" disabled="true">
                 Зарегистрироваться
             </button>
         </form>

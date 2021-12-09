@@ -1,0 +1,12 @@
+.padding-0-5 {
+    padding: 0 5%;
+}
+
+.w-flex_mrgn-2 {
+    display: -webkit-flex;
+    margin: 2%;
+}
+
+.footer {
+    text-align: center;
+}

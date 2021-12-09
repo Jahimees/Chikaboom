@@ -1,4 +1,5 @@
 $('.open-login-popup').on('click', function (e) {
+    closeRegisterPopup();
     e.preventDefault();
     $('.login-popup-bg').fadeIn(800);
     $('.login-popup').fadeIn(800);
@@ -19,6 +20,7 @@ $('.login-popup-bg').on('click', function () {
 })
 
 $('.open-register-popup').on('click', function (e) {
+    closeLoginPopup();
     e.preventDefault();
     $('.register-popup-bg').fadeIn(800);
     $('.register-popup').fadeIn(800);
