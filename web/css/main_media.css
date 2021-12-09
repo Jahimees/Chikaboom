@@ -156,6 +156,10 @@
     .service-block-all > div {
         width: 50%;
     }
+
+    .yt-video {
+        height: 500px;
+    }
 }
 
 @media screen and (max-width: 1100px) {
@@ -190,6 +194,10 @@
 
     .block-button {
         font-size: 17px;
+    }
+
+    .yt-video {
+        height: 400px;
     }
 }
 
@@ -306,6 +314,10 @@
     .block-button {
         font-size: 13px;
     }
+
+    .yt-video {
+        height: 350px;
+    }
 }
 
 @media screen and (max-width: 700px) {
@@ -390,6 +402,10 @@
     .block-button {
         font-size: 9px;
     }
+
+    .yt-video {
+        height: 315px;
+    }
 }
 
 @media screen and (max-width: 500px) {
@@ -432,6 +448,10 @@
     .block-button {
         font-size: 8px;
     }
+
+    .yt-video {
+        height: 275px;
+    }
 }
 
 @media screen and (max-width: 450px) {
@@ -467,6 +487,10 @@
 
     .block-button {
         font-size: 7px;
+    }
+
+    .yt-video {
+        height: 230px;
     }
 }
 
@@ -508,6 +532,10 @@
 
     .block-button {
         font-size: 6px;
+    }
+
+    .yt-video {
+        height: 200px;
     }
 }
 

@@ -12,18 +12,11 @@
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/main_media.css">
     <link rel="stylesheet" href="../css/popup.css">
-
-    <%--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"--%>
-    <%--          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">--%>
+    <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/bootstrap/bootstrap.css">
-    <link rel="script" href="../js/bootstrap/bootstrap.bundle.js">
-    <%--    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"--%>
-    <%--            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"--%>
-    <%--            crossorigin="anonymous"></script>--%>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=PT+Serif&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/4be5e8b664.js" crossorigin="anonymous"></script>
 </head>
@@ -92,13 +85,68 @@
     </div>
 
     <div class="block-title">Топ-мастера в городе Минск</div>
-    <div class="top_masters_block">
-        <img src="../image/top_master_template.png" class="top_master_block"/>
-        <img src="../image/top_master_template.png" class="top_master_block"/>
+
+    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
+                    aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
+                    aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="w-flex_mrgn-2">
+                    <img src="../image/top_master_template.png" class="d-block top_master_block" alt="...">
+                    <img src="../image/top_master_template.png" class="d-block top_master_block" alt="...">
+                </div>
+            </div>
+            <c:forEach var="x" begin="0" end="1" step="1">
+                <div class="carousel-item">
+                    <div class="w-flex_mrgn-2">
+                        <img src="../image/top_master_template.png" class="d-block top_master_block" alt="...">
+                        <img src="../image/top_master_template.png" class="d-block top_master_block" alt="...">
+                    </div>
+                </div>
+            </c:forEach>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+                data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Предыдущий</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+                data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Следующий</span>
+        </button>
     </div>
 
+    <div class="block-title">Записаться к мастеру стало ещё проще!</div>
+    <div class="block-text w-flex_mrgn-2">
+        <ol class="padding-0-5">
+            <li>Большой выбор мастеров по различным услугам</li>
+            <li>Простой и удобный способ записи</li>
+        </ol>
+        <ol class="padding-0-5">
+            <li>Смс-оповещения о предстоящем визите</li>
+            <li>Возможность оставить отзыв</li>
+        </ol>
+    </div>
+
+    <iframe class="yt-video" src="https://www.youtube.com/embed/HOJ7H6gh8Jo"
+            title="YouTube video player" frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+
+    </iframe>
+
+    <jsp:include page="common/footer.jsp"/>
 </div>
 </body>
 </html>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script type="text/javascript" src="../js/popup.js"></script>
+<script type="text/javascript" src="../js/bootstrap/bootstrap.js"></script>
