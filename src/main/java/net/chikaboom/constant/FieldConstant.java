@@ -45,6 +45,9 @@ public class FieldConstant {
     public static final String IMAGE = "image";
     public static final String COMMENT = "comment";
 
+    //SUBSERVICE TYPE TABLE
+    public static final String ID_SUBSERVICE_TYPE = "idSubserviceType";
+
     //WORK TABLE
     public static final String ID_WORK = "idWork";
 
@@ -56,6 +59,7 @@ public class FieldConstant {
     public static final List<String> MASTER_FIELDS = Arrays.asList(ID_MASTER, ID_ACCOUNT, ADDRESS, DESCRIPTION);
     public static final List<String> SERVICE_FIELDS = Arrays.asList(ID_SERVICE, ID_MASTER, ID_SERVICE_TYPE,
             NAME, DESCRIPTION, COST);
-    public static final List<String> SERVICE_TYPE_FIELDS = Arrays.asList(ID_SERVICE_TYPE, NAME);
+    public static final List<String> SERVICE_TYPE_FIELDS = Arrays.asList(ID_SERVICE_TYPE, TYPE_NAME);
+    public static final List<String> SUBSERVICE_TYPE_FIELDS = Arrays.asList(ID_SUBSERVICE_TYPE, NAME, ID_SERVICE_TYPE);
     public static final List<String> WORK_FIELDS = Arrays.asList(ID_WORK, ID_MASTER, IMAGE, COMMENT);
 }

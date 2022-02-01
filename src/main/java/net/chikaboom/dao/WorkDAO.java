@@ -158,7 +158,7 @@ public class WorkDAO extends AbstractDAO<Work> {
         try {
             preparedStatement.setString(1, entity.getIdWork());
             preparedStatement.setString(2, entity.getIdMaster());
-            preparedStatement.setBytes(3, entity.getImage());
+            preparedStatement.setString(3, entity.getImage());
             preparedStatement.setString(4, entity.getComment());
         } catch (SQLException e) {
             logger.error(SETTING_PARAMETER_ERROR, e);
@@ -170,7 +170,7 @@ public class WorkDAO extends AbstractDAO<Work> {
         try {
             entity.setIdWork(resultSet.getString(ID_WORK));
             entity.setIdMaster(resultSet.getString(ID_MASTER));
-            entity.setImage(resultSet.getBytes(IMAGE));
+            entity.setImage(resultSet.getString(IMAGE));
             entity.setComment(resultSet.getString(COMMENT));
         } catch (SQLException e) {
             logger.error(GETTING_PARAMETER_ERROR, e);

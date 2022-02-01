@@ -7,5 +7,6 @@ public class TableConstant {
     public static final String MASTER = "master";
     public static final String SERVICE = "service";
     public static final String SERVICE_TYPE = "servicetype";
+    public static final String SUBSERVICE_TYPE = "subservicetype";
     public static final String WORK = "work";
 }

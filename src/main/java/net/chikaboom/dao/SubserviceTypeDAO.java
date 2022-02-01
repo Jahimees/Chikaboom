@@ -1,7 +1,7 @@
 package net.chikaboom.dao;
 
 import net.chikaboom.connection.ConnectionPool;
-import net.chikaboom.model.ServiceType;
+import net.chikaboom.model.SubserviceType;
 import net.chikaboom.util.QueryBuilder;
 import org.apache.log4j.Logger;
 
@@ -14,56 +14,56 @@ import java.util.List;
 
 import static net.chikaboom.constant.FieldConstant.*;
 import static net.chikaboom.constant.LoggerMessageConstant.*;
-import static net.chikaboom.constant.TableConstant.SERVICE_TYPE;
+import static net.chikaboom.constant.TableConstant.SUBSERVICE_TYPE;
 
-public class ServiceTypeDAO extends AbstractDAO<ServiceType> {
+public class SubserviceTypeDAO extends AbstractDAO<SubserviceType> {
     private final QueryBuilder queryBuilder;
-    private static final Logger logger = Logger.getLogger(ServiceTypeDAO.class);
+    private static final Logger logger = Logger.getLogger(SubserviceTypeDAO.class);
 
-    public ServiceTypeDAO() {
+    public SubserviceTypeDAO() {
         queryBuilder = new QueryBuilder();
     }
 
     @Override
-    public List<ServiceType> findAll() {
+    public List<SubserviceType> findAll() {
         Connection connection = ConnectionPool.getInstance().getConnection();
-        String query = queryBuilder.select().from(SERVICE_TYPE).build();
-        List<ServiceType> serviceTypeList = new ArrayList<>();
+        String query = queryBuilder.select().from(SUBSERVICE_TYPE).build();
+        List<SubserviceType> subserviceTypeList = new ArrayList<>();
         try {
             PreparedStatement findAllStatement = connection.prepareStatement(query);
             ResultSet resultSet = findAllStatement.executeQuery();
 
             while (resultSet.next()) {
-                ServiceType serviceType = new ServiceType();
-                setFieldsToEntity(serviceType, resultSet);
-                serviceTypeList.add(serviceType);
+                SubserviceType subserviceType = new SubserviceType();
+                setFieldsToEntity(subserviceType, resultSet);
+                subserviceTypeList.add(subserviceType);
             }
         } catch (SQLException e) {
-            logger.error(QUERY_EXECUTION_ERROR, e);
+            logger.error(QUERY_EXECUTION_ERROR);
         } finally {
             try {
                 connection.close();
             } catch (SQLException e) {
-                logger.error(CONNECTION_CLOSING_ERROR, e);
+                logger.error(CONNECTION_CLOSING_ERROR);
             }
         }
-
-        return serviceTypeList;
+        return subserviceTypeList;
     }
 
     @Override
-    public ServiceType findEntity(String id) {
-        String query = queryBuilder.select().from(SERVICE_TYPE).where(ID_SERVICE_TYPE).build();
+    public SubserviceType findEntity(String id) {
+        String query = queryBuilder.select().from(SUBSERVICE_TYPE).where(ID_SUBSERVICE_TYPE).build();
         Connection connection = ConnectionPool.getInstance().getConnection();
-        ServiceType serviceType = new ServiceType();
+        SubserviceType subserviceType = new SubserviceType();
         try {
             PreparedStatement findEntityStatement = connection.prepareStatement(query);
             findEntityStatement.setString(1, id);
             ResultSet resultSet = findEntityStatement.executeQuery();
 
             if (resultSet.next()) {
-                setFieldsToEntity(serviceType, resultSet);
+                setFieldsToEntity(subserviceType, resultSet);
             }
+
         } catch (SQLException e) {
             logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
@@ -74,24 +74,23 @@ public class ServiceTypeDAO extends AbstractDAO<ServiceType> {
             }
         }
 
-        if (!serviceType.getIdServiceType().equals(id)) {
+        if (!subserviceType.getIdSubserviceType().equals(id)) {
             return null;
         }
 
-        return serviceType;
+        return subserviceType;
     }
 
     @Override
     public boolean delete(String id) {
-        String query = queryBuilder.delete().from(SERVICE_TYPE).where(ID_SERVICE_TYPE).build();
+        String query = queryBuilder.delete().from(SUBSERVICE_TYPE).where(ID_SUBSERVICE_TYPE).build();
         Connection connection = ConnectionPool.getInstance().getConnection();
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, id);
+            PreparedStatement deleteStatement = connection.prepareStatement(query);
+            deleteStatement.setString(1, id);
 
-            return preparedStatement.execute();
-
+            return deleteStatement.execute();
         } catch (SQLException e) {
             logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
@@ -106,17 +105,16 @@ public class ServiceTypeDAO extends AbstractDAO<ServiceType> {
     }
 
     @Override
-    public boolean update(ServiceType entity) {
-        String query = queryBuilder.update(SERVICE_TYPE, SERVICE_TYPE_FIELDS).where(ID_SERVICE_TYPE).build();
+    public boolean update(SubserviceType entity) {
+        String query = queryBuilder.update(SUBSERVICE_TYPE, SUBSERVICE_TYPE_FIELDS).where(ID_SUBSERVICE_TYPE).build();
         Connection connection = ConnectionPool.getInstance().getConnection();
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            setFieldsToPreparedStatement(preparedStatement, entity);
-            preparedStatement.setString(3, entity.getIdServiceType());
+            PreparedStatement updateStatement = connection.prepareStatement(query);
+            setFieldsToPreparedStatement(updateStatement, entity);
+            updateStatement.setString(3, entity.getIdSubserviceType());
 
-            return preparedStatement.execute();
-
+            return updateStatement.execute();
         } catch (SQLException e) {
             logger.error(QUERY_EXECUTION_ERROR, e);
         } finally {
@@ -131,8 +129,8 @@ public class ServiceTypeDAO extends AbstractDAO<ServiceType> {
     }
 
     @Override
-    public boolean create(ServiceType entity) {
-        String query = queryBuilder.insert(SERVICE_TYPE, SERVICE_TYPE_FIELDS).build();
+    boolean create(SubserviceType entity) {
+        String query = queryBuilder.insert(SUBSERVICE_TYPE, SUBSERVICE_TYPE_FIELDS).build();
         Connection connection = ConnectionPool.getInstance().getConnection();
 
         try {
@@ -154,27 +152,29 @@ public class ServiceTypeDAO extends AbstractDAO<ServiceType> {
     }
 
     @Override
-    public void setFieldsToPreparedStatement(PreparedStatement preparedStatement, ServiceType entity) {
+    void setFieldsToPreparedStatement(PreparedStatement preparedStatement, SubserviceType entity) {
         try {
-            preparedStatement.setString(1, entity.getIdServiceType());
-            preparedStatement.setString(2, entity.getTypeName());
+            preparedStatement.setString(1, ID_SUBSERVICE_TYPE);
+            preparedStatement.setString(2, NAME);
+            preparedStatement.setString(3, ID_SERVICE_TYPE);
         } catch (SQLException e) {
             logger.error(SETTING_PARAMETER_ERROR, e);
         }
     }
 
     @Override
-    public void setFieldsToEntity(ServiceType entity, ResultSet resultSet) {
+    void setFieldsToEntity(SubserviceType entity, ResultSet resultSet) {
         try {
+            entity.setIdSubserviceType(resultSet.getString(ID_SUBSERVICE_TYPE));
+            entity.setName(resultSet.getString(NAME));
             entity.setIdServiceType(resultSet.getString(ID_SERVICE_TYPE));
-            entity.setTypeName(resultSet.getString(TYPE_NAME));
         } catch (SQLException e) {
-            logger.error(GETTING_PARAMETER_ERROR, e);
+            logger.error(SETTING_PARAMETER_ERROR, e);
         }
     }
 
     @Override
-    protected ServiceType createEntity() {
-        return new ServiceType();
+    public SubserviceType createEntity() {
+        return new SubserviceType();
     }
 }
