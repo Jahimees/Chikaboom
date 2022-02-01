@@ -24,7 +24,7 @@ public class Work implements Entity {
     /**
      * Картинка работы
      */
-    private byte[] image;
+    private String image;
 
     /**
      * Комментарий мастера о работе

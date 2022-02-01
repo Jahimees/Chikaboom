@@ -19,7 +19,7 @@ public class ServiceType implements Entity {
     /**
      * Наименование типа услуги
      */
-    private String name;
+    private String typeName;
 
     public ServiceType() {
         idServiceType = UUID.randomUUID().toString();
