@@ -23,16 +23,25 @@
 <body>
 <div class="content">
 
+    <c:set var="session" value="${id}"/>
     <div class="header">
         <div class="menu-top">
-            <div><a href="#" class="open-login-popup">▸Личный кабинет◂</a></div>
+            <c:if test="${session!=null}">
+                <div><a href="#" class="open-login-popup">▸Личный кабинет◂</a></div>
+            </c:if>
         </div>
         <div class="menu-right">
-            <div class="open-login-popup"><a href="#">Вход</a></div>
-            <div class="open-register-popup"><a href="#">Регистрация</a></div>
-            <div><a href="https://i.ytimg.com/vi/lAqf71knZF8/maxresdefault.jpg">Быстрая запись</a></div>
-            <div><a href="https://i.ytimg.com/vi/lAqf71knZF8/maxresdefault.jpg">Мои записи</a></div>
-            <div><a href="https://i.ytimg.com/vi/lAqf71knZF8/maxresdefault.jpg">Избранное</a></div>
+            <c:choose>
+                <c:when test="${session==null}">
+                    <div class="open-login-popup"><a href="#">Вход</a></div>
+                    <div class="open-register-popup"><a href="#">Регистрация</a></div>
+                    <div><a href="https://i.ytimg.com/vi/lAqf71knZF8/maxresdefault.jpg">Быстрая запись</a></div>
+                </c:when>
+                <c:otherwise>
+                    <div><a href="https://i.ytimg.com/vi/lAqf71knZF8/maxresdefault.jpg">Мои записи</a></div>
+                    <div><a href="https://i.ytimg.com/vi/lAqf71knZF8/maxresdefault.jpg">Избранное</a></div>
+                </c:otherwise>
+            </c:choose>
         </div>
     </div>
 
