@@ -2,10 +2,8 @@ package net.chikaboom.dao;
 
 import net.chikaboom.connection.ConnectionPool;
 import net.chikaboom.model.Client;
-import net.chikaboom.util.sql.QueryBuilder;
+import net.chikaboom.util.QueryBuilder;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,27 +12,22 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.chikaboom.util.constant.FieldConstant.*;
-import static net.chikaboom.util.constant.LoggerMessageConstant.*;
-import static net.chikaboom.util.constant.TableConstant.CLIENT;
+import static net.chikaboom.constant.FieldConstant.*;
+import static net.chikaboom.constant.LoggerMessageConstant.*;
+import static net.chikaboom.constant.TableConstant.CLIENT;
 
-@Service
 public class ClientDAO extends AbstractDAO<Client> {
-
-    private static final Logger logger = Logger.getLogger(ClientDAO.class);
     private final QueryBuilder queryBuilder;
-    private ConnectionPool connectionPool;
+    private static final Logger logger = Logger.getLogger(ClientDAO.class);
 
-    @Autowired
-    public ClientDAO(ConnectionPool connectionPool) {
-        super(connectionPool);
+    public ClientDAO() {
         queryBuilder = new QueryBuilder();
     }
 
-    @Override
-    public List<Client> findAll() {
+
+    @Override    public List<Client> findAll() {
         String query = queryBuilder.select().from(CLIENT).build();
-        Connection connection = connectionPool.getConnection();
+        Connection connection = ConnectionPool.getInstance().getConnection();
         List<Client> clientList = new ArrayList<>();
         try {
             PreparedStatement findAllStatement = connection.prepareStatement(query);
@@ -61,7 +54,7 @@ public class ClientDAO extends AbstractDAO<Client> {
     @Override
     public Client findEntity(String id) {
         String query = queryBuilder.select().from(CLIENT).where(ID_CLIENT).build();
-        Connection connection = connectionPool.getConnection();
+        Connection connection = ConnectionPool.getInstance().getConnection();
         Client client = new Client();
         try {
             PreparedStatement findEntityStatement = connection.prepareStatement(query);
@@ -91,7 +84,7 @@ public class ClientDAO extends AbstractDAO<Client> {
     @Override
     public boolean delete(String id) {
         String query = queryBuilder.delete().from(CLIENT).where(ID_CLIENT).build();
-        Connection connection = connectionPool.getConnection();
+        Connection connection = ConnectionPool.getInstance().getConnection();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -114,7 +107,7 @@ public class ClientDAO extends AbstractDAO<Client> {
     @Override
     public boolean update(Client entity) {
         String query = queryBuilder.update(CLIENT, CLIENT_FIELDS).where(ID_CLIENT).build();
-        Connection connection = connectionPool.getConnection();
+        Connection connection = ConnectionPool.getInstance().getConnection();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -139,7 +132,7 @@ public class ClientDAO extends AbstractDAO<Client> {
     @Override
     public boolean create(Client entity) {
         String query = queryBuilder.insert(CLIENT, CLIENT_FIELDS).build();
-        Connection connection = connectionPool.getConnection();
+        Connection connection = ConnectionPool.getInstance().getConnection();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);

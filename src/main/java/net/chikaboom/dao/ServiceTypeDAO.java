@@ -2,10 +2,8 @@ package net.chikaboom.dao;
 
 import net.chikaboom.connection.ConnectionPool;
 import net.chikaboom.model.ServiceType;
-import net.chikaboom.util.sql.QueryBuilder;
+import net.chikaboom.util.QueryBuilder;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,26 +12,21 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.chikaboom.util.constant.FieldConstant.*;
-import static net.chikaboom.util.constant.LoggerMessageConstant.*;
-import static net.chikaboom.util.constant.TableConstant.SERVICE_TYPE;
+import static net.chikaboom.constant.FieldConstant.*;
+import static net.chikaboom.constant.LoggerMessageConstant.*;
+import static net.chikaboom.constant.TableConstant.SERVICE_TYPE;
 
-@Service
 public class ServiceTypeDAO extends AbstractDAO<ServiceType> {
-
-    private static final Logger logger = Logger.getLogger(ServiceTypeDAO.class);
     private final QueryBuilder queryBuilder;
-    private ConnectionPool connectionPool;
+    private static final Logger logger = Logger.getLogger(ServiceTypeDAO.class);
 
-    @Autowired
-    public ServiceTypeDAO(ConnectionPool connectionPool) {
-        super(connectionPool);
+    public ServiceTypeDAO() {
         queryBuilder = new QueryBuilder();
     }
 
     @Override
     public List<ServiceType> findAll() {
-        Connection connection = connectionPool.getConnection();
+        Connection connection = ConnectionPool.getInstance().getConnection();
         String query = queryBuilder.select().from(SERVICE_TYPE).build();
         List<ServiceType> serviceTypeList = new ArrayList<>();
         try {
@@ -61,7 +54,7 @@ public class ServiceTypeDAO extends AbstractDAO<ServiceType> {
     @Override
     public ServiceType findEntity(String id) {
         String query = queryBuilder.select().from(SERVICE_TYPE).where(ID_SERVICE_TYPE).build();
-        Connection connection = connectionPool.getConnection();
+        Connection connection = ConnectionPool.getInstance().getConnection();
         ServiceType serviceType = new ServiceType();
         try {
             PreparedStatement findEntityStatement = connection.prepareStatement(query);
@@ -91,7 +84,7 @@ public class ServiceTypeDAO extends AbstractDAO<ServiceType> {
     @Override
     public boolean delete(String id) {
         String query = queryBuilder.delete().from(SERVICE_TYPE).where(ID_SERVICE_TYPE).build();
-        Connection connection = connectionPool.getConnection();
+        Connection connection = ConnectionPool.getInstance().getConnection();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -115,7 +108,7 @@ public class ServiceTypeDAO extends AbstractDAO<ServiceType> {
     @Override
     public boolean update(ServiceType entity) {
         String query = queryBuilder.update(SERVICE_TYPE, SERVICE_TYPE_FIELDS).where(ID_SERVICE_TYPE).build();
-        Connection connection = connectionPool.getConnection();
+        Connection connection = ConnectionPool.getInstance().getConnection();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -140,7 +133,7 @@ public class ServiceTypeDAO extends AbstractDAO<ServiceType> {
     @Override
     public boolean create(ServiceType entity) {
         String query = queryBuilder.insert(SERVICE_TYPE, SERVICE_TYPE_FIELDS).build();
-        Connection connection = connectionPool.getConnection();
+        Connection connection = ConnectionPool.getInstance().getConnection();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);

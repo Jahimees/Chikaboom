@@ -2,10 +2,8 @@ package net.chikaboom.dao;
 
 import net.chikaboom.connection.ConnectionPool;
 import net.chikaboom.model.Account;
-import net.chikaboom.util.sql.QueryBuilder;
+import net.chikaboom.util.QueryBuilder;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,27 +12,22 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.chikaboom.util.constant.FieldConstant.*;
-import static net.chikaboom.util.constant.LoggerMessageConstant.*;
-import static net.chikaboom.util.constant.TableConstant.ACCOUNT;
+import static net.chikaboom.constant.FieldConstant.*;
+import static net.chikaboom.constant.LoggerMessageConstant.*;
+import static net.chikaboom.constant.TableConstant.ACCOUNT;
 
-@Service
 public class AccountDAO extends AbstractDAO<Account> {
-
-    private static final Logger logger = Logger.getLogger(AccountDAO.class);
-    private ConnectionPool connectionPool;
     private final QueryBuilder queryBuilder;
+    private static final Logger logger = Logger.getLogger(AccountDAO.class);
 
-    @Autowired
-    public AccountDAO(ConnectionPool connectionPool) {
-        super(connectionPool);
+    public AccountDAO() {
         queryBuilder = new QueryBuilder();
     }
 
     @Override
     public List<Account> findAll() {
         String query = queryBuilder.select().from(ACCOUNT).build();
-        Connection connection = connectionPool.getConnection();
+        Connection connection = ConnectionPool.getInstance().getConnection();
         List<Account> accountList = new ArrayList<>();
         try {
             PreparedStatement findAllStatement = connection.prepareStatement(query);
@@ -61,7 +54,7 @@ public class AccountDAO extends AbstractDAO<Account> {
     @Override
     public Account findEntity(String id) {
         String query = queryBuilder.select().from(ACCOUNT).where(ID_ACCOUNT).build();
-        Connection connection = connectionPool.getConnection();
+        Connection connection = ConnectionPool.getInstance().getConnection();
         Account account = new Account();
         try {
             PreparedStatement findEntityStatement = connection.prepareStatement(query);
@@ -91,7 +84,7 @@ public class AccountDAO extends AbstractDAO<Account> {
     @Override
     public boolean delete(String id) {
         String query = queryBuilder.delete().from(ACCOUNT).where(ID_ACCOUNT).build();
-        Connection connection = connectionPool.getConnection();
+        Connection connection = ConnectionPool.getInstance().getConnection();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -115,7 +108,7 @@ public class AccountDAO extends AbstractDAO<Account> {
     @Override
     public boolean update(Account entity) {
         String query = queryBuilder.update(ACCOUNT, ACCOUNT_FIELDS).where(ID_ACCOUNT).build();
-        Connection connection = connectionPool.getConnection();
+        Connection connection = ConnectionPool.getInstance().getConnection();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -140,7 +133,7 @@ public class AccountDAO extends AbstractDAO<Account> {
     @Override
     public boolean create(Account entity) {
         String query = queryBuilder.insert(ACCOUNT, ACCOUNT_FIELDS).build();
-        Connection connection = connectionPool.getConnection();
+        Connection connection = ConnectionPool.getInstance().getConnection();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);

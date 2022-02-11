@@ -2,10 +2,8 @@ package net.chikaboom.dao;
 
 import net.chikaboom.connection.ConnectionPool;
 import net.chikaboom.model.Comment;
-import net.chikaboom.util.sql.QueryBuilder;
+import net.chikaboom.util.QueryBuilder;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,26 +12,21 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.chikaboom.util.constant.FieldConstant.*;
-import static net.chikaboom.util.constant.LoggerMessageConstant.*;
+import static net.chikaboom.constant.FieldConstant.*;
+import static net.chikaboom.constant.LoggerMessageConstant.*;
 
-@Service
 public class CommentDAO extends AbstractDAO<Comment> {
-
-    private static final Logger logger = Logger.getLogger(CommentDAO.class);
     private final QueryBuilder queryBuilder;
-    private ConnectionPool connectionPool;
+    private static final Logger logger = Logger.getLogger(CommentDAO.class);
 
-    @Autowired
-    public CommentDAO(ConnectionPool connectionPool) {
-        super(connectionPool);
+    public CommentDAO() {
         queryBuilder = new QueryBuilder();
     }
 
     @Override
     public List<Comment> findAll() {
         String query = queryBuilder.select().from(COMMENT).build();
-        Connection connection = connectionPool.getConnection();
+        Connection connection = ConnectionPool.getInstance().getConnection();
         List<Comment> commentList = new ArrayList<>();
         try {
             PreparedStatement findAllStatement = connection.prepareStatement(query);
@@ -60,7 +53,7 @@ public class CommentDAO extends AbstractDAO<Comment> {
     @Override
     public Comment findEntity(String id) {
         String query = queryBuilder.select().from(COMMENT).where(ID_COMMENT).build();
-        Connection connection = connectionPool.getConnection();
+        Connection connection = ConnectionPool.getInstance().getConnection();
         Comment comment = new Comment();
         try {
             PreparedStatement findEntityStatement = connection.prepareStatement(query);
@@ -90,7 +83,7 @@ public class CommentDAO extends AbstractDAO<Comment> {
     @Override
     public boolean delete(String id) {
         String query = queryBuilder.delete().from(COMMENT).where(ID_COMMENT).build();
-        Connection connection = connectionPool.getConnection();
+        Connection connection = ConnectionPool.getInstance().getConnection();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -114,7 +107,7 @@ public class CommentDAO extends AbstractDAO<Comment> {
     @Override
     public boolean update(Comment entity) {
         String query = queryBuilder.update(COMMENT, COMMENT_FIELDS).where(ID_COMMENT).build();
-        Connection connection = connectionPool.getConnection();
+        Connection connection = ConnectionPool.getInstance().getConnection();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -139,7 +132,7 @@ public class CommentDAO extends AbstractDAO<Comment> {
     @Override
     public boolean create(Comment entity) {
         String query = queryBuilder.insert(COMMENT, COMMENT_FIELDS).build();
-        Connection connection = connectionPool.getConnection();
+        Connection connection = ConnectionPool.getInstance().getConnection();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
