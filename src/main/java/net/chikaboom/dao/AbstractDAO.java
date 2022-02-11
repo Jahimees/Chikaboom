@@ -2,10 +2,7 @@ package net.chikaboom.dao;
 
 import net.chikaboom.connection.ConnectionPool;
 import net.chikaboom.model.Entity;
-import net.chikaboom.util.sql.QueryBuilder;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,26 +12,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static net.chikaboom.util.constant.LoggerMessageConstant.CONNECTION_CLOSING_ERROR;
-import static net.chikaboom.util.constant.LoggerMessageConstant.QUERY_EXECUTION_ERROR;
+import static net.chikaboom.constant.LoggerMessageConstant.CONNECTION_CLOSING_ERROR;
+import static net.chikaboom.constant.LoggerMessageConstant.QUERY_EXECUTION_ERROR;
 
 /**
  * Класс, определяющий методы взаимодействия с базой данных
  *
  * @param <E> класс-entity, соответствующий одной из таблиц модели
  */
-@Service
 public abstract class AbstractDAO<E extends Entity> {
-    //    TODO кастомное исполнение команды с возвращением смешанного объекта (например Account + Service), чтобы найти все услуги определенного пользователя
-    private final QueryBuilder queryBuilder;
-    private final ConnectionPool connectionPool;
-    private static final Logger logger = Logger.getLogger(AbstractDAO.class);
+//    TODO кастомное исполнение команды с возвращением смешанного объекта (например Account + Service), чтобы найти все услуги определенного пользователя
 
-    @Autowired
-    public AbstractDAO(ConnectionPool connectionPool) {
-        this.connectionPool = connectionPool;
-        this.queryBuilder = new QueryBuilder();
-    }
+    private static final Logger logger = Logger.getLogger(AbstractDAO.class);
 
     /**
      * Исполняет переданный запрос и возвращает коллекцию результатов.
@@ -45,7 +34,7 @@ public abstract class AbstractDAO<E extends Entity> {
      * @return объекты-результаты запроса
      */
     public List<E> executeQuery(String query, List<String> parameters) {
-        Connection connection = connectionPool.getConnection();
+        Connection connection = ConnectionPool.getInstance().getConnection();
         List<E> entityList = new ArrayList<>();
         try {
             PreparedStatement customStatement = connection.prepareStatement(query);
@@ -132,7 +121,6 @@ public abstract class AbstractDAO<E extends Entity> {
     abstract void setFieldsToEntity(E entity, ResultSet resultSet);
 
     //TODO не самое элегантное решение. Этот метод вообще не имеет ничего общего по смыслу с DAO
-
     /**
      * Создает новый пустой объект, соответствующий реализации
      *
