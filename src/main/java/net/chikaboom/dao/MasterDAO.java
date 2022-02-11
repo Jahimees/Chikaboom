@@ -2,8 +2,10 @@ package net.chikaboom.dao;
 
 import net.chikaboom.connection.ConnectionPool;
 import net.chikaboom.model.Master;
-import net.chikaboom.util.QueryBuilder;
+import net.chikaboom.util.sql.QueryBuilder;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,22 +14,27 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.chikaboom.constant.FieldConstant.*;
-import static net.chikaboom.constant.LoggerMessageConstant.*;
-import static net.chikaboom.constant.TableConstant.MASTER;
+import static net.chikaboom.util.constant.FieldConstant.*;
+import static net.chikaboom.util.constant.LoggerMessageConstant.*;
+import static net.chikaboom.util.constant.TableConstant.MASTER;
 
+@Service
 public class MasterDAO extends AbstractDAO<Master> {
-    private final QueryBuilder queryBuilder;
-    private static final Logger logger = Logger.getLogger(MasterDAO.class);
 
-    public MasterDAO() {
+    private static final Logger logger = Logger.getLogger(MasterDAO.class);
+    private final QueryBuilder queryBuilder;
+    private ConnectionPool connectionPool;
+
+    @Autowired
+    public MasterDAO(ConnectionPool connectionPool) {
+        super(connectionPool);
         queryBuilder = new QueryBuilder();
     }
 
     @Override
     public List<Master> findAll() {
         String query = queryBuilder.select().from(MASTER).build();
-        Connection connection = ConnectionPool.getInstance().getConnection();
+        Connection connection = connectionPool.getConnection();
         List<Master> masterList = new ArrayList<>();
         try {
             PreparedStatement findAllStatement = connection.prepareStatement(query);
@@ -54,7 +61,7 @@ public class MasterDAO extends AbstractDAO<Master> {
     @Override
     public Master findEntity(String id) {
         String query = queryBuilder.select().from(MASTER).where(ID_MASTER).build();
-        Connection connection = ConnectionPool.getInstance().getConnection();
+        Connection connection = connectionPool.getConnection();
         Master master = new Master();
         try {
             PreparedStatement findEntityStatement = connection.prepareStatement(query);
@@ -84,7 +91,7 @@ public class MasterDAO extends AbstractDAO<Master> {
     @Override
     public boolean delete(String id) {
         String query = queryBuilder.delete().from(MASTER).where(ID_MASTER).build();
-        Connection connection = ConnectionPool.getInstance().getConnection();
+        Connection connection = connectionPool.getConnection();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -108,7 +115,7 @@ public class MasterDAO extends AbstractDAO<Master> {
     @Override
     public boolean update(Master entity) {
         String query = queryBuilder.update(MASTER, MASTER_FIELDS).where(ID_MASTER).build();
-        Connection connection = ConnectionPool.getInstance().getConnection();
+        Connection connection = connectionPool.getConnection();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -133,7 +140,7 @@ public class MasterDAO extends AbstractDAO<Master> {
     @Override
     public boolean create(Master entity) {
         String query = queryBuilder.insert(MASTER, MASTER_FIELDS).build();
-        Connection connection = ConnectionPool.getInstance().getConnection();
+        Connection connection = connectionPool.getConnection();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);

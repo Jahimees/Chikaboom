@@ -1,6 +1,9 @@
 package net.chikaboom.util;
 
-import net.chikaboom.exception.EmptyListException;
+import net.chikaboom.util.exception.EmptyListException;
+import net.chikaboom.util.sql.QueryBuilder;
+import net.chikaboom.util.sql.SqlComparatorType;
+import net.chikaboom.util.sql.SqlJoinType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -9,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.chikaboom.constant.LoggerMessageConstant.GOT_EMPTY_LIST_ERROR;
+import static net.chikaboom.util.constant.LoggerMessageConstant.GOT_EMPTY_LIST_ERROR;
 
 public class QueryBuilderTest {
 

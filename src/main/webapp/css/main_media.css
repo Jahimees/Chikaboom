@@ -1,0 +1,579 @@
+
+@media screen and (max-width: 1700px) {
+    .service-image {
+        width: 190px;
+        height: 190px;
+    }
+
+    .service-item {
+        font-size: 28px;
+        height: 165px;
+        width: 490px;
+    }
+}
+
+@media screen and (max-width: 1600px) {
+    .service-image {
+        width: 180px;
+        height: 180px;
+    }
+
+    .service-item {
+        font-size: 26px;
+        height: 155px;
+        width: 470px;
+    }
+}
+
+@media screen and (max-width: 1500px) {
+    .service-image {
+        width: 170px;
+        height: 170px;
+    }
+
+    .service-item {
+        font-size: 22px;
+        height: 145px;
+        width: 420px;
+    }
+
+    .block-title {
+        font-size: 42px;
+    }
+
+    .block-text {
+        font-size: 34px;
+    }
+
+    .block-button {
+        font-size: 21px;
+    }
+}
+
+@media screen and (max-width: 1400px) {
+    .service-image {
+        width: 160px;
+        height: 160px;
+    }
+
+    .service-item {
+        font-size: 20px;
+        height: 155px;
+        width: 400px;
+    }
+
+    .block-title {
+        font-size: 40px;
+    }
+
+    .block-text {
+        font-size: 32px;
+    }
+
+    .block-button {
+        font-size: 20px;
+    }
+}
+
+@media screen and (max-width: 1300px) {
+    .menu-top {
+        font-size: 24px;
+    }
+
+    .menu-right {
+        font-size: 28px;
+        width: 275px;
+    }
+
+    .service-block-name div {
+        font-size: 42px;
+    }
+
+    .service-image {
+        width: 150px;
+        height: 150px;
+    }
+
+    .service-item {
+        font-size: 18px;
+        height: 125px;
+        width: 370px;
+    }
+
+    .service-block-button {
+        font-size: 27px;
+    }
+
+    .block-title {
+        font-size: 38px;
+    }
+
+    .block-text {
+        font-size: 30px;
+    }
+
+    .block-button {
+        font-size: 19px;
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    .menu-top {
+        font-size: 22px;
+    }
+
+    .menu-right {
+        font-size: 26px;
+        width: 250px;
+    }
+
+    .service-block-name div {
+        font-size: 38px;
+    }
+
+    .service-image {
+        width: 140px;
+        height: 140px;
+    }
+
+    .service-block-button {
+        font-size: 25px;
+    }
+
+    .block-title {
+        font-size: 36px;
+    }
+
+    .block-text {
+        font-size: 29px;
+    }
+
+    .block-button {
+        font-size: 18px;
+    }
+
+    .service-block-all > div {
+        width: 50%;
+    }
+
+    .yt-video {
+        height: 500px;
+    }
+}
+
+@media screen and (max-width: 1100px) {
+    .menu-top {
+        font-size: 20px;
+    }
+
+    .menu-right {
+        font-size: 24px;
+        width: 230px;
+    }
+
+    .block-title {
+        font-size: 36px;
+    }
+
+    .block-text {
+        font-size: 27px;
+    }
+
+    .block-button {
+        font-size: 18px;
+    }
+
+    .block-title {
+        font-size: 34px;
+    }
+
+    .block-text {
+        font-size: 27px;
+    }
+
+    .block-button {
+        font-size: 17px;
+    }
+
+    .yt-video {
+        height: 400px;
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    .menu-top {
+        font-size: 18px;
+    }
+
+    .menu-right {
+        font-size: 22px;
+        width: 205px;
+    }
+
+    .service-block-name div {
+        font-size: 32px;
+    }
+
+    .service-image {
+        width: 120px;
+        height: 120px;
+    }
+
+    .service-item {
+        border-radius: 5px;
+        font-size: 16px;
+        height: 100px;
+        width: 300px;
+    }
+
+    .service-block-button {
+        font-size: 21px;
+    }
+
+    .block-title {
+        font-size: 32px;
+    }
+
+    .block-text {
+        font-size: 26px;
+    }
+
+    .block-button {
+        font-size: 16px;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .menu-top {
+        font-size: 16px;
+    }
+
+    .menu-right {
+        font-size: 20px;
+        width: 185px;
+    }
+
+    .service-block-name div {
+        font-size: 29px;
+    }
+
+    .service-image {
+        width: 110px;
+        height: 110px;
+    }
+
+    .service-block-button {
+        font-size: 19px;
+    }
+
+    .block-title {
+        font-size: 28px;
+    }
+
+    .block-text {
+        font-size: 22px;
+    }
+
+    .block-button {
+        font-size: 14px;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .menu-top {
+        font-size: 14px;
+    }
+
+    .menu-right {
+        font-size: 18px;
+        width: 160px;
+    }
+
+    .service-block-name div {
+        font-size: 26px;
+    }
+
+    .service-image {
+        width: 110px;
+        height: 110px;
+    }
+
+    .service-block-button {
+        font-size: 17px;
+    }
+
+    .block-title {
+        font-size: 26px;
+    }
+
+    .block-text {
+        font-size: 21px;
+    }
+
+    .block-button {
+        font-size: 13px;
+    }
+
+    .yt-video {
+        height: 350px;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .menu-top {
+        font-size: 12px;
+    }
+
+    .menu-right {
+        font-size: 16px;
+        width: 140px;
+    }
+
+    .service-block-name div {
+        font-size: 23px;
+    }
+
+    .service-image {
+        width: 90px;
+        height: 90px;
+    }
+
+    .service-item {
+        font-size: 14px;
+        height: 80px;
+        width: 270px;
+    }
+
+    .service-block-button {
+        font-size: 15px;
+    }
+
+    .block-title {
+        font-size: 22px;
+    }
+
+    .block-text {
+        font-size: 18px;
+    }
+
+    .block-button {
+        font-size: 11px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .menu-top {
+        font-size: 10px;
+    }
+
+    .menu-right {
+        font-size: 14px;
+        width: 115px;
+    }
+
+    .service-block-name div {
+        font-size: 20px;
+    }
+
+    .service-image {
+        width: 70px;
+        height: 70px;
+    }
+
+    .service-item {
+        font-size: 12px;
+        height: 60px;
+        width: 250px;
+    }
+
+    .service-block-button {
+        font-size: 12px;
+    }
+
+    .block-title {
+        font-size: 18px;
+    }
+
+    .block-text {
+        font-size: 14px;
+    }
+
+    .block-button {
+        font-size: 9px;
+    }
+
+    .yt-video {
+        height: 315px;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .menu-top {
+        font-size: 9px;
+    }
+
+    .menu-right {
+        font-size: 12px;
+        width: 105px;
+    }
+
+    .service-block-name div {
+        font-size: 17px;
+    }
+
+    .service-image {
+        width: 60px;
+        height: 60px;
+    }
+
+    .service-item {
+        font-size: 8px;
+        height: 35px;
+        width: 165px;
+    }
+
+    .service-block-button {
+        font-size: 10px;
+    }
+
+    .block-title {
+        font-size: 16px;
+    }
+
+    .block-text {
+        font-size: 13px;
+    }
+
+    .block-button {
+        font-size: 8px;
+    }
+
+    .yt-video {
+        height: 275px;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .menu-top {
+        font-size: 8px;
+    }
+
+    .menu-right {
+        font-size: 11px;
+        width: 95px;
+    }
+
+    .service-block-name div {
+        font-size: 16px;
+    }
+
+    .service-image {
+        width: 50px;
+        height: 50px;
+    }
+
+    .service-item {
+        font-size: 8px;
+    }
+
+    .block-title {
+        font-size: 14px;
+    }
+
+    .block-text {
+        font-size: 11px;
+    }
+
+    .block-button {
+        font-size: 7px;
+    }
+
+    .yt-video {
+        height: 230px;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .menu-top {
+        font-size: 7px;
+    }
+
+    .menu-right {
+        font-size: 10px;
+        width: 85px;
+    }
+
+    .service-block-name div {
+        font-size: 15px;
+    }
+
+    .service-image {
+        width: 40px;
+        height: 40px;
+    }
+
+    .service-item {
+        font-size: 7px;
+        width: 140px;
+    }
+
+    .service-block-button {
+        font-size: 7px;
+    }
+
+    .block-title {
+        font-size: 12px;
+    }
+
+    .block-text {
+        font-size: 10px;
+    }
+
+    .block-button {
+        font-size: 6px;
+    }
+
+    .yt-video {
+        height: 200px;
+    }
+}
+
+/*@media screen and (max-width: 350px) {*/
+/*    .menu-top {*/
+/*        font-size: 6px;*/
+/*    }*/
+
+/*    .menu-right {*/
+/*        font-size: 9px;*/
+/*        width: 75px;*/
+/*    }*/
+
+/*    .service-block-name div {*/
+/*        font-size: 14px;*/
+/*    }*/
+
+/*    .service-image {*/
+/*        width: 30px;*/
+/*        height: 30px;*/
+/*    }*/
+
+/*    .service-item {*/
+/*        font-size: 7px;*/
+/*    }*/
+
+/*    .service-block-button {*/
+/*        font-size: 6px;*/
+/*    }*/
+
+/*    .block-title {*/
+/*        font-size: 10px;*/
+/*    }*/
+
+/*    .block-text {*/
+/*        font-size: 8px;*/
+/*    }*/
+
+/*    .block-button {*/
+/*        font-size: 5px;*/
+/*    }*/
+/*}*/
