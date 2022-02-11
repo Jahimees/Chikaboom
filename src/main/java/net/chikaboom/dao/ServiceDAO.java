@@ -2,8 +2,9 @@ package net.chikaboom.dao;
 
 import net.chikaboom.connection.ConnectionPool;
 import net.chikaboom.model.Service;
-import net.chikaboom.util.QueryBuilder;
+import net.chikaboom.util.sql.QueryBuilder;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,22 +13,27 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.chikaboom.constant.FieldConstant.*;
-import static net.chikaboom.constant.LoggerMessageConstant.*;
-import static net.chikaboom.constant.TableConstant.SERVICE;
+import static net.chikaboom.util.constant.FieldConstant.*;
+import static net.chikaboom.util.constant.LoggerMessageConstant.*;
+import static net.chikaboom.util.constant.TableConstant.SERVICE;
 
+@org.springframework.stereotype.Service
 public class ServiceDAO extends AbstractDAO<Service> {
-    private final QueryBuilder queryBuilder;
-    private static final Logger logger = Logger.getLogger(ServiceDAO.class);
 
-    public ServiceDAO() {
+    private static final Logger logger = Logger.getLogger(ServiceDAO.class);
+    private final QueryBuilder queryBuilder;
+    private ConnectionPool connectionPool;
+
+    @Autowired
+    public ServiceDAO(ConnectionPool connectionPool) {
+        super(connectionPool);
         queryBuilder = new QueryBuilder();
     }
 
     @Override
     public List<Service> findAll() {
         String query = queryBuilder.select().from(SERVICE).build();
-        Connection connection = ConnectionPool.getInstance().getConnection();
+        Connection connection = connectionPool.getConnection();
         List<Service> serviceList = new ArrayList<>();
         try {
             PreparedStatement findAllStatement = connection.prepareStatement(query);
@@ -54,7 +60,7 @@ public class ServiceDAO extends AbstractDAO<Service> {
     @Override
     public Service findEntity(String id) {
         String query = queryBuilder.select().from(SERVICE).where(ID_SERVICE).build();
-        Connection connection = ConnectionPool.getInstance().getConnection();
+        Connection connection = connectionPool.getConnection();
         Service service = new Service();
         try {
             PreparedStatement findEntityStatement = connection.prepareStatement(query);
@@ -84,7 +90,7 @@ public class ServiceDAO extends AbstractDAO<Service> {
     @Override
     public boolean delete(String id) {
         String query = queryBuilder.delete().from(SERVICE).where(ID_SERVICE).build();
-        Connection connection = ConnectionPool.getInstance().getConnection();
+        Connection connection = connectionPool.getConnection();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -108,7 +114,7 @@ public class ServiceDAO extends AbstractDAO<Service> {
     @Override
     public boolean update(Service entity) {
         String query = queryBuilder.update(SERVICE, SERVICE_FIELDS).where(ID_SERVICE).build();
-        Connection connection = ConnectionPool.getInstance().getConnection();
+        Connection connection = connectionPool.getConnection();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -133,7 +139,7 @@ public class ServiceDAO extends AbstractDAO<Service> {
     @Override
     public boolean create(Service entity) {
         String query = queryBuilder.insert(SERVICE, SERVICE_FIELDS).build();
-        Connection connection = ConnectionPool.getInstance().getConnection();
+        Connection connection = connectionPool.getConnection();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);

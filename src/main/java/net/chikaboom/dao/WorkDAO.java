@@ -2,8 +2,10 @@ package net.chikaboom.dao;
 
 import net.chikaboom.connection.ConnectionPool;
 import net.chikaboom.model.Work;
-import net.chikaboom.util.QueryBuilder;
+import net.chikaboom.util.sql.QueryBuilder;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,21 +14,26 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.chikaboom.constant.FieldConstant.*;
-import static net.chikaboom.constant.LoggerMessageConstant.*;
-import static net.chikaboom.constant.TableConstant.WORK;
+import static net.chikaboom.util.constant.FieldConstant.*;
+import static net.chikaboom.util.constant.LoggerMessageConstant.*;
+import static net.chikaboom.util.constant.TableConstant.WORK;
 
+@Service
 public class WorkDAO extends AbstractDAO<Work> {
-    private final QueryBuilder queryBuilder;
-    private static final Logger logger = Logger.getLogger(WorkDAO.class);
 
-    public WorkDAO() {
+    private static final Logger logger = Logger.getLogger(WorkDAO.class);
+    private final QueryBuilder queryBuilder;
+    private ConnectionPool connectionPool;
+
+    @Autowired
+    public WorkDAO(ConnectionPool connectionPool) {
+        super(connectionPool);
         queryBuilder = new QueryBuilder();
     }
 
     @Override
     public List<Work> findAll() {
-        Connection connection = ConnectionPool.getInstance().getConnection();
+        Connection connection = connectionPool.getConnection();
         String query = queryBuilder.select().from(WORK).build();
         List<Work> workList = new ArrayList<>();
         try {
@@ -54,7 +61,7 @@ public class WorkDAO extends AbstractDAO<Work> {
     @Override
     public Work findEntity(String id) {
         String query = queryBuilder.select().from(WORK).where(ID_WORK).build();
-        Connection connection = ConnectionPool.getInstance().getConnection();
+        Connection connection = connectionPool.getConnection();
         Work work = new Work();
         try {
             PreparedStatement findEntityStatement = connection.prepareStatement(query);
@@ -84,7 +91,7 @@ public class WorkDAO extends AbstractDAO<Work> {
     @Override
     public boolean delete(String id) {
         String query = queryBuilder.delete().from(WORK).where(ID_WORK).build();
-        Connection connection = ConnectionPool.getInstance().getConnection();
+        Connection connection = connectionPool.getConnection();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -108,7 +115,7 @@ public class WorkDAO extends AbstractDAO<Work> {
     @Override
     public boolean update(Work entity) {
         String query = queryBuilder.update(WORK, WORK_FIELDS).where(ID_WORK).build();
-        Connection connection = ConnectionPool.getInstance().getConnection();
+        Connection connection = connectionPool.getConnection();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -133,7 +140,7 @@ public class WorkDAO extends AbstractDAO<Work> {
     @Override
     public boolean create(Work entity) {
         String query = queryBuilder.insert(WORK, WORK_FIELDS).build();
-        Connection connection = ConnectionPool.getInstance().getConnection();
+        Connection connection = connectionPool.getConnection();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);

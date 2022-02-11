@@ -8,10 +8,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-import static net.chikaboom.constant.AttributeConstant.COMMAND;
-import static net.chikaboom.constant.CommandConstant.AUTHORIZATION;
-import static net.chikaboom.constant.CommandConstant.REGISTRATION;
-import static net.chikaboom.constant.PageConstant.*;
+import static net.chikaboom.util.constant.AttributeConstant.COMMAND;
+import static net.chikaboom.util.constant.CommandConstant.AUTHORIZATION;
+import static net.chikaboom.util.constant.CommandConstant.REGISTRATION;
+import static net.chikaboom.util.constant.PageConstant.*;
 
 /**
  * Класс-фильтр. Предназанчен для проверки запрашиваемой страницы на необходимость авторизации со стороны пользователя.
@@ -20,6 +20,7 @@ import static net.chikaboom.constant.PageConstant.*;
  * - если пользователь авторизован - передаем управление ServletController;
  * - если пользователь НЕ авторизован - перенаправляем на страницу авторизации.
  */
+//TODO Перевести на SPRING
 public class LoginRequirementFilter implements Filter {
 
     Logger logger = Logger.getLogger(LoginRequirementFilter.class);

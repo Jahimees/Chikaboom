@@ -2,8 +2,10 @@ package net.chikaboom.dao;
 
 import net.chikaboom.connection.ConnectionPool;
 import net.chikaboom.model.SubserviceType;
-import net.chikaboom.util.QueryBuilder;
+import net.chikaboom.util.sql.QueryBuilder;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,21 +14,26 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.chikaboom.constant.FieldConstant.*;
-import static net.chikaboom.constant.LoggerMessageConstant.*;
-import static net.chikaboom.constant.TableConstant.SUBSERVICE_TYPE;
+import static net.chikaboom.util.constant.FieldConstant.*;
+import static net.chikaboom.util.constant.LoggerMessageConstant.*;
+import static net.chikaboom.util.constant.TableConstant.SUBSERVICE_TYPE;
 
+@Service
 public class SubserviceTypeDAO extends AbstractDAO<SubserviceType> {
-    private final QueryBuilder queryBuilder;
-    private static final Logger logger = Logger.getLogger(SubserviceTypeDAO.class);
 
-    public SubserviceTypeDAO() {
+    private static final Logger logger = Logger.getLogger(SubserviceTypeDAO.class);
+    private final QueryBuilder queryBuilder;
+    private ConnectionPool connectionPool;
+
+    @Autowired
+    public SubserviceTypeDAO(ConnectionPool connectionPool) {
+        super(connectionPool);
         queryBuilder = new QueryBuilder();
     }
 
     @Override
     public List<SubserviceType> findAll() {
-        Connection connection = ConnectionPool.getInstance().getConnection();
+        Connection connection = connectionPool.getConnection();
         String query = queryBuilder.select().from(SUBSERVICE_TYPE).build();
         List<SubserviceType> subserviceTypeList = new ArrayList<>();
         try {
@@ -53,7 +60,7 @@ public class SubserviceTypeDAO extends AbstractDAO<SubserviceType> {
     @Override
     public SubserviceType findEntity(String id) {
         String query = queryBuilder.select().from(SUBSERVICE_TYPE).where(ID_SUBSERVICE_TYPE).build();
-        Connection connection = ConnectionPool.getInstance().getConnection();
+        Connection connection = connectionPool.getConnection();
         SubserviceType subserviceType = new SubserviceType();
         try {
             PreparedStatement findEntityStatement = connection.prepareStatement(query);
@@ -84,7 +91,7 @@ public class SubserviceTypeDAO extends AbstractDAO<SubserviceType> {
     @Override
     public boolean delete(String id) {
         String query = queryBuilder.delete().from(SUBSERVICE_TYPE).where(ID_SUBSERVICE_TYPE).build();
-        Connection connection = ConnectionPool.getInstance().getConnection();
+        Connection connection = connectionPool.getConnection();
 
         try {
             PreparedStatement deleteStatement = connection.prepareStatement(query);
@@ -107,7 +114,7 @@ public class SubserviceTypeDAO extends AbstractDAO<SubserviceType> {
     @Override
     public boolean update(SubserviceType entity) {
         String query = queryBuilder.update(SUBSERVICE_TYPE, SUBSERVICE_TYPE_FIELDS).where(ID_SUBSERVICE_TYPE).build();
-        Connection connection = ConnectionPool.getInstance().getConnection();
+        Connection connection = connectionPool.getConnection();
 
         try {
             PreparedStatement updateStatement = connection.prepareStatement(query);
@@ -131,7 +138,7 @@ public class SubserviceTypeDAO extends AbstractDAO<SubserviceType> {
     @Override
     boolean create(SubserviceType entity) {
         String query = queryBuilder.insert(SUBSERVICE_TYPE, SUBSERVICE_TYPE_FIELDS).build();
-        Connection connection = ConnectionPool.getInstance().getConnection();
+        Connection connection = connectionPool.getConnection();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
