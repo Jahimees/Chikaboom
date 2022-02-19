@@ -1,19 +1,23 @@
 package net.chikaboom.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.UUID;
 
 /**
  * Определяет модель таблицы Comment в базе данных
  */
-@Getter
-@Setter
-public class Comment implements Entity {
+@Data
+@Entity
+@Table(name = "comment")
+public class Comment implements BaseEntity {
     /**
      * Id комментария
      */
+    @Id
     private String idComment;
 
     /**

@@ -3,6 +3,7 @@ package net.chikaboom.util.sql;
 /**
  * Перечесление сравнений-sql.
  */
+@Deprecated
 public enum SqlComparatorType {
     EQUAL {{ setValue("=?");}},
     NOT_EQUAL {{ setValue("!=?");}},

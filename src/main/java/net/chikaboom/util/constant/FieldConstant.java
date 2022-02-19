@@ -56,7 +56,7 @@ public class FieldConstant {
     public static final List<String> CLIENT_FIELDS = Arrays.asList(ID_CLIENT, ID_ACCOUNT);
     public static final List<String> COMMENT_FIELDS = Arrays.asList(ID_COMMENT, ID_MASTER, ID_CLIENT, MESSAGE,
             IS_CLIENT_MESSAGE, RATE);
-    public static final List<String> MASTER_FIELDS = Arrays.asList(ID_MASTER, ID_ACCOUNT, ADDRESS, DESCRIPTION);
+    public static final List<String> MASTER_FIELDS = Arrays.asList(ID_MASTER, ID_ACCOUNT, ADDRESS, ABOUT);
     public static final List<String> SERVICE_FIELDS = Arrays.asList(ID_SERVICE, ID_MASTER, ID_SERVICE_TYPE,
             NAME, DESCRIPTION, COST);
     public static final List<String> SERVICE_TYPE_FIELDS = Arrays.asList(ID_SERVICE_TYPE, TYPE_NAME);

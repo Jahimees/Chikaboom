@@ -1,6 +1,5 @@
 package net.chikaboom.config;
 
-import net.chikaboom.connection.ConnectionPool;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +9,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import javax.sql.DataSource;
 
 /**
- * Конфигурация для MySQL DataSource и пула соединений
+ * Конфигурация для MySQL DataSource
  */
 @Configuration
 @PropertySource("/application.properties")
@@ -26,7 +25,7 @@ public class DataBaseConfiguration {
     private String password;
 
     @Bean
-    public DataSource mysqlDataSource() {
+    public DataSource getDataSource() {
         DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource();
         driverManagerDataSource.setDriverClassName(driverClassName);
         driverManagerDataSource.setUrl(url);
@@ -34,10 +33,5 @@ public class DataBaseConfiguration {
         driverManagerDataSource.setPassword(password);
 
         return driverManagerDataSource;
-    }
-
-    @Bean
-    public ConnectionPool connectionPool() {
-        return new ConnectionPool(mysqlDataSource());
     }
 }

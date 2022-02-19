@@ -3,6 +3,7 @@ package net.chikaboom.util.sql;
 /**
  * Перечесление типов присоединений sql.
  */
+@Deprecated
 public enum SqlJoinType {
     LEFT_JOIN {{ setValue(" LEFT ");}},
     RIGHT_JOIN {{ setValue(" RIGHT ");}},
