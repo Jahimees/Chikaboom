@@ -1,19 +1,23 @@
 package net.chikaboom.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.UUID;
 
 /**
  * Определяет модель таблицы Work в базе данных
  */
-@Getter
-@Setter
-public class Work implements Entity {
+@Data
+@Entity
+@Table(name = "work")
+public class Work implements BaseEntity {
     /**
      * Id примера работы
      */
+    @Id
     private String idWork;
 
     /**

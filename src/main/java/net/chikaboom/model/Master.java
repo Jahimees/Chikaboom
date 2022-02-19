@@ -1,19 +1,23 @@
 package net.chikaboom.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.UUID;
 
 /**
  * Определяет модель таблицы Master в базе данных
  */
-@Getter
-@Setter
-public class Master implements Entity {
+@Data
+@Entity
+@Table(name = "master")
+public class Master implements BaseEntity {
     /**
      * Id мастера
      */
+    @Id
     private String idMaster;
 
     /**
@@ -29,7 +33,7 @@ public class Master implements Entity {
     /**
      * Краткое описание мастера о себе
      */
-    private String description;
+    private String about;
 
     public Master() {
         idMaster = UUID.randomUUID().toString();

@@ -1,19 +1,23 @@
 package net.chikaboom.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.UUID;
 
 /**
  * Определяет модель таблицы ServiceType в базе данных
  */
-@Getter
-@Setter
-public class ServiceType implements Entity {
+@Data
+@Entity
+@Table(name = "servicetype")
+public class ServiceType implements BaseEntity {
     /**
      * Id типа услуги
      */
+    @Id
     private String idServiceType;
 
     /**

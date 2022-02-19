@@ -1,17 +1,14 @@
 package net.chikaboom.service.action;
 
-import net.chikaboom.dao.AccountDAO;
 import net.chikaboom.model.Account;
+import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.service.ClientDataStorageService;
-import net.chikaboom.util.sql.QueryBuilder;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.List;
 
 import static net.chikaboom.util.constant.AttributeConstant.ID;
 import static net.chikaboom.util.constant.FieldConstant.EMAIL;
@@ -26,12 +23,12 @@ public class AuthorizationService implements ActionService {
 
     Logger logger = Logger.getLogger(AuthorizationService.class);
     ClientDataStorageService clientDataStorageService;
-    AccountDAO accountDAO;
+    AccountRepository accountRepository;
 
     @Autowired
-    public AuthorizationService(ClientDataStorageService clientDataStorageService, AccountDAO accountDAO) {
+    public AuthorizationService(ClientDataStorageService clientDataStorageService, AccountRepository accountRepository) {
         this.clientDataStorageService = clientDataStorageService;
-        this.accountDAO = accountDAO;
+        this.accountRepository = accountRepository;
     }
 
     /**
@@ -45,28 +42,19 @@ public class AuthorizationService implements ActionService {
 
         logger.info("Login procedure started");
 
-        QueryBuilder builder = new QueryBuilder();
-
         String email = clientDataStorageService.getData("email").toString();
         String password = clientDataStorageService.getData("password").toString();
 
-        List<String> parameters = new ArrayList<>();
+        Account account = accountRepository.findByEmail(email);
 
-        parameters.add(email);
-
-        String query = builder.select().from("account").where("email").build();
-        List<Account> accountList = accountDAO.executeQuery(query, parameters);
-
-        Account account = accountList.get(0);
-
-        if (account.getPassword().equals(password)) {
+        if (account != null && account.getPassword().equals(password)) {
             logger.info("User logged in");
             initSession((HttpServletRequest) clientDataStorageService.getData("servletRequest"), account);
             return ACCOUNT_PAGE;
-        } else {
-            logger.info("User has NOT logged in. Password or email is incorrect.");
-            return MAIN_PAGE;
         }
+
+        logger.info("User has NOT logged in. Password or email is incorrect.");
+        return MAIN_PAGE;
     }
 
     private void initSession(HttpServletRequest request, Account account) {

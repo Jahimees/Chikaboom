@@ -2,6 +2,10 @@ package net.chikaboom.model;
 
 import lombok.Data;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -10,10 +14,14 @@ import java.util.UUID;
  * Определяет модель таблицы Account в базе данных
  */
 @Data
-public class Account implements Entity {
+@Entity
+@Table(name = "account")
+public class Account implements BaseEntity {
     /**
      * id аккаунта
      */
+    @Id
+    @Column(name="idaccount")
     private String idAccount;
 
     /**
@@ -44,6 +52,7 @@ public class Account implements Entity {
     /**
      * Дата регистрации аккаунта
      */
+    @Column(name = "registrationdate")
     private Timestamp registrationDate;
 
     public Account() {

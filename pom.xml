@@ -13,7 +13,7 @@
 
     <groupId>t-and-j-team</groupId>
     <artifactId>Extra_Mileiux</artifactId>
-    <version>0.1.2-ALPHA-S</version>
+    <version>0.1.3-ALPHA-S</version>
     <packaging>war</packaging>
 
     <build>

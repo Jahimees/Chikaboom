@@ -5,6 +5,7 @@ package net.chikaboom.util.sql;
 /**
  * Перечисление типов операндов sql.
  */
+@Deprecated
 public enum SqlOperandType {
     AND {{ setValue(" AND ");}},
     OR {{ setValue(" OR ");}};

@@ -3,7 +3,7 @@ package net.chikaboom.util.sql;
 import net.chikaboom.util.exception.EmptyListException;
 import org.apache.log4j.Logger;
 
-import java.util.*;
+import java.util.List;
 
 import static net.chikaboom.util.constant.LoggerMessageConstant.*;
 
@@ -13,7 +13,7 @@ import static net.chikaboom.util.constant.LoggerMessageConstant.*;
  * С помощью данного класса запросы можно собирать как конструктор.
  * Ответственность за неправильную последовательность вызвов методов несет программист.
  */
-//TODO проверки на пустые коллекции. Необходима серъезная доработка по безопасности и исключительным ситуациям
+@Deprecated
 public class QueryBuilder {
     private StringBuilder queryString;
     private static final Logger logger = Logger.getLogger(QueryBuilder.class);

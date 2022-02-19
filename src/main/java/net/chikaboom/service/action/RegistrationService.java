@@ -1,7 +1,7 @@
 package net.chikaboom.service.action;
 
-import net.chikaboom.dao.AccountDAO;
 import net.chikaboom.model.Account;
+import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.service.ClientDataStorageService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,15 +15,16 @@ public class RegistrationService implements ActionService {
 
     Logger logger = Logger.getLogger(RegistrationService.class);
     ClientDataStorageService clientDataStorageService;
-    AccountDAO accountDAO;
+    AccountRepository accountRepository;
     AuthorizationService authorizationService;
 
     @Autowired
-    public RegistrationService(ClientDataStorageService clientDataStorageService, AccountDAO accountDAO,
-                               AuthorizationService authorizationService) {
+    public RegistrationService(ClientDataStorageService clientDataStorageService,
+                               AuthorizationService authorizationService,
+                               AccountRepository accountRepository) {
         this.clientDataStorageService = clientDataStorageService;
-        this.accountDAO = accountDAO;
         this.authorizationService = authorizationService;
+        this.accountRepository = accountRepository;
     }
     /**
      * Реализация команды регистрации нового аккаунта
@@ -39,7 +40,7 @@ public class RegistrationService implements ActionService {
         account.setEmail(clientDataStorageService.getData("email").toString());
         account.setPassword(clientDataStorageService.getData("password").toString());
 
-        accountDAO.create(account);
+        accountRepository.save(account);
 
         logger.info("New account created");
 

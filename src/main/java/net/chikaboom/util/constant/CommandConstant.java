@@ -1,5 +1,6 @@
 package net.chikaboom.util.constant;
 
+@Deprecated
 public class CommandConstant {
     public static final String LOGIN = "login";
     public static final String LOGOUT = "logout";
