@@ -1,0 +1,50 @@
+plugins {
+    id 'java'
+    id 'war'
+    id 'maven-publish'
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        url = uri('https://repo.maven.apache.org/maven2/')
+    }
+}
+
+dependencies {
+    implementation 'mysql:mysql-connector-java:8.0.28'
+    implementation 'log4j:log4j:1.2.12'
+    implementation 'javax.servlet:jstl:1.2'
+    implementation 'org.springframework.session:spring-session-jdbc:2.6.1'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.6.3'
+    implementation 'org.springframework:spring-jdbc:5.3.15'
+    implementation 'org.springframework.boot:spring-boot-starter-web:2.6.3'
+
+    runtimeOnly 'org.springframework.boot:spring-boot-devtools:2.6.3'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.6.3'
+
+    providedCompile 'org.projectlombok:lombok:1.18.12'
+    providedCompile 'org.apache.tomcat.embed:tomcat-embed-jasper:9.0.56'
+    providedCompile 'org.springframework.boot:spring-boot-starter-tomcat:2.6.3'
+
+    annotationProcessor 'org.projectlombok:lombok:1.18.8'
+}
+
+group = 't-and-j-team'
+version = '0.1.4-ALPHA-S'
+description = 'Extra_Mileiux'
+java.sourceCompatibility = JavaVersion.VERSION_1_8
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from(components.java)
+        }
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
