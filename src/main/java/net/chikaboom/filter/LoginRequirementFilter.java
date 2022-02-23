@@ -1,6 +1,8 @@
 package net.chikaboom.filter;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -8,10 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-import static net.chikaboom.util.constant.AttributeConstant.COMMAND;
 import static net.chikaboom.util.constant.CommandConstant.AUTHORIZATION;
 import static net.chikaboom.util.constant.CommandConstant.REGISTRATION;
-import static net.chikaboom.util.constant.PageConstant.*;
 
 /**
  * Класс-фильтр. Предназанчен для проверки запрашиваемой страницы на необходимость авторизации со стороны пользователя.
@@ -21,8 +21,16 @@ import static net.chikaboom.util.constant.PageConstant.*;
  * - если пользователь НЕ авторизован - перенаправляем на страницу авторизации.
  */
 //TODO Перевести на SPRING
+@Deprecated
+@PropertySource("/constants.properties")
 public class LoginRequirementFilter implements Filter {
 
+    @Value("${attr.command}")
+    private String COMMAND;
+    @Value("${page.main}")
+    private String MAIN_PAGE;
+    @Value("${page.auth_popup}")
+    private String AUTHORIZATION_POPUP;
     Logger logger = Logger.getLogger(LoginRequirementFilter.class);
 
     /**
@@ -89,7 +97,7 @@ public class LoginRequirementFilter implements Filter {
      */
     private boolean isCommonPath(String path) {
         switch (path) {
-            case MAIN_PAGE:
+            case "/view/main.jsp":
                 return true;
             default:
                 return false;
