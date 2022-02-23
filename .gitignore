@@ -1,2 +1,5 @@
 /.idea/
 Chikaboom.iml
+/.gradle/
+/target/
+/build/
