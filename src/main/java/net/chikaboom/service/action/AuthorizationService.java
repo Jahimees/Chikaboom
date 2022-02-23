@@ -5,22 +5,28 @@ import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.service.ClientDataStorageService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import static net.chikaboom.util.constant.AttributeConstant.ID;
-import static net.chikaboom.util.constant.FieldConstant.EMAIL;
-import static net.chikaboom.util.constant.PageConstant.ACCOUNT_PAGE;
-import static net.chikaboom.util.constant.PageConstant.MAIN_PAGE;
-
 /**
  * Класс реализует команду авторизации пользователя на сайте
  */
+@PropertySource("/constants.properties")
 @Service
 public class AuthorizationService implements ActionService {
 
+    @Value("${attr.id}")
+    private String ID;
+    @Value("${attr.email}")
+    private String EMAIL;
+    @Value("${page.main}")
+    private String MAIN_PAGE;
+    @Value("${page.account}")
+    private String ACCOUNT_PAGE;
     Logger logger = Logger.getLogger(AuthorizationService.class);
     ClientDataStorageService clientDataStorageService;
     AccountRepository accountRepository;
