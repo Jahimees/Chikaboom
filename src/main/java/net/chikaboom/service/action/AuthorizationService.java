@@ -51,7 +51,7 @@ public class AuthorizationService implements ActionService {
         String email = clientDataStorageService.getData("email").toString();
         String password = clientDataStorageService.getData("password").toString();
 
-        Account account = accountRepository.findByEmail(email);
+        Account account = accountRepository.findOneByEmail(email);
 
         if (account != null && account.getPassword().equals(password)) {
             logger.info("User logged in");
