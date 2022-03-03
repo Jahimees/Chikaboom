@@ -1,6 +1,6 @@
 package net.chikaboom.repository;
 
-import net.chikaboom.model.Account;
+import net.chikaboom.model.database.Account;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'war'
     id 'maven-publish'
+    id "org.flywaydb.flyway" version "8.2.0"
 }
 
 repositories {
@@ -9,6 +10,13 @@ repositories {
     maven {
         url = uri('https://repo.maven.apache.org/maven2/')
     }
+}
+
+flyway {
+    url = 'jdbc:mysql://localhost:3306/chikaboom?serverTimezone=UTC'
+    schemas = ['chikaboom']
+    user = 'root'
+    password = '1234'
 }
 
 dependencies {
@@ -19,6 +27,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.6.3'
     implementation 'org.springframework:spring-jdbc:5.3.15'
     implementation 'org.springframework.boot:spring-boot-starter-web:2.6.3'
+    implementation 'com.google.guava:guava:11.0.2'
 
     runtimeOnly 'org.springframework.boot:spring-boot-devtools:2.6.3'
 
@@ -33,7 +42,7 @@ dependencies {
 }
 
 group = 't-and-j-team'
-version = '0.1.5-ALPHA-S'
+version = '0.2.0-ALPHA-S'
 description = 'Extra_Mileiux'
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 

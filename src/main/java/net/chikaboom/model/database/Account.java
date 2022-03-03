@@ -1,4 +1,4 @@
-package net.chikaboom.model;
+package net.chikaboom.model.database;
 
 import lombok.Data;
 
@@ -54,6 +54,8 @@ public class Account implements BaseEntity {
      */
     @Column(name = "registrationdate")
     private Timestamp registrationDate;
+
+    private String salt;
 
     public Account() {
         idAccount = UUID.randomUUID().toString();

@@ -1,4 +1,4 @@
-package net.chikaboom.model;
+package net.chikaboom.model.database;
 
 /**
  * Интерфейс для добавления слоя абстракции в модель данных
