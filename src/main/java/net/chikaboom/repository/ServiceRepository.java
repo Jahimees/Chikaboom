@@ -1,6 +1,6 @@
 package net.chikaboom.repository;
 
-import net.chikaboom.model.Service;
+import net.chikaboom.model.database.Service;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
