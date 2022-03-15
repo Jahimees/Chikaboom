@@ -3,7 +3,7 @@
     src: local(pompadur), url(../font/PTF56F.woff); /* Для остальных браузеров */
 }
 
-.header {
+.main-header {
     background: url(../image/space_background.jpg)
 }
 

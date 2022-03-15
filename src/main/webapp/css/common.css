@@ -10,3 +10,34 @@
 .footer {
     text-align: center;
 }
+
+.header {
+    width: 100%;
+    padding: 10px 0;
+    background-color: #51382ACC;
+    display: inline-flex;
+}
+
+.header-text {
+    font-family: Manrope, serif;
+    font-size: 35px;
+    padding: 10px 0 0 10px;
+}
+
+.header-text a {
+    color: white;
+}
+
+.right-header-box {
+    display: inline-flex;
+    margin-left: auto;
+    margin-right: 2%;
+}
+
+.small-icon-header {
+    width: 55px;
+}
+
+a {
+    text-decoration: none;
+}

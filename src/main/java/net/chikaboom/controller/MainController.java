@@ -16,7 +16,6 @@ public class MainController {
 
     @Value("${page.main}")
     private String MAIN_PAGE;
-    private String mainPage = "main";
 
     @GetMapping
     public String processRequest() {

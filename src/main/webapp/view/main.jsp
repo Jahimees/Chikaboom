@@ -24,10 +24,10 @@
 <div class="content">
 
     <c:set var="session" value="${id}"/>
-    <div class="header">
+    <div class="main-header">
         <div class="menu-top">
             <c:if test="${session!=null}">
-                <div><a href="#" class="open-login-popup">▸Личный кабинет◂</a></div>
+                <div><a href="/chikaboom/account">▸Личный кабинет◂</a></div>
             </c:if>
         </div>
         <div class="menu-right">
