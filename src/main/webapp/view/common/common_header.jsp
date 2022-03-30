@@ -1,0 +1,11 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+
+<div class="header">
+    <div class="header-text"><a href="/chikaboom">Лого</a></div>
+    <div class="right-header-box">
+        <div class="small-icon"><img src="../../image/icon/info_icon.svg"></div>
+        <div class="small-icon"><img src="../../image/icon/bell_icon.svg"></div>
+        <div class="header-text"><a href="/chikaboom">Выйти</a></div>
+    </div>
+</div>

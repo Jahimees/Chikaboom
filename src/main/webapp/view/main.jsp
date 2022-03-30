@@ -24,10 +24,10 @@
 <div class="content">
 
     <c:set var="session" value="${id}"/>
-    <div class="header">
+    <div class="main-header">
         <div class="menu-top">
             <c:if test="${session!=null}">
-                <div><a href="#" class="open-login-popup">▸Личный кабинет◂</a></div>
+                <div><a href="/chikaboom/account">▸Личный кабинет◂</a></div>
             </c:if>
         </div>
         <div class="menu-right">
@@ -35,11 +35,11 @@
                 <c:when test="${session==null}">
                     <div class="open-login-popup"><a href="#">Вход</a></div>
                     <div class="open-register-popup"><a href="#">Регистрация</a></div>
-                    <div><a href="https://i.ytimg.com/vi/lAqf71knZF8/maxresdefault.jpg">Быстрая запись</a></div>
+                    <div><a href="/chikaboom/under_construction">Быстрая запись</a></div>
                 </c:when>
                 <c:otherwise>
-                    <div><a href="https://i.ytimg.com/vi/lAqf71knZF8/maxresdefault.jpg">Мои записи</a></div>
-                    <div><a href="https://i.ytimg.com/vi/lAqf71knZF8/maxresdefault.jpg">Избранное</a></div>
+                    <div><a href="/chikaboom/under_construction">Мои записи</a></div>
+                    <div><a href="/chikaboom/under_construction">Избранное</a></div>
                 </c:otherwise>
             </c:choose>
         </div>
@@ -56,7 +56,7 @@
                          items="Визаж/Брови,Парикмахерские услуги,Ресницы,Татуаж/Тату,Ногтевой сервис,Косметология/Уход за телом"
                          delims=",">
                 <div class="col-xl-4 service-outer-image">
-                    <a style="display: inline-flex" href="https://i.ytimg.com/vi/lAqf71knZF8/maxresdefault.jpg">
+                    <a style="display: inline-flex" href="/chikaboom/under_construction">
                         <img class="service-image" src="../image/service/service_icon_${counter}.png">
                         <div class="service-item">
                             <p><c:out value="${i}"/></p>
@@ -71,7 +71,7 @@
         <jsp:include page="common/register_popup.jsp"/>
 
         <div style="display: flex">
-            <a class="service-block-button" href="https://i.ytimg.com/vi/lAqf71knZF8/maxresdefault.jpg">ВСЕ УСЛУГИ</a>
+            <a class="service-block-button" href="/chikaboom/under_construction">ВСЕ УСЛУГИ</a>
         </div>
 
     </div>
@@ -80,7 +80,7 @@
         <div class="block-big-part">
             <div class="block-title">Найдите мастера близко к дому</div>
             <div class="block-text">Все мастера Минска на одной карте!</div>
-            <div class="service-block-button">СМОТРЕТЬ</div>
+            <div class="service-block-button"><a href="/chikaboom/under_construction">СМОТРЕТЬ</a></div>
         </div>
     </div>
 
@@ -88,7 +88,7 @@
         <div class="block-big-part">
             <div class="block-title">Обучение у лучших мастеров Минска</div>
             <div class="block-text">Не пропустите ни один курс или мастер-класс!</div>
-            <div class="service-block-button">УЗНАТЬ БОЛЬШЕ</div>
+            <div class="service-block-button"><a href="/chikaboom/under_construction">УЗНАТЬ БОЛЬШЕ</a></div>
         </div>
         <div class="img-block"><img src="../image/course.png"></div>
     </div>
