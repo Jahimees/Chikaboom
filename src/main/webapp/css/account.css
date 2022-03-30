@@ -1,0 +1,54 @@
+.flex-box {
+    display: inline-flex;
+    background-color: #eaeaea;
+    width: 100%;
+}
+
+.content-box {
+    font-size: 25px;
+    display: block;
+}
+
+.content {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 10px;
+}
+
+.gallery_image {
+    object-fit: cover;
+    width: 175px;
+    margin: 0 auto;
+}
+
+p > span {
+    font-size: 0.8em;
+}
+
+p > span:first-child {
+    max-width: 90%;
+    float: left;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+}
+
+p > span:last-child {
+    float: right;
+}
+
+.table > p:after {
+    font-size: 0.8em;
+    font-family: Manrope, serif;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/*TODO FIXME*/
+p {
+    margin: 0 !important;
+    padding-right: 10px;
+}

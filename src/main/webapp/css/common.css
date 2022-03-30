@@ -20,8 +20,8 @@
 
 .header-text {
     font-family: Manrope, serif;
-    font-size: 35px;
-    padding: 10px 0 0 10px;
+    font-size: 25px;
+    margin: auto 0;
 }
 
 .header-text a {
@@ -34,10 +34,45 @@
     margin-right: 2%;
 }
 
-.small-icon-header {
-    width: 55px;
+.small-icon {
+    width: 35px;
 }
 
 a {
     text-decoration: none;
+}
+
+.w-20 {
+    width: 20%;
+}
+
+.w-80 {
+    width: 80%;
+}
+
+.common-text {
+    margin-bottom: 0;
+    color: #51382A;
+}
+
+.small-text {
+    font-size: 0.8em;
+}
+
+.small-light-text {
+    font-size: 0.9em;
+    color: #DCA269;
+}
+
+.button:hover {
+    background-color: #DCA2694A;
+    cursor: pointer;
+}
+
+.big-button {
+    background-color: #DCA2697B;
+    text-align: center;
+    padding: 5px;
+    margin-top: 10px;
+    border-radius: 10px;
 }

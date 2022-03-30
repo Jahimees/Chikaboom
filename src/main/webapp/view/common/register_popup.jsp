@@ -14,21 +14,21 @@
             <label class="invalid-field-label" id="r-input-email-empty">Поле не может быть пустым</label>
             <label class="invalid-field-label" id="r-input-email-short">Email должен быть длиннее 5 символов</label>
             <div class="image-input">
-                <img class="small-icon" src="../../image/login_icon.png">
+                <img class="small-popup-icon" src="../../image/icon/login_icon.png">
                 <input id="r-input-email" name="email" required placeholder="Введите email">
             </div>
 
             <label class="invalid-field-label" id="r-input-password-empty">Поле не может быть пустым</label>
             <label class="invalid-field-label" id="r-input-password-short">Пароль должен быть длиннее 5 символов</label>
             <div class="image-input">
-                <img class="small-icon" src="../../image/password_icon.png">
+                <img class="small-popup-icon" src="../../image/icon/password_icon.png">
                 <input id="r-input-password" name="password" type="password" required placeholder="Введите пароль">
             </div>
 
             <label class="invalid-field-label" id="r-input-confirm-password-empty">Поле не может быть пустым</label>
             <label class="invalid-field-label" id="r-input-confirm-password-different">Пароли не совпадают</label>
             <div class="image-input">
-                <img class="small-icon" src="../../image/password_icon.png">
+                <img class="small-popup-icon" src="../../image/icon/password_icon.png">
                 <input id="r-input-confirm-password" type="password" required placeholder="Подтвердите пароль">
             </div>
 
