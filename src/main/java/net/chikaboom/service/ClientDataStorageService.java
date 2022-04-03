@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 /**
  * Сервис, который хранит информацию (параметры) с клиента.
- *
+ * <p>
  * Реализован для общего доступа всех сервисов для хранения информации.
  */
 //TODO Доработка уникальности параметров, очищения хранилища и т.д.
@@ -16,7 +16,7 @@ public class ClientDataStorageService {
     /**
      * Коллекция, содержащая информацию (параметры) с клиента
      */
-    private HashMap<String, Object> dataStorage;
+    private final HashMap<String, Object> dataStorage;
 
     public ClientDataStorageService() {
         dataStorage = new HashMap<>();
@@ -35,11 +35,20 @@ public class ClientDataStorageService {
     /**
      * Добавление нового/обновление старого параметра в хранилище
      *
-     * @param name имя параметра
+     * @param name  имя параметра
      * @param value значение параметра
      */
     public void setData(String name, Object value) {
         dataStorage.put(name, value);
+    }
+
+    /**
+     * Удаление параметра из хранилища
+     *
+     * @param name имя параметра
+     */
+    public void dropData(String name) {
+        dataStorage.remove(name);
     }
 
 }

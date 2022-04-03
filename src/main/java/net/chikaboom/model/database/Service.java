@@ -7,12 +7,14 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.UUID;
 
+import static net.chikaboom.util.constant.DbNamesConstant.SERVICE;
+
 /**
  * Определяет модель таблицы Service в базе данных
  */
 @Data
 @Entity
-@Table(name = "service")
+@Table(name = SERVICE)
 public class Service implements BaseEntity {
     /**
      * Id услуги

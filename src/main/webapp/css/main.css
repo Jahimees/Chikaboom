@@ -138,7 +138,6 @@ body {
 }
 
 .block-map {
-    width: 100%;
     display: flex;
     margin: 6% 3% 2% 3%;
     letter-spacing: calc(1em / 10);

@@ -7,12 +7,14 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.UUID;
 
+import static net.chikaboom.util.constant.DbNamesConstant.MASTER;
+
 /**
  * Определяет модель таблицы Master в базе данных
  */
 @Data
 @Entity
-@Table(name = "master")
+@Table(name = MASTER)
 public class Master implements BaseEntity {
     /**
      * Id мастера

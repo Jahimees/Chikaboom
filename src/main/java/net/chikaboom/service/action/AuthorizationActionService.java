@@ -13,12 +13,15 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import static net.chikaboom.util.constant.RequestParametersConstant.PASSWORD;
+import static net.chikaboom.util.constant.RequestParametersConstant.SERVLET_REQUEST;
+
 /**
  * Класс реализует команду авторизации пользователя на сайте
  */
 @PropertySource("/constants.properties")
 @Service
-public class AuthorizationService implements ActionService {
+public class AuthorizationActionService implements ActionService {
 
     @Value("${attr.id}")
     private String ID;
@@ -28,14 +31,15 @@ public class AuthorizationService implements ActionService {
     private String MAIN_PAGE;
     @Value("${page.account}")
     private String ACCOUNT_PAGE;
-    Logger logger = Logger.getLogger(AuthorizationService.class);
-    ClientDataStorageService clientDataStorageService;
-    HashPasswordService hashPasswordService;
-    AccountRepository accountRepository;
+
+    private final Logger logger = Logger.getLogger(AuthorizationActionService.class);
+    private final ClientDataStorageService clientDataStorageService;
+    private final HashPasswordService hashPasswordService;
+    private final AccountRepository accountRepository;
 
     @Autowired
-    public AuthorizationService(ClientDataStorageService clientDataStorageService, AccountRepository accountRepository,
-                                HashPasswordService hashPasswordService) {
+    public AuthorizationActionService(ClientDataStorageService clientDataStorageService, AccountRepository accountRepository,
+                                      HashPasswordService hashPasswordService) {
         this.clientDataStorageService = clientDataStorageService;
         this.accountRepository = accountRepository;
         this.hashPasswordService = hashPasswordService;
@@ -49,20 +53,20 @@ public class AuthorizationService implements ActionService {
      */
     @Override
     public String execute() {
-
+//        TODO Возврат ошибки, при неправильном пароле или логине
         logger.info("Login procedure started");
 
-        String email = clientDataStorageService.getData("email").toString();
+        String email = clientDataStorageService.getData(EMAIL).toString();
 
         Account account = accountRepository.findOneByEmail(email);
 
         if (account != null) {
-            String actualPassword = hashPasswordService.hashPassword(
-                    clientDataStorageService.getData("password").toString() + account.getSalt());
+            String actualPassword = hashPasswordService.convertPasswordForComparing(
+                    clientDataStorageService.getData(PASSWORD).toString(), account.getSalt());
 
             if (account.getPassword().equals(actualPassword)) {
                 logger.info("User logged in");
-                initSession((HttpServletRequest) clientDataStorageService.getData("servletRequest"), account);
+                initSession((HttpServletRequest) clientDataStorageService.getData(SERVLET_REQUEST), account);
 
                 return ACCOUNT_PAGE;
             }

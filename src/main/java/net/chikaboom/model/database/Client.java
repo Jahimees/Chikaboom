@@ -7,12 +7,14 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.UUID;
 
+import static net.chikaboom.util.constant.DbNamesConstant.CLIENT;
+
 /**
  * Определяет модель таблицы Client в базе данных
  */
 @Data
 @Entity
-@Table(name = "client")
+@Table(name = CLIENT)
 public class Client implements BaseEntity {
     /**
      * Id клиента
