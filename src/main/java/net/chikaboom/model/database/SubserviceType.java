@@ -7,9 +7,11 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.UUID;
 
+import static net.chikaboom.util.constant.DbNamesConstant.SUBSERVICE_TYPE;
+
 @Data
 @Entity
-@Table(name = "subservicetype")
+@Table(name = SUBSERVICE_TYPE)
 public class SubserviceType implements BaseEntity {
     /**
      * id подтипа услуги

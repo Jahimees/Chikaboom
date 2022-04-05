@@ -1,7 +1,7 @@
 package net.chikaboom.controller;
 
-import net.chikaboom.service.action.AuthorizationService;
 import net.chikaboom.service.ClientDataStorageService;
+import net.chikaboom.service.action.AuthorizationActionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,22 +10,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 
+import static net.chikaboom.util.constant.RequestParametersConstant.*;
+
 /**
  * Класс-контроллер, отвечающий за авторизацию пользователя.
  *
- * Контроллер сохраняет данные запроса в {@link ClientDataStorageService} и передает управление в {@link AuthorizationService}
+ * Контроллер сохраняет данные запроса в {@link ClientDataStorageService} и передает управление в {@link AuthorizationActionService}
  */
 @Controller
 @RequestMapping("/chikaboom/authorization")
 public class AuthorizationController {
 
-    ClientDataStorageService clientDataStorageService;
-    AuthorizationService authorizationService;
+    private final ClientDataStorageService clientDataStorageService;
+    private final AuthorizationActionService authorizationActionService;
 
     @Autowired
-    public AuthorizationController(ClientDataStorageService clientDataStorageService, AuthorizationService authorizationService) {
+    public AuthorizationController(ClientDataStorageService clientDataStorageService, AuthorizationActionService authorizationActionService) {
         this.clientDataStorageService = clientDataStorageService;
-        this.authorizationService = authorizationService;
+        this.authorizationActionService = authorizationActionService;
     }
 
     /**
@@ -38,10 +40,10 @@ public class AuthorizationController {
      */
     @GetMapping
     public String authorize(@RequestParam String email, @RequestParam String password, HttpServletRequest request) {
-        clientDataStorageService.setData("email", email);
-        clientDataStorageService.setData("password", password);
-        clientDataStorageService.setData("servletRequest", request);
+        clientDataStorageService.setData(EMAIL, email);
+        clientDataStorageService.setData(PASSWORD, password);
+        clientDataStorageService.setData(SERVLET_REQUEST, request);
 
-        return authorizationService.execute();
+        return authorizationActionService.execute();
     }
 }

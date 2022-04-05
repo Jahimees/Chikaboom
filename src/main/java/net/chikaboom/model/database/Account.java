@@ -10,18 +10,20 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static net.chikaboom.util.constant.DbNamesConstant.*;
+
 /**
  * Определяет модель таблицы Account в базе данных
  */
 @Data
 @Entity
-@Table(name = "account")
+@Table(name = ACCOUNT)
 public class Account implements BaseEntity {
     /**
      * id аккаунта
      */
     @Id
-    @Column(name="idaccount")
+    @Column(name = ID_ACCOUNT)
     private String idAccount;
 
     /**
@@ -52,13 +54,12 @@ public class Account implements BaseEntity {
     /**
      * Дата регистрации аккаунта
      */
-    @Column(name = "registrationdate")
+    @Column(name = REGISTRATION_DATE)
     private Timestamp registrationDate;
 
     private String salt;
 
     public Account() {
         idAccount = UUID.randomUUID().toString();
-        registrationDate = Timestamp.valueOf(LocalDateTime.now()); //TODO Убрать и перенести в регистрацию
     }
 }

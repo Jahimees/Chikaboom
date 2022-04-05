@@ -7,12 +7,14 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.UUID;
 
+import static net.chikaboom.util.constant.DbNamesConstant.WORK;
+
 /**
  * Определяет модель таблицы Work в базе данных
  */
 @Data
 @Entity
-@Table(name = "work")
+@Table(name = WORK)
 public class Work implements BaseEntity {
     /**
      * Id примера работы

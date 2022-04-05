@@ -80,14 +80,6 @@ public class LoginRequirementFilter implements Filter {
     }
 
     /**
-     * Выводит фильтр из эксплуатации
-     */
-    @Override
-    public void destroy() {
-
-    }
-
-    /**
      * Метод для проверки передаваемого клиентом пути. Если путь в списке разрешенных без авторизации - возвращает TRUE
      *
      * @param path путь передаваемый клиентом

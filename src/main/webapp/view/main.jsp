@@ -4,21 +4,21 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <!DOCTYPE HTML>
-<html>
+<html lang="ru">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Extra Milieux</title>
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/main_media.css">
     <link rel="stylesheet" href="../css/popup.css">
     <link rel="stylesheet" href="../css/common.css">
-    <link rel="stylesheet" href="../css/bootstrap/bootstrap.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=PT+Serif&display=swap" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/4be5e8b664.js" crossorigin="anonymous"></script>
 </head>
 <body>
 <div class="content">
@@ -57,7 +57,7 @@
                          delims=",">
                 <div class="col-xl-4 service-outer-image">
                     <a style="display: inline-flex" href="/chikaboom/under_construction">
-                        <img class="service-image" src="../image/service/service_icon_${counter}.png">
+                        <img class="service-image" src="../image/service/service_icon_${counter}.png" alt="no_image">
                         <div class="service-item">
                             <p><c:out value="${i}"/></p>
                         </div>
@@ -76,7 +76,7 @@
 
     </div>
     <div class="block-map">
-        <div class="img-block"><img src="../image/map.png"></div>
+        <div class="img-block"><img src="../image/map.png" alt="no_image"></div>
         <div class="block-big-part">
             <div class="block-title">Найдите мастера близко к дому</div>
             <div class="block-text">Все мастера Минска на одной карте!</div>
@@ -90,18 +90,18 @@
             <div class="block-text">Не пропустите ни один курс или мастер-класс!</div>
             <div class="service-block-button"><a href="/chikaboom/under_construction">УЗНАТЬ БОЛЬШЕ</a></div>
         </div>
-        <div class="img-block"><img src="../image/course.png"></div>
+        <div class="img-block"><img src="../image/course.png" alt="no_image"></div>
     </div>
 
     <div class="block-title">Топ-мастера в городе Минск</div>
 
-    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+    <div id="topMastersCarousel" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-indicators">
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
+            <button type="button" data-bs-target="#topMastersCarousel" data-bs-slide-to="0" class="active"
                     aria-current="true" aria-label="Slide 1"></button>
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
+            <button type="button" data-bs-target="#topMastersCarousel" data-bs-slide-to="1"
                     aria-label="Slide 2"></button>
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
+            <button type="button" data-bs-target="#topMastersCarousel" data-bs-slide-to="2"
                     aria-label="Slide 3"></button>
         </div>
         <div class="carousel-inner">
@@ -120,12 +120,12 @@
                 </div>
             </c:forEach>
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+        <button class="carousel-control-prev" type="button" data-bs-target="#topMastersCarousel"
                 data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Предыдущий</span>
         </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+        <button class="carousel-control-next" type="button" data-bs-target="#topMastersCarousel"
                 data-bs-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Следующий</span>
@@ -145,7 +145,7 @@
     </div>
 
     <iframe class="yt-video" src="https://www.youtube.com/embed/HOJ7H6gh8Jo"
-            title="YouTube video player" frameborder="0"
+            title="YouTube video player"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen>
 
@@ -153,9 +153,11 @@
 
     <jsp:include page="common/footer.jsp"/>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
 </body>
 </html>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script type="text/javascript" src="../js/popup.js"></script>
-<script type="text/javascript" src="../js/bootstrap/bootstrap.js"></script>

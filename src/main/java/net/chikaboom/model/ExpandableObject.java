@@ -7,7 +7,6 @@ import java.util.HashMap;
  * <p>
  * Отличительной особенностью такого объекта является его расширяемость и гибкость.
  * <p>
- * Требуется доработка.
  */
 public class ExpandableObject {
 
@@ -38,5 +37,14 @@ public class ExpandableObject {
      */
     public void setField(String name, Object value) {
         fields.put(name, value);
+    }
+
+    /**
+     * Удаляет поле по имени
+     *
+     * @param name имя поля
+     */
+    public void dropField(String name) {
+        fields.remove(name);
     }
 }

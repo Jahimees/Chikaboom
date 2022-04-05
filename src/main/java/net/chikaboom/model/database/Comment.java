@@ -7,12 +7,14 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.UUID;
 
+import static net.chikaboom.util.constant.DbNamesConstant.COMMENT;
+
 /**
  * Определяет модель таблицы Comment в базе данных
  */
 @Data
 @Entity
-@Table(name = "comment")
+@Table(name = COMMENT)
 public class Comment implements BaseEntity {
     /**
      * Id комментария
