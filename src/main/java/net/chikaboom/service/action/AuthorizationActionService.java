@@ -4,10 +4,10 @@ import net.chikaboom.model.database.Account;
 import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.HashPasswordService;
+import net.chikaboom.util.constant.RequestParametersConstant;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +19,6 @@ import static net.chikaboom.util.constant.RequestParametersConstant.SERVLET_REQU
 /**
  * Класс реализует команду авторизации пользователя на сайте
  */
-@PropertySource("/constants.properties")
 @Service
 public class AuthorizationActionService implements ActionService {
 
@@ -56,17 +55,20 @@ public class AuthorizationActionService implements ActionService {
 //        TODO Возврат ошибки, при неправильном пароле или логине
         logger.info("Login procedure started");
 
-        String email = clientDataStorageService.getData(EMAIL).toString();
+        String email = clientDataStorageService.getData(RequestParametersConstant.EMAIL).toString();
+        clientDataStorageService.dropData(RequestParametersConstant.EMAIL);
 
         Account account = accountRepository.findOneByEmail(email);
 
         if (account != null) {
             String actualPassword = hashPasswordService.convertPasswordForComparing(
                     clientDataStorageService.getData(PASSWORD).toString(), account.getSalt());
+            clientDataStorageService.dropData(PASSWORD);
 
             if (account.getPassword().equals(actualPassword)) {
                 logger.info("User logged in");
                 initSession((HttpServletRequest) clientDataStorageService.getData(SERVLET_REQUEST), account);
+                clientDataStorageService.dropData(SERVLET_REQUEST);
 
                 return ACCOUNT_PAGE;
             }
@@ -78,7 +80,6 @@ public class AuthorizationActionService implements ActionService {
     }
 
     private void initSession(HttpServletRequest request, Account account) {
-
         HttpSession session = request.getSession();
 
         session.setAttribute(EMAIL, account.getEmail());

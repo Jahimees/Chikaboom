@@ -9,16 +9,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 /**
  * Класс-контроллер. Перенаправляет на главную страницу
  */
-@PropertySource("/constants.properties")
 @Controller
-@RequestMapping("/chikaboom")
+@PropertySource("/constants.properties")
+@RequestMapping("/chikaboom/main")
 public class MainController {
 
     @Value("${page.main}")
     private String MAIN_PAGE;
 
     @GetMapping
-    public String processRequest() {
+    public String openMainPage() {
         return MAIN_PAGE;
     }
 }
