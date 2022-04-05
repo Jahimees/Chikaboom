@@ -12,4 +12,8 @@ public final class DbNamesConstant {
     public static final String SERVICE_TYPE = "servicetype";
     public static final String SUBSERVICE_TYPE = "subservicetype";
     public static final String WORK = "work";
+
+    private DbNamesConstant() {
+
+    }
 }

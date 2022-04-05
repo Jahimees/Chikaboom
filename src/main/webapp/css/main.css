@@ -1,5 +1,5 @@
 @font-face {
-    font-family: 'PT Serif'; /* Гарнитура шрифта */
+    font-family: 'Manrope', serif; /* Гарнитура шрифта */
     src: local(pompadur), url(../font/PTF56F.woff); /* Для остальных браузеров */
 }
 
@@ -23,7 +23,7 @@ body {
 
 .content-box {
     width: 100%;
-    font-family: 'PT Serif', serif;
+    font-family: 'Manrope', serif;
 }
 
 .menu-top {
@@ -83,20 +83,12 @@ body {
     letter-spacing: calc(1em / 10);
 }
 
-.service-block div {
-    /*padding-bottom: 0;*/
-}
-
 .service-block-all {
     margin: 2% 3% 0 3% !important;
 }
 
 .service-outer-image {
     padding: 0 0 3% 0;
-}
-
-.service-block-all div {
-    /*padding: 0;*/
 }
 
 .service-item {

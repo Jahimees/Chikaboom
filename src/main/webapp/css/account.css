@@ -14,6 +14,7 @@
     border-radius: 10px;
     padding: 15px;
     margin-bottom: 10px;
+    font-family: "Manrope", serif;
 }
 
 .gallery_image {
@@ -41,7 +42,7 @@ p > span:last-child {
 
 .table > p:after {
     font-size: 0.8em;
-    font-family: Manrope, serif;
+    font-family: "Manrope", serif;
     display: block;
     white-space: nowrap;
     overflow: hidden;
@@ -51,4 +52,30 @@ p > span:last-child {
 p {
     margin: 0 !important;
     padding-right: 10px;
+}
+
+.right-inline-box {
+    display: inline-flex;
+    margin: 0 0 0 auto;
+}
+
+.full-width-inline-box {
+    display: inline-flex;
+    width: 100%;
+}
+
+.wall-menu-child {
+    padding: 0 5px;
+}
+
+.solid-dark-border {
+    border: #1a1e21 1px solid
+}
+
+.post_image {
+    width: 65%;
+    min-height: 450px;
+    max-height: 450px;
+    margin: 0 auto;
+    object-fit: cover;
 }

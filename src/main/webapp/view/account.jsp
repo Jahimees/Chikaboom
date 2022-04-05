@@ -4,14 +4,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <!DOCTYPE HTML>
-<html>
+<html lang="ru">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>XM. Аккаунт</title>
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/account.css">
-    <link rel="stylesheet" href="../css/bootstrap/bootstrap.css">
     <link rel="stylesheet" href="../css/addition/carousel.css">
     <link rel="stylesheet" href="../css/addition/menu_bar.css">
 </head>
@@ -28,18 +29,16 @@
 
             <%-- БЛОК ИНФОРМАЦИИ --%>
             <div class="content">
-                <%-- TODO REFACTOR STYLE --%>
-                <div style="display: inline-flex; width: 100%">
+                <div class="full-width-inline-box">
                     <p class="common-text">
                         Маркиза Анфисова
                     </p>
-                    <%-- TODO REFACTOR STYLE --%>
-                    <div style="display: inline-flex; margin: 0 0 0 auto">
-                        <img class="small-icon" src="../image/icon/star_filled_icon.svg">
-                        <img class="small-icon" src="../image/icon/star_filled_icon.svg">
-                        <img class="small-icon" src="../image/icon/star_filled_icon.svg">
-                        <img class="small-icon" src="../image/icon/star_filled_icon.svg">
-                        <img class="small-icon" src="../image/icon/star_icon.svg">
+                    <div class="right-inline-box">
+                        <img class="small-icon" src="../image/icon/star_filled_icon.svg" alt="no_image">
+                        <img class="small-icon" src="../image/icon/star_filled_icon.svg" alt="no_image">
+                        <img class="small-icon" src="../image/icon/star_filled_icon.svg" alt="no_image">
+                        <img class="small-icon" src="../image/icon/star_filled_icon.svg" alt="no_image">
+                        <img class="small-icon" src="../image/icon/star_icon.svg" alt="no_image">
                     </div>
                 </div>
                 <div class="small-light-text">
@@ -63,46 +62,36 @@
                 </div>
             </div>
 
-            <%-- КАРУСЕЛЬ ГАЛЕРЕИ TODO REFACTOR--%>
+            <%-- КАРУСЕЛЬ ГАЛЕРЕИ --%>
             <div class="content">
                 <div class="common-text">Галерея</div>
                 <div id="carouselGallery" class="carousel slide" data-bs-interval="false" data-bs-ride="carousel">
                     <div class="carousel-inner">
                         <div class="carousel-item active">
                             <div class="w-flex_mrgn-2">
-                                <img class="gallery_image" src="../image/test/test1.png"
-                                     class="d-block top_master_block" alt="...">
-                                <img class="gallery_image" src="../image/test/test2.png"
-                                     class="d-block top_master_block" alt="...">
-                                <img class="gallery_image" src="../image/test/test3.png"
-                                     class="d-block top_master_block" alt="...">
-                                <img class="gallery_image" src="../image/test/test4.png"
-                                     class="d-block top_master_block" alt="...">
-                                <img class="gallery_image" src="../image/test/test5.png"
-                                     class="d-block top_master_block" alt="...">
+                                <img class="gallery_image" src="../image/test/test1.png" alt="...">
+                                <img class="gallery_image" src="../image/test/test2.png" alt="...">
+                                <img class="gallery_image" src="../image/test/test3.png" alt="...">
+                                <img class="gallery_image" src="../image/test/test4.png" alt="...">
+                                <img class="gallery_image" src="../image/test/test5.png" alt="...">
                             </div>
                         </div>
                         <div class="carousel-item">
                             <div class="w-flex_mrgn-2">
-                                <img class="gallery_image" src="../image/stub.png" class="d-block top_master_block"
-                                     alt="...">
-                                <img class="gallery_image" src="../image/test/test5.png"
-                                     class="d-block top_master_block" alt="...">
-                                <img class="gallery_image" src="../image/space_background.jpg"
-                                     class="d-block top_master_block" alt="...">
-                                <img class="gallery_image" src="../image/top_master_template.png"
-                                     class="d-block top_master_block" alt="...">
-                                <img class="gallery_image" src="../image/service/service_icon_1.png"
-                                     class="d-block top_master_block" alt="...">
+                                <img class="gallery_image" src="../image/stub.png" alt="...">
+                                <img class="gallery_image" src="../image/test/test5.png" alt="...">
+                                <img class="gallery_image" src="../image/space_background.jpg" alt="...">
+                                <img class="gallery_image" src="../image/top_master_template.png" alt="...">
+                                <img class="gallery_image" src="../image/service/service_icon_1.png" alt="...">
                             </div>
                         </div>
                     </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselGallery"
+                    <button class="carousel-control-prev" data-bs-target="#carouselGallery"
                             data-bs-slide="prev">
                         <span class="carousel-prev-icon" aria-hidden="true"></span>
                         <span class="visually-hidden">Предыдущий</span>
                     </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselGallery"
+                    <button class="carousel-control-next" data-bs-target="#carouselGallery"
                             data-bs-slide="next">
                         <span class="carousel-next-icon" aria-hidden="true"></span>
                         <span class="visually-hidden">Следующий</span>
@@ -119,58 +108,56 @@
                 </div>
             </div>
 
-            <%-- СТЕНА И ОТЗЫВЫ TODO REFACTOR STYLE --%>
+            <%-- СТЕНА И ОТЗЫВЫ --%>
             <div class="content">
-                <div style="display: inline-flex">
+                <div class="full-width-inline-box">
                     |
-                    <div class="small-light-text" style="padding: 0 5px">
+                    <div class="small-light-text wall-menu-child">
                         Стена
                     </div>
                     |
-                    <div class="small-light-text" style="padding: 0 5px">
+                    <div class="small-light-text wall-menu-child">
                         Отзывы
                     </div>
                     |
                 </div>
                 <hr>
-                <div class="content" style="border: #1a1e21 1px solid">
-                    <div style="width: 100%; display: inline-flex">
-                        <div style="margin: 0 0 0 auto">ooo</div>
+                <div class="content" class="solid-dark-border">
+                    <div class="full-width-inline-box">
+                        <div class="right-inline-box">ooo</div>
                     </div>
 
-                    <%-- TODO REFACTOR STYLE --%>
+                    <%-- TODO REFACTOR STYLE. Будет генерироваться--%>
                     <div id="carouselPost" class="carousel slide" data-bs-interval="false" data-bs-ride="carousel">
                         <div class="carousel-inner">
                             <div class="carousel-item active">
                                 <div class="w-flex_mrgn-2">
-                                    <img style="width: 65%; max-height: 350px" class="gallery_image"
-                                         src="../image/test/test1.png"
-                                         class="d-block top_master_block" alt="...">
+                                    <img src="../image/test/test1.png"
+                                         class="post_image" alt="...">
                                 </div>
                             </div>
                             <div class="carousel-item">
                                 <div class="w-flex_mrgn-2">
-                                    <img style="width: 65%; max-height: 350px" class="gallery_image"
-                                         src="../image/stub.png"
-                                         class="d-block top_master_block"
+                                    <img src="../image/stub.png"
+                                         class="post_image"
                                          alt="...">
                                 </div>
                             </div>
                         </div>
 
                         <div class="carousel-indicators">
-                            <button type="button" data-bs-target="#carouselGallery2" data-bs-slide-to="0"
+                            <button data-bs-target="#carouselPost" data-bs-slide-to="0"
                                     class="active"
                                     aria-current="true" aria-label="Slide 1"></button>
-                            <button type="button" data-bs-target="#carouselGallery2" data-bs-slide-to="1"
+                            <button data-bs-target="#carouselPost" data-bs-slide-to="1"
                                     aria-label="Slide 2"></button>
                         </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselPost"
+                        <button class="carousel-control-prev" data-bs-target="#carouselPost"
                                 data-bs-slide="prev">
                             <span class="carousel-prev-icon" aria-hidden="true"></span>
                             <span class="visually-hidden">Предыдущий</span>
                         </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#carouselPost"
+                        <button class="carousel-control-next" data-bs-target="#carouselPost"
                                 data-bs-slide="next">
                             <span class="carousel-next-icon" aria-hidden="true"></span>
                             <span class="visually-hidden">Следующий</span>
@@ -190,7 +177,7 @@
         <div class="content-box col-3 my-2 ms-2 g-0">
 
             <div class="content">
-                <img style="width: 100%" src="../image/test/test.svg">
+                <img class="full-width-inline-box" src="../image/test/test.svg" alt="no_image">
                 <div class="button big-button"><a href="/chikaboom/under_construction">Редактировать</a></div>
             </div>
 
@@ -202,11 +189,11 @@
                 <hr>
                 <div>
                     <div class="content">
-                        <div id="carouselGallery2" class="carousel slide" data-bs-interval="false"
+                        <div id="servicesCarousel" class="carousel slide" data-bs-interval="false"
                              data-bs-ride="carousel">
                             <div class="carousel-inner">
                                 <div class="carousel-item active">
-                                    <div class="w-flex_mrgn-2 table" style="display: block">
+                                    <div class="w-flex_mrgn-2" style="display: grid">
                                         <p><span>Снятие чужого покрытия</span><span>5р</span></p>
                                         <p><span>Однотонное покрытие</span><span>5р</span></p>
                                         <p><span>Наращивание</span><span>5р</span></p>
@@ -217,7 +204,7 @@
                                     </div>
                                 </div>
                                 <div class="carousel-item">
-                                    <div class="w-flex_mrgn-2 table" style="display: block">
+                                    <div class="w-flex_mrgn-2" style="display: grid">
                                         <p><span>покрытия чужого </span><span>5р</span></p>
                                         <p><span>покрытие Однотонное </span><span>5р</span></p>
                                         <p><span>Себя Наращивание</span><span>5р</span></p>
@@ -229,24 +216,22 @@
                                 </div>
                             </div>
 
-                            <%-- TODO FIX STYLE JSTL--%>
                             <div class="carousel-indicators">
-                                <button type="button" data-bs-target="#carouselGallery2" data-bs-slide-to="0"
+                                <button data-bs-target="#servicesCarousel" data-bs-slide-to="0"
                                         class="active"
                                         aria-current="true" aria-label="Slide 1"></button>
-                                <button type="button" data-bs-target="#carouselGallery2" data-bs-slide-to="1"
+                                <button data-bs-target="#servicesCarousel" data-bs-slide-to="1"
                                         aria-label="Slide 2"></button>
                             </div>
-                            <div style="display: inline-flex; width: 100%">
-                                <button class="carousel-control-prev" style="position: relative" type="button"
-                                        data-bs-target="#carouselGallery2"
+                            <div class="full-width-inline-box">
+                                <button class="carousel-control-prev" style="position: relative"
+                                        data-bs-target="#servicesCarousel"
                                         data-bs-slide="prev">
                                     <span class="carousel-prev-icon" aria-hidden="true"></span>
                                     <span class="visually-hidden">Предыдущий</span>
                                 </button>
                                 <button class="carousel-control-next" style="position: relative; margin: 0 0 0 auto;"
-                                        type="button"
-                                        data-bs-target="#carouselGallery2"
+                                        data-bs-target="#servicesCarousel"
                                         data-bs-slide="next">
                                     <span class="carousel-next-icon" aria-hidden="true"></span>
                                     <span class="visually-hidden">Следующий</span>
@@ -261,10 +246,11 @@
 
     </div>
 
+</div>
+</div>
 
-</div>
-</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
 </body>
 </html>
-
-<script type="text/javascript" src="../js/bootstrap/bootstrap.js"></script>
