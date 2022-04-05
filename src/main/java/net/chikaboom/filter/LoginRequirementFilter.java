@@ -2,7 +2,6 @@ package net.chikaboom.filter;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +21,6 @@ import static net.chikaboom.util.constant.CommandConstant.REGISTRATION;
  */
 //TODO Перевести на SPRING
 @Deprecated
-@PropertySource("/constants.properties")
 public class LoginRequirementFilter implements Filter {
 
     @Value("${attr.command}")
@@ -84,7 +82,7 @@ public class LoginRequirementFilter implements Filter {
      *
      * @param path путь передаваемый клиентом
      * @return true или false в зависимости от того, какой был получен путь
-     *
+     * <p>
      * TODO необходимо дополнить страницы
      */
     private boolean isCommonPath(String path) {
@@ -102,7 +100,7 @@ public class LoginRequirementFilter implements Filter {
      *
      * @param command передаваемая клиентом команда
      * @return true или false в зависимости от того, какая была получена команда
-     *
+     * <p>
      * TODO необходимо дополнить команды
      */
     private boolean isAllowedCommand(String command) {

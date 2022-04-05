@@ -44,6 +44,6 @@ public class AuthorizationController {
         clientDataStorageService.setData(PASSWORD, password);
         clientDataStorageService.setData(SERVLET_REQUEST, request);
 
-        return authorizationActionService.execute();
+        return "redirect:" + authorizationActionService.execute();
     }
 }

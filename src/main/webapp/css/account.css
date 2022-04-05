@@ -5,7 +5,7 @@
 }
 
 .content-box {
-    font-size: 25px;
+    font-size: 35px;
     display: block;
 }
 
@@ -19,7 +19,7 @@
 
 .gallery_image {
     object-fit: cover;
-    width: 175px;
+    width: 200px;
     margin: 0 auto;
 }
 
