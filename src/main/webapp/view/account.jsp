@@ -22,6 +22,9 @@
 
 <div class="flex-box">
     <jsp:include page="common/menu_bar.jsp"/>
+    <c:if test="${empty id}">
+        <c:redirect url="/chikaboom/main"/>
+    </c:if>
     <div class="row w-80">
 
         <%-- ЛЕВАЯ ЧАСТЬ --%>
@@ -177,7 +180,7 @@
         <div class="content-box col-3 my-2 ms-2 g-0">
 
             <div class="content">
-                <img class="full-width-inline-box" src="../image/test/test.svg" alt="no_image">
+                <img class="full-width-inline-box" src="../image/user/${id}/avatar.png" onerror="this.src='../image/user/no_photo.jpg'" alt="error on load">
                 <div class="button big-button"><a href="/chikaboom/under_construction">Редактировать</a></div>
             </div>
 

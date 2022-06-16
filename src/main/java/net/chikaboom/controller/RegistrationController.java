@@ -1,10 +1,12 @@
 package net.chikaboom.controller;
 
-import net.chikaboom.service.action.RegistrationActionService;
 import net.chikaboom.service.ClientDataStorageService;
+import net.chikaboom.service.action.RegistrationActionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -13,7 +15,7 @@ import static net.chikaboom.util.constant.RequestParametersConstant.PASSWORD;
 
 /**
  * Класс-контроллер, отвечающий за регистрацию пользователя.
- *
+ * <p>
  * Контроллер сохраняет данные запроса в {@link ClientDataStorageService} и передает управление в {@link RegistrationActionService}
  */
 @Controller
@@ -30,17 +32,18 @@ public class RegistrationController {
     }
 
     /**
-     * Сохранение данных и передача управления в сервис
+     * Сохраняет параметры клиента и передает управление в сервис {@link RegistrationActionService}
      *
-     * @param email параметр электронной почты
+     * @param email    параметр электронной почты
      * @param password параметр пароля
-     * @return название страницы, на которую будет переведен пользователь
+     * @return объект-ответ, содержащий название страницы, на которую должен будет осуществлен переход и http статус.
+     * В случае ошибки возвращает объект-ответ-ошибки с помощью {@link AdviceController}
      */
-    @PostMapping
-    public String register(@RequestParam String email, @RequestParam String password) {
+    @GetMapping
+    public ResponseEntity<?> register(@RequestParam String email, @RequestParam String password) {
         clientDataStorageService.setData(EMAIL, email);
         clientDataStorageService.setData(PASSWORD, password);
 
-        return registrationActionService.execute();
+        return new ResponseEntity<Object>("/chikaboom/" + registrationActionService.execute(), HttpStatus.OK);
     }
 }

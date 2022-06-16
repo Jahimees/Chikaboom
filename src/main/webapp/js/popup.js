@@ -1,3 +1,4 @@
+//TODO Избавиться от дублирования кода по всему файлу
 $('.open-login-popup').on('click', function (e) {
     closeRegisterPopup();
     e.preventDefault();
@@ -10,14 +11,10 @@ function closeLoginPopup() {
     $('.login-popup').fadeOut(800);
 }
 
-$('.close-login-popup').on('click', function () {
+$('.close-login-popup, .login-popup-bg').on('click', function () {
     closeLoginPopup();
-    repaintFields();
+    repaintLoginFields();
 });
-
-$('.login-popup-bg').on('click', function () {
-    closeLoginPopup();
-})
 
 $('.open-register-popup').on('click', function (e) {
     closeLoginPopup();
@@ -31,113 +28,191 @@ function closeRegisterPopup() {
     $('.register-popup').fadeOut(800);
 }
 
-$('.close-register-popup').on('click', function () {
+$('.close-register-popup, .register-popup-bg').on('click', function () {
     closeRegisterPopup();
-});
-
-$('.register-popup-bg').on('click', function () {
-    closeRegisterPopup();
-    repaintFields();
+    repaintRegisterFields();
 });
 
 $("#confirm-register").on("click", function () {
+    if (validateAllRegisterFields()) {
+        var email = $("#r-input-email")[0].value;
+        var password = $("#r-input-password")[0].value;
+        $.ajax({
+            type: "GET",
+            url: "/chikaboom/registration", //TODO выглядит не ок прям совсем
+            contentType: "application/text",
+            dataType: "text",
+            data: {
+                email: email,
+                password: password,
+            },
+            success: function (data) {
+                window.location.replace(data);
+            },
+            error: function (e) {
+                showWarnEmailDuplicate();
+            }
+        });
+    }
 });
 
 $("#confirm-login").on("click", function () {
-});
-
-$("#l-input-email").on("change", function () {
-    validateAuthorize();
-});
-
-$("#l-input-password").on("change", function () {
-    validateAuthorize();
-});
-
-$("#r-input-email").on("change", function () {
-    validateRegister();
-});
-
-$("#r-input-password").on("change", function () {
-    validateRegister();
-});
-
-$("#r-input-confirm-password").on("change", function () {
-    validateRegister();
-});
-
-let register_fields = $(".register-popup > .popup-body > form > .image-input > input");
-let login_fields = $(".login-popup > .popup-body > form > .image-input > input");
-
-function repaintFields() {
-    for (let field of register_fields) {
-        field.style.borderColor = "";
+    if (validateAllAuthorizeFields()) {
+        var email = $("#l-input-email")[0].value;
+        var password = $("#l-input-password")[0].value;
+        $.ajax({
+            type: "GET",
+            url: "/chikaboom/authorization", //TODO выглядит не ок прям совсем
+            contentType: "application/text",
+            dataType: "text",
+            data: {
+                email: email,
+                password: password,
+            },
+            success: function (data) {
+                window.location.replace(data);
+            },
+            error: function () {
+                showWarnWrongLoginData();
+            }
+        });
     }
+});
+
+$("#l-input-email").on("keyup", function () {
+    validateAuthorizeField($("#l-input-email")[0]);
+});
+
+$("#l-input-password").on("keyup", function () {
+    validateAuthorizeField($("#l-input-password")[0]);
+});
+
+$("#r-input-email").on("keyup", function () {
+    validateRegisterField($("#r-input-email")[0]);
+});
+
+$("#r-input-password").on("keyup", function () {
+    validateRegisterField($("#r-input-password")[0]);
+});
+
+$("#r-input-confirm-password").on("keyup", function () {
+    validateRegisterField($("#r-input-confirm-password")[0]);
+});
+
+let register_fields = $(".register-popup > .popup-body > .image-input > input");
+let login_fields = $(".login-popup > .popup-body > .image-input > input");
+
+function repaintLoginFields() {
     for (let field of login_fields) {
         field.style.borderColor = "";
+        field.setAttribute("valid", false);
+        field.value = "";
+        $("#" + field.id + "-" + field.getAttribute("reason")).css("display", "none");
     }
+    hideWarnWrongLoginData();
+}
+
+function repaintRegisterFields() {
+    for (let field of register_fields) {
+        field.style.borderColor = "";
+        field.setAttribute("valid", false);
+        field.value = "";
+        $("#" + field.id + "-" + field.getAttribute("reason")).css("display", "none");
+    }
+    hideWarnEmailDuplicate();
 }
 
 let reasons = ["empty", "incorrect", "different", "short"];
 
-function validateRegister() {
-    let validationResult = true;
-    for (let field of register_fields) {
-        for (let reason of reasons) {
-            $("#" + field.id + "-" + reason).css("display", "none");
-        }
-
-        if (field.value == null || field.value === "") {
-            field.setAttribute("reason", "empty");
-        } else if (field.value.length < 5 && field.id !== "r-input-confirm-password") {
-            field.setAttribute("reason", "short");
-        } else if (field.id === "r-input-email" && !/^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test(field.value)) {
-            field.setAttribute("reason", "incorrect");
-        } else if (field.id === "r-input-confirm-password" && $("#r-input-confirm-password")[0].value !== $("#r-input-password")[0].value) {
-            field.setAttribute("reason", "different");
-        } else {
-            field.style.borderColor = ""
-            field.setAttribute("valid", true);
-            field.setAttribute("reason", "");
-        }
-
-       validationResult = setFieldInvalid(field, validationResult);
+function validateRegisterField(field) {
+    for (let reason of reasons) {
+        $("#" + field.id + "-" + reason).css("display", "none");
     }
 
-    $("#confirm-register")[0].disabled = validationResult === false;
-}
-
-function validateAuthorize() {
-    let validationResult = true;
-    for (let field of login_fields) {
-        for (let reason of reasons) {
-            $("#" + field.id + "-" + reason).css("display", "none");
-        }
-
-        if (field.value == null || field.value === "") {
-            field.setAttribute("reason", "empty");
-        } else if (field.id === "l-input-email" && !/^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test(field.value)) {
-            field.setAttribute("reason", "incorrect");
-        } else {
-            field.style.borderColor = ""
-            field.setAttribute("valid", true);
-            field.setAttribute("reason", "");
-        }
-
-        validationResult = setFieldInvalid(field, validationResult);
+    if (field.value == null || field.value === "") {
+        field.setAttribute("reason", "empty");
+    } else if (field.value.length < 5 && field.id !== "r-input-confirm-password") {
+        field.setAttribute("reason", "short");
+    } else if (field.id === "r-input-email" && !/^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test(field.value)) {
+        field.setAttribute("reason", "incorrect");
+    } else if (field.id === "r-input-confirm-password" && $("#r-input-confirm-password")[0].value !== $("#r-input-password")[0].value) {
+        field.setAttribute("reason", "different");
+    } else {
+        field.style.borderColor = ""
+        field.setAttribute("valid", true);
+        field.setAttribute("reason", "");
     }
 
-    $("#confirm-login")[0].disabled = validationResult === false;
+    defineIsFieldValid(field);
 }
 
-function setFieldInvalid(field, validationResult) {
+function validateAuthorizeField(field) {
+    for (let reason of reasons) {
+        $("#" + field.id + "-" + reason).css("display", "none");
+    }
+
+    if (field.value == null || field.value === "") {
+        field.setAttribute("reason", "empty");
+    } else if (field.id === "l-input-email" && !/^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test(field.value)) {
+        field.setAttribute("reason", "incorrect");
+    } else {
+        field.style.borderColor = ""
+        field.setAttribute("valid", true);
+        field.setAttribute("reason", "");
+    }
+
+    defineIsFieldValid(field);
+}
+
+function validateAllAuthorizeFields() {
+    var flag = true;
+    for (var field of login_fields) {
+        if (field.getAttribute("valid") === 'false') {
+            validateAuthorizeField(field);
+            flag = false;
+        }
+    }
+
+    return flag
+}
+
+function validateAllRegisterFields() {
+    var flag = true;
+    for (var field of register_fields) {
+        if (field.getAttribute("valid") === 'false') {
+            validateAuthorizeField(field);
+            flag = false;
+        }
+    }
+
+    return flag
+}
+
+function defineIsFieldValid(field) {
     if (field.getAttribute("reason") !== '') {
-        validationResult = false;
         field.style.borderColor = "#ff4444";
         field.setAttribute("valid", false);
         $("#" + field.id + "-" + field.getAttribute("reason")).css("display", "block");
+        return false;
     }
 
-    return validationResult;
+    return true;
 }
 
+function showWarnWrongLoginData() {
+    $("#l-email-or-password-incorrect").css("display", "block");
+    $("#l-input-password")[0].value = ""
+    $("#l-input-password")[0].setAttribute("valid", "false");
+}
+
+function hideWarnWrongLoginData() {
+    $("#l-email-or-password-incorrect").css("display", "none");
+}
+
+function showWarnEmailDuplicate() {
+    $("#r-email-duplicate").css("display", "block");
+}
+
+function hideWarnEmailDuplicate() {
+    $("#r-email-duplicate").css("display", "none");
+}

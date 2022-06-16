@@ -1,5 +1,6 @@
 package net.chikaboom.service.action;
 
+import net.chikaboom.exception.IncorrectInputDataException;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.service.ClientDataStorageService;
@@ -17,7 +18,7 @@ import static net.chikaboom.util.constant.RequestParametersConstant.PASSWORD;
 import static net.chikaboom.util.constant.RequestParametersConstant.SERVLET_REQUEST;
 
 /**
- * Класс реализует команду авторизации пользователя на сайте
+ * Сервис реализует авторизацию пользователя на сайте
  */
 @Service
 public class AuthorizationActionService implements ActionService {
@@ -26,8 +27,6 @@ public class AuthorizationActionService implements ActionService {
     private String ID;
     @Value("${attr.email}")
     private String EMAIL;
-    @Value("${page.main}")
-    private String MAIN_PAGE;
     @Value("${page.account}")
     private String ACCOUNT_PAGE;
 
@@ -48,11 +47,10 @@ public class AuthorizationActionService implements ActionService {
      * Реализация команды авторизации
      *
      * @return возвращает страницу пользователя в случае совпадения паролей,
-     * возвращает стартовую страницу в случае нудачи.
+     * выбрасывает ошибку некорректного ввода данных в случае нудачи.
      */
     @Override
     public String execute() {
-//        TODO Возврат ошибки, при неправильном пароле или логине
         logger.info("Login procedure started");
 
         String email = clientDataStorageService.getData(RequestParametersConstant.EMAIL).toString();
@@ -76,7 +74,7 @@ public class AuthorizationActionService implements ActionService {
 
         logger.info("User has NOT logged in. Password or email is incorrect.");
 
-        return MAIN_PAGE;
+        throw new IncorrectInputDataException("Email and/or password are/is incorrect");
     }
 
     private void initSession(HttpServletRequest request, Account account) {

@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
 <!DOCTYPE HTML>
 <html lang="ru">
@@ -14,6 +15,7 @@
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/main_media.css">
     <link rel="stylesheet" href="../css/popup.css">
+    <link rel="stylesheet" href="../css/popup_media.css">
     <link rel="stylesheet" href="../css/common.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -67,9 +69,6 @@
             </c:forTokens>
         </div>
 
-        <jsp:include page="common/login_popup.jsp"/>
-        <jsp:include page="common/register_popup.jsp"/>
-
         <div style="display: flex">
             <a class="service-block-button" href="/chikaboom/under_construction">ВСЕ УСЛУГИ</a>
         </div>
@@ -94,7 +93,6 @@
     </div>
 
     <div class="block-title">Топ-мастера в городе Минск</div>
-
     <div id="topMastersCarousel" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-indicators">
             <button type="button" data-bs-target="#topMastersCarousel" data-bs-slide-to="0" class="active"
@@ -131,7 +129,6 @@
             <span class="visually-hidden">Следующий</span>
         </button>
     </div>
-
     <div class="block-title">Записаться к мастеру стало ещё проще!</div>
     <div class="block-text w-flex_mrgn-2">
         <ol class="padding-0-5">
@@ -148,9 +145,10 @@
             title="YouTube video player"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen>
-
     </iframe>
 
+    <jsp:include page="common/login_popup.jsp"/>
+    <jsp:include page="common/register_popup.jsp"/>
     <jsp:include page="common/footer.jsp"/>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
@@ -159,5 +157,4 @@
 </body>
 </html>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script type="text/javascript" src="../js/popup.js"></script>
