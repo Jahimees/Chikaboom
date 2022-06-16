@@ -14,7 +14,7 @@
     border: #000000 solid 2px;
     border-radius: 0.5em;
     background: #ffffff;
-    width: 30%;
+    width: 550px;
     left: 50%;
     right: 50%;
     top: 10%;
@@ -26,7 +26,6 @@
     font-family: Manrope, serif;
     background-color: #FFE4FE;
     padding: 1% 0 0 3%;
-    height: 3em;
     margin: 0 0 0 20%;
     border-radius: 0.3em;
     border: #4c4c4c solid 1px;
@@ -46,10 +45,10 @@
     background-color: #4c4c4c;
     text-align: center;
     border-radius: 0.2em;
-    font-size: 1.2em;
+    font-size: 20px;
 }
 
-.close-login-popup, .close-register-popup:focus {
+.close-login-popup:focus, .close-register-popup:focus {
     transform: scale(0.9);
 }
 

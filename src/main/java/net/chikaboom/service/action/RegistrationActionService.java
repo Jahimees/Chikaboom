@@ -1,5 +1,6 @@
 package net.chikaboom.service.action;
 
+import net.chikaboom.exception.UserAlreadyExistsException;
 import net.chikaboom.model.ExpandableObject;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.repository.AccountRepository;
@@ -19,7 +20,7 @@ import static net.chikaboom.util.constant.RequestParametersConstant.EMAIL;
 import static net.chikaboom.util.constant.RequestParametersConstant.PASSWORD;
 
 /**
- * Класс реализует команду создания нового аккаунта
+ * Сервис реализует создание нового аккаунта
  */
 @Service
 public class RegistrationActionService implements ActionService {
@@ -47,21 +48,24 @@ public class RegistrationActionService implements ActionService {
 
     /**
      * Реализация команды регистрации нового аккаунта
-     * TODO Реализовать автоматическую авторизацию после регистрации
+     * TODO Реализовать автоматическую авторизацию после регистрации. Надо ли?
      *
-     * @return возвращает страницу аккаунта (страницу заполнения личных данных?) ВРЕМЕННО. На главную страницу
+     * @return возвращает главную страницу. В случае неудачи выбрасывает исключение попытки создания существующего
+     * пользователя
      */
     @Override
     public String execute() {
-
-        logger.info("New account creating started.");
+        String email = clientDataStorageService.getData(EMAIL).toString();
+        if (isUserAlreadyExists(email)) {
+            throw new UserAlreadyExistsException("User with email " + email + " already exists");
+        }
 
         Account account = new Account();
 
         String clearPassword = clientDataStorageService.getData(PASSWORD).toString();
         ExpandableObject complexPasswordEO = hashPasswordService.convertPasswordForStorage(clearPassword);
 
-        account.setEmail(clientDataStorageService.getData(EMAIL).toString());
+        account.setEmail(email);
         account.setPassword(complexPasswordEO.getField(CONVERTED_PASSWORD).toString());
         account.setSalt(complexPasswordEO.getField(SALT).toString());
         account.setRegistrationDate(Timestamp.valueOf(LocalDateTime.now()));
@@ -71,5 +75,9 @@ public class RegistrationActionService implements ActionService {
         logger.info("New account created");
 
         return MAIN_PAGE;
+    }
+
+    private boolean isUserAlreadyExists(String email) {
+        return accountRepository.findOneByEmail(email) != null;
     }
 }

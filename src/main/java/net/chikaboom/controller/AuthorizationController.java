@@ -3,6 +3,8 @@ package net.chikaboom.controller;
 import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.action.AuthorizationActionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +16,7 @@ import static net.chikaboom.util.constant.RequestParametersConstant.*;
 
 /**
  * Класс-контроллер, отвечающий за авторизацию пользователя.
- *
+ * <p>
  * Контроллер сохраняет данные запроса в {@link ClientDataStorageService} и передает управление в {@link AuthorizationActionService}
  */
 @Controller
@@ -31,19 +33,20 @@ public class AuthorizationController {
     }
 
     /**
-     * Сохранение данных и передача управления в сервис
+     * Сохраняет параметры с клиента и передает управление в сервис авторизации {@link AuthorizationActionService}
      *
-     * @param email параметр электронной почты
+     * @param email    параметр электронной почты
      * @param password параметр пароля
-     * @param request запрос для использования сессии
-     * @return название страницы, на которую будет переведен пользователь
+     * @param request  запрос для использования сессии
+     * @return объект-ответ, содержащий название страницы, на которую должен будет осуществлен переход и http статус.
+     * В случае ошибки возвращает объект-ответ-ошибки с помощью {@link AdviceController}
      */
     @GetMapping
-    public String authorize(@RequestParam String email, @RequestParam String password, HttpServletRequest request) {
+    public ResponseEntity<?> authorize(@RequestParam String email, @RequestParam String password, HttpServletRequest request) {
         clientDataStorageService.setData(EMAIL, email);
         clientDataStorageService.setData(PASSWORD, password);
         clientDataStorageService.setData(SERVLET_REQUEST, request);
 
-        return "redirect:" + authorizationActionService.execute();
+        return new ResponseEntity<Object>("/chikaboom/" + authorizationActionService.execute(), HttpStatus.OK);
     }
 }
