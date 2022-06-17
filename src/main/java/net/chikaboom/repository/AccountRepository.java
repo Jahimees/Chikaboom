@@ -8,14 +8,14 @@ import org.springframework.stereotype.Repository;
  * Интерфейс для CRUD обработки таблицы Account
  */
 @Repository
-public interface AccountRepository extends CrudRepository<Account, String> {
+public interface AccountRepository extends CrudRepository<Account, Integer> {
 
     /**
-     * Метод для поиска аккаунта по указанному email
+     * Метод для поиска аккаунта по указанному телефону
      *
-     * @param email электронная почта (логин)
+     * @param phone номер телефона
      * @return найденного пользователя
      */
-    Account findOneByEmail(String email);
+    Account findOneByPhone(String phone);
 
 }

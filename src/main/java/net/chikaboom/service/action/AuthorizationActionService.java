@@ -25,8 +25,8 @@ public class AuthorizationActionService implements ActionService {
 
     @Value("${attr.id}")
     private String ID;
-    @Value("${attr.email}")
-    private String EMAIL;
+    @Value("${attr.phone}")
+    private String PHONE;
     @Value("${page.account}")
     private String ACCOUNT_PAGE;
 
@@ -53,10 +53,10 @@ public class AuthorizationActionService implements ActionService {
     public String execute() {
         logger.info("Login procedure started");
 
-        String email = clientDataStorageService.getData(RequestParametersConstant.EMAIL).toString();
-        clientDataStorageService.dropData(RequestParametersConstant.EMAIL);
+        String phone = clientDataStorageService.getData(RequestParametersConstant.PHONE).toString();
+        clientDataStorageService.dropData(RequestParametersConstant.PHONE);
 
-        Account account = accountRepository.findOneByEmail(email);
+        Account account = accountRepository.findOneByPhone(phone);
 
         if (account != null) {
             String actualPassword = hashPasswordService.convertPasswordForComparing(
@@ -72,15 +72,15 @@ public class AuthorizationActionService implements ActionService {
             }
         }
 
-        logger.info("User has NOT logged in. Password or email is incorrect.");
+        logger.info("User has NOT logged in. Password or phone is incorrect.");
 
-        throw new IncorrectInputDataException("Email and/or password are/is incorrect");
+        throw new IncorrectInputDataException("Phone and/or password are/is incorrect");
     }
 
     private void initSession(HttpServletRequest request, Account account) {
         HttpSession session = request.getSession();
 
-        session.setAttribute(EMAIL, account.getEmail());
+        session.setAttribute(PHONE, account.getPhone());
         session.setAttribute(ID, account.getIdAccount());
     }
 }

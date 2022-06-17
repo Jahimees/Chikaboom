@@ -14,8 +14,8 @@ import static net.chikaboom.util.constant.RequestParametersConstant.SERVLET_REQU
 @Service
 public class LogoutActionService implements ActionService {
 
-    @Value("${attr.email}")
-    private String EMAIL;
+    @Value("${attr.phone}")
+    private String PHONE;
     @Value("${attr.id}")
     private String ID;
     @Value("${page.main}")
@@ -35,7 +35,7 @@ public class LogoutActionService implements ActionService {
         HttpSession session = ((HttpServletRequest) clientDataStorageService.getData(SERVLET_REQUEST)).getSession();
         clientDataStorageService.dropData(SERVLET_REQUEST);
 
-        session.setAttribute(EMAIL, null);
+        session.setAttribute(PHONE, null);
         session.setAttribute(ID, null);
 
         logger.info("User logged out successful");

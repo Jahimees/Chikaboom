@@ -9,12 +9,12 @@
         <h3>Регистрация</h3>
     </div>
     <div class="popup-body">
-        <label class="invalid-field-label" id="r-input-email-incorrect">Некорректный email</label>
-        <label class="invalid-field-label" id="r-input-email-empty">Поле не может быть пустым</label>
-        <label class="invalid-field-label" id="r-input-email-short">Email должен быть длиннее 5 символов</label>
+        <label class="invalid-field-label" id="r-input-phone-incorrect">Некорректный номер телефона</label>
+        <label class="invalid-field-label" id="r-input-phone-empty">Поле не может быть пустым</label>
+        <label class="invalid-field-label" id="r-input-phone-short">Номер телефона должен быть длиннее 5 символов</label>
         <div class="image-input">
             <img class="small-popup-icon" src="../../image/icon/login_icon.svg" alt="no_image">
-            <input id="r-input-email" name="email" required placeholder="Введите email">
+            <input id="r-input-phone" name="phone" required placeholder="Введите номер телефона">
         </div>
 
         <label class="invalid-field-label" id="r-input-password-empty">Поле не может быть пустым</label>
@@ -32,7 +32,7 @@
         </div>
 
         <div>
-            <label class="invalid-field-label" id="r-email-duplicate">Аккаунт с таким email уже существует!</label>
+            <label class="invalid-field-label" id="r-phone-duplicate">Аккаунт с таким номером телефона уже существует!</label>
         </div>
 
         <button id="confirm-register" class="btn btn-dark confirm-btn">

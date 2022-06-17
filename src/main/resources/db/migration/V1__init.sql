@@ -1,138 +1,137 @@
-USE chikaboom;
+-- MySQL Workbench Forward Engineering
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
-DROP TABLE IF EXISTS `account`;
-CREATE TABLE `account` (
-  `idAccount` varchar(36) NOT NULL,
-  `name` varchar(45) DEFAULT NULL,
-  `surname` varchar(45) DEFAULT NULL,
-  `email` varchar(45) DEFAULT NULL,
-  `password` varchar(45) NOT NULL,
-  `phone` varchar(45) DEFAULT NULL,
-  `registrationDate` date NOT NULL,
-  PRIMARY KEY (`idAccount`),
-  UNIQUE KEY `idAccount_UNIQUE` (`idAccount`),
-  UNIQUE KEY `phone_UNIQUE` (`phone`),
-  UNIQUE KEY `login` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+-- -----------------------------------------------------
+-- Schema chikaboom
+-- -----------------------------------------------------
 
-LOCK TABLES `account` WRITE;
-/*!40000 ALTER TABLE `account` DISABLE KEYS */;
-/*!40000 ALTER TABLE `account` ENABLE KEYS */;
-UNLOCK TABLES;
+-- -----------------------------------------------------
+-- Schema chikaboom
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `chikaboom` DEFAULT CHARACTER SET utf8 ;
+USE `chikaboom` ;
 
-DROP TABLE IF EXISTS `client`;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `client` (
-  `idClient` varchar(36) NOT NULL,
-  `idAccount` varchar(36) NOT NULL,
-  PRIMARY KEY (`idClient`),
-  UNIQUE KEY `idClient_UNIQUE` (`idClient`),
-  UNIQUE KEY `idAccount_UNIQUE` (`idAccount`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+-- -----------------------------------------------------
+-- Table `chikaboom`.`role`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `chikaboom`.`role` (
+                                                  `idrole` INT NOT NULL AUTO_INCREMENT,
+                                                  `role` VARCHAR(45) NOT NULL,
+    PRIMARY KEY (`idrole`))
+    ENGINE = InnoDB;
 
-LOCK TABLES `client` WRITE;
-/*!40000 ALTER TABLE `client` DISABLE KEYS */;
-/*!40000 ALTER TABLE `client` ENABLE KEYS */;
-UNLOCK TABLES;
 
-DROP TABLE IF EXISTS `comment`;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `comment` (
-  `idComment` varchar(36) NOT NULL,
-  `idMaster` varchar(36) NOT NULL,
-  `idClient` varchar(36) NOT NULL,
-  `message` text NOT NULL,
-  `isClientMessage` tinyint NOT NULL,
-  `rate` int NOT NULL,
-  PRIMARY KEY (`idComment`),
-  UNIQUE KEY `idComment_UNIQUE` (`idComment`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+-- -----------------------------------------------------
+-- Table `chikaboom`.`account`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `chikaboom`.`account` (
+                                                     `idaccount` INT NOT NULL AUTO_INCREMENT,
+                                                     `phone` VARCHAR(15) NOT NULL,
+    `password` VARCHAR(200) NOT NULL,
+    `salt` VARCHAR(100) NOT NULL,
+    `nickname` VARCHAR(45) NOT NULL,
+    `registration_date` DATE NOT NULL,
+    `idrole` INT NOT NULL,
+    PRIMARY KEY (`idaccount`),
+    INDEX `fk_account_role_idx` (`idrole` ASC) VISIBLE,
+    CONSTRAINT `fk_account_role`
+    FOREIGN KEY (`idrole`)
+    REFERENCES `chikaboom`.`role` (`idrole`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+    ENGINE = InnoDB;
 
-LOCK TABLES `comment` WRITE;
-/*!40000 ALTER TABLE `comment` DISABLE KEYS */;
-/*!40000 ALTER TABLE `comment` ENABLE KEYS */;
-UNLOCK TABLES;
 
-DROP TABLE IF EXISTS `master`;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `master` (
-  `idMaster` varchar(36) NOT NULL,
-  `idAccount` varchar(36) NOT NULL,
-  `address` varchar(45) NOT NULL,
-  `about` varchar(500) DEFAULT NULL,
-  PRIMARY KEY (`idMaster`),
-  UNIQUE KEY `idMaster_UNIQUE` (`idMaster`),
-  UNIQUE KEY `idAccount_UNIQUE` (`idAccount`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+-- -----------------------------------------------------
+-- Table `chikaboom`.`address`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `chikaboom`.`address` (
+                                                     `idaddress` INT NOT NULL AUTO_INCREMENT,
+                                                     `address` VARCHAR(145) NOT NULL,
+    `idaccount` INT NOT NULL,
+    PRIMARY KEY (`idaddress`),
+    INDEX `fk_address_account1_idx` (`idaccount` ASC) VISIBLE,
+    CONSTRAINT `fk_address_account1`
+    FOREIGN KEY (`idaccount`)
+    REFERENCES `chikaboom`.`account` (`idaccount`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+    ENGINE = InnoDB;
 
-LOCK TABLES `master` WRITE;
-/*!40000 ALTER TABLE `master` DISABLE KEYS */;
-/*!40000 ALTER TABLE `master` ENABLE KEYS */;
-UNLOCK TABLES;
 
-DROP TABLE IF EXISTS `service`;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `service` (
-  `idService` varchar(36) NOT NULL,
-  `idMaster` varchar(36) NOT NULL,
-  `idServiceType` varchar(36) NOT NULL,
-  `name` varchar(45) NOT NULL,
-  `description` text NOT NULL,
-  `cost` double NOT NULL,
-  PRIMARY KEY (`idService`),
-  UNIQUE KEY `idService_UNIQUE` (`idService`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+-- -----------------------------------------------------
+-- Table `chikaboom`.`social_network`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `chikaboom`.`social_network` (
+                                                            `idsocial_network` INT NOT NULL AUTO_INCREMENT,
+                                                            `link` VARCHAR(145) NOT NULL,
+    `idaccount` INT NOT NULL,
+    PRIMARY KEY (`idsocial_network`),
+    INDEX `fk_social_network_account1_idx` (`idaccount` ASC) VISIBLE,
+    CONSTRAINT `fk_social_network_account1`
+    FOREIGN KEY (`idaccount`)
+    REFERENCES `chikaboom`.`account` (`idaccount`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+    ENGINE = InnoDB;
 
-LOCK TABLES `service` WRITE;
-/*!40000 ALTER TABLE `service` DISABLE KEYS */;
-/*!40000 ALTER TABLE `service` ENABLE KEYS */;
-UNLOCK TABLES;
 
-DROP TABLE IF EXISTS `servicetype`;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `servicetype` (
-  `idServiceType` varchar(36) NOT NULL,
-  `typeName` varchar(45) NOT NULL,
-  PRIMARY KEY (`idServiceType`),
-  UNIQUE KEY `idServiceType_UNIQUE` (`idServiceType`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+-- -----------------------------------------------------
+-- Table `chikaboom`.`about`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `chikaboom`.`about` (
+                                                   `idabout` INT NOT NULL AUTO_INCREMENT,
+                                                   `text` TEXT NULL,
+                                                   `tags` TEXT NULL,
+                                                   `idaccount` INT NOT NULL,
+                                                   PRIMARY KEY (`idabout`),
+    INDEX `fk_about_account1_idx` (`idaccount` ASC) VISIBLE,
+    CONSTRAINT `fk_about_account1`
+    FOREIGN KEY (`idaccount`)
+    REFERENCES `chikaboom`.`account` (`idaccount`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+    ENGINE = InnoDB;
 
-LOCK TABLES `servicetype` WRITE;
-/*!40000 ALTER TABLE `servicetype` DISABLE KEYS */;
-/*!40000 ALTER TABLE `servicetype` ENABLE KEYS */;
-UNLOCK TABLES;
 
-DROP TABLE IF EXISTS `work`;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `work` (
-  `idWork` varchar(36) NOT NULL,
-  `idMaster` varchar(45) NOT NULL,
-  `image` varchar(45) DEFAULT NULL,
-  `comment` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`idWork`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='					';
+-- -----------------------------------------------------
+-- Table `chikaboom`.`status`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `chikaboom`.`status` (
+                                                    `idstatus` INT NOT NULL AUTO_INCREMENT,
+                                                    `status` VARCHAR(45) NOT NULL,
+    PRIMARY KEY (`idstatus`))
+    ENGINE = InnoDB;
 
-LOCK TABLES `work` WRITE;
-/*!40000 ALTER TABLE `work` DISABLE KEYS */;
-/*!40000 ALTER TABLE `work` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+-- -----------------------------------------------------
+-- Table `chikaboom`.`account_status`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `chikaboom`.`account_status` (
+                                                            `idaccount_status` INT NOT NULL AUTO_INCREMENT,
+                                                            `since_date` DATE NOT NULL,
+                                                            `to_date` DATE NULL,
+                                                            `idaccount` INT NOT NULL,
+                                                            `idstatus` INT NOT NULL,
+                                                            PRIMARY KEY (`idaccount_status`),
+    INDEX `fk_account_status_account1_idx` (`idaccount` ASC) VISIBLE,
+    INDEX `fk_account_status_status1_idx` (`idstatus` ASC) VISIBLE,
+    CONSTRAINT `fk_account_status_account1`
+    FOREIGN KEY (`idaccount`)
+    REFERENCES `chikaboom`.`account` (`idaccount`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+    CONSTRAINT `fk_account_status_status1`
+    FOREIGN KEY (`idstatus`)
+    REFERENCES `chikaboom`.`status` (`idstatus`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+    ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

@@ -35,15 +35,15 @@ public class AuthorizationController {
     /**
      * Сохраняет параметры с клиента и передает управление в сервис авторизации {@link AuthorizationActionService}
      *
-     * @param email    параметр электронной почты
+     * @param phone    параметр электронной почты
      * @param password параметр пароля
      * @param request  запрос для использования сессии
      * @return объект-ответ, содержащий название страницы, на которую должен будет осуществлен переход и http статус.
      * В случае ошибки возвращает объект-ответ-ошибки с помощью {@link AdviceController}
      */
     @GetMapping
-    public ResponseEntity<?> authorize(@RequestParam String email, @RequestParam String password, HttpServletRequest request) {
-        clientDataStorageService.setData(EMAIL, email);
+    public ResponseEntity<?> authorize(@RequestParam String phone, @RequestParam String password, HttpServletRequest request) {
+        clientDataStorageService.setData(PHONE, phone);
         clientDataStorageService.setData(PASSWORD, password);
         clientDataStorageService.setData(SERVLET_REQUEST, request);
 

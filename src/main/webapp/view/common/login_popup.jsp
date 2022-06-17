@@ -9,11 +9,11 @@
         <h3>Авторизация</h3>
     </div>
     <div class="popup-body">
-        <label class="invalid-field-label" id="l-input-email-incorrect">Некорректный email</label>
-        <label class="invalid-field-label" id="l-input-email-empty">Поле не может быть пустым</label>
+        <label class="invalid-field-label" id="l-input-phone-incorrect">Некорректный номер телефона</label>
+        <label class="invalid-field-label" id="l-input-phone-empty">Поле не может быть пустым</label>
         <div class="image-input">
             <img class="small-popup-icon" src="../../image/icon/login_icon.svg" alt="no_image">
-            <input id="l-input-email" name="email" required placeholder="Введите email" valid="false">
+            <input id="l-input-phone" name="phone" required placeholder="Введите номер телефона" valid="false">
         </div>
         <label class="invalid-field-label" id="l-input-password-empty">Поле не может быть пустым</label>
         <div class="image-input">
@@ -23,7 +23,7 @@
         </div>
 
         <div>
-            <label class="invalid-field-label" id="l-email-or-password-incorrect">
+            <label class="invalid-field-label" id="l-phone-or-password-incorrect">
                 Введенные данные некорректны, попробуйте ещё раз</label>
         </div>
 

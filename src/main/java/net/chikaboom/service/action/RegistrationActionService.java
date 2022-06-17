@@ -16,8 +16,8 @@ import java.time.LocalDateTime;
 
 import static net.chikaboom.util.constant.EOFieldsCostant.CONVERTED_PASSWORD;
 import static net.chikaboom.util.constant.EOFieldsCostant.SALT;
-import static net.chikaboom.util.constant.RequestParametersConstant.EMAIL;
 import static net.chikaboom.util.constant.RequestParametersConstant.PASSWORD;
+import static net.chikaboom.util.constant.RequestParametersConstant.PHONE;
 
 /**
  * Сервис реализует создание нового аккаунта
@@ -31,18 +31,15 @@ public class RegistrationActionService implements ActionService {
     private final ClientDataStorageService clientDataStorageService;
     private final HashPasswordService hashPasswordService;
     private final AccountRepository accountRepository;
-    private final AuthorizationActionService authorizationActionService;
 
     Logger logger = Logger.getLogger(RegistrationActionService.class);
 
     @Autowired
     public RegistrationActionService(ClientDataStorageService clientDataStorageService,
                                      HashPasswordService hashPasswordService,
-                                     AuthorizationActionService authorizationActionService,
                                      AccountRepository accountRepository) {
         this.clientDataStorageService = clientDataStorageService;
         this.hashPasswordService = hashPasswordService;
-        this.authorizationActionService = authorizationActionService;
         this.accountRepository = accountRepository;
     }
 
@@ -55,9 +52,9 @@ public class RegistrationActionService implements ActionService {
      */
     @Override
     public String execute() {
-        String email = clientDataStorageService.getData(EMAIL).toString();
-        if (isUserAlreadyExists(email)) {
-            throw new UserAlreadyExistsException("User with email " + email + " already exists");
+        String phone = clientDataStorageService.getData(PHONE).toString();
+        if (isUserAlreadyExists(phone)) {
+            throw new UserAlreadyExistsException("User with phone " + phone + " already exists");
         }
 
         Account account = new Account();
@@ -65,7 +62,7 @@ public class RegistrationActionService implements ActionService {
         String clearPassword = clientDataStorageService.getData(PASSWORD).toString();
         ExpandableObject complexPasswordEO = hashPasswordService.convertPasswordForStorage(clearPassword);
 
-        account.setEmail(email);
+        account.setPhone(phone);
         account.setPassword(complexPasswordEO.getField(CONVERTED_PASSWORD).toString());
         account.setSalt(complexPasswordEO.getField(SALT).toString());
         account.setRegistrationDate(Timestamp.valueOf(LocalDateTime.now()));
@@ -77,7 +74,7 @@ public class RegistrationActionService implements ActionService {
         return MAIN_PAGE;
     }
 
-    private boolean isUserAlreadyExists(String email) {
-        return accountRepository.findOneByEmail(email) != null;
+    private boolean isUserAlreadyExists(String phone) {
+        return accountRepository.findOneByPhone(phone) != null;
     }
 }
