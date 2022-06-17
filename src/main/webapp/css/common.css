@@ -14,13 +14,13 @@
 .header {
     width: 100%;
     padding: 10px 0;
-    background-color: #51382ACC;
+    background-color: #5F4E7D;
     display: inline-flex;
 }
 
 .header-text {
     font-family: Manrope, serif;
-    font-size: 35px;
+    font-size: 30px;
     margin: auto 0;
 }
 
@@ -60,17 +60,17 @@ a {
 }
 
 .small-light-text {
-    font-size: 0.9em;
+    font-size: 0.8em;
     color: #DCA269;
 }
 
 .button:hover {
-    background-color: #DCA2694A;
+    background-color: #AEA1C4;
     cursor: pointer;
 }
 
 .big-button {
-    background-color: #DCA2697B;
+    background-color: #AEA1C4;
     text-align: center;
     padding: 5px;
     margin-top: 10px;
