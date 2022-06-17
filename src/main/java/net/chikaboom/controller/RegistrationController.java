@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import static net.chikaboom.util.constant.RequestParametersConstant.EMAIL;
+import static net.chikaboom.util.constant.RequestParametersConstant.PHONE;
 import static net.chikaboom.util.constant.RequestParametersConstant.PASSWORD;
 
 /**
@@ -34,14 +34,14 @@ public class RegistrationController {
     /**
      * Сохраняет параметры клиента и передает управление в сервис {@link RegistrationActionService}
      *
-     * @param email    параметр электронной почты
+     * @param phone    параметр электронной почты
      * @param password параметр пароля
      * @return объект-ответ, содержащий название страницы, на которую должен будет осуществлен переход и http статус.
      * В случае ошибки возвращает объект-ответ-ошибки с помощью {@link AdviceController}
      */
     @GetMapping
-    public ResponseEntity<?> register(@RequestParam String email, @RequestParam String password) {
-        clientDataStorageService.setData(EMAIL, email);
+    public ResponseEntity<?> register(@RequestParam String phone, @RequestParam String password) {
+        clientDataStorageService.setData(PHONE, phone);
         clientDataStorageService.setData(PASSWORD, password);
 
         return new ResponseEntity<Object>("/chikaboom/" + registrationActionService.execute(), HttpStatus.OK);

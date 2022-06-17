@@ -19,15 +19,15 @@
 <body>
 <c:set var="session" value="${id}"/>
 
+<jsp:include page="common/common_header.jsp"/>
 <div class="flex-box">
-    <jsp:include page="common/menu_bar.jsp"/>
     <c:if test="${empty id}">
         <c:redirect url="/chikaboom/main"/>
     </c:if>
-    <div class="row w-80">
+    <div class="row w-100 justify-content-md-center">
 
         <%-- ЛЕВАЯ ЧАСТЬ --%>
-        <div class="content-box col ms-2 g-0">
+        <div class="content-box col-7 ms-2 g-0">
 
             <%-- БЛОК ИНФОРМАЦИИ --%>
             <div class="content">
@@ -238,9 +238,7 @@
                     </div>
                 </div>
             </div>
-
         </div>
-
     </div>
 
 </div>

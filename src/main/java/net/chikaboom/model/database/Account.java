@@ -7,8 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 import static net.chikaboom.util.constant.DbNamesConstant.*;
 
@@ -24,32 +22,31 @@ public class Account implements BaseEntity {
      */
     @Id
     @Column(name = ID_ACCOUNT)
-    private String idAccount;
-
-    /**
-     * Имя владельца аккаунта
-     */
-    private String name;
-
-    /**
-     * Фамилия владельца аккаунта
-     */
-    private String surname;
-
-    /**
-     * Электронная почта владельца. Также является логином
-     */
-    private String email;
-
-    /**
-     * Пароль от аккаунта
-     */
-    private String password;
+    private int idAccount;
 
     /**
      * Номер телефона владельца аккаунта
      */
+    @Column(name = PHONE)
     private String phone;
+
+    /**
+     * Пароль от аккаунта
+     */
+    @Column(name = PASSWORD)
+    private String password;
+
+    /**
+     * Соль для пароля
+     */
+    @Column(name = SALT)
+    private String salt;
+
+    /**
+     * Имя пользователя
+     */
+    @Column(name = NICKNAME)
+    private String nickname;
 
     /**
      * Дата регистрации аккаунта
@@ -57,9 +54,7 @@ public class Account implements BaseEntity {
     @Column(name = REGISTRATION_DATE)
     private Timestamp registrationDate;
 
-    private String salt;
+    @Column(name = ID_ROLE)
+    private int idRole;
 
-    public Account() {
-        idAccount = UUID.randomUUID().toString();
-    }
 }

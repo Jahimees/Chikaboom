@@ -35,7 +35,7 @@ $('.close-register-popup, .register-popup-bg').on('click', function () {
 
 $("#confirm-register").on("click", function () {
     if (validateAllRegisterFields()) {
-        var email = $("#r-input-email")[0].value;
+        var phone = $("#r-input-phone")[0].value;
         var password = $("#r-input-password")[0].value;
         $.ajax({
             type: "GET",
@@ -43,14 +43,14 @@ $("#confirm-register").on("click", function () {
             contentType: "application/text",
             dataType: "text",
             data: {
-                email: email,
+                phone: phone,
                 password: password,
             },
             success: function (data) {
                 window.location.replace(data);
             },
             error: function (e) {
-                showWarnEmailDuplicate();
+                showWarnPhoneDuplicate();
             }
         });
     }
@@ -58,7 +58,7 @@ $("#confirm-register").on("click", function () {
 
 $("#confirm-login").on("click", function () {
     if (validateAllAuthorizeFields()) {
-        var email = $("#l-input-email")[0].value;
+        var phone = $("#l-input-phone")[0].value;
         var password = $("#l-input-password")[0].value;
         $.ajax({
             type: "GET",
@@ -66,7 +66,7 @@ $("#confirm-login").on("click", function () {
             contentType: "application/text",
             dataType: "text",
             data: {
-                email: email,
+                phone: phone,
                 password: password,
             },
             success: function (data) {
@@ -79,16 +79,16 @@ $("#confirm-login").on("click", function () {
     }
 });
 
-$("#l-input-email").on("keyup", function () {
-    validateAuthorizeField($("#l-input-email")[0]);
+$("#l-input-phone").on("keyup", function () {
+    validateAuthorizeField($("#l-input-phone")[0]);
 });
 
 $("#l-input-password").on("keyup", function () {
     validateAuthorizeField($("#l-input-password")[0]);
 });
 
-$("#r-input-email").on("keyup", function () {
-    validateRegisterField($("#r-input-email")[0]);
+$("#r-input-phone").on("keyup", function () {
+    validateRegisterField($("#r-input-phone")[0]);
 });
 
 $("#r-input-password").on("keyup", function () {
@@ -119,7 +119,7 @@ function repaintRegisterFields() {
         field.value = "";
         $("#" + field.id + "-" + field.getAttribute("reason")).css("display", "none");
     }
-    hideWarnEmailDuplicate();
+    hideWarnPhoneDuplicate();
 }
 
 let reasons = ["empty", "incorrect", "different", "short"];
@@ -133,7 +133,7 @@ function validateRegisterField(field) {
         field.setAttribute("reason", "empty");
     } else if (field.value.length < 5 && field.id !== "r-input-confirm-password") {
         field.setAttribute("reason", "short");
-    } else if (field.id === "r-input-email" && !/^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test(field.value)) {
+    } else if (field.id === "r-input-phone" && !/^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test(field.value)) {
         field.setAttribute("reason", "incorrect");
     } else if (field.id === "r-input-confirm-password" && $("#r-input-confirm-password")[0].value !== $("#r-input-password")[0].value) {
         field.setAttribute("reason", "different");
@@ -153,7 +153,7 @@ function validateAuthorizeField(field) {
 
     if (field.value == null || field.value === "") {
         field.setAttribute("reason", "empty");
-    } else if (field.id === "l-input-email" && !/^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test(field.value)) {
+    } else if (field.id === "l-input-phone" && !/^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test(field.value)) {
         field.setAttribute("reason", "incorrect");
     } else {
         field.style.borderColor = ""
@@ -200,19 +200,19 @@ function defineIsFieldValid(field) {
 }
 
 function showWarnWrongLoginData() {
-    $("#l-email-or-password-incorrect").css("display", "block");
+    $("#l-phone-or-password-incorrect").css("display", "block");
     $("#l-input-password")[0].value = ""
     $("#l-input-password")[0].setAttribute("valid", "false");
 }
 
 function hideWarnWrongLoginData() {
-    $("#l-email-or-password-incorrect").css("display", "none");
+    $("#l-phone-or-password-incorrect").css("display", "none");
 }
 
-function showWarnEmailDuplicate() {
-    $("#r-email-duplicate").css("display", "block");
+function showWarnPhoneDuplicate() {
+    $("#r-phone-duplicate").css("display", "block");
 }
 
-function hideWarnEmailDuplicate() {
-    $("#r-email-duplicate").css("display", "none");
+function hideWarnPhoneDuplicate() {
+    $("#r-phone-duplicate").css("display", "none");
 }
