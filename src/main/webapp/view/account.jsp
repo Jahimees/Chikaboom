@@ -17,7 +17,6 @@
     <link rel="stylesheet" href="../css/addition/menu_bar.css">
 </head>
 <body>
-<jsp:include page="common/common_header.jsp"/>
 <c:set var="session" value="${id}"/>
 
 <div class="flex-box">
@@ -28,7 +27,7 @@
     <div class="row w-80">
 
         <%-- ЛЕВАЯ ЧАСТЬ --%>
-        <div class="content-box col my-2 ms-2 g-0">
+        <div class="content-box col ms-2 g-0">
 
             <%-- БЛОК ИНФОРМАЦИИ --%>
             <div class="content">
@@ -63,10 +62,8 @@
                         #френч #модные коготки #быстрый маникюр #аппаратный педикюр
                     </div>
                 </div>
-            </div>
 
-            <%-- КАРУСЕЛЬ ГАЛЕРЕИ --%>
-            <div class="content">
+                <%-- КАРУСЕЛЬ ГАЛЕРЕИ --%>
                 <div class="common-text">Галерея</div>
                 <div id="carouselGallery" class="carousel slide" data-bs-interval="false" data-bs-ride="carousel">
                     <div class="carousel-inner">
@@ -100,19 +97,15 @@
                         <span class="visually-hidden">Следующий</span>
                     </button>
                 </div>
-            </div>
 
-            <div class="content">
                 <div class="small-light-text">О себе</div>
                 <div class="common-text">
                     Мяу мяу мяу мяу мяу мяу мяу мяу мяу мяу мяу мяу мяу мяу мяу мяу мяу мяу
                     мур мур мурмур мур мурмур мур мурмур мур мурмур мур мурмур мур мурмур мур мур
                     мур мур мур мур мур мур мур мур мур мур мур мур мур мур мур мур мур мур мур мур мур
                 </div>
-            </div>
 
-            <%-- СТЕНА И ОТЗЫВЫ --%>
-            <div class="content">
+                <%-- СТЕНА И ОТЗЫВЫ --%>
                 <div class="full-width-inline-box">
                     |
                     <div class="small-light-text wall-menu-child">
@@ -177,10 +170,11 @@
         </div>
 
         <%-- ПРАВАЯ ЧАСТЬ --%>
-        <div class="content-box col-3 my-2 ms-2 g-0">
+        <div class="content-box col-3 g-0">
 
             <div class="content">
-                <img class="full-width-inline-box" src="../image/user/${id}/avatar.png" onerror="this.src='../image/user/no_photo.jpg'" alt="error on load">
+                <img class="full-width-inline-box" src="../image/user/${id}/avatar.png"
+                     onerror="this.src='../image/user/no_photo.jpg'" alt="error on load">
                 <div class="button big-button"><a href="/chikaboom/under_construction">Редактировать</a></div>
             </div>
 
@@ -249,7 +243,6 @@
 
     </div>
 
-</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"

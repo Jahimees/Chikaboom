@@ -1,19 +1,17 @@
 .menu-box {
-    display: grid;
-    background-color: #fff;
-    border-radius: 10px;
+    background-color: #5F4E7D;
     padding: 10px 0;
+    height: 90%;
 }
 
 .menu-child {
     display: inline-flex;
-    margin-left: 10px;
-    margin-right: 10px;
     padding: 5px;
-    border-radius: 10px;
+    width: 100%;
 }
 
-.menu-text {
+.menu-text > a {
     margin: auto 10px auto 10px;
-    font-size: 35px;
+    font-size: 30px;
+    color: white;
 }
