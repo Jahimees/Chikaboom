@@ -16,6 +16,7 @@ public final class DbNamesConstant {
     public static final String TAGS = "tags";
 
     public static final String ID_ACCOUNT = "idaccount";
+    public static final String PHONE_CODE = "phone_code";
     public static final String PHONE = "phone";
     public static final String PASSWORD = "password";
     public static final String SALT = "salt";

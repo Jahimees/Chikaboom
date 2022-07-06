@@ -6,6 +6,7 @@ import net.chikaboom.model.database.Account;
 import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.HashPasswordService;
+import net.chikaboom.util.PhoneNumberConverter;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,8 +17,7 @@ import java.time.LocalDateTime;
 
 import static net.chikaboom.util.constant.EOFieldsCostant.CONVERTED_PASSWORD;
 import static net.chikaboom.util.constant.EOFieldsCostant.SALT;
-import static net.chikaboom.util.constant.RequestParametersConstant.PASSWORD;
-import static net.chikaboom.util.constant.RequestParametersConstant.PHONE;
+import static net.chikaboom.util.constant.RequestParametersConstant.*;
 
 /**
  * Сервис реализует создание нового аккаунта
@@ -52,9 +52,11 @@ public class RegistrationActionService implements ActionService {
      */
     @Override
     public String execute() {
+        String phoneCode = clientDataStorageService.getData(PHONE_CODE).toString();
         String phone = clientDataStorageService.getData(PHONE).toString();
-        if (isUserAlreadyExists(phone)) {
-            throw new UserAlreadyExistsException("User with phone " + phone + " already exists");
+        phone = PhoneNumberConverter.clearPhoneNumber(phone);
+        if (isUserAlreadyExists(phone, phoneCode)) {
+            throw new UserAlreadyExistsException("User with phone " + phoneCode + " " + phone + " already exists");
         }
 
         Account account = new Account();
@@ -62,6 +64,7 @@ public class RegistrationActionService implements ActionService {
         String clearPassword = clientDataStorageService.getData(PASSWORD).toString();
         ExpandableObject complexPasswordEO = hashPasswordService.convertPasswordForStorage(clearPassword);
 
+        account.setPhoneCode(phoneCode);
         account.setPhone(phone);
         account.setPassword(complexPasswordEO.getField(CONVERTED_PASSWORD).toString());
         account.setSalt(complexPasswordEO.getField(SALT).toString());
@@ -74,7 +77,7 @@ public class RegistrationActionService implements ActionService {
         return MAIN_PAGE;
     }
 
-    private boolean isUserAlreadyExists(String phone) {
-        return accountRepository.findOneByPhone(phone) != null;
+    private boolean isUserAlreadyExists(String phone, String phoneCode) {
+        return accountRepository.findOneByPhoneAndPhoneCode(phone, phoneCode) != null;
     }
 }

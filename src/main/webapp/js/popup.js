@@ -35,14 +35,19 @@ $('.close-register-popup, .register-popup-bg').on('click', function () {
 
 $("#confirm-register").on("click", function () {
     if (validateAllRegisterFields()) {
+        var phoneCode = $("#country-phone-register > .country-phone-selector > .country-phone-selected > span")[0].firstChild.textContent;
         var phone = $("#r-input-phone")[0].value;
         var password = $("#r-input-password")[0].value;
+        console.log(phoneCode);
+        console.log(phone);
+        console.log(password);
         $.ajax({
             type: "GET",
             url: "/chikaboom/registration", //TODO выглядит не ок прям совсем
             contentType: "application/text",
             dataType: "text",
             data: {
+                phoneCode: phoneCode,
                 phone: phone,
                 password: password,
             },
@@ -58,6 +63,7 @@ $("#confirm-register").on("click", function () {
 
 $("#confirm-login").on("click", function () {
     if (validateAllAuthorizeFields()) {
+        var phoneCode = $("#country-phone-login > .country-phone-selector > .country-phone-selected > span")[0].firstChild.textContent;
         var phone = $("#l-input-phone")[0].value;
         var password = $("#l-input-password")[0].value;
         $.ajax({
@@ -66,6 +72,7 @@ $("#confirm-login").on("click", function () {
             contentType: "application/text",
             dataType: "text",
             data: {
+                phoneCode: phoneCode,
                 phone: phone,
                 password: password,
             },
@@ -131,9 +138,11 @@ function validateRegisterField(field) {
 
     if (field.value == null || field.value === "") {
         field.setAttribute("reason", "empty");
-    } else if (field.value.length < 5 && field.id !== "r-input-confirm-password") {
+    } else if (field.value.length < 9 && field.id !== "r-input-confirm-password" && field.id !== "r-input-password") {
         field.setAttribute("reason", "short");
-    } else if (field.id === "r-input-phone" && !/^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test(field.value)) {
+    } else if (field.value.length < 5 && field.id === "r-input-password") {
+        field.setAttribute("reason", "short");
+    } else if (field.id === "r-input-phone" && !/^(\s*)?([- _():=+]??\d[- _():=+]?){9,14}(\s*)?$/.test(field.value)) {
         field.setAttribute("reason", "incorrect");
     } else if (field.id === "r-input-confirm-password" && $("#r-input-confirm-password")[0].value !== $("#r-input-password")[0].value) {
         field.setAttribute("reason", "different");
@@ -153,7 +162,7 @@ function validateAuthorizeField(field) {
 
     if (field.value == null || field.value === "") {
         field.setAttribute("reason", "empty");
-    } else if (field.id === "l-input-phone" && !/^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test(field.value)) {
+    } else if (field.id === "l-input-phone" && !/^(\s*)?([- _():=+]??\d[- _():=+]?){9,14}(\s*)?$/.test(field.value)) {
         field.setAttribute("reason", "incorrect");
     } else {
         field.style.borderColor = ""
