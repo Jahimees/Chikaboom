@@ -2,7 +2,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
 <!DOCTYPE HTML>
 <html lang="ru">
@@ -17,10 +16,31 @@
     <link rel="stylesheet" href="../css/popup.css">
     <link rel="stylesheet" href="../css/popup_media.css">
     <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/addition/phonecode.css"/>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=PT+Serif&display=swap" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script rel="script" src="../js/jquery-ui-1.10.4.custom.min.js">
+
+    <script src="../js/countries.js"></script>
+    <script src="../js/phonecode.js"></script>
+    <script>
+        $(function(){
+            $('#l-input-phone').phonecode({
+                preferCo: 'by',
+                id: 'login'
+            });
+        });
+        $(function(){
+            $('#r-input-phone').phonecode({
+                preferCo: 'by',
+                id: 'register'
+            });
+        });
+    </script>
 </head>
 <body>
 <div class="content">
@@ -156,5 +176,6 @@
         crossorigin="anonymous"></script>
 </body>
 </html>
+
 
 <script type="text/javascript" src="../js/popup.js"></script>

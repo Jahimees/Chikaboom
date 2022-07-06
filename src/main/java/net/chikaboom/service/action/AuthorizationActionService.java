@@ -5,6 +5,7 @@ import net.chikaboom.model.database.Account;
 import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.HashPasswordService;
+import net.chikaboom.util.PhoneNumberConverter;
 import net.chikaboom.util.constant.RequestParametersConstant;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import static net.chikaboom.util.constant.RequestParametersConstant.PASSWORD;
-import static net.chikaboom.util.constant.RequestParametersConstant.SERVLET_REQUEST;
+import static net.chikaboom.util.constant.RequestParametersConstant.*;
 
 /**
  * Сервис реализует авторизацию пользователя на сайте
@@ -29,6 +29,8 @@ public class AuthorizationActionService implements ActionService {
     private String PHONE;
     @Value("${page.account}")
     private String ACCOUNT_PAGE;
+    @Value("${attr.phoneCode}")
+    private String PHONE_CODE;
 
     private final Logger logger = Logger.getLogger(AuthorizationActionService.class);
     private final ClientDataStorageService clientDataStorageService;
@@ -53,10 +55,14 @@ public class AuthorizationActionService implements ActionService {
     public String execute() {
         logger.info("Login procedure started");
 
+        String phoneCode = clientDataStorageService.getData(RequestParametersConstant.PHONE_CODE).toString();
+        clientDataStorageService.dropData(RequestParametersConstant.PHONE_CODE);
+
         String phone = clientDataStorageService.getData(RequestParametersConstant.PHONE).toString();
         clientDataStorageService.dropData(RequestParametersConstant.PHONE);
+        phone = PhoneNumberConverter.clearPhoneNumber(phone);
 
-        Account account = accountRepository.findOneByPhone(phone);
+        Account account = accountRepository.findOneByPhoneAndPhoneCode(phone, phoneCode);
 
         if (account != null) {
             String actualPassword = hashPasswordService.convertPasswordForComparing(
@@ -80,6 +86,7 @@ public class AuthorizationActionService implements ActionService {
     private void initSession(HttpServletRequest request, Account account) {
         HttpSession session = request.getSession();
 
+        session.setAttribute(PHONE_CODE, account.getPhoneCode());
         session.setAttribute(PHONE, account.getPhone());
         session.setAttribute(ID, account.getIdAccount());
     }

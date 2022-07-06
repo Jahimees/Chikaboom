@@ -11,11 +11,12 @@ import org.springframework.stereotype.Repository;
 public interface AccountRepository extends CrudRepository<Account, Integer> {
 
     /**
-     * Метод для поиска аккаунта по указанному телефону
+     * Метод для поиска аккаунта по указанному телефону и коду страны
      *
-     * @param phone номер телефона
+     * @param phone     номер телефона
+     * @param phoneCode код страны
      * @return найденного пользователя
      */
-    Account findOneByPhone(String phone);
+    Account findOneByPhoneAndPhoneCode(String phone, String phoneCode);
 
 }

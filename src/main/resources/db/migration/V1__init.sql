@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `chikaboom`.`account` (
                                                      `phone` VARCHAR(15) NOT NULL,
     `password` VARCHAR(200) NOT NULL,
     `salt` VARCHAR(100) NOT NULL,
-    `nickname` VARCHAR(45) NOT NULL,
+    `nickname` VARCHAR(45) NULL,
     `registration_date` DATE NOT NULL,
     `idrole` INT NOT NULL,
     PRIMARY KEY (`idaccount`),

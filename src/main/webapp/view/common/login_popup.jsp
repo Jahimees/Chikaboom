@@ -13,7 +13,7 @@
         <label class="invalid-field-label" id="l-input-phone-empty">Поле не может быть пустым</label>
         <div class="image-input">
             <img class="small-popup-icon" src="../../image/icon/login_icon.svg" alt="no_image">
-            <input id="l-input-phone" name="phone" required placeholder="Введите номер телефона" valid="false">
+            <input id="l-input-phone" class="phone-input" name="phone" required placeholder="Введите номер телефона" valid="false">
         </div>
         <label class="invalid-field-label" id="l-input-password-empty">Поле не может быть пустым</label>
         <div class="image-input">

@@ -11,10 +11,10 @@
     <div class="popup-body">
         <label class="invalid-field-label" id="r-input-phone-incorrect">Некорректный номер телефона</label>
         <label class="invalid-field-label" id="r-input-phone-empty">Поле не может быть пустым</label>
-        <label class="invalid-field-label" id="r-input-phone-short">Номер телефона должен быть длиннее 5 символов</label>
+        <label class="invalid-field-label" id="r-input-phone-short">Номер телефона должен быть длиннее 8 символов</label>
         <div class="image-input">
             <img class="small-popup-icon" src="../../image/icon/login_icon.svg" alt="no_image">
-            <input id="r-input-phone" name="phone" required placeholder="Введите номер телефона">
+            <input id="r-input-phone" class="phone-input" name="phone" required placeholder="Введите номер телефона" valid="false">
         </div>
 
         <label class="invalid-field-label" id="r-input-password-empty">Поле не может быть пустым</label>

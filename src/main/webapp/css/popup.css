@@ -89,3 +89,8 @@
     font-family: Manrope, serif;
     color: red;
 }
+
+.phone-input {
+    width: 70%;
+    margin: 0 0 0 auto;
+}
