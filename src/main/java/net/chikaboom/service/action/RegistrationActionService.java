@@ -7,6 +7,7 @@ import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.HashPasswordService;
 import net.chikaboom.util.PhoneNumberConverter;
+import net.chikaboom.util.constant.ApplicationRole;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -61,6 +62,11 @@ public class RegistrationActionService implements ActionService {
 
         Account account = new Account();
 
+        String role = clientDataStorageService.getData(ROLE).toString();
+        int idRole = ApplicationRole.valueOf(role.toUpperCase()).ordinal();
+
+        String nickname = clientDataStorageService.getData(NICKNAME).toString();
+
         String clearPassword = clientDataStorageService.getData(PASSWORD).toString();
         ExpandableObject complexPasswordEO = hashPasswordService.convertPasswordForStorage(clearPassword);
 
@@ -69,6 +75,8 @@ public class RegistrationActionService implements ActionService {
         account.setPassword(complexPasswordEO.getField(CONVERTED_PASSWORD).toString());
         account.setSalt(complexPasswordEO.getField(SALT).toString());
         account.setRegistrationDate(Timestamp.valueOf(LocalDateTime.now()));
+        account.setIdRole(idRole);
+        account.setNickname(nickname);
 
         accountRepository.save(account);
 

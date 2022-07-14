@@ -1,36 +1,42 @@
 //TODO Избавиться от дублирования кода по всему файлу
-$('.open-login-popup').on('click', function (e) {
-    closeRegisterPopup();
-    e.preventDefault();
-    $('.login-popup-bg').fadeIn(800);
-    $('.login-popup').fadeIn(800);
-});
-
-function closeLoginPopup() {
-    $('.login-popup-bg').fadeOut(800);
-    $('.login-popup').fadeOut(800);
+function openMessagePopup() {
+    $('.popup-bg').fadeIn(200);
+    $('.message-popup').fadeIn(200);
 }
 
-$('.close-login-popup, .login-popup-bg').on('click', function () {
-    closeLoginPopup();
-    repaintLoginFields();
+function closeMessagePopup() {
+    $('.popup-bg').fadeOut(200);
+    $('.message-popup').fadeOut(200);
+}
+
+$('.close-message-popup, .action-btn-close').on('click', function (e) {
+    closeMessagePopup();
 });
+
+$('.open-login-popup').on('click', function (e) {
+    closeRegisterLoginPopup();
+    e.preventDefault();
+    $('.popup-bg').fadeIn(200);
+    $('.login-popup').fadeIn(200);
+});
+
+function closeRegisterLoginPopup() {
+    closeMessagePopup();
+    $('.login-popup').fadeOut(200);
+    $('.register-popup').fadeOut(200);
+}
 
 $('.open-register-popup').on('click', function (e) {
-    closeLoginPopup();
+    closeRegisterLoginPopup();
     e.preventDefault();
-    $('.register-popup-bg').fadeIn(800);
-    $('.register-popup').fadeIn(800);
+    $('.popup-bg').fadeIn(200);
+    $('.register-popup').fadeIn(200);
 });
 
-function closeRegisterPopup() {
-    $('.register-popup-bg').fadeOut(800);
-    $('.register-popup').fadeOut(800);
-}
-
-$('.close-register-popup, .register-popup-bg').on('click', function () {
-    closeRegisterPopup();
+$('.close-register-popup, .close-login-popup, .popup-bg').on('click', function () {
+    closeRegisterLoginPopup();
     repaintRegisterFields();
+    repaintLoginFields();
 });
 
 $("#confirm-register").on("click", function () {
@@ -38,9 +44,8 @@ $("#confirm-register").on("click", function () {
         var phoneCode = $("#country-phone-register > .country-phone-selector > .country-phone-selected > span")[0].firstChild.textContent;
         var phone = $("#r-input-phone")[0].value;
         var password = $("#r-input-password")[0].value;
-        console.log(phoneCode);
-        console.log(phone);
-        console.log(password);
+        var nickname = $("#r-input-nickname")[0].value;
+        var role = $("role :checked, :radio")[0].value;
         $.ajax({
             type: "GET",
             url: "/chikaboom/registration", //TODO выглядит не ок прям совсем
@@ -50,9 +55,14 @@ $("#confirm-register").on("click", function () {
                 phoneCode: phoneCode,
                 phone: phone,
                 password: password,
+                nickname: nickname,
+                role: role
             },
-            success: function (data) {
-                window.location.replace(data);
+            success: function () {
+                closeRegisterLoginPopup();
+                openMessagePopup();
+                $("#popup-message-text")[0].innerText = "Вы успешно прошли регистрацию!"
+                $("#popup-message-header")[0].innerText = "Регистрация успешна!";
             },
             error: function (e) {
                 showWarnPhoneDuplicate();
@@ -98,6 +108,10 @@ $("#r-input-phone").on("keyup", function () {
     validateRegisterField($("#r-input-phone")[0]);
 });
 
+$("#r-input-nickname").on("keyup", function () {
+    validateRegisterField($("#r-input-nickname")[0]);
+});
+
 $("#r-input-password").on("keyup", function () {
     validateRegisterField($("#r-input-password")[0]);
 });
@@ -138,11 +152,18 @@ function validateRegisterField(field) {
 
     if (field.value == null || field.value === "") {
         field.setAttribute("reason", "empty");
-    } else if (field.value.length < 9 && field.id !== "r-input-confirm-password" && field.id !== "r-input-password") {
+    } else if (field.value.length < 9
+        && field.id !== "r-input-confirm-password" && field.id !== "r-input-password"
+        && field.id !== "r-input-nickname"
+    ) {
+        field.setAttribute("reason", "short");
+    } else if (field.value.length < 2 && field.id === "r-input-nickname") {
         field.setAttribute("reason", "short");
     } else if (field.value.length < 5 && field.id === "r-input-password") {
         field.setAttribute("reason", "short");
     } else if (field.id === "r-input-phone" && !/^(\s*)?([- _():=+]??\d[- _():=+]?){9,14}(\s*)?$/.test(field.value)) {
+        field.setAttribute("reason", "incorrect");
+    } else if (field.id === "r-input-nickname" && !/^[a-zA-ZА-Яа-я]+\s{0,1}[a-zA-ZА-Яа-я]+$/.test(field.value)) {
         field.setAttribute("reason", "incorrect");
     } else if (field.id === "r-input-confirm-password" && $("#r-input-confirm-password")[0].value !== $("#r-input-password")[0].value) {
         field.setAttribute("reason", "different");
@@ -189,7 +210,7 @@ function validateAllRegisterFields() {
     var flag = true;
     for (var field of register_fields) {
         if (field.getAttribute("valid") === 'false') {
-            validateAuthorizeField(field);
+            validateRegisterField(field);
             flag = false;
         }
     }

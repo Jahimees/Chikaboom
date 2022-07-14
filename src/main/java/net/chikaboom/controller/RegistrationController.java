@@ -36,15 +36,20 @@ public class RegistrationController {
      * @param phoneCode параметр кода страны
      * @param phone     параметр номера телефона пользователя
      * @param password  параметр пароля
+     * @param nickname  имя регистрируемого пользователя
+     * @param role      тип регистрируемого аккаунта
      * @return объект-ответ, содержащий название страницы, на которую должен будет осуществлен переход и http статус.
      * В случае ошибки возвращает объект-ответ-ошибки с помощью {@link AdviceController}
      */
     @GetMapping
     public ResponseEntity<?> register(@RequestParam String phoneCode, @RequestParam String phone,
-                                      @RequestParam String password) {
+                                      @RequestParam String password, @RequestParam String nickname,
+                                      @RequestParam String role) {
         clientDataStorageService.setData(PHONE_CODE, phoneCode);
         clientDataStorageService.setData(PHONE, phone);
         clientDataStorageService.setData(PASSWORD, password);
+        clientDataStorageService.setData(NICKNAME, nickname);
+        clientDataStorageService.setData(ROLE, role);
 
         return new ResponseEntity<Object>("/chikaboom/" + registrationActionService.execute(), HttpStatus.OK);
     }
