@@ -14,9 +14,9 @@ public interface AccountRepository extends CrudRepository<Account, Integer> {
      * Метод для поиска аккаунта по указанному телефону и коду страны
      *
      * @param phone     номер телефона
-     * @param phoneCode код страны
+     * @param idPhoneCode id кода страны
      * @return найденного пользователя
      */
-    Account findOneByPhoneAndPhoneCode(String phone, String phoneCode);
+    Account findOneByPhoneAndIdPhoneCode(String phone, int idPhoneCode);
 
 }

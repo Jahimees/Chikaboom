@@ -4,6 +4,7 @@ import net.chikaboom.exception.UserAlreadyExistsException;
 import net.chikaboom.model.ExpandableObject;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.repository.AccountRepository;
+import net.chikaboom.repository.PhoneCodeRepository;
 import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.HashPasswordService;
 import net.chikaboom.util.PhoneNumberConverter;
@@ -32,16 +33,19 @@ public class RegistrationActionService implements ActionService {
     private final ClientDataStorageService clientDataStorageService;
     private final HashPasswordService hashPasswordService;
     private final AccountRepository accountRepository;
+    private final PhoneCodeRepository phoneCodeRepository;
 
     Logger logger = Logger.getLogger(RegistrationActionService.class);
 
     @Autowired
     public RegistrationActionService(ClientDataStorageService clientDataStorageService,
                                      HashPasswordService hashPasswordService,
-                                     AccountRepository accountRepository) {
+                                     AccountRepository accountRepository,
+                                     PhoneCodeRepository phoneCodeRepository) {
         this.clientDataStorageService = clientDataStorageService;
         this.hashPasswordService = hashPasswordService;
         this.accountRepository = accountRepository;
+        this.phoneCodeRepository = phoneCodeRepository;
     }
 
     /**
@@ -53,11 +57,12 @@ public class RegistrationActionService implements ActionService {
      */
     @Override
     public String execute() {
-        String phoneCode = clientDataStorageService.getData(PHONE_CODE).toString();
+        int phoneCode = Integer.parseInt(clientDataStorageService.getData(PHONE_CODE).toString());
+        int idPhoneCode = phoneCodeRepository.findOneByPhoneCode(phoneCode).getIdPhoneCode();
         String phone = clientDataStorageService.getData(PHONE).toString();
         phone = PhoneNumberConverter.clearPhoneNumber(phone);
-        if (isUserAlreadyExists(phone, phoneCode)) {
-            throw new UserAlreadyExistsException("User with phone " + phoneCode + " " + phone + " already exists");
+        if (isUserAlreadyExists(phone, idPhoneCode)) {
+            throw new UserAlreadyExistsException("User with phone +" + phoneCode + " " + phone + " already exists");
         }
 
         Account account = new Account();
@@ -70,7 +75,7 @@ public class RegistrationActionService implements ActionService {
         String clearPassword = clientDataStorageService.getData(PASSWORD).toString();
         ExpandableObject complexPasswordEO = hashPasswordService.convertPasswordForStorage(clearPassword);
 
-        account.setPhoneCode(phoneCode);
+        account.setIdPhoneCode(idPhoneCode);
         account.setPhone(phone);
         account.setPassword(complexPasswordEO.getField(CONVERTED_PASSWORD).toString());
         account.setSalt(complexPasswordEO.getField(SALT).toString());
@@ -85,7 +90,7 @@ public class RegistrationActionService implements ActionService {
         return MAIN_PAGE;
     }
 
-    private boolean isUserAlreadyExists(String phone, String phoneCode) {
-        return accountRepository.findOneByPhoneAndPhoneCode(phone, phoneCode) != null;
+    private boolean isUserAlreadyExists(String phone, int idPhoneCode) {
+        return accountRepository.findOneByPhoneAndIdPhoneCode(phone, idPhoneCode) != null;
     }
 }
