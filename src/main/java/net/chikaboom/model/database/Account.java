@@ -27,8 +27,8 @@ public class Account implements BaseEntity {
     /**
      * Код телефона страны
      */
-    @Column(name = PHONE_CODE)
-    private String phoneCode;
+    @Column(name = ID_PHONE_CODE)
+    private int idPhoneCode;
 
     /**
      * Номер телефона владельца аккаунта

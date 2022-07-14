@@ -44,6 +44,10 @@ public final class DbNamesConstant {
     public static final String SUBSERVICE_TYPE = "subservicetype";
     public static final String WORK = "work";
 
+    public static final String ID_PHONE_CODE = "idphonecode";
+    public static final String COUNTRY_NAME = "country_name";
+    public static final String COUNTRY_CUT = "country_cut";
+
     private DbNamesConstant() {
 
     }
