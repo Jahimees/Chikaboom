@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<div class="login-popup-bg"></div>
+<div class="popup-bg"></div>
 
 <div class="login-popup">
     <div class="close-login-popup" tabindex="1">
@@ -12,7 +12,7 @@
         <label class="invalid-field-label" id="l-input-phone-incorrect">Некорректный номер телефона</label>
         <label class="invalid-field-label" id="l-input-phone-empty">Поле не может быть пустым</label>
         <div class="image-input">
-            <img class="small-popup-icon" src="../../image/icon/login_icon.svg" alt="no_image">
+            <img class="small-popup-icon" src="../../image/icon/phone_icon.svg" alt="no_image">
             <input id="l-input-phone" class="phone-input" name="phone" required placeholder="Введите номер телефона" valid="false">
         </div>
         <label class="invalid-field-label" id="l-input-password-empty">Поле не может быть пустым</label>

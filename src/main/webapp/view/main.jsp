@@ -169,6 +169,7 @@
 
     <jsp:include page="common/login_popup.jsp"/>
     <jsp:include page="common/register_popup.jsp"/>
+    <jsp:include page="common/message_popup.jsp"/>
     <jsp:include page="common/footer.jsp"/>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
@@ -176,6 +177,5 @@
         crossorigin="anonymous"></script>
 </body>
 </html>
-
 
 <script type="text/javascript" src="../js/popup.js"></script>
