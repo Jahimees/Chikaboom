@@ -25,7 +25,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script rel="script" src="../js/jquery-ui-1.10.4.custom.min.js">
 
-    <script src="../js/countries.js"></script>
     <script src="../js/phonecode.js"></script>
     <script>
         $(function(){
@@ -49,7 +48,7 @@
     <div class="main-header">
         <div class="menu-top">
             <c:if test="${session!=null}">
-                <div><a href="/chikaboom/account">▸Личный кабинет◂</a></div>
+                <div><a href="/chikaboom/personality/${id}">▸Личный кабинет◂</a></div>
             </c:if>
         </div>
         <div class="menu-right">

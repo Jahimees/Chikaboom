@@ -15,6 +15,8 @@
     <link rel="stylesheet" href="/css/account.css">
     <link rel="stylesheet" href="/css/addition/carousel.css">
     <link rel="stylesheet" href="/css/addition/menu_bar.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
 <body>
 <div class="flex-box">
@@ -25,52 +27,56 @@
             ЛОГО
         </div>
         <div class="menu-box">
-            <div class="menu-child button">
+            <div id="settings-btn" class="menu-child button" selected="true">
                 <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
-                <div class="menu-text"><a href="/chikaboom/under_construction">Настройки</a></div>
+                <div class="menu-text"><a href="#">Настройки</a></div>
             </div>
-            <div class="menu-child button">
+            <div id="profile-btn" class="menu-child button" selected="false">
                 <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
-                <div class="menu-text"><a href="/chikaboom/under_construction">Профиль</a></div>
+                <div class="menu-text"><a href="#">Профиль</a></div>
             </div>
-            <div class="menu-child button">
+            <div id="services-btn" class="menu-child button" selected="false">
                 <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
-                <div class="menu-text"><a href="/chikaboom/under_construction">Услуги</a></div>
+                <div class="menu-text"><a href="#">Услуги</a></div>
             </div>
-            <div class="menu-child button">
+            <div id="statistic-btn" class="menu-child button" selected="false">
                 <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
-                <div class="menu-text"><a href="/chikaboom/under_construction">Статистика</a></div>
+                <div class="menu-text"><a href="#">Статистика</a></div>
             </div>
 
-            <div class="menu-child button">
+            <div id="orders-btn" class="menu-child button" selected="false">
                 <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
-                <div class="menu-text"><a href="/chikaboom/under_construction">Записи</a></div>
+                <div class="menu-text"><a href="#">Записи</a></div>
             </div>
-            <div class="menu-child button">
+            <div id="chart-btn" class="menu-child button" selected="false">
                 <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
-                <div class="menu-text"><a href="/chikaboom/under_construction">График</a></div>
+                <div class="menu-text"><a href="#">График</a></div>
             </div>
-            <div class="menu-child button">
+            <div id="clients-btn" class="menu-child button" selected="false">
                 <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
-                <div class="menu-text"><a href="/chikaboom/under_construction">Мои клиенты</a></div>
+                <div class="menu-text"><a href="#">Мои клиенты</a></div>
             </div>
-            <div class="menu-child button">
+            <div id="messages-btn" class="menu-child button" selected="false">
                 <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
-                <div class="menu-text"><a href="/chikaboom/under_construction">Сообщения</a></div>
+                <div class="menu-text"><a href="#">Сообщения</a></div>
             </div>
-            <div class="menu-child button">
+            <div id="reviews-btn" class="menu-child button" selected="false">
                 <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
-                <div class="menu-text"><a href="/chikaboom/under_construction">Отзывы</a></div>
+                <div class="menu-text"><a href="#">Отзывы</a></div>
             </div>
         </div>
     </div>
-</div>
-<div class="row w-80">
-fa
+
+    <div id="content-placeholder" class="w-80">
+
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
+        crossorigin="anonymous">
+</script>
 </body>
 </html>
+
+<script type="text/javascript" src="../../js/personality.js"></script>
