@@ -15,3 +15,7 @@
     font-size: 30px;
     color: white;
 }
+
+.menu-child[selected="true"] {
+    background-color: #AEA1C4;
+}

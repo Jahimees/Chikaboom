@@ -28,13 +28,13 @@
     <script src="../js/countries.js"></script>
     <script src="../js/phonecode.js"></script>
     <script>
-        $(function(){
+        $(function () {
             $('#l-input-phone').phonecode({
                 preferCo: 'by',
                 id: 'login'
             });
         });
-        $(function(){
+        $(function () {
             $('#r-input-phone').phonecode({
                 preferCo: 'by',
                 id: 'register'
@@ -49,7 +49,7 @@
     <div class="main-header">
         <div class="menu-top">
             <c:if test="${session!=null}">
-                <div><a href="/chikaboom/account">▸Личный кабинет◂</a></div>
+                <div><a href="/chikaboom/personality/${id}">▸Личный кабинет◂</a></div>
             </c:if>
         </div>
         <div class="menu-right">
