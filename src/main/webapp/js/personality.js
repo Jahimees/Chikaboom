@@ -1,40 +1,41 @@
 $("#settings-btn").on("click", function () {
-    unselectAll(this);
+    selectCurrent(this);
+    loadSettings();
 });
 
 $("#profile-btn").on("click", function () {
-    unselectAll(this);
+    selectCurrent(this);
 });
 
 $("#services-btn").on("click", function () {
-    unselectAll(this);
+    selectCurrent(this);
 });
 
 $("#statistic-btn").on("click", function () {
-    unselectAll(this);
+    selectCurrent(this);
 });
 
 $("#orders-btn").on("click", function () {
-    unselectAll(this);
+    selectCurrent(this);
 });
 
 $("#chart-btn").on("click", function () {
-    unselectAll(this);
+    selectCurrent(this);
 });
 
 $("#clients-btn").on("click", function () {
-    unselectAll(this);
+    selectCurrent(this);
 });
 
 $("#messages-btn").on("click", function () {
-    unselectAll(this);
+    selectCurrent(this);
 });
 
 $("#reviews-btn").on("click", function () {
-    unselectAll(this);
+    selectCurrent(this);
 });
 
-function unselectAll(thisObj) {
+function selectCurrent(thisObj) {
     Array.from($(".menu-box > div")).forEach(function(elem) {
         elem.setAttribute("selected", "false");
     });
@@ -42,4 +43,7 @@ function unselectAll(thisObj) {
     thisObj.setAttribute("selected", "true");
 }
 
+function loadSettings() {
+
+}
 

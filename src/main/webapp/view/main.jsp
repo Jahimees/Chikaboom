@@ -25,15 +25,16 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script rel="script" src="../js/jquery-ui-1.10.4.custom.min.js">
 
+    <script src="../js/countries.js"></script>
     <script src="../js/phonecode.js"></script>
     <script>
-        $(function(){
+        $(function () {
             $('#l-input-phone').phonecode({
                 preferCo: 'by',
                 id: 'login'
             });
         });
-        $(function(){
+        $(function () {
             $('#r-input-phone').phonecode({
                 preferCo: 'by',
                 id: 'register'
