@@ -4,6 +4,24 @@
     height: 100%;
 }
 
+.menu-box-horizontal {
+    background-color: white;
+    display: inline-flex;
+    width: 100%;
+    font-family: Manrope, serif;
+}
+
+.horizontal-menu-text > a {
+    margin: auto 10px auto 10px;
+    font-size: 25px;
+    color: #5F4E7D;
+}
+
+.horizontal-menu-child {
+    display: inline-flex;
+    padding: 15px;
+}
+
 .menu-child {
     display: inline-flex;
     padding: 5px;
@@ -14,6 +32,11 @@
     margin: auto 10px auto 10px;
     font-size: 30px;
     color: white;
+    font-family: Manrope, serif;
+}
+
+.horizontal-menu-child[selected="true"] {
+    text-decoration: underline;
 }
 
 .menu-child[selected="true"] {

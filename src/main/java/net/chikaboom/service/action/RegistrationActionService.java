@@ -19,7 +19,6 @@ import java.time.LocalDateTime;
 
 import static net.chikaboom.util.constant.EOFieldsCostant.CONVERTED_PASSWORD;
 import static net.chikaboom.util.constant.EOFieldsCostant.SALT;
-import static net.chikaboom.util.constant.RequestParametersConstant.*;
 
 /**
  * Сервис реализует создание нового аккаунта
@@ -29,6 +28,16 @@ public class RegistrationActionService implements ActionService {
 
     @Value("${page.main}")
     private String MAIN_PAGE;
+    @Value("${attr.phoneCode}")
+    private String PHONE_CODE;
+    @Value("${attr.phone}")
+    private String PHONE;
+    @Value("${attr.password}")
+    private String PASSWORD;
+    @Value("${attr.role}")
+    private String ROLE;
+    @Value("${attr.nickname}")
+    private String NICKNAME;
 
     private final ClientDataStorageService clientDataStorageService;
     private final HashPasswordService hashPasswordService;

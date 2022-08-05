@@ -1,4 +1,4 @@
-package net.chikaboom.controller;
+package net.chikaboom.controller.tab;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @PropertySource("/constants.properties")
-@RequestMapping("/chikaboom/personality/{idAccount}")
-public class PersonalityController {
+@RequestMapping("/chikaboom/personality/{idAccount}/settings")
+public class SettingTabController {
 
-    @Value("${page.personality}")
-    private String PERSONALITY_PAGE;
+    @Value("${tab.settings}")
+    private String SETTINGS_TAB;
 
     @GetMapping
-    public String openPersonalityPage(@PathVariable int idAccount) {
-        return PERSONALITY_PAGE;
+    public String openSettingTab(@PathVariable int idAccount) {
+        return SETTINGS_TAB;
     }
 }

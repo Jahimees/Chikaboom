@@ -3,14 +3,13 @@ package net.chikaboom.controller;
 import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.action.RegistrationActionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import static net.chikaboom.util.constant.RequestParametersConstant.*;
 
 /**
  * Класс-контроллер, отвечающий за регистрацию пользователя.
@@ -20,6 +19,17 @@ import static net.chikaboom.util.constant.RequestParametersConstant.*;
 @Controller
 @RequestMapping("/chikaboom/registration")
 public class RegistrationController {
+
+    @Value("${attr.phone}")
+    private String PHONE;
+    @Value("${attr.phoneCode}")
+    private String PHONE_CODE;
+    @Value("${attr.password}")
+    private String PASSWORD;
+    @Value("${attr.nickname}")
+    private String NICKNAME;
+    @Value("${attr.role}")
+    private String ROLE;
 
     private final RegistrationActionService registrationActionService;
     private final ClientDataStorageService clientDataStorageService;

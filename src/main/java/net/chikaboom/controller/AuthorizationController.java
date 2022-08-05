@@ -3,6 +3,7 @@ package net.chikaboom.controller;
 import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.action.AuthorizationActionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -12,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static net.chikaboom.util.constant.RequestParametersConstant.*;
-
 /**
  * Класс-контроллер, отвечающий за авторизацию пользователя.
  * <p>
@@ -22,6 +21,15 @@ import static net.chikaboom.util.constant.RequestParametersConstant.*;
 @Controller
 @RequestMapping("/chikaboom/authorization")
 public class AuthorizationController {
+
+    @Value("${attr.servletRequest}")
+    private String SERVLET_REQUEST;
+    @Value("${attr.password}")
+    private String PASSWORD;
+    @Value("${attr.phone}")
+    private String PHONE;
+    @Value("${attr.phoneCode}")
+    private String PHONE_CODE;
 
     private final ClientDataStorageService clientDataStorageService;
     private final AuthorizationActionService authorizationActionService;

@@ -9,15 +9,15 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import static net.chikaboom.util.constant.RequestParametersConstant.SERVLET_REQUEST;
-
 @Service
 public class LogoutActionService implements ActionService {
 
     @Value("${attr.phone}")
     private String PHONE;
-    @Value("${attr.id}")
-    private String ID;
+    @Value("${attr.idAccount}")
+    private String ID_ACCOUNT;
+    @Value("${attr.servletRequest}")
+    private String SERVLET_REQUEST;
     @Value("${page.main}")
     private String MAIN_PAGE;
 
@@ -36,7 +36,7 @@ public class LogoutActionService implements ActionService {
         clientDataStorageService.dropData(SERVLET_REQUEST);
 
         session.setAttribute(PHONE, null);
-        session.setAttribute(ID, null);
+        session.setAttribute(ID_ACCOUNT, null);
 
         logger.info("User logged out successful");
 

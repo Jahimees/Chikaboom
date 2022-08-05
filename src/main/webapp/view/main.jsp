@@ -11,22 +11,18 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="../css/main.css">
-    <link rel="stylesheet" href="../css/main_media.css">
-    <link rel="stylesheet" href="../css/popup.css">
-    <link rel="stylesheet" href="../css/popup_media.css">
-    <link rel="stylesheet" href="../css/common.css">
-    <link rel="stylesheet" href="../css/addition/phonecode.css"/>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=PT+Serif&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/media/main_media.css">
+    <link rel="stylesheet" href="/css/popup.css">
+    <link rel="stylesheet" href="/css/media/popup_media.css">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/addition/phonecode.css"/>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script rel="script" src="../js/jquery-ui-1.10.4.custom.min.js">
+    <script rel="script" src="/js/jquery-ui-1.10.4.custom.min.js">
 
-    <script src="../js/countries.js"></script>
-    <script src="../js/phonecode.js"></script>
+    <script src="/js/countries.js"></script>
+    <script src="/js/phonecode.js"></script>
     <script>
         $(function () {
             $('#l-input-phone').phonecode({
@@ -45,18 +41,18 @@
 <body>
 <div class="content">
 
-    <c:set var="session" value="${id}"/>
+    <c:set var="session" value="${idAccount}"/>
     <div class="main-header">
         <div class="menu-top">
             <c:if test="${session!=null}">
-                <div><a href="/chikaboom/personality/${id}">▸Личный кабинет◂</a></div>
+                <div><a href="/chikaboom/personality/${idAccount}">▸Личный кабинет◂</a></div>
             </c:if>
         </div>
         <div class="menu-right">
             <c:choose>
                 <c:when test="${session==null}">
-                    <div class="open-login-popup"><a href="#">Вход</a></div>
-                    <div class="open-register-popup"><a href="#">Регистрация</a></div>
+                    <div class="open-login-popup" onclick="openPopup('login-popup')"><a href="#">Вход</a></div>
+                    <div class="open-register-popup" onclick="openPopup('register-popup')"><a href="#">Регистрация</a></div>
                     <div><a href="/chikaboom/under_construction">Быстрая запись</a></div>
                 </c:when>
                 <c:otherwise>
@@ -161,20 +157,17 @@
         </ol>
     </div>
 
-    <iframe class="yt-video" src="https://www.youtube.com/embed/HOJ7H6gh8Jo"
+    <iframe class="yt-video" src="https://www.youtube.com/embed/dQw4w9WgXcQ"
             title="YouTube video player"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen>
     </iframe>
 
-    <jsp:include page="common/login_popup.jsp"/>
-    <jsp:include page="common/register_popup.jsp"/>
-    <jsp:include page="common/message_popup.jsp"/>
+    <jsp:include page="common/popup/login_popup.jsp"/>
+    <jsp:include page="common/popup/register_popup.jsp"/>
+    <jsp:include page="common/popup/message_popup.jsp"/>
     <jsp:include page="common/footer.jsp"/>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
 </body>
 </html>
 

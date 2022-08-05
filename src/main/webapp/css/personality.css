@@ -1,0 +1,10 @@
+.content-placeholder {
+    padding: 10px;
+}
+
+.setting-content-placeholder {
+    background-color: white;
+    margin-top: 10px;
+    height: 100%;
+    border-radius: 15px;
+}

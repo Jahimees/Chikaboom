@@ -1,21 +1,3 @@
-.flex-box {
-    display: inline-flex;
-    background-color: #eaeaea;
-    width: 100%;
-}
-
-.content-box {
-    font-size: 35px;
-    display: block;
-}
-
-.content {
-    background-color: #fff;
-    padding: 15px;
-    font-family: "Manrope", serif;
-    margin-left: 15px;
-}
-
 .gallery_image {
     object-fit: cover;
     width: 200px;

@@ -8,11 +8,9 @@
     display: none;
 }
 
-.login-popup, .register-popup, .message-popup {
+.popup {
     position: fixed;
     display: none;
-    border: #000000 solid 2px;
-    border-radius: 0.5em;
     background: #ffffff;
     width: 550px;
     left: 50%;
@@ -24,10 +22,9 @@
 
 .popup-title {
     font-family: Manrope, serif;
-    background-color: #FFE4FE;
+    background-color: #5F4E7D;
+    color: white;
     padding: 1% 0 0 3%;
-    margin: 0 0 0 20%;
-    border-radius: 0.3em;
     border: #4c4c4c solid 1px;
 }
 
@@ -36,13 +33,13 @@
     padding: 7% 5% 5% 5%;
 }
 
-.close-login-popup, .close-register-popup, .close-message-popup {
+.close-popup {
     position: absolute;
     margin: 2% 0 0 93%;
     width: 5%;
     cursor: pointer;
-    color: #FFE4FE;
-    background-color: #4c4c4c;
+    color: #5F4E7D;
+    background-color: #AEA1C4;
     text-align: center;
     border-radius: 0.2em;
     font-size: 20px;
@@ -56,7 +53,7 @@
     overflow-y: hidden;
 }
 
-.image-input {
+.popup-image {
     margin: 0% 10% 0% 10%;
     display: inline-flex;
     padding: 0 0 0.9em 0;
@@ -69,37 +66,63 @@
     border-radius: 0.2em;
 }
 
-.image-input > input {
+.popup-image > input {
     width: 100%;
 }
 
-.small-info {
+.small-info-popup {
     color: #4c4c4c;
     font-family: Manrope, serif;
 }
 
-.confirm-btn {
+.confirm-popup-btn {
     margin: 5% 0 0 25%;
     display: block !important;
     width: 50%;
 }
 
-.action-btn-close {
-    width: 100px;
-    margin: 0 10px;
-}
-
-.invalid-field-label {
+.invalid-field-label-popup {
     display: none;
     font-family: Manrope, serif;
     color: red;
 }
 
-.phone-input {
-    width: 70%;
+.phone-input-popup {
+    /*TODO ПЕРЕНЕСТИ FONT SIZE*/
+    font-size: 20px;
+    width: 100%;
     margin: 0 0 0 auto;
 }
 
-.message-text {
+.message-text-popup {
     padding: 0 0 20px 0;
+}
+
+body {
+    /*line-height: 0;*/
+}
+
+.popup-btn {
+    font-family: Manrope, serif;
+    font-size: 25px;
+    width: 200px;
+    margin: 0 10px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.popup-btn:hover {
+    background-color: #AEA1C4;
+}
+
+.popup-input-field {
+    font-family: Manrope, serif;
+    color: #5F4E7D;
+    width: 70%;
+    font-size: 25px;
+}
+
+.country-phone-selected > span {
+    display: inline-flex;
 }

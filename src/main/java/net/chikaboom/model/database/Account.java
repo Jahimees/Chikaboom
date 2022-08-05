@@ -60,7 +60,16 @@ public class Account implements BaseEntity {
     @Column(name = REGISTRATION_DATE)
     private Timestamp registrationDate;
 
+    /**
+     * Идентификатор роли пользователя
+     */
     @Column(name = ID_ROLE)
     private int idRole;
+
+    /**
+     * Электронная почта пользователя
+     */
+    @Column(name = EMAIL)
+    private String email;
 
 }

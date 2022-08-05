@@ -11,17 +11,17 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="../css/common.css">
-    <link rel="stylesheet" href="../css/account.css">
-    <link rel="stylesheet" href="../css/addition/carousel.css">
-    <link rel="stylesheet" href="../css/addition/menu_bar.css">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/account.css">
+    <link rel="stylesheet" href="/css/addition/carousel.css">
+    <link rel="stylesheet" href="/css/addition/menu_bar.css">
 </head>
 <body>
-<c:set var="session" value="${id}"/>
+<c:set var="session" value="${idAccount}"/>
 
 <jsp:include page="common/common_header.jsp"/>
-<div class="flex-box">
-    <c:if test="${empty id}">
+<div class="flex-box-gray">
+    <c:if test="${empty idAccount}">
         <c:redirect url="/chikaboom/main"/>
     </c:if>
     <div class="row w-100 justify-content-md-center">

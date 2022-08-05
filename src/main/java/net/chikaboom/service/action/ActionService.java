@@ -3,7 +3,8 @@ package net.chikaboom.service.action;
 import org.springframework.stereotype.Service;
 
 /**
- * Родительский интеррфейс для основных сервисов-логики
+ * Родительский интеррфейс для основных сервисов-логики, выполняющих какое-либо действие и возвращающих путь
+ * к странице, на которую будет перенаправляться пользователь
  */
 @Service
 public interface ActionService {

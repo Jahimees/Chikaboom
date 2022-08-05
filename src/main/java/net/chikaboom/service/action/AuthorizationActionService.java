@@ -7,7 +7,6 @@ import net.chikaboom.repository.PhoneCodeRepository;
 import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.HashPasswordService;
 import net.chikaboom.util.PhoneNumberConverter;
-import net.chikaboom.util.constant.RequestParametersConstant;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,23 +15,24 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import static net.chikaboom.util.constant.RequestParametersConstant.PASSWORD;
-import static net.chikaboom.util.constant.RequestParametersConstant.SERVLET_REQUEST;
-
 /**
  * Сервис реализует авторизацию пользователя на сайте
  */
 @Service
 public class AuthorizationActionService implements ActionService {
 
-    @Value("${attr.id}")
-    private String ID;
+    @Value("${attr.idAccount}")
+    private String ID_ACCOUNT;
     @Value("${attr.phone}")
     private String PHONE;
     @Value("${page.account}")
     private String ACCOUNT_PAGE;
     @Value("${attr.phoneCode}")
     private String PHONE_CODE;
+    @Value("${attr.servletRequest}")
+    private String SERVLET_REQUEST;
+    @Value("${attr.password}")
+    private String PASSWORD;
 
     private final Logger logger = Logger.getLogger(AuthorizationActionService.class);
     private final ClientDataStorageService clientDataStorageService;
@@ -59,13 +59,13 @@ public class AuthorizationActionService implements ActionService {
     public String execute() {
         logger.info("Login procedure started");
 
-        int phoneCode = Integer.parseInt(clientDataStorageService.getData(RequestParametersConstant.PHONE_CODE).toString());
-        clientDataStorageService.dropData(RequestParametersConstant.PHONE_CODE);
+        int phoneCode = Integer.parseInt(clientDataStorageService.getData(PHONE_CODE).toString());
+        clientDataStorageService.dropData(PHONE_CODE);
 
         int idPhoneCode = phoneCodeRepository.findOneByPhoneCode(phoneCode).getIdPhoneCode();
 
-        String phone = clientDataStorageService.getData(RequestParametersConstant.PHONE).toString();
-        clientDataStorageService.dropData(RequestParametersConstant.PHONE);
+        String phone = clientDataStorageService.getData(PHONE).toString();
+        clientDataStorageService.dropData(PHONE);
         phone = PhoneNumberConverter.clearPhoneNumber(phone);
 
         Account account = accountRepository.findOneByPhoneAndIdPhoneCode(phone, idPhoneCode);
@@ -94,6 +94,6 @@ public class AuthorizationActionService implements ActionService {
 
         session.setAttribute(PHONE_CODE, phoneCode);
         session.setAttribute(PHONE, account.getPhone());
-        session.setAttribute(ID, account.getIdAccount());
+        session.setAttribute(ID_ACCOUNT, account.getIdAccount());
     }
 }
