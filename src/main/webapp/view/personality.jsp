@@ -75,8 +75,11 @@
     <div id="content-placeholder" class="w-80 content-placeholder">
 
     </div>
+    <script type="text/javascript" src="/js/dynamic_popup.js"></script>
+    <script type="text/javascript" src="/js/message_popup.js"></script>
 
     <jsp:include page="common/popup/edit_popup.jsp"/>
+    <jsp:include page="common/popup/message_popup.jsp"/>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
@@ -87,10 +90,11 @@
 </body>
 </html>
 
-<script type="text/javascript" src="../../js/personality.js"></script>
-<script type="text/javascript" src="../../js/popup.js"></script>
+<script type="text/javascript" src="/js/personality.js"></script>
 
 <script>
+
+    var accountJson = ${account};
 
     function loadSettings() {
         $.ajax({

@@ -28,6 +28,7 @@ dependencies {
     implementation 'org.springframework:spring-jdbc:5.3.15'
     implementation 'org.springframework.boot:spring-boot-starter-web:2.6.3'
     implementation 'com.google.guava:guava:11.0.2'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.0.1'
 
     runtimeOnly 'org.springframework.boot:spring-boot-devtools:2.6.3'
 

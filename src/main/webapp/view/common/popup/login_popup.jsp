@@ -13,12 +13,12 @@
         <label class="invalid-field-label-popup" id="l-input-phone-empty">Поле не может быть пустым</label>
         <div class="popup-image">
             <input id="l-input-phone" class="phone-input-popup" name="phone" required
-                   placeholder="Введите номер телефона" valid="false">
+                   placeholder="(44) 111-11-11" valid="false">
         </div>
         <label class="invalid-field-label-popup" id="l-input-password-empty">Поле не может быть пустым</label>
         <div class="popup-image">
             <input id="l-input-password" class="popup-input-field" name="password" type="password" required
-                   placeholder="Введите пароль" valid="false">
+                   placeholder="*****" valid="false">
         </div>
 
         <div>

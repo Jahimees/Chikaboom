@@ -1,7 +1,6 @@
 package net.chikaboom.service.action;
 
 import net.chikaboom.exception.UserAlreadyExistsException;
-import net.chikaboom.model.ExpandableObject;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.repository.PhoneCodeRepository;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 import static net.chikaboom.util.constant.EOFieldsCostant.CONVERTED_PASSWORD;
 import static net.chikaboom.util.constant.EOFieldsCostant.SALT;
@@ -44,7 +44,7 @@ public class RegistrationActionService implements ActionService {
     private final AccountRepository accountRepository;
     private final PhoneCodeRepository phoneCodeRepository;
 
-    Logger logger = Logger.getLogger(RegistrationActionService.class);
+    private final Logger logger = Logger.getLogger(RegistrationActionService.class);
 
     @Autowired
     public RegistrationActionService(ClientDataStorageService clientDataStorageService,
@@ -82,12 +82,12 @@ public class RegistrationActionService implements ActionService {
         String nickname = clientDataStorageService.getData(NICKNAME).toString();
 
         String clearPassword = clientDataStorageService.getData(PASSWORD).toString();
-        ExpandableObject complexPasswordEO = hashPasswordService.convertPasswordForStorage(clearPassword);
+        Map<String, Object> complexPasswordEO = hashPasswordService.convertPasswordForStorage(clearPassword);
 
         account.setIdPhoneCode(idPhoneCode);
         account.setPhone(phone);
-        account.setPassword(complexPasswordEO.getField(CONVERTED_PASSWORD).toString());
-        account.setSalt(complexPasswordEO.getField(SALT).toString());
+        account.setPassword(complexPasswordEO.get(CONVERTED_PASSWORD).toString());
+        account.setSalt(complexPasswordEO.get(SALT).toString());
         account.setRegistrationDate(Timestamp.valueOf(LocalDateTime.now()));
         account.setIdRole(idRole);
         account.setNickname(nickname);

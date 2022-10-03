@@ -35,7 +35,7 @@
             *****
         </div>
         <input id="password-change-input" class="col-4 common-text" style="display: none">
-        <div id="change-password-btn" onclick="openChangeInputFields(this)" class="col-1 edit-button">
+        <div id="change-password-btn" onclick="openPasswordEditPopup()" class="col-1 edit-button">
             <img src="/image/icon/edit_icon.svg">
         </div>
     </div>
@@ -47,13 +47,22 @@
 <script>
     function openEditEmailPopup() {
         dropAllFields();
-        addField("Электронная почта", "email", "text", "example@gmail.com");
+        addField("Электронная почта", "email", "text", "example@gmail.com", false, [new Validation("Неверный формат электронной почты", InvalidReason.EMAIL)]);
         openPopup("edit-popup");
     }
 
     function openPhoneEditPopup() {
         dropAllFields();
-        addField("Номер телефона", "phone", "text", "(44) 111-11-11", true);
+        addField("Номер телефона", "phone", "text", "(44) 111-11-11", true, [new Validation("Неверный шаблон телефона", InvalidReason.PHONE),
+            new Validation("Поле не может быть пустым", InvalidReason.EMPTY)]);
+        openPopup("edit-popup");
+    }
+
+    function openPasswordEditPopup() {
+        dropAllFields();
+        addField("Старый пароль", "oldPassword", "password", "*****", false, [new Validation("Поле не может быть пустым", InvalidReason.EMPTY)]);
+        addField("Новый пароль", "newPassword", "password", "*****", false, [new Validation("Поле не может быть пустым", InvalidReason.EMPTY)]);
+        addField("Подтвердите новый пароль", "confirmNewPassword", "password", "*****", false, [new Validation("Поле не может быть пустым", InvalidReason.EMPTY)]);
         openPopup("edit-popup");
     }
 </script>

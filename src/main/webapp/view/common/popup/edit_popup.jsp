@@ -10,14 +10,12 @@
         <h3 id="popup-message-header">Редактирование</h3>
     </div>
     <div class="popup-body">
+        <label class="invalid-field-label-popup" id="e-input-data-incorrect-label" style="display: none">
+            Проверьте введенные данные</label>
         <div id="field-box-placeholder">
-            <div class="common-black-text">
-                Имя
-            </div>
-            <input class="popup-input-field" type="text">
         </div>
         <div class="button-box">
-            <div class="popup-btn" onclick="closePopup('edit-popup')">
+            <div class="popup-btn" onclick="confirmEdit()">
                 Подтвердить
             </div>
             <div class="popup-btn" onclick="closePopup('edit-popup')">
@@ -26,45 +24,6 @@
         </div>
     </div>
 </div>
-
-<script>
-    function dropAllFields() {
-        $("#field-box-placeholder").html("");
-        countryCache = null;
-        countryRequesting = false;
-    }
-
-    function addField(labelText, fieldName, inputType, placeHolderText, isPhoneCode) {
-        let divLabel = document.createElement("div");
-        divLabel.setAttribute("class", "common-black-text");
-        divLabel.innerHTML = labelText;
-
-        let inputField = document.createElement("input");
-        inputField.setAttribute("class", "popup-input-field");
-        inputField.type = inputType;
-        inputField.name = fieldName;
-        inputField.placeholder = placeHolderText ? placeHolderText : '';
-
-        if (isPhoneCode) {
-            inputField.id = "edit-phone";
-        }
-
-        let fieldPlaceholder = $("#field-box-placeholder")[0]
-        fieldPlaceholder.appendChild(divLabel);
-        fieldPlaceholder.appendChild(inputField);
-
-        if (isPhoneCode) {
-            $(function () {
-                $('#edit-phone').phonecode({
-                    preferCo: 'by',
-                    id: 'edit'
-                });
-            });
-        }
-    }
-
-
-</script>
 
 <script rel="script" src="/js/jquery-ui-1.10.4.custom.min.js"></script>
 

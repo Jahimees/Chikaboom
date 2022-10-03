@@ -1,19 +1,20 @@
 package net.chikaboom.service.action;
 
-import net.chikaboom.model.database.BaseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 /**
  * Родительский интерфейс для сервисов-логики, которые совершают операции над данными
- * и возвращают их в преобразованном виде. Возвращает строго объект
+ * и возвращают их в преобразованном виде
  */
 @Service
-public interface DataService {
+public interface UndefinedDataService {
 
     /**
      * Метод предназначен для выполнения основной логики сервиса
      *
-     * @return преобразованный объект для отправки на клиент
+     * @return упакованные данные для отправки на клиент
      */
-    BaseEntity execute();
+    Map<String, Object> execute();
 }

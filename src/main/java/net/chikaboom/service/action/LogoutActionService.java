@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+/**
+ * Сервис выхода из аккаунта
+ */
 @Service
 public class LogoutActionService implements ActionService {
 
@@ -29,6 +32,11 @@ public class LogoutActionService implements ActionService {
         this.clientDataStorageService = clientDataStorageService;
     }
 
+    /**
+     * Сбрасывает все параметры текущей сессии и возвращает ссылку на главную страницу
+     *
+     * @return ссылка на главную страницу
+     */
     @Override
     public String execute() {
 

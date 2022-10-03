@@ -6,6 +6,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+/**
+ * Контроллер-заглушка для недоделанной функциональности
+ */
 @Controller
 @PropertySource("/constants.properties")
 @RequestMapping("/chikaboom/under_construction")

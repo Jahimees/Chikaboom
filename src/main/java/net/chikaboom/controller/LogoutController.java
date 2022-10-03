@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * Осуществляет выход из аккаунта и сброс сессии
+ */
 @Controller
 @RequestMapping("/chikaboom/logout")
 public class LogoutController {
@@ -26,6 +29,12 @@ public class LogoutController {
         this.logoutActionService = logoutActionService;
     }
 
+    /**
+     * Передает управление сервису и перенаправляет на главную страницу
+     *
+     * @param request объект запроса
+     * @return команду перенаправления на страницу
+     */
     @GetMapping
     public String logout(HttpServletRequest request) {
         clientDataStorageService.setData(SERVLET_REQUEST, request);

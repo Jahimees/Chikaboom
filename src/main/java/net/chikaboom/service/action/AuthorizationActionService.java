@@ -62,7 +62,7 @@ public class AuthorizationActionService implements ActionService {
         int phoneCode = Integer.parseInt(clientDataStorageService.getData(PHONE_CODE).toString());
         clientDataStorageService.dropData(PHONE_CODE);
 
-        int idPhoneCode = phoneCodeRepository.findOneByPhoneCode(phoneCode).getIdPhoneCode();
+        int idPhoneCode = phoneCodeRepository.findOneByPhoneCode(phoneCode).getIdPhoneCode(); //TODO вопрос с повторением кода
 
         String phone = clientDataStorageService.getData(PHONE).toString();
         clientDataStorageService.dropData(PHONE);
@@ -89,6 +89,13 @@ public class AuthorizationActionService implements ActionService {
         throw new IncorrectInputDataException("Phone and/or password are/is incorrect");
     }
 
+    /**
+     * Метод для инициализации сессии параметрами пользователя
+     *
+     * @param request   запрос, в котором передана сессия
+     * @param account   аккаунт пользователя
+     * @param phoneCode код телефона страны
+     */
     private void initSession(HttpServletRequest request, Account account, int phoneCode) {
         HttpSession session = request.getSession();
 

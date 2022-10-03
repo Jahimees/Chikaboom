@@ -1,5 +1,6 @@
 package net.chikaboom.model.database;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -16,6 +17,7 @@ import static net.chikaboom.util.constant.DbNamesConstant.*;
 @Data
 @Entity
 @Table(name = ACCOUNT)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Account implements BaseEntity {
     /**
      * id аккаунта

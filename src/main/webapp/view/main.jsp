@@ -171,4 +171,4 @@
 </body>
 </html>
 
-<script type="text/javascript" src="../js/popup.js"></script>
+<script type="text/javascript" src="../js/static_popup.js"></script>
