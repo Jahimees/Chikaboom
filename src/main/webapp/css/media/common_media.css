@@ -1,34 +1,3 @@
-@media screen and (min-width: 1700px) {
-    .login-popup, .register-popup, .message-popup {
-        width: 600px;
-    }
-
-    .close-login-popup, .close-register-popup, .message-popup {
-        font-size: 20px;
-    }
-}
-
-@media screen and (max-width: 1700px) {
-    .login-popup, .register-popup, .message-popup {
-        width: 600px;
-    }
-
-    .close-login-popup, .close-register-popup, .message-popup {
-        font-size: 20px;
-    }
-}
-
-@media screen and (max-width: 1600px) {
-    .login-popup, .register-popup, .message-popup {
-        width: 550px;
-    }
-}
-
-@media screen and (max-width: 1500px) {
-    .login-popup, .register-popup, .message-popup {
-        width: 500px;
-    }
-}
 
 @media screen and (max-width: 1400px) {
     .login-popup, .register-popup, .message-popup {
@@ -88,10 +57,10 @@
         font-size: 16px;
     }
 
-    .action-btn-close {
-        width: 75px;
+    .button {
+        width: 150px;
         margin: 0 10px;
-        font-size: 13px;
+        font-size: 20px;
     }
 }
 
@@ -130,8 +99,8 @@
         width: 200px;
     }
 
-    .action-btn-close {
-        width: 55px;
+    .button {
+        width: 75px;
         margin: 0 10px;
         font-size: 9px;
     }

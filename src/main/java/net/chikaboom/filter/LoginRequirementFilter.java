@@ -29,7 +29,7 @@ public class LoginRequirementFilter implements Filter {
     private String MAIN_PAGE;
     @Value("${page.auth_popup}")
     private String AUTHORIZATION_POPUP;
-    Logger logger = Logger.getLogger(LoginRequirementFilter.class);
+    private final Logger logger = Logger.getLogger(LoginRequirementFilter.class);
 
     /**
      * Метод инициализации фильтра перед запуском приложения

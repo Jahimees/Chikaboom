@@ -3,17 +3,22 @@ package net.chikaboom.controller;
 import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.action.LogoutActionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static net.chikaboom.util.constant.RequestParametersConstant.SERVLET_REQUEST;
-
+/**
+ * Осуществляет выход из аккаунта и сброс сессии
+ */
 @Controller
 @RequestMapping("/chikaboom/logout")
 public class LogoutController {
+
+    @Value("${attr.servletRequest}")
+    private String SERVLET_REQUEST;
 
     private final ClientDataStorageService clientDataStorageService;
     private final LogoutActionService logoutActionService;
@@ -24,6 +29,12 @@ public class LogoutController {
         this.logoutActionService = logoutActionService;
     }
 
+    /**
+     * Передает управление сервису и перенаправляет на главную страницу
+     *
+     * @param request объект запроса
+     * @return команду перенаправления на страницу
+     */
     @GetMapping
     public String logout(HttpServletRequest request) {
         clientDataStorageService.setData(SERVLET_REQUEST, request);

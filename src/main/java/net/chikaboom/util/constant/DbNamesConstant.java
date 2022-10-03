@@ -22,6 +22,7 @@ public final class DbNamesConstant {
     public static final String SALT = "salt";
     public static final String NICKNAME = "nickname";
     public static final String REGISTRATION_DATE = "registration_date";
+    public static final String EMAIL = "email";
 
     public static final String ID_ACCOUNT_STATUS = "idaccount_status";
     public static final String SINCE_DATE = "since_date";

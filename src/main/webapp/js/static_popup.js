@@ -1,42 +1,20 @@
 //TODO Избавиться от дублирования кода по всему файлу
-function openMessagePopup() {
+function openPopup(popupName) {
     $('.popup-bg').fadeIn(200);
-    $('.message-popup').fadeIn(200);
+    $('.' + popupName).fadeIn(200);
 }
 
-function closeMessagePopup() {
+function closePopup(popupName) {
     $('.popup-bg').fadeOut(200);
-    $('.message-popup').fadeOut(200);
+    $('.' + popupName).fadeOut(200);
+    repaintLoginRegisterFields();
 }
 
-$('.close-message-popup, .action-btn-close').on('click', function (e) {
-    closeMessagePopup();
-});
-
-$('.open-login-popup').on('click', function (e) {
-    closeRegisterLoginPopup();
-    e.preventDefault();
-    $('.popup-bg').fadeIn(200);
-    $('.login-popup').fadeIn(200);
-});
-
-function closeRegisterLoginPopup() {
-    closeMessagePopup();
-    $('.login-popup').fadeOut(200);
-    $('.register-popup').fadeOut(200);
-}
-
-$('.open-register-popup').on('click', function (e) {
-    closeRegisterLoginPopup();
-    e.preventDefault();
-    $('.popup-bg').fadeIn(200);
-    $('.register-popup').fadeIn(200);
-});
-
-$('.close-register-popup, .close-login-popup, .popup-bg').on('click', function () {
-    closeRegisterLoginPopup();
-    repaintRegisterFields();
-    repaintLoginFields();
+$('.popup-bg').on('click', function () {
+    closePopup('login-popup');
+    closePopup('register-popup');
+    closePopup('message-popup');
+    closePopup('edit-popup');
 });
 
 $("#confirm-register").on("click", function () {
@@ -59,12 +37,13 @@ $("#confirm-register").on("click", function () {
                 role: role
             },
             success: function () {
-                closeRegisterLoginPopup();
-                openMessagePopup();
+                closePopup('register-popup');
+                closePopup('login-popup');
                 $("#popup-message-text")[0].innerText = "Вы успешно прошли регистрацию!"
                 $("#popup-message-header")[0].innerText = "Регистрация успешна!";
+                openPopup('message-popup');
             },
-            error: function (e) {
+            error: function () {
                 showWarnPhoneDuplicate();
             }
         });
@@ -97,49 +76,51 @@ $("#confirm-login").on("click", function () {
 });
 
 $("#l-input-phone").on("keyup", function () {
-    validateAuthorizeField($("#l-input-phone")[0]);
+    validateAuthorizeField(this);
 });
 
 $("#l-input-password").on("keyup", function () {
-    validateAuthorizeField($("#l-input-password")[0]);
+    validateAuthorizeField(this);
 });
 
 $("#r-input-phone").on("keyup", function () {
-    validateRegisterField($("#r-input-phone")[0]);
+    validateRegisterField(this);
 });
 
 $("#r-input-nickname").on("keyup", function () {
-    validateRegisterField($("#r-input-nickname")[0]);
+    validateRegisterField(this);
 });
 
 $("#r-input-password").on("keyup", function () {
-    validateRegisterField($("#r-input-password")[0]);
+    validateRegisterField(this);
 });
 
 $("#r-input-confirm-password").on("keyup", function () {
-    validateRegisterField($("#r-input-confirm-password")[0]);
+    validateRegisterField(this);
 });
 
-let register_fields = $(".register-popup > .popup-body > .image-input > input");
-let login_fields = $(".login-popup > .popup-body > .image-input > input");
+let login_register_fields = [];
+let register_fields = $(".register-popup > .popup-body > .popup-image > input");
+let login_fields = $(".login-popup > .popup-body > .popup-image > input");
 
-function repaintLoginFields() {
-    for (let field of login_fields) {
+function repaintLoginRegisterFields() {
+    if (login_register_fields.length === 0) {
+        for (let field of login_fields) {
+            login_register_fields.push(field);
+        }
+        for (let field of register_fields) {
+            login_register_fields.push(field);
+        }
+    }
+
+    for (let field of login_register_fields) {
         field.style.borderColor = "";
         field.setAttribute("valid", false);
         field.value = "";
         $("#" + field.id + "-" + field.getAttribute("reason")).css("display", "none");
     }
+
     hideWarnWrongLoginData();
-}
-
-function repaintRegisterFields() {
-    for (let field of register_fields) {
-        field.style.borderColor = "";
-        field.setAttribute("valid", false);
-        field.value = "";
-        $("#" + field.id + "-" + field.getAttribute("reason")).css("display", "none");
-    }
     hideWarnPhoneDuplicate();
 }
 
@@ -165,7 +146,7 @@ function validateRegisterField(field) {
         field.setAttribute("reason", "incorrect");
     } else if (field.id === "r-input-nickname" && !/^[a-zA-ZА-Яа-я]+\s{0,1}[a-zA-ZА-Яа-я]+$/.test(field.value)) {
         field.setAttribute("reason", "incorrect");
-    } else if (field.id === "r-input-confirm-password" && $("#r-input-confirm-password")[0].value !== $("#r-input-password")[0].value) {
+    } else if (field.id === "r-input-confirm-password" && $("#" + field.id)[0].value !== $("#r-input-password")[0].value) {
         field.setAttribute("reason", "different");
     } else {
         field.style.borderColor = ""
