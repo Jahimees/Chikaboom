@@ -1,8 +1,7 @@
 package net.chikaboom.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import net.chikaboom.repository.AccountRepository;
+import net.chikaboom.service.ClientDataStorageService;
+import net.chikaboom.service.action.LoadPersonalityService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Map;
+
 
 @RestController
 @PropertySource("/constants.properties")
@@ -21,14 +22,21 @@ public class PersonalityController {
 
     @Value("${attr.account}")
     private String ACCOUNT;
+    @Value("${attr.idAccount}")
+    private String ID_ACCOUNT;
+    @Value("${attr.phoneCode}")
+    private String PHONE_CODE;
 
-    private final AccountRepository accountRepository;
+    private final ClientDataStorageService clientDataStorageService;
+    private final LoadPersonalityService loadPersonalityService;
 
     private final Logger logger = Logger.getLogger(PersonalityController.class);
 
     @Autowired
-    public PersonalityController(AccountRepository accountRepository) {
-        this.accountRepository = accountRepository;
+    public PersonalityController(ClientDataStorageService clientDataStorageService, LoadPersonalityService loadPersonalityService)
+    {
+        this.clientDataStorageService = clientDataStorageService;
+        this.loadPersonalityService = loadPersonalityService;
     }
 
     @Value("${page.personality}")
@@ -39,18 +47,12 @@ public class PersonalityController {
         logger.info("Opening personality page");
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName(PERSONALITY_PAGE);
-        ObjectMapper objectMapper = new ObjectMapper();
+        clientDataStorageService.setData(ID_ACCOUNT, idAccount);
 
-        String accountJson = "";
+        Map<String,Object> parameters = loadPersonalityService.execute();
 
-        try {
-            accountJson = objectMapper.writeValueAsString(accountRepository.findById(idAccount).get());
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-//            TODO Exception
-        }
-
-        modelAndView.addObject(ACCOUNT, accountJson);
+        modelAndView.addObject(ACCOUNT, parameters.get(ACCOUNT));
+        modelAndView.addObject(PHONE_CODE, parameters.get(PHONE_CODE));
 // TODO NoSuchElementException
         return modelAndView;
     }

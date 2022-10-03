@@ -27,20 +27,20 @@
 
 <script src="../../../js/setting_tab.js"></script>
 <script>
-    function loadGeneralSetting() {
+
+    function loadSettingTab(tabName) {
         $.ajax({
             type: "get",
-            url: "/chikaboom/personality/${idAccount}/settings/general",
+            url: "/chikaboom/personality/${idAccount}/settings/" + tabName,
             contentType: "application/text",
             dataType: "text",
             data: {},
             success: function (data) {
+                setCurrentTabName(tabName);
                 $("#setting-content-placeholder").html(data);
             },
             error: function () {
-                console.error("ERROR")
-                //TODO Доделать ошибку
-                // showWarnWrongLoginData();
+                loadUnderConstruction();
             }
         });
     }
@@ -61,10 +61,6 @@
                 // showWarnWrongLoginData();
             }
         });
-    }
-
-    function loadProfileSetting() {
-        loadUnderConstruction(); //TODO Заглушка
     }
 
     function loadPersonalizationSetting() {

@@ -1,11 +1,11 @@
 $("#general-setting-tab").on("click", function () {
     selectCurrentSetting(this);
-    loadGeneralSetting();
+    loadSettingTab("general");
 });
 
 $("#profile-setting-tab").on("click", function () {
     selectCurrentSetting(this);
-    loadProfileSetting();
+    loadSettingTab("profile");
 });
 
 $("#personalization-setting-tab").on("click", function () {

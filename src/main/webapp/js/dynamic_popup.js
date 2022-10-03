@@ -1,4 +1,9 @@
 let fields = []
+let currentTabName = "general";
+
+function setCurrentTabName(newTabName) {
+    currentTabName = newTabName;
+}
 
 function openPopup(popupName) {
     $('.popup-bg').fadeIn(200);
@@ -17,9 +22,7 @@ function closePopup(popupName) {
 function confirmEdit() {
     if (validateAllFields()) {
         console.log("Valid");
-        //TODO !!! URL должен быть динамическим
-        let url = "/chikaboom/personality/" + accountJson.idAccount + "/settings/general"
-        // let url = "/chikaboom/personality/" + accountJson.idAccount;
+        let url = "/chikaboom/personality/" + accountJson.idAccount + "/settings";
         let updatedAccountJson = JSON.parse(JSON.stringify(accountJson));
 
         Array.from($(".popup-input-field")).forEach(field => {
@@ -31,21 +34,22 @@ function confirmEdit() {
             updatedAccountJson["phoneCode"] = phoneCodeField.firstChild.textContent;
         }
 
-        console.log(updatedAccountJson);
-
         $.ajax({
             type: "POST",
             url: url,
             contentType: "application/json",
             dataType: "json",
             data: JSON.stringify(updatedAccountJson),
-            success: function () {
+            success: function (data) {
                 closePopup('edit-popup');
                 $("#popup-message-text")[0].innerText = "Изменения прошли успешно!"
                 $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Изменения прошли успешно!";
                 openPopup('message-popup');
 
-                loadGeneralSetting();
+                accountJson = JSON.parse(data.account);
+                phoneCodeJson = JSON.parse(data.phoneCode);
+
+                loadSettingTab(currentTabName);
             },
             error: function () {
                 $("#e-input-data-incorrect-label").css("display", "block");
