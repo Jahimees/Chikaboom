@@ -6,7 +6,7 @@
             Электронная почта:
         </div>
         <div id="email-placeholder" class="col-4 common-text placeholder">
-            ${email}
+
         </div>
         <input id="email-change-input" class="col-4 common-text" style="display: none">
         <div id="change-email-btn" onclick="openEditEmailPopup()" class="col-1 edit-button">
@@ -19,7 +19,7 @@
             Номер телефона:
         </div>
         <div id="phone-placeholder" class="col-4 common-text placeholder">
-            +${phoneCode} ${phone}
+
         </div>
         <input id="phone-change-input" class="col-4 common-text" style="display: none">
         <div id="change-phone-btn" onclick="openPhoneEditPopup()" class="col-1 edit-button">
@@ -42,8 +42,6 @@
     <hr>
 </div>
 
-<script src="../../../js/tab/general_setting_tab.js"></script>
-
 <script>
     function openEditEmailPopup() {
         dropAllFields();
@@ -65,4 +63,9 @@
         addField("Подтвердите новый пароль", "confirmNewPassword", "password", "*****", false, [new Validation("Поле не может быть пустым", InvalidReason.EMPTY)]);
         openPopup("edit-popup");
     }
+
+    $(document).ready(function () {
+        $("#email-placeholder")[0].innerText = accountJson.email;
+        $("#phone-placeholder")[0].innerText =  "+" + phoneCodeJson.phoneCode + " " + accountJson.phone;
+    });
 </script>

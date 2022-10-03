@@ -95,6 +95,7 @@
 <script>
 
     var accountJson = ${account};
+    var phoneCodeJson = ${phoneCode};
 
     function loadSettings() {
         $.ajax({
