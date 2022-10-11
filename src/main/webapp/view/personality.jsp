@@ -110,7 +110,6 @@
             error: function () {
                 console.error("ERROR")
                 //TODO Доделать ошибку
-                // showWarnWrongLoginData();
             }
         });
     }
@@ -128,7 +127,6 @@
             error: function () {
                 console.error("ERROR")
                 //TODO Доделать ошибку
-                // showWarnWrongLoginData();
             }
         });
     }

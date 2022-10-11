@@ -17,7 +17,7 @@
     min-width: 35px;
     width: auto;
     padding-left: 20px;
-    background: url('../../image/icon/arrow_down.png') no-repeat
+    background: url('/image/icon/arrow_down.png') no-repeat
 }
 
 .country-phone-option {

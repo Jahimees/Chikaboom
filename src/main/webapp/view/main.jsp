@@ -75,7 +75,7 @@
                          delims=",">
                 <div class="col-xl-4 service-outer-image">
                     <a style="display: inline-flex" href="/chikaboom/under_construction">
-                        <img class="service-image" src="../image/service/service_icon_${counter}.png" alt="no_image">
+                        <img class="service-image" src="/image/service/service_icon_${counter}.png" alt="no_image">
                         <div class="service-item">
                             <p><c:out value="${i}"/></p>
                         </div>
@@ -91,7 +91,7 @@
 
     </div>
     <div class="block-map">
-        <div class="img-block"><img src="../image/map.png" alt="no_image"></div>
+        <div class="img-block"><img src="/image/map.png" alt="no_image"></div>
         <div class="block-big-part">
             <div class="block-title">Найдите мастера близко к дому</div>
             <div class="block-text">Все мастера Минска на одной карте!</div>
@@ -105,7 +105,7 @@
             <div class="block-text">Не пропустите ни один курс или мастер-класс!</div>
             <div class="service-block-button"><a href="/chikaboom/under_construction">УЗНАТЬ БОЛЬШЕ</a></div>
         </div>
-        <div class="img-block"><img src="../image/course.png" alt="no_image"></div>
+        <div class="img-block"><img src="/image/course.png" alt="no_image"></div>
     </div>
 
     <div class="block-title">Топ-мастера в городе Минск</div>
@@ -121,15 +121,15 @@
         <div class="carousel-inner">
             <div class="carousel-item active">
                 <div class="w-flex_mrgn-2">
-                    <img src="../image/top_master_template.png" class="d-block top_master_block" alt="...">
-                    <img src="../image/top_master_template.png" class="d-block top_master_block" alt="...">
+                    <img src="/image/top_master_template.png" class="d-block top_master_block" alt="...">
+                    <img src="/image/top_master_template.png" class="d-block top_master_block" alt="...">
                 </div>
             </div>
             <c:forEach var="x" begin="0" end="1" step="1">
                 <div class="carousel-item">
                     <div class="w-flex_mrgn-2">
-                        <img src="../image/top_master_template.png" class="d-block top_master_block" alt="...">
-                        <img src="../image/top_master_template.png" class="d-block top_master_block" alt="...">
+                        <img src="/image/top_master_template.png" class="d-block top_master_block" alt="...">
+                        <img src="/image/top_master_template.png" class="d-block top_master_block" alt="...">
                     </div>
                 </div>
             </c:forEach>
@@ -171,4 +171,4 @@
 </body>
 </html>
 
-<script type="text/javascript" src="../js/static_popup.js"></script>
+<script type="text/javascript" src="/js/static_popup.js"></script>

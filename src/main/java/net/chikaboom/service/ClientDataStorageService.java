@@ -1,5 +1,6 @@
 package net.chikaboom.service;
 
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -9,9 +10,11 @@ import java.util.HashMap;
  * <p>
  * Реализован для общего доступа всех сервисов для хранения информации.
  */
-//TODO Доработка уникальности параметров, очищения хранилища и т.д.
+//TODO Доработка уникальности параметров и т.д.
 @Service
 public class ClientDataStorageService {
+
+    private final Logger logger = Logger.getLogger(ClientDataStorageService.class);
 
     /**
      * Коллекция, содержащая информацию (параметры) с клиента
@@ -51,4 +54,8 @@ public class ClientDataStorageService {
         dataStorage.remove(name);
     }
 
+    public void clearAllData() {
+        logger.info("Clearing all data from client data storage");
+        dataStorage.clear();
+    }
 }

@@ -25,7 +25,7 @@
 
 </div>
 
-<script src="../../../js/setting_tab.js"></script>
+<script src="/js/setting_tab.js"></script>
 <script>
 
     function loadSettingTab(tabName) {
