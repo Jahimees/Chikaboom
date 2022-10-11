@@ -24,8 +24,8 @@ public class SettingTabController {
 
     @Value("${tab.settings}")
     private String SETTINGS_TAB;
-    @Value("${attr.account}")
-    private String ACCOUNT;
+    @Value("${attr.customAccount}")
+    private String CUSTOM_ACCOUNT;
     @Value("${attr.idAccount}")
     private String ID_ACCOUNT;
 
@@ -68,7 +68,7 @@ public class SettingTabController {
         logger.info("Editing user data. idUser: " + idAccount);
         logger.info(changedAccount);
 
-        clientDataStorageService.setData(ACCOUNT, changedAccount);
+        clientDataStorageService.setData(CUSTOM_ACCOUNT, changedAccount);
         clientDataStorageService.setData(ID_ACCOUNT, idAccount);
 
         editGeneralSettingsService.execute();
@@ -77,8 +77,7 @@ public class SettingTabController {
         logger.info("Reloading personality page...");
         Map<String, Object> parameters = loadPersonalityService.execute();
 
-        clientDataStorageService.dropData(ACCOUNT);
-        clientDataStorageService.dropData(ID_ACCOUNT);
+        clientDataStorageService.clearAllData();
 
         return new ResponseEntity<>(parameters, HttpStatus.OK);
     }

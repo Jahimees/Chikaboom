@@ -1,12 +1,18 @@
-package net.chikaboom.controller;
+package net.chikaboom.controller.error;
 
+import net.chikaboom.exception.IllegalAccessException;
 import net.chikaboom.exception.IncorrectInputDataException;
+import net.chikaboom.exception.NoSuchDataException;
 import net.chikaboom.exception.UserAlreadyExistsException;
 import org.apache.log4j.Logger;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * Перехватывает исключения отсылая их с нужной информацией на клиентскую часть.
@@ -28,7 +34,6 @@ public class AdviceController {
      */
     @ExceptionHandler(IncorrectInputDataException.class)
     public ResponseEntity<Error> incorrectInputData(IncorrectInputDataException ex) {
-        logger.warn("Incorrect data exception");
         logger.warn(ex.getMessage());
 
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -46,5 +51,41 @@ public class AdviceController {
         logger.warn(ex.getMessage());
 
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Перехватывает исключение попытки обращения к несуществующим данным
+     *
+     * @param ex экземпляр исключения
+     * @return объект ошибки с http кодом 400
+     */
+    @ExceptionHandler(NoSuchDataException.class)
+    public ResponseEntity<String> noSuchData(NoSuchDataException ex) {
+        logger.error("Trying to get not existing data");
+        logger.error(ex.getMessage());
+
+        URI location = null;
+        try {
+            location = new URI("/404");
+        } catch (URISyntaxException e) {
+            logger.error(e.getMessage());
+        }
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.setLocation(location);
+
+        return new ResponseEntity<>(responseHeaders, HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Перехватывает исключение попытки обращения к данным, к которым у пользователя нет доступа
+     *
+     * @param ex экземпляр исключения
+     * @return объект ошибки с http кодом 403
+     */
+    @ExceptionHandler(IllegalAccessException.class)
+    public ResponseEntity<String> illegalAccess(IllegalAccessException ex) {
+        logger.error(ex.getMessage());
+
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 }

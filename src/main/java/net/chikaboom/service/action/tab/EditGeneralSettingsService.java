@@ -26,8 +26,8 @@ import static net.chikaboom.util.constant.EOFieldsCostant.SALT;
 @PropertySource("/constants.properties")
 public class EditGeneralSettingsService implements DataService {
 
-    @Value("${attr.account}")
-    private String ACCOUNT;
+    @Value("${attr.customAccount}")
+    private String CUSTOM_ACCOUNT;
     @Value("${attr.newPassword}")
     private String NEW_PASSWORD;
     @Value("${attr.oldPassword}")
@@ -64,7 +64,7 @@ public class EditGeneralSettingsService implements DataService {
     @Override
     public Account execute() {
         logger.info("Starting to change account parameter...");
-        Map<String, Object> accountParameters = (Map<String, Object>) clientDataStorageService.getData(ACCOUNT);
+        Map<String, Object> accountParameters = (Map<String, Object>) clientDataStorageService.getData(CUSTOM_ACCOUNT);
 
         Account resultAccount;
         ObjectMapper mapper = new ObjectMapper();

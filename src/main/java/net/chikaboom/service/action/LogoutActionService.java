@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpSession;
  * Сервис выхода из аккаунта
  */
 @Service
+@Transactional
 public class LogoutActionService implements ActionService {
 
     @Value("${attr.phone}")
@@ -43,8 +45,7 @@ public class LogoutActionService implements ActionService {
         HttpSession session = ((HttpServletRequest) clientDataStorageService.getData(SERVLET_REQUEST)).getSession();
         clientDataStorageService.dropData(SERVLET_REQUEST);
 
-        session.setAttribute(PHONE, null);
-        session.setAttribute(ID_ACCOUNT, null);
+        session.invalidate();
 
         logger.info("User logged out successful");
 

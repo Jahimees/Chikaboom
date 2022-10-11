@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpSession;
  * Сервис реализует авторизацию пользователя на сайте
  */
 @Service
+@Transactional
 public class AuthorizationActionService implements ActionService {
 
     @Value("${attr.idAccount}")
@@ -34,11 +36,12 @@ public class AuthorizationActionService implements ActionService {
     @Value("${attr.password}")
     private String PASSWORD;
 
-    private final Logger logger = Logger.getLogger(AuthorizationActionService.class);
     private final ClientDataStorageService clientDataStorageService;
     private final HashPasswordService hashPasswordService;
     private final AccountRepository accountRepository;
     private final PhoneCodeRepository phoneCodeRepository;
+
+    private final Logger logger = Logger.getLogger(AuthorizationActionService.class);
 
     @Autowired
     public AuthorizationActionService(ClientDataStorageService clientDataStorageService, AccountRepository accountRepository,
@@ -60,12 +63,10 @@ public class AuthorizationActionService implements ActionService {
         logger.info("Login procedure started");
 
         int phoneCode = Integer.parseInt(clientDataStorageService.getData(PHONE_CODE).toString());
-        clientDataStorageService.dropData(PHONE_CODE);
 
-        int idPhoneCode = phoneCodeRepository.findOneByPhoneCode(phoneCode).getIdPhoneCode(); //TODO вопрос с повторением кода
+        int idPhoneCode = phoneCodeRepository.findOneByPhoneCode(phoneCode).getIdPhoneCode();
 
         String phone = clientDataStorageService.getData(PHONE).toString();
-        clientDataStorageService.dropData(PHONE);
         phone = PhoneNumberConverter.clearPhoneNumber(phone);
 
         Account account = accountRepository.findOneByPhoneAndIdPhoneCode(phone, idPhoneCode);
@@ -73,17 +74,18 @@ public class AuthorizationActionService implements ActionService {
         if (account != null) {
             String actualPassword = hashPasswordService.convertPasswordForComparing(
                     clientDataStorageService.getData(PASSWORD).toString(), account.getSalt());
-            clientDataStorageService.dropData(PASSWORD);
 
             if (account.getPassword().equals(actualPassword)) {
                 logger.info("User logged in");
                 initSession((HttpServletRequest) clientDataStorageService.getData(SERVLET_REQUEST), account, phoneCode);
-                clientDataStorageService.dropData(SERVLET_REQUEST);
+
+                clientDataStorageService.clearAllData();
 
                 return ACCOUNT_PAGE;
             }
         }
 
+        clientDataStorageService.clearAllData();
         logger.info("User has NOT logged in. Password or phone is incorrect.");
 
         throw new IncorrectInputDataException("Phone and/or password are/is incorrect");

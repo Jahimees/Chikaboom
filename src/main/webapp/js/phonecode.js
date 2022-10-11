@@ -39,7 +39,7 @@ var countryRequesting = false;
         _loadData : function() {
             var self = this;
             if(!countryCache && !countryRequesting) {
-                countryRequesting = $.getJSON('../js/countries.json', {})
+                countryRequesting = $.getJSON('/js/countries.json', {})
                     .done(function(json) {
                         self.data = json;
                         countryCache = self.data;
@@ -129,7 +129,7 @@ var countryRequesting = false;
 
                 var option = $('<div data-phone="'+
                     country.ph + '" data-co="'+ prefCountry.toLowerCase() +'"' +
-                    ' class="country-phone-option"><span>+'+ country.ph +'<img src="../js/blank.gif" class="flag flag-'+
+                    ' class="country-phone-option"><span>+'+ country.ph +'<img src="/js/blank.gif" class="flag flag-'+
                     country.co +
                     '"></span>'+ country.na +'</div>'
                 );
@@ -147,7 +147,7 @@ var countryRequesting = false;
             }
             if(selected) {
                 this.container.find('.country-phone-selected')
-                    .html('<span>+' + selected.ph + '<img src="../js/blank.gif" class="flag flag-'+ selected.co +'"></span>');
+                    .html('<span>+' + selected.ph + '<img src="/js/blank.gif" class="flag flag-'+ selected.co +'"></span>');
             }
             $(selector).bind('click', function(e){
                 self._toggleSelector();

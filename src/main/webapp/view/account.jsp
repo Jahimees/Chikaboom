@@ -36,11 +36,11 @@
                         Маркиза Анфисова
                     </p>
                     <div class="right-inline-box">
-                        <img class="small-icon" src="../image/icon/star_filled_icon.svg" alt="no_image">
-                        <img class="small-icon" src="../image/icon/star_filled_icon.svg" alt="no_image">
-                        <img class="small-icon" src="../image/icon/star_filled_icon.svg" alt="no_image">
-                        <img class="small-icon" src="../image/icon/star_filled_icon.svg" alt="no_image">
-                        <img class="small-icon" src="../image/icon/star_icon.svg" alt="no_image">
+                        <img class="small-icon" src="/image/icon/star_filled_icon.svg" alt="no_image">
+                        <img class="small-icon" src="/image/icon/star_filled_icon.svg" alt="no_image">
+                        <img class="small-icon" src="/image/icon/star_filled_icon.svg" alt="no_image">
+                        <img class="small-icon" src="/image/icon/star_filled_icon.svg" alt="no_image">
+                        <img class="small-icon" src="/image/icon/star_icon.svg" alt="no_image">
                     </div>
                 </div>
                 <div class="small-light-text">
@@ -69,20 +69,20 @@
                     <div class="carousel-inner">
                         <div class="carousel-item active">
                             <div class="w-flex_mrgn-2">
-                                <img class="gallery_image" src="../image/test/test1.png" alt="...">
-                                <img class="gallery_image" src="../image/test/test2.png" alt="...">
-                                <img class="gallery_image" src="../image/test/test3.png" alt="...">
-                                <img class="gallery_image" src="../image/test/test4.png" alt="...">
-                                <img class="gallery_image" src="../image/test/test5.png" alt="...">
+                                <img class="gallery_image" src="/image/test/test1.png" alt="...">
+                                <img class="gallery_image" src="/image/test/test2.png" alt="...">
+                                <img class="gallery_image" src="/image/test/test3.png" alt="...">
+                                <img class="gallery_image" src="/image/test/test4.png" alt="...">
+                                <img class="gallery_image" src="/image/test/test5.png" alt="...">
                             </div>
                         </div>
                         <div class="carousel-item">
                             <div class="w-flex_mrgn-2">
-                                <img class="gallery_image" src="../image/stub.png" alt="...">
-                                <img class="gallery_image" src="../image/test/test5.png" alt="...">
-                                <img class="gallery_image" src="../image/space_background.jpg" alt="...">
-                                <img class="gallery_image" src="../image/top_master_template.png" alt="...">
-                                <img class="gallery_image" src="../image/service/service_icon_1.png" alt="...">
+                                <img class="gallery_image" src="/image/stub.png" alt="...">
+                                <img class="gallery_image" src="/image/test/test5.png" alt="...">
+                                <img class="gallery_image" src="/image/space_background.jpg" alt="...">
+                                <img class="gallery_image" src="/image/top_master_template.png" alt="...">
+                                <img class="gallery_image" src="/image/service/service_icon_1.png" alt="...">
                             </div>
                         </div>
                     </div>
@@ -128,13 +128,13 @@
                         <div class="carousel-inner">
                             <div class="carousel-item active">
                                 <div class="w-flex_mrgn-2">
-                                    <img src="../image/test/test1.png"
+                                    <img src="/image/test/test1.png"
                                          class="post_image" alt="...">
                                 </div>
                             </div>
                             <div class="carousel-item">
                                 <div class="w-flex_mrgn-2">
-                                    <img src="../image/stub.png"
+                                    <img src="/image/stub.png"
                                          class="post_image"
                                          alt="...">
                                 </div>
@@ -173,8 +173,8 @@
         <div class="content-box col-3 g-0">
 
             <div class="content">
-                <img class="full-width-inline-box" src="../image/user/${id}/avatar.png"
-                     onerror="this.src='../image/user/no_photo.jpg'" alt="error on load">
+                <img class="full-width-inline-box" src="/image/user/${id}/avatar.png"
+                     onerror="this.src='/image/user/no_photo.jpg'" alt="error on load">
                 <div class="button big-button"><a href="/chikaboom/under_construction">Редактировать</a></div>
             </div>
 

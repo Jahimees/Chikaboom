@@ -1,11 +1,11 @@
 .carousel-next-icon {
-    background-image: url("../../image/icon/arrow_right_icon.svg");
+    background-image: url("/image/icon/arrow_right_icon.svg");
     width: 50px;
     height: 50px;
 }
 
 .carousel-prev-icon {
-    background-image: url("../../image/icon/arrow_left_icon.svg");
+    background-image: url("/image/icon/arrow_left_icon.svg");
     width: 50px;
     height: 50px;
 }

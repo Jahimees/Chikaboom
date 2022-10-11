@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -24,6 +25,7 @@ import static net.chikaboom.util.constant.EOFieldsCostant.SALT;
  * Сервис реализует создание нового аккаунта
  */
 @Service
+@Transactional
 public class RegistrationActionService implements ActionService {
 
     @Value("${page.main}")
@@ -93,6 +95,8 @@ public class RegistrationActionService implements ActionService {
         account.setNickname(nickname);
 
         accountRepository.save(account);
+
+        clientDataStorageService.clearAllData();
 
         logger.info("New account created");
 
