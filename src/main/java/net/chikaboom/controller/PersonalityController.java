@@ -2,7 +2,7 @@ package net.chikaboom.controller;
 
 import net.chikaboom.exception.IllegalAccessException;
 import net.chikaboom.service.ClientDataStorageService;
-import net.chikaboom.service.action.LoadPersonalityService;
+import net.chikaboom.service.action.AccountInfoLoaderService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,16 +28,20 @@ public class PersonalityController {
     private String ID_ACCOUNT;
     @Value("${attr.phoneCode}")
     private String PHONE_CODE;
+    @Value("${attr.about}")
+    private String ABOUT;
+    @Value("${attr.address}")
+    private String ADDRESS;
 
     private final ClientDataStorageService clientDataStorageService;
-    private final LoadPersonalityService loadPersonalityService;
+    private final AccountInfoLoaderService accountInfoLoaderService;
 
     private final Logger logger = Logger.getLogger(PersonalityController.class);
 
     @Autowired
-    public PersonalityController(ClientDataStorageService clientDataStorageService, LoadPersonalityService loadPersonalityService) {
+    public PersonalityController(ClientDataStorageService clientDataStorageService, AccountInfoLoaderService accountInfoLoaderService) {
         this.clientDataStorageService = clientDataStorageService;
-        this.loadPersonalityService = loadPersonalityService;
+        this.accountInfoLoaderService = accountInfoLoaderService;
     }
 
     @Value("${page.personality}")
@@ -57,10 +61,12 @@ public class PersonalityController {
         modelAndView.setViewName(PERSONALITY_PAGE);
         clientDataStorageService.setData(ID_ACCOUNT, idAccount);
 
-        Map<String, Object> parameters = loadPersonalityService.execute();
+        Map<String, Object> parameters = accountInfoLoaderService.execute();
 
         modelAndView.addObject(ACCOUNT, parameters.get(ACCOUNT));
         modelAndView.addObject(PHONE_CODE, parameters.get(PHONE_CODE));
+        modelAndView.addObject(ABOUT, parameters.get(ABOUT));
+        modelAndView.addObject(ADDRESS, parameters.get(ADDRESS));
 
         return modelAndView;
     }

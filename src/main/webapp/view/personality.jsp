@@ -21,15 +21,18 @@
     <link rel="stylesheet" href="/css/addition/menu_bar.css">
     <link rel="stylesheet" href="/css/addition/phonecode.css"/>
 
+<%--    <script src="http://maps.google.com/maps/api/js?key=AIzaSyClTTM2s3F_2yNxZ7cJmnlwF8yodWtoDO0&callback=initMap"></script>--%>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
 </head>
 <body>
 <div class="flex-box-gray">
     <div class="w-20 me-1">
-        <jsp:include page="common/common_header.jsp"/>
+
         <div style="text-align: center; font-size: 3em; background-color: #5F4E7D;" id="logo">
-            <img style="width: 70%" src="/image/logo.svg">
+            <a href="/chikaboom/main">
+                <img style="width: 50%" src="/image/logo_gradient.svg">
+            </a>
         </div>
         <div class="menu-box">
             <div id="settings-btn" class="menu-child button">
@@ -38,7 +41,7 @@
             </div>
             <div id="profile-btn" class="menu-child button" selected="false">
                 <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
-                <div class="menu-text"><a href="#">Профиль</a></div>
+                <div class="menu-text"><a href="/chikaboom/account/${idAccount}">Профиль</a></div>
             </div>
             <div id="services-btn" class="menu-child button" selected="false">
                 <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
@@ -69,6 +72,10 @@
                 <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
                 <div class="menu-text"><a href="#">Отзывы</a></div>
             </div>
+            <div id="logout-btn" onclick="" class="menu-child button" selected="false">
+                <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
+                <div class="menu-text"><a href="/chikaboom/logout">Выйти</a></div>
+            </div>
         </div>
     </div>
 
@@ -76,7 +83,6 @@
 
     </div>
     <script type="text/javascript" src="/js/dynamic_popup.js"></script>
-    <script type="text/javascript" src="/js/message_popup.js"></script>
 
     <jsp:include page="common/popup/edit_popup.jsp"/>
     <jsp:include page="common/popup/message_popup.jsp"/>
@@ -96,6 +102,8 @@
 
     var accountJson = ${account};
     var phoneCodeJson = ${phoneCode};
+    var aboutJson = ${about};
+    var addressJson = ${address};
 
     function loadSettings() {
         $.ajax({

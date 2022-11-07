@@ -1,7 +1,7 @@
 package net.chikaboom.controller.setting_tab;
 
 import net.chikaboom.service.ClientDataStorageService;
-import net.chikaboom.service.action.LoadPersonalityService;
+import net.chikaboom.service.action.AccountInfoLoaderService;
 import net.chikaboom.service.action.tab.EditGeneralSettingsService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,17 +31,17 @@ public class SettingTabController {
 
     private final ClientDataStorageService clientDataStorageService;
     private final EditGeneralSettingsService editGeneralSettingsService;
-    private final LoadPersonalityService loadPersonalityService;
+    private final AccountInfoLoaderService accountInfoLoaderService;
 
     private final Logger logger = Logger.getLogger(SettingTabController.class);
 
     @Autowired
     public SettingTabController(ClientDataStorageService clientDataStorageService,
                                 EditGeneralSettingsService editGeneralSettingsService,
-                                LoadPersonalityService loadPersonalityService) {
+                                AccountInfoLoaderService accountInfoLoaderService) {
         this.clientDataStorageService = clientDataStorageService;
         this.editGeneralSettingsService = editGeneralSettingsService;
-        this.loadPersonalityService = loadPersonalityService;
+        this.accountInfoLoaderService = accountInfoLoaderService;
     }
 
     /**
@@ -75,7 +75,7 @@ public class SettingTabController {
         logger.info("Data was successfully change");
 
         logger.info("Reloading personality page...");
-        Map<String, Object> parameters = loadPersonalityService.execute();
+        Map<String, Object> parameters = accountInfoLoaderService.execute();
 
         clientDataStorageService.clearAllData();
 

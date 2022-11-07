@@ -1,21 +1,42 @@
 package net.chikaboom.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import net.chikaboom.model.client.AccountInformation;
+import net.chikaboom.service.ClientDataStorageService;
+import net.chikaboom.service.action.AccountInfoLoaderService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Перенаправляет на страницу аккаунта
  */
-@Controller
+@RestController
 @PropertySource("/constants.properties")
-@RequestMapping("/chikaboom/account")
+@RequestMapping("/chikaboom/account/{idAccount}")
 public class AccountController {
 
     @Value("${page.account}")
     private String ACCOUNT_PAGE;
+    @Value("${attr.idAccount}")
+    private String ID_ACCOUNT;
+    @Value("${attr.account}")
+    private String ACCOUNT;
+
+    private final ClientDataStorageService clientDataStorageService;
+    private final AccountInfoLoaderService accountInfoLoaderService;
+
+    @Autowired
+    public AccountController(ClientDataStorageService clientDataStorageService, AccountInfoLoaderService accountInfoLoaderService) {
+        this.clientDataStorageService = clientDataStorageService;
+        this.accountInfoLoaderService = accountInfoLoaderService;
+    }
 
     /**
      * Перенаправляет на страницу аккаунта
@@ -23,7 +44,20 @@ public class AccountController {
      * @return ссылку на страницу аккаунта
      */
     @GetMapping
-    public String openAccountPage() {
-        return ACCOUNT_PAGE;
+    public ModelAndView openAccountPage(@PathVariable int idAccount) {
+        ModelAndView modelAndView = new ModelAndView(ACCOUNT_PAGE);
+        clientDataStorageService.setData(ID_ACCOUNT, idAccount);
+
+        AccountInformation accountInformation = accountInfoLoaderService.loadPublicAccountInformation();
+        ObjectMapper mapper = new ObjectMapper();
+        String result = "";
+        try {
+            result = mapper.writeValueAsString(accountInformation);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        modelAndView.addObject(ACCOUNT, result);
+
+        return modelAndView;
     }
 }

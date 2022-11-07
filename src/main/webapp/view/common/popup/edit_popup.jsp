@@ -24,8 +24,3 @@
         </div>
     </div>
 </div>
-
-<script rel="script" src="/js/jquery-ui-1.10.4.custom.min.js"></script>
-
-<script src="/js/countries.js"></script>
-<script src="/js/phonecode.js"></script>

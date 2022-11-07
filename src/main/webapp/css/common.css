@@ -23,8 +23,28 @@
     margin-left: 15px;
 }
 
+.margin-5-0 {
+    margin: 5% 0;
+}
+
+.margin-2-10-0-10 {
+    margin: 2% 10% 0 10%;
+}
+
+.margin-0-10 {
+    margin: 0 10%;
+}
+
+.margin-0-20 {
+    margin: 0 20%;
+}
+
 .padding-0-5 {
     padding: 0 5%;
+}
+
+.padding-0-0-0-5 {
+    padding: 0 0 0 5%;
 }
 
 .w-flex_mrgn-2 {
@@ -34,29 +54,6 @@
 
 .footer {
     text-align: center;
-}
-
-.header {
-    width: 100%;
-    padding: 10px 0;
-    background-color: #5F4E7D;
-    display: inline-flex;
-}
-
-.header-text {
-    font-family: Manrope, serif;
-    font-size: 30px;
-    margin: auto 0;
-}
-
-.header-text a {
-    color: white;
-}
-
-.right-header-box {
-    display: inline-flex;
-    margin-left: auto;
-    margin-right: 2%;
 }
 
 .small-icon {
@@ -76,6 +73,8 @@ a {
     width: 80%;
 }
 
+/*TEXT*/
+
 .common-text {
     font-family: Manrope, serif;
     margin-bottom: 0;
@@ -94,11 +93,23 @@ a {
     font-size: 0.8em;
 }
 
-.small-light-text {
+.light-medium-text {
     font-family: Manrope, serif;
-    font-size: 0.8em;
-    color: #AEA1C4;
+    font-size: 20px;
+    color: #ffffff;
 }
+
+.medium-text {
+    font-family: Manrope, serif;
+    font-size: 20px;
+}
+
+.smaller-medium-text {
+    font-family: Manrope, serif;
+    font-size: 15px;
+}
+
+/*BUTTON*/
 
 .button {
     font-family: Manrope, serif;
@@ -112,12 +123,19 @@ a {
     background-color: #AEA1C4;
 }
 
-.big-button {
+.purple-button {
+    font-family: Manrope, serif;
+    font-size: 25px;
+    color: white;
+    cursor: pointer;
     background-color: #AEA1C4;
     text-align: center;
-    padding: 5px;
-    margin-top: 10px;
-    border-radius: 10px;
+    padding: 5px 15px;
+    border-radius: 20px;
+}
+
+.purple-button:hover {
+    background-color: #cfc3e7;
 }
 
 .input-box {
@@ -133,4 +151,44 @@ a {
 .button-box {
     display: inline-flex;
     padding: 30px 0 10px 0;
+}
+
+/*HEADER*/
+
+.header {
+    width: 100%;
+    padding: 10px 0;
+    display: inline-flex;
+}
+
+.header-text {
+    font-family: Manrope, serif;
+    font-size: 20px;
+    padding: 0 20px;
+    margin: auto 0;
+}
+
+.header-middle-box {
+    display: inline-flex;
+    margin: 0 auto;
+    width: 50%;
+    justify-content: center;
+}
+
+.right-header-box {
+    display: inline-flex;
+}
+
+.header-menu-link {
+    color: #2D333E;
+    cursor: pointer;
+    font-size: 20px;
+    padding: 0 20px;
+    margin: auto 0;
+    text-decoration: none;
+}
+
+.header-menu-link:hover {
+    color: #39414f;
+    text-decoration: underline;
 }

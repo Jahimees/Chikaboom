@@ -3,11 +3,6 @@ $("#settings-btn").on("click", function () {
     loadSettings();
 });
 
-$("#profile-btn").on("click", function () {
-    selectCurrent(this);
-    loadProfile();
-});
-
 $("#services-btn").on("click", function () {
     selectCurrent(this);
     loadServices();
@@ -49,10 +44,6 @@ function selectCurrent(thisObj) {
     });
 
     thisObj.setAttribute("selected", "true");
-}
-
-function loadProfile() {
-    document.location.replace("/chikaboom/account");
 }
 
 function loadServices() {

@@ -21,7 +21,6 @@ function closePopup(popupName) {
  */
 function confirmEdit() {
     if (validateAllFields()) {
-        console.log("Valid");
         let url = "/chikaboom/personality/" + accountJson.idAccount + "/settings";
         let updatedAccountJson = JSON.parse(JSON.stringify(accountJson));
 
@@ -56,7 +55,7 @@ function confirmEdit() {
             }
         });
     } else {
-        console.log("Invalid");
+        console.log("field is invalid");
     }
 }
 
@@ -80,12 +79,12 @@ function dropAllFields() {
  * @param isPhoneCode флаг, является ли поле номером телефона
  * @param validations массив правил валидации поля
  */
-function addField(labelText, fieldName, inputType, placeHolderText, isPhoneCode, validations) {
+function addField(labelText, fieldName, inputType, placeHolderText, isPhoneCode, validations, fieldType) {
     let divLabel = document.createElement("div");
     divLabel.setAttribute("class", "common-black-text");
     divLabel.innerHTML = labelText;
 
-    let inputField = document.createElement("input");
+    let inputField = document.createElement(fieldType ? fieldType : "input");
     if (isPhoneCode) {
         inputField.id = "edit-phone";
     }
@@ -123,9 +122,11 @@ function addField(labelText, fieldName, inputType, placeHolderText, isPhoneCode,
             });
         });
     }
+
+    return inputField;
 }
 
-const InvalidReason = {PHONE: 'phone', EMAIL: "email", EMPTY: "empty", SHORT: "short"}
+const InvalidReason = {PHONE: 'phone', EMAIL: "email", EMPTY: "empty", SHORT: "short", LONG: "long"}
 
 class Validation {
     constructor(invalidMessage, InvalidReason) {
@@ -174,7 +175,9 @@ function validateField(thisField) {
             }
             case InvalidReason.SHORT: {
                 if (thisField.innerHTML.trim().length <= 4) {
-                    // TODO short reason
+                    thisField.setAttribute("reason", InvalidReason.SHORT)
+                    $("#" + thisFieldName + "-" + InvalidReason.SHORT).css("display", "block");
+                    isReasonShouldBeEmpty = false;
                 }
                 break;
             }
@@ -198,10 +201,21 @@ function validateField(thisField) {
                 }
                 break;
             }
+            case InvalidReason.LONG: {
+                if (thisField.innerHTML.trim().length > 30) {
+                    thisField.setAttribute("reason", InvalidReason.LONG)
+                    $("#" + thisFieldName + "-" + InvalidReason.LONG).css("display", "block");
+                    isReasonShouldBeEmpty = false;
+                } else {
+                    $("#" + thisFieldName + "-" + InvalidReason.LONG).css("display", "none");
+                }
+                break;
+            }
         }
-        if (isReasonShouldBeEmpty) {
-            thisField.setAttribute("reason", "");
-        }
+    }
+
+    if (isReasonShouldBeEmpty) {
+        thisField.setAttribute("reason", "");
     }
 
     thisField.setAttribute("valid", thisField.getAttribute("reason") === "");

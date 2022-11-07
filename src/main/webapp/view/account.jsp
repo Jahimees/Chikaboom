@@ -15,232 +15,225 @@
     <link rel="stylesheet" href="/css/account.css">
     <link rel="stylesheet" href="/css/addition/carousel.css">
     <link rel="stylesheet" href="/css/addition/menu_bar.css">
+    <link rel="stylesheet" href="/css/media/main_media.css">
+    <link rel="stylesheet" href="/css/popup.css">
+    <link rel="stylesheet" href="/css/addition/phonecode.css"/>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script rel="script" src="/js/jquery-ui-1.10.4.custom.min.js">
+        <script src="/js/countries.js"></script>
+    <script src="/js/phonecode.js"></script>
+    <script>
+        $(function () {
+            $('#l-input-phone').phonecode({
+                preferCo: 'by',
+                id: 'login'
+            });
+        });
+    </script>
+
 </head>
 <body>
-<c:set var="session" value="${idAccount}"/>
-
 <jsp:include page="common/common_header.jsp"/>
-<div class="flex-box-gray">
-    <c:if test="${empty idAccount}">
-        <c:redirect url="/chikaboom/main"/>
-    </c:if>
-    <div class="row w-100 justify-content-md-center">
-
-        <%-- ЛЕВАЯ ЧАСТЬ --%>
-        <div class="content-box col-7 ms-2 g-0">
-
-            <%-- БЛОК ИНФОРМАЦИИ --%>
-            <div class="content">
-                <div class="full-width-inline-box">
-                    <p class="common-text">
-                        Маркиза Анфисова
-                    </p>
-                    <div class="right-inline-box">
-                        <img class="small-icon" src="/image/icon/star_filled_icon.svg" alt="no_image">
-                        <img class="small-icon" src="/image/icon/star_filled_icon.svg" alt="no_image">
-                        <img class="small-icon" src="/image/icon/star_filled_icon.svg" alt="no_image">
-                        <img class="small-icon" src="/image/icon/star_filled_icon.svg" alt="no_image">
-                        <img class="small-icon" src="/image/icon/star_icon.svg" alt="no_image">
-                    </div>
-                </div>
-                <div class="small-light-text">
-                    inst: @murmurmur
-                </div>
-
-                <hr>
-
-                <div>
-                    <p class="common-text">Телефон(ы): +375 (25) 728-41-58 Life:)</p>
-                    <p class="common-text">Адрес: г. Милашек, ул. Пушистиков, 40</p>
-                </div>
-
-                <hr>
-
-                <div>
-                    <p class="common-text">Мастер ногтевого сервиса</p>
-                    <div class="small-light-text">
-                        #френч #модные коготки #быстрый маникюр #аппаратный педикюр
-                    </div>
-                </div>
-
-                <%-- КАРУСЕЛЬ ГАЛЕРЕИ --%>
-                <div class="common-text">Галерея</div>
-                <div id="carouselGallery" class="carousel slide" data-bs-interval="false" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <div class="w-flex_mrgn-2">
-                                <img class="gallery_image" src="/image/test/test1.png" alt="...">
-                                <img class="gallery_image" src="/image/test/test2.png" alt="...">
-                                <img class="gallery_image" src="/image/test/test3.png" alt="...">
-                                <img class="gallery_image" src="/image/test/test4.png" alt="...">
-                                <img class="gallery_image" src="/image/test/test5.png" alt="...">
-                            </div>
-                        </div>
-                        <div class="carousel-item">
-                            <div class="w-flex_mrgn-2">
-                                <img class="gallery_image" src="/image/stub.png" alt="...">
-                                <img class="gallery_image" src="/image/test/test5.png" alt="...">
-                                <img class="gallery_image" src="/image/space_background.jpg" alt="...">
-                                <img class="gallery_image" src="/image/top_master_template.png" alt="...">
-                                <img class="gallery_image" src="/image/service/service_icon_1.png" alt="...">
-                            </div>
-                        </div>
-                    </div>
-                    <button class="carousel-control-prev" data-bs-target="#carouselGallery"
-                            data-bs-slide="prev">
-                        <span class="carousel-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Предыдущий</span>
-                    </button>
-                    <button class="carousel-control-next" data-bs-target="#carouselGallery"
-                            data-bs-slide="next">
-                        <span class="carousel-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Следующий</span>
-                    </button>
-                </div>
-
-                <div class="small-light-text">О себе</div>
-                <div class="common-text">
-                    Мяу мяу мяу мяу мяу мяу мяу мяу мяу мяу мяу мяу мяу мяу мяу мяу мяу мяу
-                    мур мур мурмур мур мурмур мур мурмур мур мурмур мур мурмур мур мурмур мур мур
-                    мур мур мур мур мур мур мур мур мур мур мур мур мур мур мур мур мур мур мур мур мур
-                </div>
-
-                <%-- СТЕНА И ОТЗЫВЫ --%>
-                <div class="full-width-inline-box">
-                    |
-                    <div class="small-light-text wall-menu-child">
-                        Стена
-                    </div>
-                    |
-                    <div class="small-light-text wall-menu-child">
-                        Отзывы
-                    </div>
-                    |
-                </div>
-                <hr>
-                <div class="content" class="solid-dark-border">
-                    <div class="full-width-inline-box">
-                        <div class="right-inline-box">ooo</div>
-                    </div>
-
-                    <%-- TODO REFACTOR STYLE. Будет генерироваться--%>
-                    <div id="carouselPost" class="carousel slide" data-bs-interval="false" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                            <div class="carousel-item active">
-                                <div class="w-flex_mrgn-2">
-                                    <img src="/image/test/test1.png"
-                                         class="post_image" alt="...">
-                                </div>
-                            </div>
-                            <div class="carousel-item">
-                                <div class="w-flex_mrgn-2">
-                                    <img src="/image/stub.png"
-                                         class="post_image"
-                                         alt="...">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="carousel-indicators">
-                            <button data-bs-target="#carouselPost" data-bs-slide-to="0"
-                                    class="active"
-                                    aria-current="true" aria-label="Slide 1"></button>
-                            <button data-bs-target="#carouselPost" data-bs-slide-to="1"
-                                    aria-label="Slide 2"></button>
-                        </div>
-                        <button class="carousel-control-prev" data-bs-target="#carouselPost"
-                                data-bs-slide="prev">
-                            <span class="carousel-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Предыдущий</span>
-                        </button>
-                        <button class="carousel-control-next" data-bs-target="#carouselPost"
-                                data-bs-slide="next">
-                            <span class="carousel-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Следующий</span>
-                        </button>
-                    </div>
-                    <div class="common-text">
-                        Всем привет, с вами Джонни Кэтсвилл и я немного набрал весу....
-                        Такие дела. Тада-да-да
-                    </div>
-                    <div class="small-light-text">30.03.2022 4:05</div>
+<div class="flex-box-white">
+    <%-- БЛОК ИНФОРМАЦИИ --%>
+    <div class="content">
+        <div class="d-flex divided-background padding-0-0-0-5 ">
+            <div style="padding: 0 0 30px;">
+                <img class="avatar-image" src="/image/user/${idAccount}/avatar.png"
+                     onerror="this.src='/image/user/no_photo.jpg'"
+                     alt="error on load">
+                <div class="d-flex flex-row-reverse">
+                    <img src="/image/icon/edit_icon.svg">
+                    <div class="purple-button m-2">ЗАПИСАТЬСЯ</div>
                 </div>
             </div>
+            <div class="main-information-block">
+                <b>
+                    <div id="nickname-placeholder" class="common-black-text">
+                    </div>
+                </b>
+                <div id="profession-placeholder" class="small-text"></div>
+                <div class="main-information">
+                    <div id="phone-placeholder" class="medium-text">Телефон: </div>
+                    <div id="address-placeholder" class="medium-text">Адрес: </div>
+                    <div class="d-inline-flex medium-text">
+                        <div class="chapter-header">
+                            О себе:
+                        </div>
+                        <div class="vertical-blue-line"></div>
+                        <div id="about-text-placeholder"></div>
+                    </div>
 
+                </div>
+            </div>
         </div>
 
-        <%-- ПРАВАЯ ЧАСТЬ --%>
-        <div class="content-box col-3 g-0">
+        <%--    ЯКОРЯ    --%>
+        <div class="d-inline-flex medium-text margin-2-10-0-10">
+            <a href="#price-block">
+                ЦЕНЫ
+            </a>
+            <div class="horizontal-black-line"></div>
+            <a href="#photo-gallery-block">
+                ГАЛЕРЕЯ ФОТО
+            </a>
+            <div class="horizontal-black-line"></div>
+            <a href="#review-block">
+                ОТЗЫВЫ
+            </a>
+        </div>
 
-            <div class="content">
-                <img class="full-width-inline-box" src="/image/user/${id}/avatar.png"
-                     onerror="this.src='/image/user/no_photo.jpg'" alt="error on load">
-                <div class="button big-button"><a href="/chikaboom/under_construction">Редактировать</a></div>
+        <hr>
+
+        <%--    ЦЕНЫ И УСЛУГИ    --%>
+        <div id="price-block" class="d-flex margin-2-10-0-10">
+            <div class="chapter-header medium-text">
+                ЦЕНЫ И УСЛУГИ
             </div>
-
-            <%-- ЦЕНЫ НА УСЛУГИ --%>
-            <div class="content">
-                <div class="small-light-text">
-                    Цены на услуги
-                </div>
-                <hr>
-                <div>
-                    <div class="content">
-                        <div id="servicesCarousel" class="carousel slide" data-bs-interval="false"
-                             data-bs-ride="carousel">
-                            <div class="carousel-inner">
-                                <div class="carousel-item active">
-                                    <div class="w-flex_mrgn-2" style="display: grid">
-                                        <p><span>Снятие чужого покрытия</span><span>5р</span></p>
-                                        <p><span>Однотонное покрытие</span><span>5р</span></p>
-                                        <p><span>Наращивание</span><span>5р</span></p>
-                                        <p><span>Сложный дизайн</span><span>5р</span></p>
-                                        <p>
-                                            <span>Снятие чужого покрытия Снятие чужого покрытия Снятие чужого покрытия</span><span>5р</span>
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="carousel-item">
-                                    <div class="w-flex_mrgn-2" style="display: grid">
-                                        <p><span>покрытия чужого </span><span>5р</span></p>
-                                        <p><span>покрытие Однотонное </span><span>5р</span></p>
-                                        <p><span>Себя Наращивание</span><span>5р</span></p>
-                                        <p><span>дизайн Сложный </span><span>5р</span></p>
-                                        <p>
-                                            <span>Снятие чужого покрытия Снятие чужого покрытия Снятие чужого покрытия</span><span>5р</span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="carousel-indicators">
-                                <button data-bs-target="#servicesCarousel" data-bs-slide-to="0"
-                                        class="active"
-                                        aria-current="true" aria-label="Slide 1"></button>
-                                <button data-bs-target="#servicesCarousel" data-bs-slide-to="1"
-                                        aria-label="Slide 2"></button>
-                            </div>
-                            <div class="full-width-inline-box">
-                                <button class="carousel-control-prev" style="position: relative"
-                                        data-bs-target="#servicesCarousel"
-                                        data-bs-slide="prev">
-                                    <span class="carousel-prev-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Предыдущий</span>
-                                </button>
-                                <button class="carousel-control-next" style="position: relative; margin: 0 0 0 auto;"
-                                        data-bs-target="#servicesCarousel"
-                                        data-bs-slide="next">
-                                    <span class="carousel-next-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Следующий</span>
-                                </button>
-                            </div>
+            <div class="d-block w-100">
+                <div class="service-type-block">
+                    <div>
+                        <div class="horizontal-blue-line"></div>
+                        <div class="service-header medium-text">
+                            МАНИКЮР
                         </div>
+                    </div>
+                    <div class="service-row row medium-text">
+                        <div class="col-6">Маникюр + покрытие гель лаком (с дизайном)</div>
+                        <div class="col-3">3 часа</div>
+                        <div class="col-1">25 BYN</div>
+                        <div class="col-1">икон</div>
+                        <div class="col-1">Записаться</div>
+                    </div>
+                    <div class="service-row row medium-text">
+                        <div class="col-6">Наименование услуги</div>
+                        <div class="col-3">2 часа 20 минут</div>
+                        <div class="col-1">25 BYN</div>
+                        <div class="col-1">икон</div>
+                        <div class="col-1">Записаться</div>
+                    </div>
+                    <div class="service-row row medium-text">
+                        <div class="col-6">Наименование услуги</div>
+                        <div class="col-3">3 часа</div>
+                        <div class="col-1">25 BYN</div>
+                        <div class="col-1">икон</div>
+                        <div class="col-1">Записаться</div>
+                    </div>
+                </div>
+                <%--                --%>
+                <div class="service-type-block">
+                    <div>
+                        <div class="horizontal-blue-line">
+
+                        </div>
+                        <div class="service-header medium-text">
+                            ПЕДИКЮР
+                        </div>
+                    </div>
+                    <div class="service-row row medium-text">
+                        <div class="col-6">Наименование услуги</div>
+                        <div class="col-3">3 часа</div>
+                        <div class="col-1">25 BYN</div>
+                        <div class="col-1">икон</div>
+                        <div class="col-1">Записаться</div>
+                    </div>
+                    <div class="service-row row medium-text">
+                        <div class="col-6">Наименование услуги</div>
+                        <div class="col-3">1 час 30 минут</div>
+                        <div class="col-1">25 BYN</div>
+                        <div class="col-1">икон</div>
+                        <div class="col-1">Записаться</div>
+                    </div>
+                    <div class="service-row row medium-text">
+                        <div class="col-6">Наименование услуги</div>
+                        <div class="col-3">3 часа</div>
+                        <div class="col-1">25 BYN</div>
+                        <div class="col-1">икон</div>
+                        <div class="col-1">Записаться</div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <hr>
+
+        <%--    ГАЛЕРЕЯ ФОТО    --%>
+        <div id="photo-gallery-block" class="d-flex margin-2-10-0-10">
+            <div class="chapter-header medium-text">
+                ГАЛЕРЕЯ ФОТО
+            </div>
+            <div class="d-inline-flex w-100" style="justify-content: center;">
+                <div>
+                    <img class="gallery_image" src="/image/service/service_icon_1.png">
+                </div>
+                <div>
+                    <img class="gallery_image" src="/image/service/service_icon_2.png">
+                </div>
+                <div>
+                    <img class="gallery_image" src="/image/service/service_icon_3.png">
+                </div>
+                <div>
+                    <img class="gallery_image" src="/image/service/service_icon_4.png">
+                </div>
+            </div>
+        </div>
+
+        <%--    СТАТИСТИКА    --%>
+        <div class="d-inline-flex w-100 statistic-line">
+            <div class="light-medium-text statistic-elem">
+                ХХХ ПОДТВЕРЖДЕННЫХ ЗАПИСЕЙ
+            </div>
+            <div class="light-medium-text light-statistic-elem">
+                БОЛЕЕ ХХХ ПОЛОЖИТЕЛЬНЫХ ОТЗВЫВОВ
+            </div>
+            <div class="light-medium-text statistic-elem">
+                ХХХ КЛИЕНТ ДОБАВИЛ В ИЗБРАННОЕ
+            </div>
+        </div>
+
+        <%--    ОТЗЫВЫ    --%>
+        <div id="review-block" class="d-flex margin-2-10-0-10">
+            <div class="chapter-header medium-text">
+                ОТЗЫВЫ
+            </div>
+
+            <div class="margin-0-20">
+                <div class="d-inline-flex margin-0-10">
+                    <div>
+                        <img class="feedback-image" src="/image/user/acf4f874-76e6-444e-b223-9b5e776d84fd/avatar.png">
+                        <div class="small-text">01 янв 2001</div>
+                    </div>
+                    <div class="review-text-block">
+                        <div style="white-space: nowrap" class="medium-text">
+                            Алина Булавкина
+                        </div>
+                        <div class="horizontal-blue-line"></div>
+                        <div>
+                            Как всегда все очень аккуратно и красиво! Ногтик к ногтику, ручки аккуратно обработаны. Ну и в конце масло и кремик - верх блаженства!
+                        </div>
+                    </div>
+                </div>
+                <div class="d-inline-flex margin-0-10">
+                    <div>
+                        <img class="feedback-image" src="/image/user/acf4f874-76e6-444e-b223-9b5e776d84fd/avatar.png">
+                        <div class="small-text">01 янв 2001</div>
+                    </div>
+                    <div class="review-text-block">
+                        <div style="white-space: nowrap" class="medium-text">
+                            Алина Булавкина
+                        </div>
+                        <div class="horizontal-blue-line"></div>
+                        <div>
+                            Юлечка спасибо огромное за работу которую вы делаете,моя жизнь становится более краше после посещения моего любимого мастера по маникюру.🤗
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
     </div>
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
@@ -248,3 +241,16 @@
         crossorigin="anonymous"></script>
 </body>
 </html>
+
+<jsp:include page="/view/common/popup/login_popup.jsp"/>
+
+<script type="text/javascript" src="/js/static_popup.js"></script>
+<script>
+    var accountJson = JSON.parse(JSON.stringify(${account}));
+
+    $("#about-text-placeholder")[0].innerText = accountJson.aboutText;
+    $("#phone-placeholder")[0].innerText = "Телефон: " + "+" + accountJson.phoneCode + " " + accountJson.phone;
+    $("#nickname-placeholder")[0].innerText = accountJson.nickname;
+    $("#address-placeholder")[0].innerText = "Адрес: " + accountJson.address;
+    $("#profession-placeholder")[0].innerText = accountJson.profession;
+</script>

@@ -16,6 +16,15 @@ import static net.chikaboom.util.constant.DbNamesConstant.*;
 @Entity
 @Table(name = ABOUT)
 public class About implements BaseEntity {
+
+    public About() {
+
+    }
+
+    public About(int idAccount) {
+        this.idAccount = idAccount;
+    }
+
     /**
      * id сущности about
      */
@@ -40,4 +49,10 @@ public class About implements BaseEntity {
      */
     @Column(name = ID_ACCOUNT)
     private int idAccount;
+
+    /**
+     * Краткое отражение вида деятельности мастера
+     */
+    @Column(name = PROFESSION)
+    private String profession;
 }

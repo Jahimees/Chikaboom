@@ -16,7 +16,7 @@ import static net.chikaboom.util.constant.DbNamesConstant.ROLE;
 @Data
 @Entity
 @Table(name = ROLE)
-public class Role {
+public class Role implements BaseEntity {
     /**
      * id сущности в таблице role
      */
