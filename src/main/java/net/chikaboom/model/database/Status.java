@@ -16,7 +16,7 @@ import static net.chikaboom.util.constant.DbNamesConstant.STATUS;
 @Data
 @Entity
 @Table(name = STATUS)
-public class Status {
+public class Status implements BaseEntity {
     /**
      * id сущности в таблице Status
      */

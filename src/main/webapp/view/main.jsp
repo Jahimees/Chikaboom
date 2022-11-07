@@ -163,10 +163,10 @@
             allowfullscreen>
     </iframe>
 
-    <jsp:include page="common/popup/login_popup.jsp"/>
-    <jsp:include page="common/popup/register_popup.jsp"/>
-    <jsp:include page="common/popup/message_popup.jsp"/>
-    <jsp:include page="common/footer.jsp"/>
+    <jsp:include page="/view/common/popup/login_popup.jsp"/>
+    <jsp:include page="/view/common/popup/register_popup.jsp"/>
+    <jsp:include page="/view/common/popup/message_popup.jsp"/>
+    <jsp:include page="/view/common/footer.jsp"/>
 </div>
 </body>
 </html>

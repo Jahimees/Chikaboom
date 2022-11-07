@@ -14,6 +14,7 @@ public final class DbNamesConstant {
     public static final String ID_ABOUT = "idabout";
     public static final String TEXT = "text";
     public static final String TAGS = "tags";
+    public static final String PROFESSION = "profession";
 
     public static final String ID_ACCOUNT = "idaccount";
     public static final String PHONE_CODE = "phone_code";

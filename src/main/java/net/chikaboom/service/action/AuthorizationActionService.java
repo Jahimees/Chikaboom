@@ -81,7 +81,7 @@ public class AuthorizationActionService implements ActionService {
 
                 clientDataStorageService.clearAllData();
 
-                return ACCOUNT_PAGE;
+                return ACCOUNT_PAGE + "/" + account.getIdAccount();
             }
         }
 

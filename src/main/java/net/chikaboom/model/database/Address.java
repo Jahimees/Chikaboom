@@ -15,7 +15,16 @@ import static net.chikaboom.util.constant.DbNamesConstant.*;
 @Data
 @Entity
 @Table(name = ADDRESS)
-public class Address {
+public class Address implements BaseEntity {
+
+    public Address() {
+
+    }
+
+    public Address(int idAccount) {
+        this.idAccount = idAccount;
+    }
+
     /**
      * id сущности в таблице Address
      */
