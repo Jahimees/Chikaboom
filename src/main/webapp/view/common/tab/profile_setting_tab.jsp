@@ -1,6 +1,21 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <div class="content">
+
+    <div class="row w-100 input-box">
+        <div class="col-4 common-black-text">
+            Фотография профиля:
+        </div>
+        <div class="col-4 common-text placeholder">
+            <input id="avatar-input" type="file" accept="image/jpeg" name="file">
+        </div>
+        <div class="col-1 edit-button">
+            <input onclick="uploadAvatarImage()" style="font-size: 20px" type="submit" value="Загрузить">
+        </div>
+
+    </div>
+    <hr>
     <div class="row w-100 input-box">
         <div class="col-4 common-black-text">
             Имя пользователя:
@@ -54,9 +69,9 @@
             type: "ADDRESS",
             geoLocation: false,
             constraints: {
-                locations: { country: "*" }
+                locations: {country: "*"}
             },
-            onSelect: function(suggestion) {
+            onSelect: function (suggestion) {
                 console.log(suggestion);
             }
         });
@@ -73,9 +88,70 @@
         openPopup("edit-popup");
     }
 
+    function openEditAddressPopup() {
+        dropAllFields();
+        let addressInputField = addField("Адрес", "address", "text", "Укажите свой адрес работы", false, [], "input");
+        addressInputField.id = "address-input";
+        $("#address-input").suggestions({
+            token: "token",
+            type: "ADDRESS",
+            geoLocation: false,
+            constraints: {
+                locations: {country: "*"}
+            },
+            onSelect: function (suggestion) {
+                console.log(suggestion);
+            }
+        });
+        openPopup("edit-popup");
+    }
+
+    function openEditAboutPopup() {
+        dropAllFields();
+        let professionInputField = addField("Вид деятельности", "profession", "text", "Мастер по маникюру", false,
+            [new Validation("Название слишком длинное", InvalidReason.LONG)]);
+        let aboutTextInputField = addField("О себе", "aboutText", "text", "Напишите пару слов о себе", false, [], "textarea");
+        professionInputField.value = aboutJson.profession;
+        aboutTextInputField.value = aboutJson.text;
+        openPopup("edit-popup");
+    }
+
+    function uploadAvatarImage() {
+        let formData = new FormData();
+        formData.append("file", $("#avatar-input")[0].files[0]);
+        formData.append("fileName", "avatar.jpeg");
+        if (window.FormData === undefined) {
+            alert('В вашем браузере FormData не поддерживается')
+        }
+        console.log("uploading data " + ${idAccount});
+        $.ajax({
+            method: "POST",
+            dataType: "json",
+            contentType: false,
+            processData: false,
+            url: "/chikaboom/upload/file/${idAccount}",
+            data: formData,
+            statusCode: {
+                201: function () {
+                    $("#popup-message-text")[0].innerText = "Ваше новое фото профиля успешно было загружено!"
+                    $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Фотография успешно загружена!";
+                    openPopup('message-popup');
+                },
+                400: function () {
+                    $("#popup-message-text")[0].innerText = "Произошла ошибка! Фотографию не удалось загрузить!"
+                    $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
+                    openPopup('message-popup');
+                }
+            }
+        })
+    }
+
     $(document).ready(function () {
+        let aboutProfession = aboutJson.profession != null ? aboutJson.profession : "";
+        let aboutText = aboutJson.text != null ? aboutJson.text : "";
+
         $("#nickname-placeholder")[0].innerText = accountJson.nickname;
         $("#address-placeholder")[0].innerText = addressJson.address;
-        $("#about-text-placeholder")[0].innerText = aboutJson.profession + "\n" + aboutJson.text;
+        $("#about-text-placeholder")[0].innerText = aboutProfession + "\n" + aboutText;
     });
 </script>

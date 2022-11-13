@@ -47,6 +47,8 @@ function confirmEdit() {
 
                 accountJson = JSON.parse(data.account);
                 phoneCodeJson = JSON.parse(data.phoneCode);
+                aboutJson = JSON.parse(data.about);
+                addressJson = JSON.parse(data.address);
 
                 loadSettingTab(currentTabName);
             },
@@ -144,8 +146,9 @@ function validateAllFields() {
     var flag = true;
     for (var field of fields) {
         if (field.getAttribute("valid") === 'false') {
-            validateField(field);
-            flag = false;
+            if (!validateField(field)) {
+                flag = false;
+            }
         }
     }
 
@@ -174,10 +177,12 @@ function validateField(thisField) {
                 break;
             }
             case InvalidReason.SHORT: {
-                if (thisField.innerHTML.trim().length <= 4) {
+                if (thisField.value.trim().length <= 4) {
                     thisField.setAttribute("reason", InvalidReason.SHORT)
                     $("#" + thisFieldName + "-" + InvalidReason.SHORT).css("display", "block");
                     isReasonShouldBeEmpty = false;
+                } else {
+                    $("#" + thisFieldName + "-" + InvalidReason.SHORT).css("display", "none");
                 }
                 break;
             }
@@ -218,5 +223,9 @@ function validateField(thisField) {
         thisField.setAttribute("reason", "");
     }
 
-    thisField.setAttribute("valid", thisField.getAttribute("reason") === "");
+    thisField.setAttribute("valid", thisField.getAttribute("reason") === ""
+        || thisField.getAttribute("reason") === null);
+
+    return thisField.getAttribute("reason") === ""
+        || thisField.getAttribute("reason") === null;
 }

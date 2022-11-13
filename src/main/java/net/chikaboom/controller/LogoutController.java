@@ -39,6 +39,6 @@ public class LogoutController {
     public String logout(HttpServletRequest request) {
         clientDataStorageService.setData(SERVLET_REQUEST, request);
 
-        return "redirect:" + logoutActionService.execute();
+        return "redirect:" + logoutActionService.executeAndGetPage();
     }
 }

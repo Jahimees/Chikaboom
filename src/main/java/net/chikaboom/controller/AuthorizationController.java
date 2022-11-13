@@ -59,6 +59,6 @@ public class AuthorizationController {
         clientDataStorageService.setData(PASSWORD, password);
         clientDataStorageService.setData(SERVLET_REQUEST, request);
 
-        return new ResponseEntity<Object>("/chikaboom/" + authorizationActionService.execute(), HttpStatus.OK);
+        return new ResponseEntity<Object>("/chikaboom/" + authorizationActionService.executeAndGetPage(), HttpStatus.OK);
     }
 }

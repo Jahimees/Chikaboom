@@ -2,7 +2,7 @@ package net.chikaboom.controller.setting_tab;
 
 import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.action.AccountInfoLoaderService;
-import net.chikaboom.service.action.tab.EditGeneralSettingsService;
+import net.chikaboom.service.action.tab.EditSettingsService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,17 +30,17 @@ public class SettingTabController {
     private String ID_ACCOUNT;
 
     private final ClientDataStorageService clientDataStorageService;
-    private final EditGeneralSettingsService editGeneralSettingsService;
+    private final EditSettingsService editSettingsService;
     private final AccountInfoLoaderService accountInfoLoaderService;
 
     private final Logger logger = Logger.getLogger(SettingTabController.class);
 
     @Autowired
     public SettingTabController(ClientDataStorageService clientDataStorageService,
-                                EditGeneralSettingsService editGeneralSettingsService,
+                                EditSettingsService editSettingsService,
                                 AccountInfoLoaderService accountInfoLoaderService) {
         this.clientDataStorageService = clientDataStorageService;
-        this.editGeneralSettingsService = editGeneralSettingsService;
+        this.editSettingsService = editSettingsService;
         this.accountInfoLoaderService = accountInfoLoaderService;
     }
 
@@ -56,7 +56,7 @@ public class SettingTabController {
     }
 
     /**
-     * Изменяет определенное поле аккаунта
+     * Изменяет выбранное(ые) поле(я) аккаунта
      *
      * @param idAccount      идентификатор изменяемого аккаунта
      * @param changedAccount новый измененный аккаунт в виде пар ключ-значение
@@ -71,7 +71,7 @@ public class SettingTabController {
         clientDataStorageService.setData(CUSTOM_ACCOUNT, changedAccount);
         clientDataStorageService.setData(ID_ACCOUNT, idAccount);
 
-        editGeneralSettingsService.execute();
+        editSettingsService.execute();
         logger.info("Data was successfully change");
 
         logger.info("Reloading personality page...");

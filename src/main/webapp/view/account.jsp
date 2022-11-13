@@ -20,8 +20,8 @@
     <link rel="stylesheet" href="/css/addition/phonecode.css"/>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script rel="script" src="/js/jquery-ui-1.10.4.custom.min.js">
-        <script src="/js/countries.js"></script>
+    <script rel="script" src="/js/jquery-ui-1.10.4.custom.min.js"></script>
+    <script src="/js/countries.js"></script>
     <script src="/js/phonecode.js"></script>
     <script>
         $(function () {
@@ -40,7 +40,7 @@
     <div class="content">
         <div class="d-flex divided-background padding-0-0-0-5 ">
             <div style="padding: 0 0 30px;">
-                <img class="avatar-image" src="/image/user/${idAccount}/avatar.png"
+                <img class="avatar-image" src="/image/user/${idAccount}/avatar.jpeg"
                      onerror="this.src='/image/user/no_photo.jpg'"
                      alt="error on load">
                 <div class="d-flex flex-row-reverse">
@@ -55,8 +55,8 @@
                 </b>
                 <div id="profession-placeholder" class="small-text"></div>
                 <div class="main-information">
-                    <div id="phone-placeholder" class="medium-text">Телефон: </div>
-                    <div id="address-placeholder" class="medium-text">Адрес: </div>
+                    <div id="phone-placeholder" class="medium-text">Телефон:</div>
+                    <div id="address-placeholder" class="medium-text">Адрес:</div>
                     <div class="d-inline-flex medium-text">
                         <div class="chapter-header">
                             О себе:
@@ -210,7 +210,8 @@
                         </div>
                         <div class="horizontal-blue-line"></div>
                         <div>
-                            Как всегда все очень аккуратно и красиво! Ногтик к ногтику, ручки аккуратно обработаны. Ну и в конце масло и кремик - верх блаженства!
+                            Как всегда все очень аккуратно и красиво! Ногтик к ногтику, ручки аккуратно обработаны. Ну и
+                            в конце масло и кремик - верх блаженства!
                         </div>
                     </div>
                 </div>
@@ -225,7 +226,8 @@
                         </div>
                         <div class="horizontal-blue-line"></div>
                         <div>
-                            Юлечка спасибо огромное за работу которую вы делаете,моя жизнь становится более краше после посещения моего любимого мастера по маникюру.🤗
+                            Юлечка спасибо огромное за работу которую вы делаете,моя жизнь становится более краше после
+                            посещения моего любимого мастера по маникюру.🤗
                         </div>
                     </div>
                 </div>
@@ -247,10 +249,11 @@
 <script type="text/javascript" src="/js/static_popup.js"></script>
 <script>
     var accountJson = JSON.parse(JSON.stringify(${account}));
+    var address = accountJson.address != null ? accountJson.address : "";
 
     $("#about-text-placeholder")[0].innerText = accountJson.aboutText;
     $("#phone-placeholder")[0].innerText = "Телефон: " + "+" + accountJson.phoneCode + " " + accountJson.phone;
     $("#nickname-placeholder")[0].innerText = accountJson.nickname;
-    $("#address-placeholder")[0].innerText = "Адрес: " + accountJson.address;
+    $("#address-placeholder")[0].innerText = "Адрес: " + address;
     $("#profession-placeholder")[0].innerText = accountJson.profession;
 </script>

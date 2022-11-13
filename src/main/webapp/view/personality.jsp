@@ -116,8 +116,9 @@
                 $("#content-placeholder").html(data);
             },
             error: function () {
-                console.error("ERROR")
-                //TODO Доделать ошибку
+                $("#popup-message-text")[0].innerText = "Невозможно загрузить настройки!"
+                $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
+                openPopup('message-popup');
             }
         });
     }
@@ -134,7 +135,6 @@
             },
             error: function () {
                 console.error("ERROR")
-                //TODO Доделать ошибку
             }
         });
     }
