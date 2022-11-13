@@ -29,7 +29,7 @@ import static net.chikaboom.util.constant.EOFieldsCostant.SALT;
  */
 @Service
 @PropertySource("/constants.properties")
-public class EditGeneralSettingsService implements DataService {
+public class EditSettingsService implements DataService {
 
     @Value("${attr.customAccount}")
     private String CUSTOM_ACCOUNT;
@@ -61,12 +61,12 @@ public class EditGeneralSettingsService implements DataService {
     private final AboutRepository aboutRepository;
     private final AddressRepository addressRepository;
 
-    private final Logger logger = Logger.getLogger(EditGeneralSettingsService.class);
+    private final Logger logger = Logger.getLogger(EditSettingsService.class);
 
     @Autowired
-    public EditGeneralSettingsService(ClientDataStorageService clientDataStorageService, AccountRepository accountRepository,
-                                      PhoneCodeRepository phoneCodeRepository, HashPasswordService hashPasswordService,
-                                      AboutRepository aboutRepository, AddressRepository addressRepository) {
+    public EditSettingsService(ClientDataStorageService clientDataStorageService, AccountRepository accountRepository,
+                               PhoneCodeRepository phoneCodeRepository, HashPasswordService hashPasswordService,
+                               AboutRepository aboutRepository, AddressRepository addressRepository) {
         this.clientDataStorageService = clientDataStorageService;
         this.accountRepository = accountRepository;
         this.phoneCodeRepository = phoneCodeRepository;

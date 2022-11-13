@@ -29,6 +29,7 @@
 <link href="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/css/suggestions.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
 <script src="/js/setting_tab.js"></script>
+
 <script>
 
     function loadSettingTab(tabName) {
@@ -40,6 +41,7 @@
             data: {},
             success: function (data) {
                 setCurrentTabName(tabName);
+                console.log("Load setting tab " + tabName);
                 $("#setting-content-placeholder").html(data);
             },
             error: function () {
@@ -60,8 +62,6 @@
             },
             error: function () {
                 console.error("ERROR")
-                //TODO Доделать ошибку
-                // showWarnWrongLoginData();
             }
         });
     }

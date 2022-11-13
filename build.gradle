@@ -19,6 +19,13 @@ flyway {
     password = '1234'
 }
 
+configurations {
+    developmentOnly
+    runtimeClasspath {
+        extendsFrom developmentOnly
+    }
+}
+
 dependencies {
     implementation 'mysql:mysql-connector-java:8.0.28'
     implementation 'log4j:log4j:1.2.12'
@@ -40,6 +47,8 @@ dependencies {
     providedCompile 'org.springframework.boot:spring-boot-starter-tomcat:2.6.3'
 
     annotationProcessor 'org.projectlombok:lombok:1.18.8'
+
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
 }
 
 group = 't-and-j-team'

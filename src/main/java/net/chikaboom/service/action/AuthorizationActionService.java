@@ -59,7 +59,7 @@ public class AuthorizationActionService implements ActionService {
      * выбрасывает ошибку некорректного ввода данных в случае нудачи.
      */
     @Override
-    public String execute() {
+    public String executeAndGetPage() {
         logger.info("Login procedure started");
 
         int phoneCode = Integer.parseInt(clientDataStorageService.getData(PHONE_CODE).toString());

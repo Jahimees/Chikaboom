@@ -40,7 +40,7 @@ public class LogoutActionService implements ActionService {
      * @return ссылка на главную страницу
      */
     @Override
-    public String execute() {
+    public String executeAndGetPage() {
 
         HttpSession session = ((HttpServletRequest) clientDataStorageService.getData(SERVLET_REQUEST)).getSession();
         clientDataStorageService.dropData(SERVLET_REQUEST);

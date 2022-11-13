@@ -61,13 +61,12 @@ public class RegistrationActionService implements ActionService {
 
     /**
      * Реализация команды регистрации нового аккаунта
-     * TODO Реализовать автоматическую авторизацию после регистрации. Надо ли?
      *
      * @return возвращает главную страницу. В случае неудачи выбрасывает исключение попытки создания существующего
      * пользователя
      */
     @Override
-    public String execute() {
+    public String executeAndGetPage() {
         int phoneCode = Integer.parseInt(clientDataStorageService.getData(PHONE_CODE).toString());
         int idPhoneCode = phoneCodeRepository.findOneByPhoneCode(phoneCode).getIdPhoneCode();
         String phone = clientDataStorageService.getData(PHONE).toString();
