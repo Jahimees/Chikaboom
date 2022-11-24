@@ -2,6 +2,7 @@ package net.chikaboom.service.action;
 
 import net.chikaboom.exception.IncorrectInputDataException;
 import net.chikaboom.model.database.Account;
+import net.chikaboom.model.database.PhoneCode;
 import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.repository.PhoneCodeRepository;
 import net.chikaboom.service.ClientDataStorageService;
@@ -62,22 +63,22 @@ public class AuthorizationActionService implements ActionService {
     public String executeAndGetPage() {
         logger.info("Login procedure started");
 
-        int phoneCode = Integer.parseInt(clientDataStorageService.getData(PHONE_CODE).toString());
-
-        int idPhoneCode = phoneCodeRepository.findOneByPhoneCode(phoneCode).getIdPhoneCode();
+        int phoneCodeNumber = Integer.parseInt(clientDataStorageService.getData(PHONE_CODE).toString());
+        PhoneCode phoneCode = phoneCodeRepository.findOneByPhoneCode(phoneCodeNumber);
 
         String phone = clientDataStorageService.getData(PHONE).toString();
         phone = PhoneNumberConverter.clearPhoneNumber(phone);
 
-        Account account = accountRepository.findOneByPhoneAndIdPhoneCode(phone, idPhoneCode);
+        Account account = accountRepository.findOneByPhoneAndPhoneCode(phone, phoneCode);
 
         if (account != null) {
             String actualPassword = hashPasswordService.convertPasswordForComparing(
                     clientDataStorageService.getData(PASSWORD).toString(), account.getSalt());
 
             if (account.getPassword().equals(actualPassword)) {
+//                TODO Убрать сессию
                 logger.info("User logged in");
-                initSession((HttpServletRequest) clientDataStorageService.getData(SERVLET_REQUEST), account, phoneCode);
+                initSession((HttpServletRequest) clientDataStorageService.getData(SERVLET_REQUEST), account);
 
                 clientDataStorageService.clearAllData();
 
@@ -94,14 +95,12 @@ public class AuthorizationActionService implements ActionService {
     /**
      * Метод для инициализации сессии параметрами пользователя
      *
-     * @param request   запрос, в котором передана сессия
-     * @param account   аккаунт пользователя
-     * @param phoneCode код телефона страны
+     * @param request запрос, в котором передана сессия
+     * @param account аккаунт пользователя
      */
-    private void initSession(HttpServletRequest request, Account account, int phoneCode) {
+    private void initSession(HttpServletRequest request, Account account) {
         HttpSession session = request.getSession();
 
-        session.setAttribute(PHONE_CODE, phoneCode);
         session.setAttribute(PHONE, account.getPhone());
         session.setAttribute(ID_ACCOUNT, account.getIdAccount());
     }

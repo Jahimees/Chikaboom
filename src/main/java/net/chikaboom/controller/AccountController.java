@@ -2,7 +2,7 @@ package net.chikaboom.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.chikaboom.model.client.AccountInformation;
+import net.chikaboom.model.database.Account;
 import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.action.AccountInfoLoaderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,11 +48,12 @@ public class AccountController {
         ModelAndView modelAndView = new ModelAndView(ACCOUNT_PAGE);
         clientDataStorageService.setData(ID_ACCOUNT, idAccount);
 
-        AccountInformation accountInformation = accountInfoLoaderService.loadPublicAccountInformation();
+        Account account = accountInfoLoaderService.executeAndGetOne();
         ObjectMapper mapper = new ObjectMapper();
+
         String result = "";
         try {
-            result = mapper.writeValueAsString(accountInformation);
+            result = mapper.writeValueAsString(account);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

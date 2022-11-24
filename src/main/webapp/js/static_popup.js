@@ -39,6 +39,7 @@ $("#confirm-register").on("click", function () {
             success: function () {
                 closePopup('register-popup');
                 closePopup('login-popup');
+                repairDefaultMessagePopup();
                 $("#popup-message-text")[0].innerText = "Вы успешно прошли регистрацию!"
                 $("#popup-message-header")[0].innerText = "Регистрация успешна!";
                 openPopup('message-popup');

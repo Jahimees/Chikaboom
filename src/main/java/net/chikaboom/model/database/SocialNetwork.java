@@ -29,9 +29,4 @@ public class SocialNetwork implements BaseEntity {
     @Column(name = LINK)
     private String link;
 
-    /**
-     * Внешний ключ к таблице account. Кому принадлежит ссылка на соц. сеть
-     */
-    @Column(name = ID_ACCOUNT)
-    private int idAccount;
 }

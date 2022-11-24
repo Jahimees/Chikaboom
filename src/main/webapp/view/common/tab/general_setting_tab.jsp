@@ -68,6 +68,6 @@
 
     $(document).ready(function () {
         $("#email-placeholder")[0].innerText = accountJson.email;
-        $("#phone-placeholder")[0].innerText =  "+" + phoneCodeJson.phoneCode + " " + accountJson.phone;
+        $("#phone-placeholder")[0].innerText = "+" + accountJson.phoneCode.phoneCode + " " + accountJson.phone;
     });
 </script>

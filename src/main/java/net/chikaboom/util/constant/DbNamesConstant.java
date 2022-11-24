@@ -10,6 +10,9 @@ public final class DbNamesConstant {
     public static final String ROLE = "role";
     public static final String SOCIAL_NETWORK = "social_network";
     public static final String STATUS = "status";
+    public static final String SERVICE = "service";
+    public static final String SUBSERVICE = "subservice";
+    public static final String USER_SERVICE = "user_service";
 
     public static final String ID_ABOUT = "idabout";
     public static final String TEXT = "text";
@@ -38,17 +41,22 @@ public final class DbNamesConstant {
 
     public static final String ID_STATUS = "idstatus";
 
-    public static final String CLIENT = "client";
-    public static final String COMMENT = "comment";
-    public static final String MASTER = "master";
-    public static final String SERVICE = "service";
-    public static final String SERVICE_TYPE = "servicetype";
-    public static final String SUBSERVICE_TYPE = "subservicetype";
-    public static final String WORK = "work";
-
     public static final String ID_PHONE_CODE = "idphonecode";
     public static final String COUNTRY_NAME = "country_name";
     public static final String COUNTRY_CUT = "country_cut";
+
+    public static final String ID_SERVICE = "idservice";
+    public static final String SERVICE_NAME = "servicename";
+
+    public static final String ID_SUBSERVICE = "idsubservice";
+    public static final String SUBSERVICE_NAME = "subservicename";
+
+    public static final String ID_USER_SERVICE = "iduserservice";
+    public static final String USER_SERVICE_NAME = "userservicename";
+    public static final String PRICE = "price";
+    public static final String TIME = "time";
+
+    public static final String _PHONE_CODE = "phoneCode";
 
     private DbNamesConstant() {
 

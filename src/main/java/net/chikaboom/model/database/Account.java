@@ -3,10 +3,7 @@ package net.chikaboom.model.database;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Timestamp;
 
 import static net.chikaboom.util.constant.DbNamesConstant.*;
@@ -24,13 +21,8 @@ public class Account implements BaseEntity {
      */
     @Id
     @Column(name = ID_ACCOUNT)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idAccount;
-
-    /**
-     * Код телефона страны
-     */
-    @Column(name = ID_PHONE_CODE)
-    private int idPhoneCode;
 
     /**
      * Номер телефона владельца аккаунта
@@ -63,15 +55,28 @@ public class Account implements BaseEntity {
     private Timestamp registrationDate;
 
     /**
-     * Идентификатор роли пользователя
-     */
-    @Column(name = ID_ROLE)
-    private int idRole;
-
-    /**
      * Электронная почта пользователя
      */
     @Column(name = EMAIL)
     private String email;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = ID_ROLE)
+    private Role role;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = ID_PHONE_CODE)
+    private PhoneCode phoneCode;
+
+    @Column(name = ADDRESS)
+    private String address;
+
+    @OneToOne
+    @JoinColumn(name = ID_ABOUT)
+    private About about;
+
+    @OneToOne
+    @JoinColumn(name = ID_SOCIAL_NETWORK)
+    private SocialNetwork socialNetwork;
 
 }

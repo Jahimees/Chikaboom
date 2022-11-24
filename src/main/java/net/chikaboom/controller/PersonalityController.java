@@ -1,6 +1,9 @@
 package net.chikaboom.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.chikaboom.exception.IllegalAccessException;
+import net.chikaboom.model.database.Account;
 import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.action.AccountInfoLoaderService;
 import org.apache.log4j.Logger;
@@ -14,9 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
 
 
+/**
+ * Подготавливает и загружает страницу мастера
+ */
 @RestController
 @PropertySource("/constants.properties")
 @RequestMapping("/chikaboom/personality/{idAccount}")
@@ -26,12 +31,6 @@ public class PersonalityController {
     private String ACCOUNT;
     @Value("${attr.idAccount}")
     private String ID_ACCOUNT;
-    @Value("${attr.phoneCode}")
-    private String PHONE_CODE;
-    @Value("${attr.about}")
-    private String ABOUT;
-    @Value("${attr.address}")
-    private String ADDRESS;
 
     private final ClientDataStorageService clientDataStorageService;
     private final AccountInfoLoaderService accountInfoLoaderService;
@@ -47,6 +46,14 @@ public class PersonalityController {
     @Value("${page.personality}")
     private String PERSONALITY_PAGE;
 
+    /**
+     * Производит подготовку данных и открытие страницы личного кабинета мастера. Также проверяет аутентификацию пользователя
+     *
+     * @param idAccount идентификатор пользователя
+     * @param request   запрос с клиента
+     * @return представление личного кабинета, а также json аккаунта пользователя
+     * @throws IllegalAccessException возникает в случае, если доступ пытается получить неавторизованный пользователь
+     */
     @GetMapping
     public ModelAndView openPersonalityPage(@PathVariable int idAccount, HttpServletRequest request) throws IllegalAccessException {
         logger.info("Opening personality page...");
@@ -61,12 +68,16 @@ public class PersonalityController {
         modelAndView.setViewName(PERSONALITY_PAGE);
         clientDataStorageService.setData(ID_ACCOUNT, idAccount);
 
-        Map<String, Object> parameters = accountInfoLoaderService.execute();
+        Account account = accountInfoLoaderService.executeAndGetOne();
+        ObjectMapper mapper = new ObjectMapper();
+        String accountJSON = null;
+        try {
+            accountJSON = mapper.writeValueAsString(account);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
 
-        modelAndView.addObject(ACCOUNT, parameters.get(ACCOUNT));
-        modelAndView.addObject(PHONE_CODE, parameters.get(PHONE_CODE));
-        modelAndView.addObject(ABOUT, parameters.get(ABOUT));
-        modelAndView.addObject(ADDRESS, parameters.get(ADDRESS));
+        modelAndView.addObject(ACCOUNT, accountJSON);
 
         return modelAndView;
     }

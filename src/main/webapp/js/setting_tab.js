@@ -10,22 +10,22 @@ $("#profile-setting-tab").on("click", function () {
 
 $("#personalization-setting-tab").on("click", function () {
     selectCurrentSetting(this);
-    loadPersonalizationSetting();
+    loadUnderConstruction();
 });
 
 $("#security-setting-tab").on("click", function () {
     selectCurrentSetting(this);
-    loadSecuritySetting();
+    loadUnderConstruction();
 });
 
 $("#notification-setting-tab").on("click", function () {
     selectCurrentSetting(this);
-    loadNotificationSetting();
+    loadUnderConstruction();
 });
 
 $("#payment-details-setting-tab").on("click", function () {
     selectCurrentSetting(this);
-    loadPaymentDetailsSetting();
+    loadUnderConstruction();
 });
 
 function selectCurrentSetting(thisObj) {

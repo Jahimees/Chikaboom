@@ -91,68 +91,7 @@
             <div class="chapter-header medium-text">
                 ЦЕНЫ И УСЛУГИ
             </div>
-            <div class="d-block w-100">
-                <div class="service-type-block">
-                    <div>
-                        <div class="horizontal-blue-line"></div>
-                        <div class="service-header medium-text">
-                            МАНИКЮР
-                        </div>
-                    </div>
-                    <div class="service-row row medium-text">
-                        <div class="col-6">Маникюр + покрытие гель лаком (с дизайном)</div>
-                        <div class="col-3">3 часа</div>
-                        <div class="col-1">25 BYN</div>
-                        <div class="col-1">икон</div>
-                        <div class="col-1">Записаться</div>
-                    </div>
-                    <div class="service-row row medium-text">
-                        <div class="col-6">Наименование услуги</div>
-                        <div class="col-3">2 часа 20 минут</div>
-                        <div class="col-1">25 BYN</div>
-                        <div class="col-1">икон</div>
-                        <div class="col-1">Записаться</div>
-                    </div>
-                    <div class="service-row row medium-text">
-                        <div class="col-6">Наименование услуги</div>
-                        <div class="col-3">3 часа</div>
-                        <div class="col-1">25 BYN</div>
-                        <div class="col-1">икон</div>
-                        <div class="col-1">Записаться</div>
-                    </div>
-                </div>
-                <%--                --%>
-                <div class="service-type-block">
-                    <div>
-                        <div class="horizontal-blue-line">
-
-                        </div>
-                        <div class="service-header medium-text">
-                            ПЕДИКЮР
-                        </div>
-                    </div>
-                    <div class="service-row row medium-text">
-                        <div class="col-6">Наименование услуги</div>
-                        <div class="col-3">3 часа</div>
-                        <div class="col-1">25 BYN</div>
-                        <div class="col-1">икон</div>
-                        <div class="col-1">Записаться</div>
-                    </div>
-                    <div class="service-row row medium-text">
-                        <div class="col-6">Наименование услуги</div>
-                        <div class="col-3">1 час 30 минут</div>
-                        <div class="col-1">25 BYN</div>
-                        <div class="col-1">икон</div>
-                        <div class="col-1">Записаться</div>
-                    </div>
-                    <div class="service-row row medium-text">
-                        <div class="col-6">Наименование услуги</div>
-                        <div class="col-3">3 часа</div>
-                        <div class="col-1">25 BYN</div>
-                        <div class="col-1">икон</div>
-                        <div class="col-1">Записаться</div>
-                    </div>
-                </div>
+            <div id="user-service-placeholder" class="d-block w-100">
             </div>
         </div>
 
@@ -247,13 +186,32 @@
 <jsp:include page="/view/common/popup/login_popup.jsp"/>
 
 <script type="text/javascript" src="/js/static_popup.js"></script>
+<script type="text/javascript" src="/js/service.js"></script>
 <script>
     var accountJson = JSON.parse(JSON.stringify(${account}));
     var address = accountJson.address != null ? accountJson.address : "";
 
-    $("#about-text-placeholder")[0].innerText = accountJson.aboutText;
-    $("#phone-placeholder")[0].innerText = "Телефон: " + "+" + accountJson.phoneCode + " " + accountJson.phone;
+    $("#about-text-placeholder")[0].innerText = accountJson.about !== null ? accountJson.about.text : "";
+    $("#phone-placeholder")[0].innerText = "Телефон: " + "+" + accountJson.phoneCode.phoneCode + " " + accountJson.phone;
     $("#nickname-placeholder")[0].innerText = accountJson.nickname;
     $("#address-placeholder")[0].innerText = "Адрес: " + address;
-    $("#profession-placeholder")[0].innerText = accountJson.profession;
+    $("#profession-placeholder")[0].innerText = accountJson.about !== null ? accountJson.about.profession : "";
+
+    $(document).ready(function () {
+        $.ajax({
+            type: "get",
+            url: "/chikaboom/personality/${idAccount}/services/info",
+            contentType: "application/text",
+            dataType: "text",
+            data: {},
+            success: function (data) {
+                let userServiceJson = JSON.parse(data);
+                fillServiceTable(userServiceJson, true);
+            },
+            error: function () {
+
+            }
+        })
+    })
+
 </script>

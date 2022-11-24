@@ -11,10 +11,11 @@
             Sample Text Sample Text Sample Text Sample Text Sample Text Sample Text
         </div>
         <div style="display: inline-flex">
-            <button class="popup-btn" onclick="closePopup('message-popup')">
+            <button id="confirm-message-btn" class="popup-btn" onclick="closePopup('message-popup')">
                 Хорошо
             </button>
-            <button class="popup-btn" onclick="closePopup('message-popup')" style="display: none">
+            <button id="decline-message-btn" class="popup-btn" onclick="closePopup('message-popup')"
+                    style="display: none">
                 Нет
             </button>
         </div>

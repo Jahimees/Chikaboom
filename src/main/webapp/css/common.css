@@ -70,10 +70,17 @@ a {
 }
 
 .w-80 {
-    width: 80%;
+    width: 80% !important;
 }
 
 /*TEXT*/
+
+.big-text {
+    font-family: Manrope, serif;
+    margin-bottom: 0;
+    color: #5F4E7D;
+    font-size: 40px;
+}
 
 .common-text {
     font-family: Manrope, serif;
@@ -113,7 +120,7 @@ a {
 
 .button {
     font-family: Manrope, serif;
-    font-size: 25px;
+    font-size: 20px;
     width: 200px;
     text-align: center;
     cursor: pointer;
@@ -175,6 +182,10 @@ a {
     justify-content: center;
 }
 
+.middle-box {
+    margin: 0 auto;
+}
+
 .right-header-box {
     display: inline-flex;
 }
@@ -191,4 +202,19 @@ a {
 .header-menu-link:hover {
     color: #39414f;
     text-decoration: underline;
+}
+
+.common-table {
+    border: black solid 1px;
+    width: 100%;
+    font-size: 25px;
+}
+
+.common-table td, th {
+    /*border: black solid 1px;*/
+    padding: 10px;
+}
+
+.common-table tr {
+    background-color: #F4F4F4;
 }

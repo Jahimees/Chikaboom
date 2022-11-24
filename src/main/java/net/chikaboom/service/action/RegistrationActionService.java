@@ -2,6 +2,8 @@ package net.chikaboom.service.action;
 
 import net.chikaboom.exception.UserAlreadyExistsException;
 import net.chikaboom.model.database.Account;
+import net.chikaboom.model.database.PhoneCode;
+import net.chikaboom.model.database.Role;
 import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.repository.PhoneCodeRepository;
 import net.chikaboom.service.ClientDataStorageService;
@@ -67,31 +69,34 @@ public class RegistrationActionService implements ActionService {
      */
     @Override
     public String executeAndGetPage() {
-        int phoneCode = Integer.parseInt(clientDataStorageService.getData(PHONE_CODE).toString());
-        int idPhoneCode = phoneCodeRepository.findOneByPhoneCode(phoneCode).getIdPhoneCode();
+        int phoneCodeNumbers = Integer.parseInt(clientDataStorageService.getData(PHONE_CODE).toString());
+        PhoneCode phoneCode = phoneCodeRepository.findOneByPhoneCode(phoneCodeNumbers);
+
         String phone = clientDataStorageService.getData(PHONE).toString();
         phone = PhoneNumberConverter.clearPhoneNumber(phone);
-        if (isUserAlreadyExists(phone, idPhoneCode)) {
-            throw new UserAlreadyExistsException("User with phone +" + phoneCode + " " + phone + " already exists");
+        if (isUserAlreadyExists(phone, phoneCode)) {
+            throw new UserAlreadyExistsException("User with phone +" + phoneCodeNumbers + " " + phone + " already exists");
         }
 
         Account account = new Account();
 
-        String role = clientDataStorageService.getData(ROLE).toString();
-        int idRole = ApplicationRole.valueOf(role.toUpperCase()).ordinal();
+        String roleStr = clientDataStorageService.getData(ROLE).toString();
+        int idRole = ApplicationRole.valueOf(roleStr.toUpperCase()).ordinal();
 
         String nickname = clientDataStorageService.getData(NICKNAME).toString();
 
         String clearPassword = clientDataStorageService.getData(PASSWORD).toString();
         Map<String, Object> complexPasswordEO = hashPasswordService.convertPasswordForStorage(clearPassword);
 
-        account.setIdPhoneCode(idPhoneCode);
+        Role role = new Role(idRole);
+
         account.setPhone(phone);
         account.setPassword(complexPasswordEO.get(CONVERTED_PASSWORD).toString());
         account.setSalt(complexPasswordEO.get(SALT).toString());
         account.setRegistrationDate(Timestamp.valueOf(LocalDateTime.now()));
-        account.setIdRole(idRole);
+        account.setRole(role);
         account.setNickname(nickname);
+        account.setPhoneCode(phoneCode);
 
         accountRepository.save(account);
 
@@ -102,7 +107,7 @@ public class RegistrationActionService implements ActionService {
         return MAIN_PAGE;
     }
 
-    private boolean isUserAlreadyExists(String phone, int idPhoneCode) {
-        return accountRepository.findOneByPhoneAndIdPhoneCode(phone, idPhoneCode) != null;
+    private boolean isUserAlreadyExists(String phone, PhoneCode phoneCode) {
+        return accountRepository.findOneByPhoneAndPhoneCode(phone, phoneCode) != null;
     }
 }
