@@ -81,10 +81,10 @@
     function openEditAboutPopup() {
         dropAllFields();
         let professionInputField = addField("Вид деятельности", "profession", "text", "Мастер по маникюру", false,
-            [new Validation("Название слишком длинное", InvalidReason.LONG)]);
-        let aboutTextInputField = addField("О себе", "aboutText", "text", "Напишите пару слов о себе", false, [], "textarea");
-        professionInputField.value = aboutJson.profession;
-        aboutTextInputField.value = aboutJson.text;
+            [new Validation("Название слишком длинное", InvalidReason.LONG)], "input", "about");
+        let aboutTextInputField = addField("О себе", "text", "text", "Напишите пару слов о себе", false, [], "textarea", "about");
+        professionInputField.value = accountJson.about != null ? accountJson.about.profession : "";
+        aboutTextInputField.value = accountJson.about != null ? accountJson.about.text : "";
         openPopup("edit-popup");
     }
 
@@ -103,16 +103,6 @@
                 console.log(suggestion);
             }
         });
-        openPopup("edit-popup");
-    }
-
-    function openEditAboutPopup() {
-        dropAllFields();
-        let professionInputField = addField("Вид деятельности", "profession", "text", "Мастер по маникюру", false,
-            [new Validation("Название слишком длинное", InvalidReason.LONG)]);
-        let aboutTextInputField = addField("О себе", "aboutText", "text", "Напишите пару слов о себе", false, [], "textarea");
-        professionInputField.value = aboutJson.profession;
-        aboutTextInputField.value = aboutJson.text;
         openPopup("edit-popup");
     }
 
@@ -147,11 +137,11 @@
     }
 
     $(document).ready(function () {
-        let aboutProfession = aboutJson.profession != null ? aboutJson.profession : "";
-        let aboutText = aboutJson.text != null ? aboutJson.text : "";
+        let aboutProfession = accountJson.about != null ? accountJson.about.profession : "";
+        let aboutText = accountJson.about != null ? accountJson.about.text : "";
 
         $("#nickname-placeholder")[0].innerText = accountJson.nickname;
-        $("#address-placeholder")[0].innerText = addressJson.address;
+        $("#address-placeholder")[0].innerText = accountJson.address;
         $("#about-text-placeholder")[0].innerText = aboutProfession + "\n" + aboutText;
     });
 </script>

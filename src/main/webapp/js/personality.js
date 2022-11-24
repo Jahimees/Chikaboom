@@ -1,11 +1,11 @@
 $("#settings-btn").on("click", function () {
     selectCurrent(this);
-    loadSettings();
+    loadSettingsTab()
 });
 
 $("#services-btn").on("click", function () {
     selectCurrent(this);
-    loadServices();
+    loadServicesTab();
 });
 
 $("#statistic-btn").on("click", function () {
@@ -44,10 +44,6 @@ function selectCurrent(thisObj) {
     });
 
     thisObj.setAttribute("selected", "true");
-}
-
-function loadServices() {
-    underConstruction();
 }
 
 function loadStatistic() {

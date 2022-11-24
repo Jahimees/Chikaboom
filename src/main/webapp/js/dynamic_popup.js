@@ -10,6 +10,11 @@ function openPopup(popupName) {
     $('.' + popupName).fadeIn(200);
 }
 
+function repairDefaultMessagePopup() {
+    $("#decline-message-btn")[0].style.display = "none";
+    $("#confirm-message-btn")[0].setAttribute("onclick", "closePopup('message-popup')");
+}
+
 function closePopup(popupName) {
     $('.popup-bg').fadeOut(200);
     $('.' + popupName).fadeOut(200);
@@ -25,7 +30,17 @@ function confirmEdit() {
         let updatedAccountJson = JSON.parse(JSON.stringify(accountJson));
 
         Array.from($(".popup-input-field")).forEach(field => {
-            updatedAccountJson[field.name] = field.value;
+            let nestedObject = field.getAttribute("nestedObject");
+            let fieldValue = field.value !== null ? field.value : "";
+
+            if (nestedObject != null && nestedObject !== "") {
+                if (updatedAccountJson[nestedObject] == null) {
+                    updatedAccountJson[nestedObject] = {};
+                }
+                updatedAccountJson[nestedObject][field.name] = fieldValue;
+            } else {
+                updatedAccountJson[field.name] = fieldValue;
+            }
         });
 
         let phoneCodeField = $(".country-phone-selected > span")[0];
@@ -41,14 +56,12 @@ function confirmEdit() {
             data: JSON.stringify(updatedAccountJson),
             success: function (data) {
                 closePopup('edit-popup');
+                repairDefaultMessagePopup();
                 $("#popup-message-text")[0].innerText = "Изменения прошли успешно!"
                 $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Изменения прошли успешно!";
                 openPopup('message-popup');
 
                 accountJson = JSON.parse(data.account);
-                phoneCodeJson = JSON.parse(data.phoneCode);
-                aboutJson = JSON.parse(data.about);
-                addressJson = JSON.parse(data.address);
 
                 loadSettingTab(currentTabName);
             },
@@ -81,7 +94,7 @@ function dropAllFields() {
  * @param isPhoneCode флаг, является ли поле номером телефона
  * @param validations массив правил валидации поля
  */
-function addField(labelText, fieldName, inputType, placeHolderText, isPhoneCode, validations, fieldType) {
+function addField(labelText, fieldName, inputType, placeHolderText, isPhoneCode, validations, fieldType, nestedObject) {
     let divLabel = document.createElement("div");
     divLabel.setAttribute("class", "common-black-text");
     divLabel.innerHTML = labelText;
@@ -92,6 +105,9 @@ function addField(labelText, fieldName, inputType, placeHolderText, isPhoneCode,
     }
 
     inputField.setAttribute("class", "popup-input-field");
+    if (nestedObject != null && nestedObject !== "") {
+        inputField.setAttribute("nestedObject", nestedObject);
+    }
 
     inputField.type = inputType;
     inputField.name = fieldName;

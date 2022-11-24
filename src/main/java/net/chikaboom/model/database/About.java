@@ -2,10 +2,7 @@ package net.chikaboom.model.database;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import static net.chikaboom.util.constant.DbNamesConstant.*;
 
@@ -17,19 +14,12 @@ import static net.chikaboom.util.constant.DbNamesConstant.*;
 @Table(name = ABOUT)
 public class About implements BaseEntity {
 
-    public About() {
-
-    }
-
-    public About(int idAccount) {
-        this.idAccount = idAccount;
-    }
-
     /**
      * id сущности about
      */
     @Id
     @Column(name = ID_ABOUT)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idAbout;
 
     /**
@@ -43,12 +33,6 @@ public class About implements BaseEntity {
      */
     @Column(name = TAGS)
     private String tags;
-
-    /**
-     * Внешний ключ к таблице Account
-     */
-    @Column(name = ID_ACCOUNT)
-    private int idAccount;
 
     /**
      * Краткое отражение вида деятельности мастера

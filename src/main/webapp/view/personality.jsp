@@ -21,7 +21,6 @@
     <link rel="stylesheet" href="/css/addition/menu_bar.css">
     <link rel="stylesheet" href="/css/addition/phonecode.css"/>
 
-<%--    <script src="http://maps.google.com/maps/api/js?key=AIzaSyClTTM2s3F_2yNxZ7cJmnlwF8yodWtoDO0&callback=initMap"></script>--%>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
 </head>
@@ -101,14 +100,28 @@
 <script>
 
     var accountJson = ${account};
-    var phoneCodeJson = ${phoneCode};
-    var aboutJson = ${about};
-    var addressJson = ${address};
 
-    function loadSettings() {
+    function loadSettingsTab() {
         $.ajax({
             type: "get",
             url: "/chikaboom/personality/${idAccount}/settings",
+            contentType: "application/text",
+            dataType: "text",
+            success: function (data) {
+                $("#content-placeholder").html(data);
+            },
+            error: function () {
+                $("#popup-message-text")[0].innerText = "Невозможно загрузить настройки!"
+                $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
+                openPopup('message-popup');
+            }
+        });
+    }
+
+    function loadServicesTab() {
+        $.ajax({
+            type: "get",
+            url: "/chikaboom/personality/${idAccount}/services",
             contentType: "application/text",
             dataType: "text",
             data: {},
@@ -116,7 +129,7 @@
                 $("#content-placeholder").html(data);
             },
             error: function () {
-                $("#popup-message-text")[0].innerText = "Невозможно загрузить настройки!"
+                $("#popup-message-text")[0].innerText = "Невозможно загрузить услуги!"
                 $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
                 openPopup('message-popup');
             }

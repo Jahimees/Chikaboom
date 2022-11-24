@@ -2,11 +2,7 @@ package net.chikaboom.model.database;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
+import javax.persistence.*;
 import java.sql.Timestamp;
 
 import static net.chikaboom.util.constant.DbNamesConstant.*;
@@ -37,11 +33,9 @@ public class AccountStatus implements BaseEntity {
     @Column(name = TO_DATE)
     private Timestamp toDate;
 
-    /**
-     * Внешний ключ к account. Определяет к какому аккаунту относится статус
-     */
-    @Column(name = ID_ACCOUNT)
-    private int idAccount;
+    @OneToOne
+    @JoinColumn(name = ID_ACCOUNT)
+    private Account account;
 
     /**
      * Внешний ключ к status. Определяет конкретный тип статуса
