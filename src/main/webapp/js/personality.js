@@ -55,7 +55,7 @@ function loadOrders() {
 }
 
 function loadTimetable() {
-    underConstruction();
+    loadTimetableTab();
 }
 
 function loadClients() {

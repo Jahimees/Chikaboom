@@ -1,4 +1,4 @@
-package net.chikaboom.controller.service_tab;
+package net.chikaboom.controller.tab.service_tab;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

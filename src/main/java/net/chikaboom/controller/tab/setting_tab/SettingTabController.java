@@ -1,4 +1,4 @@
-package net.chikaboom.controller.setting_tab;
+package net.chikaboom.controller.tab.setting_tab;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -111,6 +111,7 @@ public class SettingTabController {
         try {
             accountJSON = mapper.writeValueAsString(account);
         } catch (JsonProcessingException e) {
+            //            TODO EXCEPTION
             e.printStackTrace();
         }
 

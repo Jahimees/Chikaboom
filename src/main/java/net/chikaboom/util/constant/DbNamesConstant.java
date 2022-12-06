@@ -4,6 +4,7 @@ public final class DbNamesConstant {
 
 //        TABLES
     public static final String ABOUT = "about";
+    public static final String WORKING_DAYS = "working_days";
     public static final String ACCOUNT = "account";
     public static final String ACCOUNT_STATUS = "account_status";
     public static final String ADDRESS = "address";
@@ -55,6 +56,11 @@ public final class DbNamesConstant {
     public static final String USER_SERVICE_NAME = "userservicename";
     public static final String PRICE = "price";
     public static final String TIME = "time";
+
+    public static final String ID_WORKING_DAYS = "idworking_days";
+    public static final String WORKING_DAY_START = "workingDayStart";
+    public static final String WORKING_DAY_END = "workingDayEnd";
+
 
     public static final String _PHONE_CODE = "phoneCode";
 

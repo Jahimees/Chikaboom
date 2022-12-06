@@ -136,6 +136,24 @@
         });
     }
 
+    function loadTimetableTab() {
+        $.ajax({
+            type: "get",
+            url: "/chikaboom/personality/${idAccount}/timetable",
+            contentType: "application/text",
+            dataType: "text",
+            data: {},
+            success: function (data) {
+                $("#content-placeholder").html(data);
+            },
+            error: function () {
+                $("#popup-message-text")[0].innerText = "Невозможно загрузить вкладку график!"
+                $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
+                openPopup('message-popup');
+            }
+        });
+    }
+
     function underConstruction() {
         $.ajax({
             type: "get",

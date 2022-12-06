@@ -79,4 +79,8 @@ public class Account implements BaseEntity {
     @JoinColumn(name = ID_SOCIAL_NETWORK)
     private SocialNetwork socialNetwork;
 
+    @OneToOne
+    @JoinColumn(name = ID_WORKING_DAYS)
+    private WorkingDays workingDays;
+
 }

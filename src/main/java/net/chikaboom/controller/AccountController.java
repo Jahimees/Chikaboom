@@ -55,6 +55,7 @@ public class AccountController {
         try {
             result = mapper.writeValueAsString(account);
         } catch (JsonProcessingException e) {
+//            TODO EXCEPTION
             e.printStackTrace();
         }
         modelAndView.addObject(ACCOUNT, result);

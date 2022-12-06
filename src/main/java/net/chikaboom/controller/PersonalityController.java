@@ -74,6 +74,7 @@ public class PersonalityController {
         try {
             accountJSON = mapper.writeValueAsString(account);
         } catch (JsonProcessingException e) {
+            //            TODO EXCEPTION
             e.printStackTrace();
         }
 
