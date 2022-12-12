@@ -13,14 +13,19 @@ $("#statistic-btn").on("click", function () {
     loadStatistic();
 });
 
-$("#orders-btn").on("click", function () {
+$("#appointments-btn").on("click", function () {
     selectCurrent(this);
-    loadOrders()
+    loadAppointmentTab()
+});
+
+$("#my-appointments-btn").on("click", function () {
+    selectCurrent(this);
+    loadMyAppointmentTab();
 });
 
 $("#timetable-btn").on("click", function () {
     selectCurrent(this);
-    loadTimetable();
+    loadTimetableTab();
 });
 
 $("#clients-btn").on("click", function () {
@@ -48,14 +53,6 @@ function selectCurrent(thisObj) {
 
 function loadStatistic() {
     underConstruction();
-}
-
-function loadOrders() {
-    underConstruction();
-}
-
-function loadTimetable() {
-    loadTimetableTab();
 }
 
 function loadClients() {

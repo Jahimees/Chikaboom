@@ -26,7 +26,7 @@ $("#confirm-register").on("click", function () {
         var role = $("role :checked, :radio")[0].value;
         $.ajax({
             type: "GET",
-            url: "/chikaboom/registration", //TODO выглядит не ок прям совсем
+            url: "/chikaboom/registration",
             contentType: "application/text",
             dataType: "text",
             data: {

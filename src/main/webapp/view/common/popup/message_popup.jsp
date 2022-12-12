@@ -1,8 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <div class="popup message-popup">
-    <div class="close-message-popup" onclick="closePopup('message-popup')" tabindex="1">
-        X
-    </div>
     <div class="popup-title">
         <h3 id="popup-message-header">Sample text</h3>
     </div>

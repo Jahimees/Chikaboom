@@ -1,3 +1,6 @@
+<jsp:useBean id="mapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
+<jsp:useBean id="accountObj" class="net.chikaboom.model.database.Account"/>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql" %>
@@ -33,6 +36,7 @@
                 <img style="width: 50%" src="/image/logo_gradient.svg">
             </a>
         </div>
+
         <div class="menu-box">
             <div id="settings-btn" class="menu-child button">
                 <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
@@ -42,34 +46,41 @@
                 <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
                 <div class="menu-text"><a href="/chikaboom/account/${idAccount}">Профиль</a></div>
             </div>
-            <div id="services-btn" class="menu-child button" selected="false">
-                <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
-                <div class="menu-text"><a href="#">Услуги</a></div>
-            </div>
-            <div id="statistic-btn" class="menu-child button" selected="false">
-                <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
-                <div class="menu-text"><a href="#">Статистика</a></div>
-            </div>
 
-            <div id="orders-btn" class="menu-child button" selected="false">
+            <c:set var="accountObj" value="${mapper.readValue(account, accountObj.getClass())}"/>
+            <c:if test="${accountObj.role.idRole == 1}">
+                <div id="services-btn" class="menu-child button" selected="false">
+                    <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
+                    <div class="menu-text"><a href="#">Услуги</a></div>
+                </div>
+                <div id="statistic-btn" class="menu-child button" selected="false">
+                    <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
+                    <div class="menu-text"><a href="#">Статистика</a></div>
+                </div>
+            <div id="appointments-btn" class="menu-child button" selected="false">
                 <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
-                <div class="menu-text"><a href="#">Записи</a></div>
+                <div class="menu-text"><a href="#">Записи ко мне</a></div>
             </div>
-            <div id="timetable-btn" class="menu-child button" selected="false">
+                <div id="timetable-btn" class="menu-child button" selected="false">
+                    <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
+                    <div class="menu-text"><a href="#">График</a></div>
+                </div>
+                <div id="clients-btn" class="menu-child button" selected="false">
+                    <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
+                    <div class="menu-text"><a href="#">Мои клиенты</a></div>
+                </div>
+                <div id="messages-btn" class="menu-child button" selected="false">
+                    <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
+                    <div class="menu-text"><a href="#">Сообщения</a></div>
+                </div>
+                <div id="reviews-btn" class="menu-child button" selected="false">
+                    <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
+                    <div class="menu-text"><a href="#">Отзывы</a></div>
+                </div>
+            </c:if>
+            <div id="my-appointments-btn" class="menu-child button" selected="false">
                 <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
-                <div class="menu-text"><a href="#">График</a></div>
-            </div>
-            <div id="clients-btn" class="menu-child button" selected="false">
-                <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
-                <div class="menu-text"><a href="#">Мои клиенты</a></div>
-            </div>
-            <div id="messages-btn" class="menu-child button" selected="false">
-                <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
-                <div class="menu-text"><a href="#">Сообщения</a></div>
-            </div>
-            <div id="reviews-btn" class="menu-child button" selected="false">
-                <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
-                <div class="menu-text"><a href="#">Отзывы</a></div>
+                <div class="menu-text"><a href="#">Мои записи</a></div>
             </div>
             <div id="logout-btn" onclick="" class="menu-child button" selected="false">
                 <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
@@ -148,6 +159,42 @@
             },
             error: function () {
                 $("#popup-message-text")[0].innerText = "Невозможно загрузить вкладку график!"
+                $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
+                openPopup('message-popup');
+            }
+        });
+    }
+
+    function loadAppointmentTab() {
+        $.ajax({
+            type: "get",
+            url: "/chikaboom/personality/${idAccount}/appointment",
+            contentType: "application/text",
+            dataType: "text",
+            data: {},
+            success: function (data) {
+                $("#content-placeholder").html(data);
+            },
+            error: function () {
+                $("#popup-message-text")[0].innerText = "Невозможно загрузить вкладку записи!"
+                $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
+                openPopup('message-popup');
+            }
+        });
+    }
+
+    function loadMyAppointmentTab() {
+        $.ajax({
+            type: "get",
+            url: "/chikaboom/personality/${idAccount}/myappointment",
+            contentType: "application/text",
+            dataType: "text",
+            data: {},
+            success: function (data) {
+                $("#content-placeholder").html(data);
+            },
+            error: function () {
+                $("#popup-message-text")[0].innerText = "Невозможно загрузить вкладку ваших записей!"
                 $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
                 openPopup('message-popup');
             }

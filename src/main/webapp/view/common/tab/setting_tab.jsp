@@ -7,16 +7,16 @@
     <div id="profile-setting-tab" class="horizontal-menu-child" selected="false">
         <div class="horizontal-menu-text"><a href="#">Профиль</a></div>
     </div>
-    <div id="personalization-setting-tab" class="horizontal-menu-child" selected="false">
+    <div id="personalization-setting-tab" class="horizontal-menu-child master-only" selected="false">
         <div class="horizontal-menu-text"><a href="#">Персонализация</a></div>
     </div>
-    <div id="security-setting-tab" class="horizontal-menu-child" selected="false">
+    <div id="security-setting-tab" class="horizontal-menu-child master-only" selected="false">
         <div class="horizontal-menu-text"><a href="#">Безопасность</a></div>
     </div>
-    <div id="notification-setting-tab" class="horizontal-menu-child" selected="false">
+    <div id="notification-setting-tab" class="horizontal-menu-child master-only" selected="false">
         <div class="horizontal-menu-text"><a href="#">Уведомления</a></div>
     </div>
-    <div id="payment-details-setting-tab" class="horizontal-menu-child" selected="false">
+    <div id="payment-details-setting-tab" class="horizontal-menu-child master-only" selected="false">
         <div class="horizontal-menu-text"><a href="#">Реквизиты</a></div>
     </div>
 </div>
@@ -68,5 +68,9 @@
 
     $(document).ready(function () {
         loadSettingTab("general");
+
+        if (accountJson.role.role === 'client') {
+            $(".master-only").remove();
+        }
     })
 </script>

@@ -3,9 +3,6 @@
 <div class="popup-bg"></div>
 
 <div class="popup edit-popup">
-    <div class="close-popup" onclick="closePopup('edit-popup')" tabindex="1">
-        X
-    </div>
     <div class="popup-title">
         <h3 id="popup-message-header">Редактирование</h3>
     </div>

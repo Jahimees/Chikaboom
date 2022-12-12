@@ -33,19 +33,23 @@
     </script>
 
 </head>
+<jsp:include page="common/popup/appointment_modal.jsp"/>
 <body>
 <jsp:include page="common/common_header.jsp"/>
 <div class="flex-box-white">
     <%-- БЛОК ИНФОРМАЦИИ --%>
-    <div class="content">
+    <div class="content" style="width: 95%">
         <div class="d-flex divided-background padding-0-0-0-5 ">
             <div style="padding: 0 0 30px;">
                 <img class="avatar-image" src="/image/user/${idAccount}/avatar.jpeg"
                      onerror="this.src='/image/user/no_photo.jpg'"
                      alt="error on load">
-                <div class="d-flex flex-row-reverse">
+                <div class="d-flex flex-row-reverse master-only">
                     <img src="/image/icon/edit_icon.svg">
-                    <div class="purple-button m-2">ЗАПИСАТЬСЯ</div>
+                    <!-- Кнопка-триггер модального окна -->
+                    <button type="button" class="purple-button m-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        ЗАПИСАТЬСЯ
+                    </button>
                 </div>
             </div>
             <div class="main-information-block">
@@ -53,11 +57,11 @@
                     <div id="nickname-placeholder" class="common-black-text">
                     </div>
                 </b>
-                <div id="profession-placeholder" class="small-text"></div>
+                <div id="profession-placeholder" class="small-text master-only"></div>
                 <div class="main-information">
                     <div id="phone-placeholder" class="medium-text">Телефон:</div>
-                    <div id="address-placeholder" class="medium-text">Адрес:</div>
-                    <div class="d-inline-flex medium-text">
+                    <div id="address-placeholder" class="medium-text master-only">Адрес:</div>
+                    <div class="d-inline-flex medium-text master-only">
                         <div class="chapter-header">
                             О себе:
                         </div>
@@ -70,7 +74,7 @@
         </div>
 
         <%--    ЯКОРЯ    --%>
-        <div class="d-inline-flex medium-text margin-2-10-0-10">
+        <div class="d-inline-flex medium-text margin-2-10-0-10 master-only">
             <a href="#price-block">
                 ЦЕНЫ
             </a>
@@ -87,7 +91,7 @@
         <hr>
 
         <%--    ЦЕНЫ И УСЛУГИ    --%>
-        <div id="price-block" class="d-flex margin-2-10-0-10">
+        <div id="price-block" class="d-flex margin-2-10-0-10 master-only">
             <div class="chapter-header medium-text">
                 ЦЕНЫ И УСЛУГИ
             </div>
@@ -98,7 +102,7 @@
         <hr>
 
         <%--    ГАЛЕРЕЯ ФОТО    --%>
-        <div id="photo-gallery-block" class="d-flex margin-2-10-0-10">
+        <div id="photo-gallery-block" class="d-flex margin-2-10-0-10 master-only">
             <div class="chapter-header medium-text">
                 ГАЛЕРЕЯ ФОТО
             </div>
@@ -119,7 +123,7 @@
         </div>
 
         <%--    СТАТИСТИКА    --%>
-        <div class="d-inline-flex w-100 statistic-line">
+        <div class="d-inline-flex w-100 statistic-line master-only">
             <div class="light-medium-text statistic-elem">
                 ХХХ ПОДТВЕРЖДЕННЫХ ЗАПИСЕЙ
             </div>
@@ -132,7 +136,7 @@
         </div>
 
         <%--    ОТЗЫВЫ    --%>
-        <div id="review-block" class="d-flex margin-2-10-0-10">
+        <div id="review-block" class="d-flex margin-2-10-0-10 master-only">
             <div class="chapter-header medium-text">
                 ОТЗЫВЫ
             </div>
@@ -184,11 +188,15 @@
 </html>
 
 <jsp:include page="/view/common/popup/login_popup.jsp"/>
+<jsp:include page="/view/common/popup/message_popup.jsp"/>
 
 <script type="text/javascript" src="/js/static_popup.js"></script>
+<script type="text/javascript" src="/js/dynamic_popup.js"></script>
 <script type="text/javascript" src="/js/service.js"></script>
 <script>
     var accountJson = JSON.parse(JSON.stringify(${account}));
+    var userServicesJson = "";
+    var masterAppointmentsJson = "";
     var address = accountJson.address != null ? accountJson.address : "";
 
     $("#about-text-placeholder")[0].innerText = accountJson.about !== null ? accountJson.about.text : "";
@@ -198,20 +206,15 @@
     $("#profession-placeholder")[0].innerText = accountJson.about !== null ? accountJson.about.profession : "";
 
     $(document).ready(function () {
-        $.ajax({
-            type: "get",
-            url: "/chikaboom/personality/${idAccount}/services/info",
-            contentType: "application/text",
-            dataType: "text",
-            data: {},
-            success: function (data) {
-                let userServiceJson = JSON.parse(data);
-                fillServiceTable(userServiceJson, true);
-            },
-            error: function () {
-
+        if (accountJson.role.role === 'client') {
+            if (accountJson.role.role === 'client') {
+                $(".master-only").remove();
+                $(".main-information").css("height", "auto");
             }
-        })
+        } else {
+            loadUserServices(accountJson.idAccount);
+            loadMasterAppointments(accountJson.idAccount);
+        }
     })
 
 </script>

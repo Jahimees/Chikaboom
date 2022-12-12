@@ -67,7 +67,7 @@
                 userServicesJson = JSON.parse(data);
                 console.log("general service tab successfully loaded");
                 fillServiceTable(userServicesJson);
-                loadSelectOptions();
+                loadServiceSelectOptions();
             },
             error: function () {
                 loadUnderConstruction();

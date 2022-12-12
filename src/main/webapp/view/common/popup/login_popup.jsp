@@ -2,9 +2,6 @@
 <div class="popup-bg"></div>
 
 <div class="popup login-popup">
-    <div class="close-popup" onclick="closePopup('login-popup')" tabindex="1">
-        X
-    </div>
     <div class="popup-title">
         <h3>Авторизация</h3>
     </div>
