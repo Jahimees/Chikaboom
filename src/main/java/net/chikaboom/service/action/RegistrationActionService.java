@@ -81,7 +81,7 @@ public class RegistrationActionService implements ActionService {
         Account account = new Account();
 
         String roleStr = clientDataStorageService.getData(ROLE).toString();
-        int idRole = ApplicationRole.valueOf(roleStr.toUpperCase()).ordinal();
+        int idRole = ApplicationRole.valueOf(roleStr.toUpperCase()).getValue();
 
         String nickname = clientDataStorageService.getData(NICKNAME).toString();
 

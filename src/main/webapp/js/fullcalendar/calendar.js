@@ -1,30 +1,81 @@
-// import { Calendar } from './vendor/fullcalendar/main.js';
-// import dayGridPlugin from './vendor/fullcalendar/main.js';
-// import timeGridPlugin from '/js/fullcalendar/plugin/timeGrid/main.js';
-// import listPlugin from './vendor/fullcalendar/main.js';
 $(function () {
     showTodaysDate();
-    initializeCalendar();
-    getCalendars();
-    initializeRightCalendar();
-    initializeLeftCalendar();
-    disableEnter();
+    loadMasterAppointments();
+    // initializeCalendar();
+
 });
 
-var initializeCalendar = function () {
+var initializeCalendar = function (appointmentsForCalendar) {
     $('.calendar').fullCalendar({
         editable: true,
         eventLimit: true, // allow "more" link when too many events
         // create events
-        events: events(),
+        events: appointmentsForCalendar,
         firstDay: 1,
         defaultTimedEventDuration: '00:30:00',
         forceEventDuration: true,
-        eventBackgroundColor: '#137537',
+        eventBackgroundColor: '#5F4E7D',
         editable: false,
         height: screen.height - 160,
         timezone: 'Russia/Moscow',
     });
+}
+
+var obj;
+var obj1;
+
+var loadMasterAppointments = function () {
+    let appointmentsForCalendar = [];
+    $.ajax({
+        type: "get",
+        url: "/chikaboom/appointment/" + accountJson.idAccount,
+        contentType: "application/json",
+        dataType: "json",
+        data: {},
+        success: function (masterAppointments) {
+            masterAppointments.forEach(function (masterAppointment) {
+                let title = masterAppointment.userService.userServiceName + " - " + masterAppointment.clientAccount.nickname;
+                let appointmentDate = new Date(masterAppointment.appointmentDate);
+
+                let splittedAppointmentTime = masterAppointment.appointmentTime.split(":");
+                appointmentDate.setHours(splittedAppointmentTime[0]);
+                appointmentDate.setMinutes(splittedAppointmentTime[1]);
+
+                let userServiceTime = masterAppointment.userService.time;
+                let userServiceDurationTime = userServiceTime.replace(' минут', '').split(' час');
+                let duration;
+
+                if (userServiceDurationTime.length === 1) {
+                    duration = 1;
+                } else {
+                    userServiceDurationTime[1] = userServiceDurationTime[1].replace('а', '');
+
+                    duration = userServiceDurationTime[0] * 60;
+                    duration += userServiceDurationTime[1] === '' ? 0 : 30;
+                }
+
+                let appointmentEnd = new Date(masterAppointment.appointmentDate);
+                appointmentEnd.setHours(splittedAppointmentTime[0]);
+                appointmentEnd.setMinutes(splittedAppointmentTime[1] + duration);
+
+                let appointmentObj = {
+                    id: masterAppointment.idAppointment,
+                    title: title,
+                    start: appointmentDate,
+                    end: appointmentEnd
+                }
+                appointmentsForCalendar.push(appointmentObj)
+            })
+
+            initializeCalendar(appointmentsForCalendar);
+            getCalendars();
+            initializeRightCalendar();
+            initializeLeftCalendar();
+            disableEnter();
+        }
+    })
+
+    // return appointmentsForCalendar;
 }
 
 

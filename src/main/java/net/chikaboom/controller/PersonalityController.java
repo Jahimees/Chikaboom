@@ -58,7 +58,7 @@ public class PersonalityController {
     public ModelAndView openPersonalityPage(@PathVariable int idAccount, HttpServletRequest request) throws IllegalAccessException {
         logger.info("Opening personality page...");
 
-//        TODO FILTER! Сделать аннотацию, аспект мб я хз. Который проверяет данные на совпадение.
+//        TODO FILTER! Сделать аннотацию, аспект мб. Который проверяет данные на совпадение.
         if (request.getSession().getAttribute(ID_ACCOUNT) == null ||
                 (int) request.getSession().getAttribute(ID_ACCOUNT) != idAccount) {
             throw new IllegalAccessException("User with id " + request.getSession().getAttribute(ID_ACCOUNT) + " trying " +

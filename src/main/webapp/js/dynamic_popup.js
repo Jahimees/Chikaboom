@@ -61,7 +61,7 @@ function confirmEdit() {
                 $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Изменения прошли успешно!";
                 openPopup('message-popup');
 
-                accountJson = JSON.parse(data.account);
+                accountJson = data;
 
                 loadSettingTab(currentTabName);
             },

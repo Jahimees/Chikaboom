@@ -1,9 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 
 <div class="popup register-popup">
-    <div class="close-popup" onclick="closePopup('register-popup')" tabindex="1">
-        X
-    </div>
     <div class="popup-title">
         <h3>Регистрация</h3>
     </div>

@@ -27,7 +27,7 @@
         </div>
     </div>
     <hr>
-    <div class="row w-100 input-box">
+    <div class="row w-100 input-box master-only">
         <div class="col-4 common-black-text">
             Адрес:
         </div>
@@ -37,8 +37,8 @@
             <img src="/image/icon/edit_icon.svg">
         </div>
     </div>
-    <hr>
-    <div class="row w-100 input-box">
+    <hr class="master-only">
+    <div class="row w-100 input-box master-only">
         <div class="col-4 common-black-text">
             О себе:
         </div>
@@ -48,7 +48,6 @@
             <img src="/image/icon/edit_icon.svg">
         </div>
     </div>
-
 </div>
 
 <script>
@@ -93,7 +92,7 @@
         let addressInputField = addField("Адрес", "address", "text", "Укажите свой адрес работы", false, [], "input");
         addressInputField.id = "address-input";
         $("#address-input").suggestions({
-            token: "token",
+            token: "1d06cefc6ea71518b0141a136c76497406f321b2",
             type: "ADDRESS",
             geoLocation: false,
             constraints: {
@@ -137,11 +136,17 @@
     }
 
     $(document).ready(function () {
-        let aboutProfession = accountJson.about != null ? accountJson.about.profession : "";
-        let aboutText = accountJson.about != null ? accountJson.about.text : "";
+        let aboutProfession;
+        let aboutText;
+        if (accountJson.role.role === 'client') {
+            $(".master-only").remove();
+        } else {
+            aboutProfession = accountJson.about != null && typeof accountJson.about != 'undefined' ? accountJson.about.profession : "";
+            aboutText = accountJson.about != null && typeof accountJson.about != 'undefined' ? accountJson.about.text : "";
+            $("#address-placeholder")[0].innerText = accountJson.address;
+            $("#about-text-placeholder")[0].innerText = aboutProfession + "\n" + aboutText;
+        }
 
         $("#nickname-placeholder")[0].innerText = accountJson.nickname;
-        $("#address-placeholder")[0].innerText = accountJson.address;
-        $("#about-text-placeholder")[0].innerText = aboutProfession + "\n" + aboutText;
     });
 </script>

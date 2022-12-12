@@ -87,7 +87,7 @@ p {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    height: 60%;
+    height: 35%;
 }
 
 .main-information-block {

@@ -14,6 +14,7 @@ public final class DbNamesConstant {
     public static final String SERVICE = "service";
     public static final String SUBSERVICE = "subservice";
     public static final String USER_SERVICE = "user_service";
+    public static final String APPOINTMENT = "appointment";
 
     public static final String ID_ABOUT = "idabout";
     public static final String TEXT = "text";
@@ -61,6 +62,11 @@ public final class DbNamesConstant {
     public static final String WORKING_DAY_START = "workingDayStart";
     public static final String WORKING_DAY_END = "workingDayEnd";
 
+    public static final String ID_APPOINTMENT = "idappointment";
+    public static final String ID_ACCOUNT_MASTER = "idaccount_master";
+    public static final String ID_ACCOUNT_CLIENT = "idaccount_client";
+    public static final String APPOINTMENT_DATE = "appointment_date";
+    public static final String APPOINTMENT_TIME = "appointment_time";
 
     public static final String _PHONE_CODE = "phoneCode";
 
