@@ -3,7 +3,7 @@
 
 <div class="content">
     <div>
-        <div class="big-text">Мои записи на услугиуслуги</div>
+        <div class="big-text">Мои записи на услуги</div>
 
         <div id="appointment-placeholder" class="d-block w-100">
             <div class="service-row row" style="background-color: #5f4e7d; color: white">

@@ -144,7 +144,7 @@
             aboutProfession = accountJson.about != null && typeof accountJson.about != 'undefined' ? accountJson.about.profession : "";
             aboutText = accountJson.about != null && typeof accountJson.about != 'undefined' ? accountJson.about.text : "";
             $("#address-placeholder")[0].innerText = accountJson.address;
-            $("#about-text-placeholder")[0].innerText = aboutProfession + "\n" + aboutText;
+            $("#about-text-placeholder")[0].innerText = aboutProfession != null ? aboutProfession : "" + "\n" + aboutText != null ? aboutText : "";
         }
 
         $("#nickname-placeholder")[0].innerText = accountJson.nickname;

@@ -39,51 +39,51 @@
 
         <div class="menu-box">
             <div id="settings-btn" class="menu-child button">
-                <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
+                <div><img class="small-icon" src="/image/icon/settings_icon.svg" alt="no_image"></div>
                 <div class="menu-text"><a href="#">Настройки</a></div>
             </div>
             <div id="profile-btn" class="menu-child button" selected="false">
-                <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
+                <div><img class="small-icon" src="/image/icon/profile_icon_2.svg" alt="no_image"></div>
                 <div class="menu-text"><a href="/chikaboom/account/${idAccount}">Профиль</a></div>
             </div>
 
             <c:set var="accountObj" value="${mapper.readValue(account, accountObj.getClass())}"/>
             <c:if test="${accountObj.role.idRole == 1}">
                 <div id="services-btn" class="menu-child button" selected="false">
-                    <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
+                    <div><img class="small-icon" src="/image/icon/service_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Услуги</a></div>
                 </div>
                 <div id="statistic-btn" class="menu-child button" selected="false">
-                    <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
+                    <div><img class="small-icon" src="/image/icon/statistic_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Статистика</a></div>
                 </div>
             <div id="appointments-btn" class="menu-child button" selected="false">
-                <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
+                <div><img class="small-icon" src="/image/icon/notebook_icon.svg" alt="no_image"></div>
                 <div class="menu-text"><a href="#">Записи ко мне</a></div>
             </div>
                 <div id="timetable-btn" class="menu-child button" selected="false">
-                    <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
+                    <div><img class="small-icon" src="/image/icon/calendar_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">График</a></div>
                 </div>
                 <div id="clients-btn" class="menu-child button" selected="false">
-                    <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
+                    <div><img class="small-icon" src="/image/icon/cleitns_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Мои клиенты</a></div>
                 </div>
                 <div id="messages-btn" class="menu-child button" selected="false">
-                    <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
+                    <div><img class="small-icon" src="/image/icon/message_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Сообщения</a></div>
                 </div>
                 <div id="reviews-btn" class="menu-child button" selected="false">
-                    <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
+                    <div><img class="small-icon" src="/image/icon/review_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Отзывы</a></div>
                 </div>
             </c:if>
             <div id="my-appointments-btn" class="menu-child button" selected="false">
-                <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
+                <div><img class="small-icon" src="/image/icon/notebook_icon_2.svg" alt="no_image"></div>
                 <div class="menu-text"><a href="#">Мои записи</a></div>
             </div>
             <div id="logout-btn" onclick="" class="menu-child button" selected="false">
-                <div class="small-icon"><img src="/image/icon/login_icon.svg" alt="no_image"></div>
+                <div><img  class="small-icon" src="/image/icon/exit_icon.svg" alt="no_image"></div>
                 <div class="menu-text"><a href="/chikaboom/logout">Выйти</a></div>
             </div>
         </div>
@@ -218,6 +218,12 @@
     }
 
     $(document).ready(function () {
-        $("#settings-btn").click();
+        let url = new URL(window.location.href);
+        var currentTab = url.searchParams.get("tabName")
+        if (currentTab === null) {
+            $("#settings-btn").click();
+        } else {
+            $("#" + currentTab + "-btn").click();
+        }
     })
 </script>

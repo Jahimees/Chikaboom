@@ -53,10 +53,11 @@
                 <c:when test="${session==null}">
                     <div class="open-login-popup" onclick="openPopup('login-popup')"><a href="#">Вход</a></div>
                     <div class="open-register-popup" onclick="openPopup('register-popup')"><a href="#">Регистрация</a></div>
-                    <div><a href="/chikaboom/under_construction">Быстрая запись</a></div>
+<%--                    <div><a href="/chikaboom/under_construction">Быстрая запись</a></div>--%>
                 </c:when>
                 <c:otherwise>
-                    <div><a href="/chikaboom/under_construction">Мои записи</a></div>
+                    <div><a href="/chikaboom/personality/${idAccount}?tabName=my-appointments">Мои записи</a></div>
+                    <div><a href="/chikaboom/logout">Выйти из аккаунта</a></div>
                     <div><a href="/chikaboom/under_construction">Избранное</a></div>
                 </c:otherwise>
             </c:choose>
@@ -71,10 +72,10 @@
         <div class="service-block-all row">
             <c:set var="counter" value="1"/>
             <c:forTokens var="i"
-                         items="Визаж/Брови,Парикмахерские услуги,Ресницы,Татуаж/Тату,Ногтевой сервис,Косметология/Уход за телом"
+                         items="Ногтевой сервис,Парикмахерские услуги,Ресницы,Брови,Визаж,Барбершоп"
                          delims=",">
                 <div class="col-xl-4 service-outer-image">
-                    <a style="display: inline-flex" href="/chikaboom/under_construction">
+                    <a style="display: inline-flex" href="/chikaboom/service/search/${counter}">
                         <img class="service-image" src="/image/service/service_icon_${counter}.png" alt="no_image">
                         <div class="service-item">
                             <p><c:out value="${i}"/></p>
@@ -86,7 +87,7 @@
         </div>
 
         <div style="display: flex">
-            <a class="service-block-button" href="/chikaboom/under_construction">ВСЕ УСЛУГИ</a>
+            <a class="service-block-button" href="/chikaboom/service">ВСЕ УСЛУГИ</a>
         </div>
 
     </div>
@@ -172,3 +173,4 @@
 </html>
 
 <script type="text/javascript" src="/js/static_popup.js"></script>
+<script type="text/javascript" src="/js/dynamic_popup.js"></script>

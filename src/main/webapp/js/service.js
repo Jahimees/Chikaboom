@@ -38,6 +38,7 @@ function fillServiceTable(userServicesJson, isAccountPage) {
 
         let serviceTag = $("#service-" + service.idService)[0];
         let subserviceTypeBlockHeader = document.createElement("div");
+        subserviceTypeBlockHeader.setAttribute("id", "subservice-" + subservice.idSubservice);
         subserviceTypeBlockHeader.setAttribute("class", "service-header medium-text");
         subserviceTypeBlockHeader.innerHTML = subservice.subserviceName;
 
@@ -45,8 +46,8 @@ function fillServiceTable(userServicesJson, isAccountPage) {
     })
 
     userServicesJson.forEach(function (userService) {
-        let idService = userService.subservice.service.idService;
-        let serviceTag = $("#service-" + idService)[0];
+        let idSubservice = userService.subservice.idSubservice;
+        let subserviceTag = $("#subservice-" + idSubservice)[0];
 
         let rowTag = document.createElement("div");
         rowTag.setAttribute("class", "service-row row medium-text");
@@ -105,7 +106,7 @@ function fillServiceTable(userServicesJson, isAccountPage) {
         }
 
 
-        serviceTag.appendChild(rowTag);
+        subserviceTag.appendChild(rowTag);
     })
 }
 

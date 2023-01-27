@@ -23,7 +23,7 @@ $("#confirm-register").on("click", function () {
         var phone = $("#r-input-phone")[0].value;
         var password = $("#r-input-password")[0].value;
         var nickname = $("#r-input-nickname")[0].value;
-        var role = $("role :checked, :radio")[0].value;
+        var role = $("role :checked, :radio")[0].checked ? "client" : "master";
         $.ajax({
             type: "GET",
             url: "/chikaboom/registration",

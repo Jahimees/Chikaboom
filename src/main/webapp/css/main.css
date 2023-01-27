@@ -127,6 +127,7 @@ body {
     margin: 1% auto 0 auto;
     width: fit-content;
     letter-spacing: calc(1em / 5);
+    cursor: pointer;
 }
 
 .block-map {
@@ -184,4 +185,37 @@ body {
     width: 90%;
     height: 500px;
     margin: 0 5%;
+}
+
+
+/*search page*/
+
+.result-image {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border: solid 1px
+}
+
+.result-item-name {
+    width: 200px;
+    background-color: #545454;
+    padding: 0 5px;
+}
+
+.result-item {
+    width: 200px;
+    padding: 0 5px 5px 5px;
+    background-color: #545454;
+}
+
+.small-white-text {
+    color: white;
+    size: 10px;
+    font-family: Manrope, serif;;
+}
+
+.non-decorated-link {
+    text-decoration: none;
+    color: black;
 }

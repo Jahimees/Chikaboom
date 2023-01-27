@@ -61,6 +61,12 @@
     width: 45px;
 }
 
+/*TODO media*/
+.little-icon {
+    padding: 10px 5px 0 5px;
+    width: 30px;
+}
+
 a {
     text-decoration: none;
 }

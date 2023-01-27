@@ -31,7 +31,6 @@
             });
         });
     </script>
-
 </head>
 <jsp:include page="common/popup/appointment_modal.jsp"/>
 <body>
@@ -47,7 +46,7 @@
                 <div class="d-flex flex-row-reverse master-only">
                     <img src="/image/icon/edit_icon.svg">
                     <!-- Кнопка-триггер модального окна -->
-                    <button type="button" class="purple-button m-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <button id="make-appointment-btn" type="button" class="purple-button m-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
                         ЗАПИСАТЬСЯ
                     </button>
                 </div>
@@ -108,16 +107,16 @@
             </div>
             <div class="d-inline-flex w-100" style="justify-content: center;">
                 <div>
-                    <img class="gallery_image" src="/image/service/service_icon_1.png">
+                    <img class="gallery_image" src="/image/service/service_icon_4.png">
                 </div>
                 <div>
                     <img class="gallery_image" src="/image/service/service_icon_2.png">
                 </div>
                 <div>
-                    <img class="gallery_image" src="/image/service/service_icon_3.png">
+                    <img class="gallery_image" src="/image/service/service_icon_7.png">
                 </div>
                 <div>
-                    <img class="gallery_image" src="/image/service/service_icon_4.png">
+                    <img class="gallery_image" src="/image/service/service_icon_10.png">
                 </div>
             </div>
         </div>
@@ -144,7 +143,7 @@
             <div class="margin-0-20">
                 <div class="d-inline-flex margin-0-10">
                     <div>
-                        <img class="feedback-image" src="/image/user/acf4f874-76e6-444e-b223-9b5e776d84fd/avatar.png">
+                        <img class="feedback-image" src="/image/user/no_photo.jpg">
                         <div class="small-text">01 янв 2001</div>
                     </div>
                     <div class="review-text-block">
@@ -160,7 +159,7 @@
                 </div>
                 <div class="d-inline-flex margin-0-10">
                     <div>
-                        <img class="feedback-image" src="/image/user/acf4f874-76e6-444e-b223-9b5e776d84fd/avatar.png">
+                        <img class="feedback-image" src="/image/user/no_photo.jpg">
                         <div class="small-text">01 янв 2001</div>
                     </div>
                     <div class="review-text-block">
@@ -215,6 +214,10 @@
             loadUserServices(accountJson.idAccount);
             loadMasterAppointments(accountJson.idAccount);
         }
+    })
+
+    $("#make-appointment-btn").on("click", function () {
+        loadMasterAppointments(accountJson.idAccount);
     })
 
 </script>
