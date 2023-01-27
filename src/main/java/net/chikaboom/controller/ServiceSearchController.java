@@ -8,7 +8,6 @@ import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.action.tab.ServiceTabService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +16,6 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.List;
 
 @RestController
-@PropertySource("/constants.properties")
 @RequestMapping("/chikaboom/service")
 public class ServiceSearchController {
 
@@ -32,8 +30,8 @@ public class ServiceSearchController {
     @Value("${attr.subserviceIdList}")
     private String SUBSERVICE_ID_LIST;
 
-    private ClientDataStorageService clientDataStorageService;
-    private ServiceTabService serviceTabService;
+    private final ClientDataStorageService clientDataStorageService;
+    private final ServiceTabService serviceTabService;
 
     @Autowired
     public ServiceSearchController(ClientDataStorageService clientDataStorageService, ServiceTabService serviceTabService) {

@@ -20,9 +20,6 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-import static net.chikaboom.util.constant.EOFieldsCostant.CONVERTED_PASSWORD;
-import static net.chikaboom.util.constant.EOFieldsCostant.SALT;
-
 /**
  * Сервис реализует создание нового аккаунта
  */
@@ -42,6 +39,11 @@ public class RegistrationActionService implements ActionService {
     private String ROLE;
     @Value("${attr.nickname}")
     private String NICKNAME;
+
+    @Value("${converted_password}")
+    private String CONVERTED_PASSWORD;
+    @Value("${salt}")
+    private String SALT;
 
     private final ClientDataStorageService clientDataStorageService;
     private final HashPasswordService hashPasswordService;

@@ -15,19 +15,14 @@ import net.chikaboom.service.action.DataService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
-
-import static net.chikaboom.util.constant.EOFieldsCostant.CONVERTED_PASSWORD;
-import static net.chikaboom.util.constant.EOFieldsCostant.SALT;
 
 /**
  * Сервис для изменения данных клиентом на странице "Настройки - основные"
  */
 @Service
-@PropertySource("/constants.properties")
 public class EditSettingsTabService implements DataService {
 
     @Value("${attr.customAccount}")
@@ -40,6 +35,11 @@ public class EditSettingsTabService implements DataService {
     private String PHONE_CODE;
     @Value("${attr.phone}")
     private String PHONE;
+
+    @Value("${converted_password}")
+    private String CONVERTED_PASSWORD;
+    @Value("${salt}")
+    private String SALT;
 
     private final ClientDataStorageService clientDataStorageService;
     private final AccountRepository accountRepository;

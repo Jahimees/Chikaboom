@@ -62,6 +62,6 @@ public class RegistrationController {
         clientDataStorageService.setData(NICKNAME, nickname);
         clientDataStorageService.setData(ROLE, role);
 
-        return new ResponseEntity<Object>("/chikaboom/" + registrationActionService.executeAndGetPage(), HttpStatus.OK);
+        return new ResponseEntity<>("/chikaboom/" + registrationActionService.executeAndGetPage(), HttpStatus.OK);
     }
 }
