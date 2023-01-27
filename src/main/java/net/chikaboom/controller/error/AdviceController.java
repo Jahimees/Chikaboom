@@ -1,7 +1,9 @@
 package net.chikaboom.controller.error;
 
-import net.chikaboom.exception.*;
 import net.chikaboom.exception.IllegalAccessException;
+import net.chikaboom.exception.IncorrectInputDataException;
+import net.chikaboom.exception.NoSuchDataException;
+import net.chikaboom.exception.UserAlreadyExistsException;
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

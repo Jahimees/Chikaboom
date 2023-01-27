@@ -1,6 +1,7 @@
 package net.chikaboom.service;
 
 import com.google.common.hash.Hashing;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -8,7 +9,6 @@ import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 
-import static net.chikaboom.util.constant.EOFieldsCostant.*;
 
 /**
  * Данный сервис предназначен для хэширования пароля с целью повышения безопасности.
@@ -16,6 +16,13 @@ import static net.chikaboom.util.constant.EOFieldsCostant.*;
  */
 @Service
 public class HashPasswordService {
+
+    @Value("${salted_password}")
+    private String SALTED_PASSWORD;
+    @Value("${converted_password}")
+    private String CONVERTED_PASSWORD;
+    @Value("${salt}")
+    private String SALT;
 
     /**
      * Ковертирует пароль для его дальнейшего хранения в базе данных.

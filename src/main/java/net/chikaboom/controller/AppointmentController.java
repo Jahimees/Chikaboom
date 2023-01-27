@@ -7,7 +7,6 @@ import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.action.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@PropertySource("/constants.properties")
 @RequestMapping("/chikaboom/appointment/{idAccountMaster}")
 public class AppointmentController {
 
@@ -43,8 +41,8 @@ public class AppointmentController {
 
     @PostMapping
     public ResponseEntity<Appointment> makeAppointment(@PathVariable int idAccountMaster, @RequestParam int idAccountClient,
-                                          @RequestParam int idUserService, @RequestParam String appointmentDate,
-                                          @RequestParam String appointmentTime) {
+                                                       @RequestParam int idUserService, @RequestParam String appointmentDate,
+                                                       @RequestParam String appointmentTime) {
 
         clientDataStorageService.setData(ID_ACCOUNT_MASTER, idAccountMaster);
         clientDataStorageService.setData(ID_ACCOUNT_CLIENT, idAccountClient);
@@ -63,7 +61,7 @@ public class AppointmentController {
     public ResponseEntity<String> getAllMasterAppointments(@PathVariable int idAccountMaster) {
         clientDataStorageService.setData(ID_ACCOUNT_MASTER, idAccountMaster);
 
-        List<Appointment> appointmentList =  appointmentService.executeAndGetList();
+        List<Appointment> appointmentList = appointmentService.executeAndGetList();
 
         clientDataStorageService.clearAllData();
 

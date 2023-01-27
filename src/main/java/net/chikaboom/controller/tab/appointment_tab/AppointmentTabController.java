@@ -5,7 +5,6 @@ import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.action.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +14,6 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.List;
 
 @Controller
-@PropertySource("/constants.properties")
 @RequestMapping("/chikaboom/personality/{idAccount}")
 public class AppointmentTabController {
 
@@ -29,8 +27,9 @@ public class AppointmentTabController {
     private String ID_ACCOUNT_CLIENT;
     @Value("${attr.appointmentList}")
     private String APPOINTMENT_LIST;
-    private ClientDataStorageService clientDataStorageService;
-    private AppointmentService appointmentService;
+
+    private final ClientDataStorageService clientDataStorageService;
+    private final AppointmentService appointmentService;
 
     @Autowired
     public AppointmentTabController(ClientDataStorageService clientDataStorageService, AppointmentService appointmentService) {

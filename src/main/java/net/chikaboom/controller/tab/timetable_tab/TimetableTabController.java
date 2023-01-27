@@ -7,7 +7,6 @@ import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.action.tab.TimetableTabService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,7 +17,6 @@ import org.springframework.web.servlet.ModelAndView;
  * Отвечает за все запросы к календарю на странице графика
  */
 @Controller
-@PropertySource("/constants.properties")
 @RequestMapping("/chikaboom/personality/{idAccount}/timetable")
 public class TimetableTabController {
 
@@ -29,8 +27,8 @@ public class TimetableTabController {
     @Value("${attr.workingDays}")
     private String WORKING_DAYS;
 
-    private ClientDataStorageService clientDataStorageService;
-    private TimetableTabService timetableTabService;
+    private final ClientDataStorageService clientDataStorageService;
+    private final TimetableTabService timetableTabService;
 
     @Autowired
     public TimetableTabController(ClientDataStorageService clientDataStorageService, TimetableTabService timetableTabService) {
@@ -76,7 +74,7 @@ public class TimetableTabController {
     /**
      * Перехватывает событие обновления данных о рабочих днях на странице и передает управление в сервис
      *
-     * @param idAccount идентификатор мастера
+     * @param idAccount   идентификатор мастера
      * @param workingDays объект рабочих дней
      * @return объект рабочих дней с HTTP статусом 200
      */

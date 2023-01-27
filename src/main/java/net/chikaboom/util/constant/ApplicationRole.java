@@ -5,6 +5,12 @@ public enum ApplicationRole {
     CLIENT(2);
 
     private final int val;
-    private ApplicationRole(int v) { val = v; }
-    public int getValue() { return val; }
+
+    ApplicationRole(int v) {
+        val = v;
+    }
+
+    public int getValue() {
+        return val;
+    }
 }

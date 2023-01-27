@@ -5,7 +5,6 @@ import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.action.UploadFileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -19,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
  * Контроллер позволяет пользователю загружать файлы на сервер. Например фотографии
  */
 @Controller
-@PropertySource("/constants.properties")
 @RequestMapping("/chikaboom/upload/file/{idAccount}")
 public class UploadFileController {
 

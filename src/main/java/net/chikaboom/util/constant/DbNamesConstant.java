@@ -2,7 +2,7 @@ package net.chikaboom.util.constant;
 
 public final class DbNamesConstant {
 
-//        TABLES
+//        TABLES & FIELDS
     public static final String ABOUT = "about";
     public static final String WORKING_DAYS = "working_days";
     public static final String ACCOUNT = "account";
@@ -33,8 +33,6 @@ public final class DbNamesConstant {
     public static final String ID_ACCOUNT_STATUS = "idaccount_status";
     public static final String SINCE_DATE = "since_date";
     public static final String TO_DATE = "to_date";
-
-    public static final String ID_ADDRESS = "idaddress";
 
     public static final String ID_ROLE = "idrole";
 
@@ -68,9 +66,6 @@ public final class DbNamesConstant {
     public static final String APPOINTMENT_DATE = "appointment_date";
     public static final String APPOINTMENT_TIME = "appointment_time";
 
-    public static final String _PHONE_CODE = "phoneCode";
-
     private DbNamesConstant() {
-
     }
 }

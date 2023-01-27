@@ -7,7 +7,6 @@ import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.action.AccountInfoLoaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +17,6 @@ import org.springframework.web.servlet.ModelAndView;
  * Перенаправляет на страницу аккаунта
  */
 @RestController
-@PropertySource("/constants.properties")
 @RequestMapping("/chikaboom/account/{idAccount}")
 public class AccountController {
 

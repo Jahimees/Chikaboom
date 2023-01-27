@@ -1,19 +1,23 @@
 package net.chikaboom.config;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.util.unit.DataSize;
 
+import javax.servlet.MultipartConfigElement;
 import javax.sql.DataSource;
 
 /**
- * Конфигурация для MySQL DataSource
+ * Базовая конфигурация приложения. Определение местонахождения файлов properties
  */
 @Configuration
-@PropertySource("/application.properties")
-public class DataBaseConfiguration {
+@PropertySource("classpath:application.properties")
+@PropertySource("classpath:constants.properties")
+public class ApplicationConfiguration {
 
     @Value("${spring.datasource.driver-class-name}")
     private String driverClassName;
@@ -23,6 +27,8 @@ public class DataBaseConfiguration {
     private String username;
     @Value("${spring.datasource.password}")
     private String password;
+    @Value("${data.size}")
+    private String dataSize;
 
     @Bean
     public DataSource getDataSource() {
@@ -33,5 +39,14 @@ public class DataBaseConfiguration {
         driverManagerDataSource.setPassword(password);
 
         return driverManagerDataSource;
+    }
+
+    @Bean
+    public MultipartConfigElement getMultipartConfigElement() {
+        MultipartConfigFactory factory = new MultipartConfigFactory();
+        factory.setMaxFileSize(DataSize.parse(dataSize));
+        factory.setMaxRequestSize(DataSize.parse(dataSize));
+
+        return factory.createMultipartConfig();
     }
 }
