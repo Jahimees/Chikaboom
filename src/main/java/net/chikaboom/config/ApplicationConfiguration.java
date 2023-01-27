@@ -30,6 +30,10 @@ public class ApplicationConfiguration {
     @Value("${data.size}")
     private String dataSize;
 
+    /**
+     * ТЕСТ!
+     * @return
+     */
     @Bean
     public DataSource getDataSource() {
         DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource();
