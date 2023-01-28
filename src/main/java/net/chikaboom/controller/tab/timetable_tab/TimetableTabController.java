@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.chikaboom.model.database.WorkingDays;
 import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.action.tab.TimetableTabService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,7 @@ public class TimetableTabController {
 
     private final ClientDataStorageService clientDataStorageService;
     private final TimetableTabService timetableTabService;
+    private final Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
     public TimetableTabController(ClientDataStorageService clientDataStorageService, TimetableTabService timetableTabService) {
@@ -37,13 +39,16 @@ public class TimetableTabController {
     }
 
     /**
-     * Загружает вкладку расписания для мастера
+     * Загружает вкладку расписания для мастера.
+     * С помощью сервиса {@link TimetableTabService} загружает все данные о рабочих днях мастера, содержащие информацию
+     * о том, какие дни являются рабочими, а также о начале и конце рабочего дня
      *
      * @param idAccount идентификатор мастера
      * @return модель с данными о рабочих днях и представление вкладки расписания
      */
     @GetMapping
     public ModelAndView openTimetableTab(@PathVariable int idAccount) {
+        logger.info("Loading timetableTab.");
         ModelAndView modelAndView = new ModelAndView(TIMETABLE_TAB);
         clientDataStorageService.setData(ID_ACCOUNT, idAccount);
 
@@ -55,16 +60,15 @@ public class TimetableTabController {
 
         String workingDaysJSON = "";
         try {
-
+            logger.info("Trying to convert workingDays to JSON format");
             if (workingDays != null) {
                 workingDaysJSON = mapper.writeValueAsString(workingDays);
             } else {
                 workingDaysJSON = mapper.writeValueAsString(new WorkingDays());
             }
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
-
 
         modelAndView.addObject(WORKING_DAYS, workingDaysJSON);
 
@@ -72,7 +76,7 @@ public class TimetableTabController {
     }
 
     /**
-     * Перехватывает событие обновления данных о рабочих днях на странице и передает управление в сервис
+     * Обрабатывает запрос обновления данных о рабочих днях на странице и передает управление в {@link TimetableTabService}
      *
      * @param idAccount   идентификатор мастера
      * @param workingDays объект рабочих дней
@@ -81,6 +85,7 @@ public class TimetableTabController {
     @PostMapping
     public ResponseEntity<WorkingDays> updateWorkingDays(@PathVariable int idAccount,
                                                          @RequestBody WorkingDays workingDays) {
+        logger.info("Updating workingDays data of user with id " + idAccount);
         clientDataStorageService.setData(ID_ACCOUNT, idAccount);
         clientDataStorageService.setData(WORKING_DAYS, workingDays);
 

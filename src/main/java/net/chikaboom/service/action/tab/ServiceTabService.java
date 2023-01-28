@@ -11,6 +11,7 @@ import net.chikaboom.repository.SubserviceRepository;
 import net.chikaboom.repository.UserServiceRepository;
 import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.action.DataService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -39,6 +40,7 @@ public class ServiceTabService implements DataService {
     private final AccountRepository accountRepository;
     private final SubserviceRepository subserviceRepository;
     private final ServiceRepository serviceRepository;
+    private final Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
     public ServiceTabService(UserServiceRepository userServiceRepository, ClientDataStorageService clientDataStorageService,
@@ -59,6 +61,8 @@ public class ServiceTabService implements DataService {
     @Override
     public List<UserService> executeAndGetList() {
         int idAccount = (int) clientDataStorageService.getData(ID_ACCOUNT);
+
+        logger.info("Searching all userServices of user with id " + idAccount);
         Account account = accountRepository.findById(idAccount).
                 orElseThrow(() -> new NoSuchDataException("Cannot find account with id " + idAccount));
 
@@ -81,6 +85,7 @@ public class ServiceTabService implements DataService {
      */
     public UserService saveUserService() {
         UserService userService = (UserService) clientDataStorageService.getData(USER_SERVICE);
+        logger.info("Saving userService " + userService.getUserServiceName() + " of user with id " + userService.getAccount().getIdAccount());
 
         return userServiceRepository.save(userService);
     }
@@ -90,31 +95,48 @@ public class ServiceTabService implements DataService {
      */
     public void deleteUserService() {
         int idUserService = (int) clientDataStorageService.getData(ID_USER_SERVICE);
+        logger.info("Deleting userService with id " + idUserService);
 
         userServiceRepository.deleteById(idUserService);
     }
 
+    /**
+     * Производит поиск всех подуслуг, которые относятся к данной услуге (idService)
+     *
+     * @return коллекцию подуслуг
+     */
     public List<Subservice> getSubservices() {
         int idService = (int) clientDataStorageService.getData(ID_SERVICE);
+        logger.info("Searching all subservices of service with id " + idService);
         Service service = serviceRepository.findById(idService).
                 orElseThrow(() -> new NoSuchDataException("Cannot find service with id " + idService));
 
         return subserviceRepository.findAllByService(service);
     }
 
+    /**
+     * Производит поиск всех пользовательских услуг, которые соответствуют представленному перечню id подуслуг.
+     * Т.е., если пользовательская услуга относится к подуслуге, которая включена в перечень поиска, то она будет найдена.
+     *
+     * @return коллекцию пользовательских услуг
+     */
     public List<UserService> getUserServicesByServiceIds() {
-        Integer[] subservices = (Integer[]) clientDataStorageService.getData(SUBSERVICE_ID_LIST);
+        Integer[] subserviceIdArray = (Integer[]) clientDataStorageService.getData(SUBSERVICE_ID_LIST);
         int idService = (int) clientDataStorageService.getData(ID_SERVICE);
+        logger.info("Searching all userServices which match their idSubservice to subserviceIdList");
 
         List<UserService> userServiceList = new ArrayList<>();
 
-        if (subservices.length != 0) {
-            for (int i = 0; i < subservices.length; i++) {
-                Subservice subservice = subserviceRepository.findById(subservices[i]).
+        if (subserviceIdArray.length != 0) {
+            logger.info("Found " + subserviceIdArray.length + " selected subservices. Searching data...");
+            for (Integer integer : subserviceIdArray) {
+                Subservice subservice = subserviceRepository.findById(integer).
                         orElseThrow(() -> new NoSuchDataException("Cannot find subservice with"));
                 userServiceList.addAll(userServiceRepository.findAllBySubservice(subservice));
             }
         } else {
+            logger.info("No one subservice selected. Searching all userServices with idService " + idService);
+
             Service service = serviceRepository.findById(idService).
                     orElseThrow(() -> new NoSuchDataException("Cannot find service with id " + idService));
             List<Subservice> subserviceList = subserviceRepository.findAllByService(service);

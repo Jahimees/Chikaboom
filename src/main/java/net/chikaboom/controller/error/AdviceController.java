@@ -57,12 +57,13 @@ public class AdviceController {
      * Перехватывает исключение попытки обращения к несуществующим данным
      *
      * @param ex экземпляр исключения
-     * @return объект ошибки с http кодом 400
+     * @return объект ошибки с http кодом 404
      */
     @ExceptionHandler(NoSuchDataException.class)
     public ResponseEntity<String> noSuchData(NoSuchDataException ex) {
         logger.error("Trying to get not existing data");
         logger.error(ex.getMessage());
+        logger.info("Redirecting to 404 page...");
 
         URI location = null;
         try {

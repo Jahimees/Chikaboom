@@ -1,5 +1,6 @@
 package net.chikaboom.config;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +13,7 @@ import javax.servlet.MultipartConfigElement;
 import javax.sql.DataSource;
 
 /**
- * Базовая конфигурация приложения. Определение местонахождения файлов properties
+ * Определяет базовую конфигурацию приложения, в том числе местанахождение используемых файлов properties.
  */
 @Configuration
 @PropertySource("classpath:application.properties")
@@ -30,26 +31,39 @@ public class ApplicationConfiguration {
     @Value("${data.size}")
     private String dataSize;
 
+    private final org.apache.log4j.Logger logger = Logger.getLogger(this.getClass());
+
     /**
-     * ТЕСТ!
-     * @return
+     * Конфигурация бина подключения к базе данных.
      */
     @Bean
     public DataSource getDataSource() {
+        logger.info("Creating dataSource bean:");
+        logger.info("DriverClassName: " + driverClassName + "\nurl: " + url);
+
         DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource();
         driverManagerDataSource.setDriverClassName(driverClassName);
         driverManagerDataSource.setUrl(url);
         driverManagerDataSource.setUsername(username);
         driverManagerDataSource.setPassword(password);
 
+        logger.info("DataSource bean created");
+
         return driverManagerDataSource;
     }
 
+    /**
+     * Конфигурация файлов, получаемых с клиента на сервер.
+     */
     @Bean
     public MultipartConfigElement getMultipartConfigElement() {
+        logger.info("Creating multipartConfigElementBean");
+
         MultipartConfigFactory factory = new MultipartConfigFactory();
         factory.setMaxFileSize(DataSize.parse(dataSize));
         factory.setMaxRequestSize(DataSize.parse(dataSize));
+
+        logger.info("MultipartConfigElementBean created");
 
         return factory.createMultipartConfig();
     }

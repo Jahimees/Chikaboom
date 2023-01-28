@@ -49,8 +49,7 @@ public class RegistrationActionService implements ActionService {
     private final HashPasswordService hashPasswordService;
     private final AccountRepository accountRepository;
     private final PhoneCodeRepository phoneCodeRepository;
-
-    private final Logger logger = Logger.getLogger(RegistrationActionService.class);
+    private final Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
     public RegistrationActionService(ClientDataStorageService clientDataStorageService,

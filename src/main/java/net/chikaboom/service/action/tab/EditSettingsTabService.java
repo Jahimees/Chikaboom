@@ -70,23 +70,27 @@ public class EditSettingsTabService implements DataService {
      */
     @Override
     public Account executeAndGetOne() {
-        logger.info("Starting to change account parameter...");
+        logger.info("Starting to change account parameter.");
         Map<String, Object> accountParameters = (Map<String, Object>) clientDataStorageService.getData(CUSTOM_ACCOUNT);
 
-        Account accountFromParameters = new Account();
-
+//        TODO REFACTORING
         ObjectMapper mapper = new ObjectMapper();
         if (accountParameters.get(PHONE_CODE).getClass() == String.class) {
-            savePhoneData(accountParameters, accountFromParameters);
+            accountParameters.put(PHONE_CODE,
+                    phoneCodeRepository.findOneByPhoneCode(
+                            Integer.parseInt(accountParameters.get(PHONE_CODE).toString())
+                    )
+            );
         }
 
-        accountFromParameters = mapper.convertValue(accountParameters, Account.class);
+        Account accountFromParameters = mapper.convertValue(accountParameters, Account.class);
 
         if (accountParameters.get(NEW_PASSWORD) != null) {
             savePasswordData(accountParameters, accountFromParameters);
         }
 
-        About about = aboutRepository.saveAndFlush(accountFromParameters.getAbout() != null ? accountFromParameters.getAbout() : new About());
+        About about = aboutRepository.saveAndFlush(accountFromParameters.getAbout() != null
+                ? accountFromParameters.getAbout() : new About());
         accountFromParameters.setAbout(about);
         accountRepository.save(accountFromParameters);
         roleRepository.save(accountFromParameters.getRole());
@@ -96,16 +100,12 @@ public class EditSettingsTabService implements DataService {
         return accountFromParameters;
     }
 
-    private void savePhoneData(Map<String, Object> accountParameters, Account resultAccount) {
-        String phoneCode = accountParameters.get(PHONE_CODE).toString();
-        String phone = accountParameters.get(PHONE).toString();
-        PhoneCode foundPhoneCode = phoneCodeRepository.findOneByPhoneCode(Integer.parseInt(phoneCode));
-
-        accountParameters.put(PHONE_CODE, foundPhoneCode);
-        resultAccount.setPhone(phone);
-        resultAccount.setPhoneCode(foundPhoneCode);
-    }
-
+    /**
+     * Производит операции сравнения паролей и преобразование нового пароля для хранения в базе данных
+     *
+     * @param accountParameters измененные параметры аккаунта
+     * @param resultAccount конечный объект для сохранения
+     */
     private void savePasswordData(Map<String, Object> accountParameters, Account resultAccount) {
         String actualPassword = hashPasswordService.convertPasswordForComparing(
                 accountParameters.get(OLD_PASSWORD).toString(), resultAccount.getSalt());

@@ -2,6 +2,7 @@ package net.chikaboom.controller;
 
 import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.action.LogoutActionService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;

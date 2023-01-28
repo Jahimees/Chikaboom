@@ -14,7 +14,7 @@ import java.util.HashMap;
 @Service
 public class ClientDataStorageService {
 
-    private final Logger logger = Logger.getLogger(ClientDataStorageService.class);
+    private final Logger logger = Logger.getLogger(this.getClass());
 
     /**
      * Коллекция, содержащая информацию (параметры) с клиента

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 /**
- * Перехватывает события отвечающие за вкладку настроек
+ * Обрабатывает запросы, связанные с вкладкой настроек
  */
 @Controller
 @RequestMapping("/chikaboom/personality/{idAccount}/settings")
@@ -50,9 +50,9 @@ public class SettingTabController {
     }
 
     /**
-     * Открывает вкладку настроек
+     * Открывает саму вкладку настроек пользователя.
      *
-     * @param idAccount идентификатор аккаунта
+     * @param idAccount идентификатор аккаунта, чьи настройки необходимо открыть
      * @return ссылку на вкладку с настройками
      */
     @GetMapping
@@ -61,7 +61,7 @@ public class SettingTabController {
     }
 
     /**
-     * Возвращает представление основных настроек
+     * Возвращает представление основных настроек (подвкладка вкладки настроек).
      *
      * @param idAccount идентификатор пользователя
      * @return ссылку на страницу
@@ -72,7 +72,7 @@ public class SettingTabController {
     }
 
     /**
-     * Возвращает представление настроек профиля
+     * Возвращает представление настроек профиля (подвкладка вкладки настрое)
      *
      * @param idAccount идентификатор пользователя
      * @return ссылку на страницу
@@ -83,7 +83,7 @@ public class SettingTabController {
     }
 
     /**
-     * Изменяет выбранное(ые) поле(я) аккаунта
+     * Изменяет выбранное(ые) поле(я) аккаунта, после чего перезагружает данные на представлении.
      *
      * @param idAccount      идентификатор изменяемого аккаунта
      * @param changedAccount новый измененный аккаунт в виде пар ключ-значение
@@ -93,15 +93,14 @@ public class SettingTabController {
     public ResponseEntity<String> updateSettingTab(@PathVariable int idAccount,
                                                    @RequestBody Map<String, Object> changedAccount) {
         logger.info("Editing user data. idUser: " + idAccount);
-        logger.info(changedAccount);
+        logger.info("New data: " + changedAccount);
 
         clientDataStorageService.setData(CUSTOM_ACCOUNT, changedAccount);
         clientDataStorageService.setData(ID_ACCOUNT, idAccount);
 
         editSettingsTabService.executeAndGetOne();
-        logger.info("Data was successfully change");
 
-        logger.info("Reloading personality page...");
+        logger.info("Reloading personality page.");
         Account account = accountInfoLoaderService.executeAndGetOne();
         ObjectMapper mapper = new ObjectMapper();
 
@@ -109,8 +108,7 @@ public class SettingTabController {
         try {
             accountJSON = mapper.writeValueAsString(account);
         } catch (JsonProcessingException e) {
-            //            TODO EXCEPTION
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
 
         clientDataStorageService.clearAllData();

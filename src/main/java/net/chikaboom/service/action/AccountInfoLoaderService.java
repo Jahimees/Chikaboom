@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Сервис предназначен для получения информации об аккаунте.
+ */
 @Service
 @Transactional
 public class AccountInfoLoaderService implements DataService {
@@ -28,6 +31,12 @@ public class AccountInfoLoaderService implements DataService {
         this.clientDataStorageService = clientDataStorageService;
     }
 
+    /**
+     * Производит поиск аккаунта по его идентификатору.
+     *
+     * @return найденный аккаунт
+     * @throws NoSuchDataException возникает, если аккаунт не был найден
+     */
     @Override
     public Account executeAndGetOne() throws NoSuchDataException {
         Integer idAccount = Integer.valueOf(clientDataStorageService.getData(ID_ACCOUNT).toString());
