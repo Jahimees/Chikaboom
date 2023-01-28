@@ -3,6 +3,7 @@ package net.chikaboom.controller;
 import net.chikaboom.controller.error.AdviceController;
 import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.action.AuthorizationActionService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -34,6 +35,7 @@ public class AuthorizationController {
 
     private final ClientDataStorageService clientDataStorageService;
     private final AuthorizationActionService authorizationActionService;
+    private final Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
     public AuthorizationController(ClientDataStorageService clientDataStorageService, AuthorizationActionService authorizationActionService) {
@@ -54,11 +56,12 @@ public class AuthorizationController {
     @GetMapping
     public ResponseEntity<?> authorize(@RequestParam String phoneCode, @RequestParam String phone,
                                        @RequestParam String password, HttpServletRequest request) {
+        logger.info("Authorizing of user with phone +" + phoneCode + " " + phoneCode);
         clientDataStorageService.setData(PHONE_CODE, phoneCode);
         clientDataStorageService.setData(PHONE, phone);
         clientDataStorageService.setData(PASSWORD, password);
         clientDataStorageService.setData(SERVLET_REQUEST, request);
 
-        return new ResponseEntity<Object>("/chikaboom/" + authorizationActionService.executeAndGetPage(), HttpStatus.OK);
+        return new ResponseEntity<>("/chikaboom/" + authorizationActionService.executeAndGetPage(), HttpStatus.OK);
     }
 }

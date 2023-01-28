@@ -21,6 +21,11 @@ public interface DataService {
         return null;
     }
 
+    /**
+     * Метод предназначен для выполнения основной логики сервиса
+     *
+     * @return коллекцию преобразованных объектов для отправки на клиент
+     */
     default List<? extends BaseEntity> executeAndGetList() {
         return null;
     }

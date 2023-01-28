@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.action.AccountInfoLoaderService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * Перенаправляет на страницу аккаунта
+ * Обработка запросов на странице аккаунта
  */
 @RestController
 @RequestMapping("/chikaboom/account/{idAccount}")
@@ -29,6 +30,7 @@ public class AccountController {
 
     private final ClientDataStorageService clientDataStorageService;
     private final AccountInfoLoaderService accountInfoLoaderService;
+    private final Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
     public AccountController(ClientDataStorageService clientDataStorageService, AccountInfoLoaderService accountInfoLoaderService) {
@@ -39,10 +41,11 @@ public class AccountController {
     /**
      * Перенаправляет на страницу аккаунта
      *
-     * @return ссылку на страницу аккаунта
+     * @return путь к странице аккаунта
      */
     @GetMapping
     public ModelAndView openAccountPage(@PathVariable int idAccount) {
+        logger.info("Loading account page for account with id " + idAccount);
         ModelAndView modelAndView = new ModelAndView(ACCOUNT_PAGE);
         clientDataStorageService.setData(ID_ACCOUNT, idAccount);
 
@@ -51,10 +54,10 @@ public class AccountController {
 
         String result = "";
         try {
+            logger.info("Trying to convert account to JSON form.");
             result = mapper.writeValueAsString(account);
         } catch (JsonProcessingException e) {
-//            TODO EXCEPTION
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
         modelAndView.addObject(ACCOUNT, result);
 

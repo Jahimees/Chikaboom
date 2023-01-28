@@ -1,5 +1,8 @@
 package net.chikaboom.util;
 
+/**
+ * Конвертирует номер телефона для удобного хранения
+ */
 public final class PhoneNumberConverter {
 
     private PhoneNumberConverter() {

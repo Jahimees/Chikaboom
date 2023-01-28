@@ -28,7 +28,7 @@ public class UploadFileService implements ActionService {
     private String USER_FOLDER;
 
     private ClientDataStorageService clientDataStorageService;
-    private Logger logger = Logger.getLogger(UploadFileService.class);
+    private Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
     public UploadFileService(ClientDataStorageService clientDataStorageService) {
@@ -43,9 +43,11 @@ public class UploadFileService implements ActionService {
         MultipartFile file = (MultipartFile) clientDataStorageService.getData(FILE);
         String fileName = clientDataStorageService.getData(FILE_NAME).toString();
         int idAccount = (int) clientDataStorageService.getData(ID_ACCOUNT);
+        logger.info("Saving file data of user with id " + idAccount);
 
         File path = new File(USER_FOLDER + idAccount);
         if (!path.exists()) {
+            logger.info("Creating new user folder in system");
             new File(USER_FOLDER + idAccount).mkdirs();
         }
 
@@ -53,6 +55,7 @@ public class UploadFileService implements ActionService {
                 new FileOutputStream(
                         new File(USER_FOLDER + idAccount + "/" + fileName)))) {
 
+            logger.info("Trying to save user file into system");
             byte[] bytes = file.getBytes();
             stream.write(bytes);
 

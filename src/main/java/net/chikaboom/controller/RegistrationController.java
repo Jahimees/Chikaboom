@@ -3,6 +3,7 @@ package net.chikaboom.controller;
 import net.chikaboom.controller.error.AdviceController;
 import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.action.RegistrationActionService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -34,6 +35,7 @@ public class RegistrationController {
 
     private final RegistrationActionService registrationActionService;
     private final ClientDataStorageService clientDataStorageService;
+    private final Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
     public RegistrationController(RegistrationActionService registrationActionService, ClientDataStorageService clientDataStorageService) {
@@ -56,6 +58,7 @@ public class RegistrationController {
     public ResponseEntity<?> register(@RequestParam String phoneCode, @RequestParam String phone,
                                       @RequestParam String password, @RequestParam String nickname,
                                       @RequestParam String role) {
+        logger.info("Start registration process.");
         clientDataStorageService.setData(PHONE_CODE, phoneCode);
         clientDataStorageService.setData(PHONE, phone);
         clientDataStorageService.setData(PASSWORD, password);

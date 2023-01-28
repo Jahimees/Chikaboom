@@ -42,7 +42,7 @@ public class AuthorizationActionService implements ActionService {
     private final AccountRepository accountRepository;
     private final PhoneCodeRepository phoneCodeRepository;
 
-    private final Logger logger = Logger.getLogger(AuthorizationActionService.class);
+    private final Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
     public AuthorizationActionService(ClientDataStorageService clientDataStorageService, AccountRepository accountRepository,

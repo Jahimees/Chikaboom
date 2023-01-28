@@ -9,6 +9,7 @@ import java.util.Map;
  * и возвращают их в преобразованном виде
  */
 @Service
+@Deprecated
 public interface UndefinedDataService {
 
     /**

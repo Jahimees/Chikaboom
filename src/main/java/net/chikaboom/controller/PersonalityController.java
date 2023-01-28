@@ -32,8 +32,7 @@ public class PersonalityController {
 
     private final ClientDataStorageService clientDataStorageService;
     private final AccountInfoLoaderService accountInfoLoaderService;
-
-    private final Logger logger = Logger.getLogger(PersonalityController.class);
+    private final Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
     public PersonalityController(ClientDataStorageService clientDataStorageService, AccountInfoLoaderService accountInfoLoaderService) {
@@ -69,11 +68,12 @@ public class PersonalityController {
         Account account = accountInfoLoaderService.executeAndGetOne();
         ObjectMapper mapper = new ObjectMapper();
         String accountJSON = null;
+
         try {
+            logger.info("Trying to convert account data to JSON format.");
             accountJSON = mapper.writeValueAsString(account);
         } catch (JsonProcessingException e) {
-            //            TODO EXCEPTION
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
 
         modelAndView.addObject(ACCOUNT, accountJSON);

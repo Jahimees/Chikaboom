@@ -10,5 +10,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PhoneCodeRepository extends JpaRepository<PhoneCode, Integer> {
 
+    /**
+     * Находит код сущность кода телефона по его коду
+     *
+     * @param phoneCode телефонный код
+     * @return сущность телефонного кода
+     */
     PhoneCode findOneByPhoneCode(int phoneCode);
 }

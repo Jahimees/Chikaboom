@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * Контроллер загружает сам календарь
+ * Загрузка календаря
  */
 @Controller
 @RequestMapping("/chikaboom/calendar")
@@ -15,6 +15,11 @@ public class CalendarController {
     @Value("${page.calendar}")
     private String CALENDAR_PAGE;
 
+    /**
+     * Загрузка календаря.
+     *
+     * @return путь к странице с календарем
+     */
     @GetMapping
     public String getCalendar() {
         return CALENDAR_PAGE;

@@ -7,6 +7,7 @@ import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.repository.WorkingDaysRepository;
 import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.action.DataService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -22,9 +23,10 @@ public class TimetableTabService implements DataService {
     @Value("${attr.workingDays}")
     private String WORKING_DAYS;
 
-    private ClientDataStorageService clientDataStorageService;
-    private AccountRepository accountRepository;
-    private WorkingDaysRepository workingDaysRepository;
+    private final ClientDataStorageService clientDataStorageService;
+    private final AccountRepository accountRepository;
+    private final WorkingDaysRepository workingDaysRepository;
+    private final Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
     public TimetableTabService(ClientDataStorageService clientDataStorageService, AccountRepository accountRepository,
@@ -42,6 +44,7 @@ public class TimetableTabService implements DataService {
     @Override
     public WorkingDays executeAndGetOne() {
         int idAccount = (int) clientDataStorageService.getData(ID_ACCOUNT);
+        logger.info("Saving workingDays info of user with id " + idAccount);
         WorkingDays workingDays = (WorkingDays) clientDataStorageService.getData(WORKING_DAYS);
 
         Account account = accountRepository.findById(idAccount)
@@ -60,6 +63,8 @@ public class TimetableTabService implements DataService {
         account.setWorkingDays(workingDays);
         accountRepository.save(account);
 
+        logger.info("WorkingDays info saved");
+
         return workingDays;
     }
 
@@ -71,6 +76,7 @@ public class TimetableTabService implements DataService {
      */
     public WorkingDays getWorkingDays() {
         int idAccount = (int) clientDataStorageService.getData(ID_ACCOUNT);
+        logger.info("Searching workingDays info of user with id " + idAccount);
 
         Account account = accountRepository.findById(idAccount)
                 .orElseThrow(() -> new NoSuchDataException("Cannot find account with id " + idAccount));

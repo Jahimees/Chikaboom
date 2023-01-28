@@ -26,7 +26,7 @@ public class LogoutActionService implements ActionService {
     @Value("${page.main}")
     private String MAIN_PAGE;
 
-    private final Logger logger = Logger.getLogger(LogoutActionService.class);
+    private final Logger logger = Logger.getLogger(this.getClass());
     private final ClientDataStorageService clientDataStorageService;
 
     @Autowired
