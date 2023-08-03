@@ -5,33 +5,23 @@ import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.WorkingDays;
 import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.repository.WorkingDaysRepository;
-import net.chikaboom.service.ClientDataStorageService;
-import net.chikaboom.service.action.DataService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
  * Сервис для обработки логики на странице графика работы мастера
  */
 @Service
-public class TimetableTabService implements DataService {
+public class TimetableTabService {
 
-    @Value("${attr.idAccount}")
-    private String ID_ACCOUNT;
-    @Value("${attr.workingDays}")
-    private String WORKING_DAYS;
-
-    private final ClientDataStorageService clientDataStorageService;
     private final AccountRepository accountRepository;
     private final WorkingDaysRepository workingDaysRepository;
     private final Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
-    public TimetableTabService(ClientDataStorageService clientDataStorageService, AccountRepository accountRepository,
+    public TimetableTabService(AccountRepository accountRepository,
                                WorkingDaysRepository workingDaysRepository) {
-        this.clientDataStorageService = clientDataStorageService;
         this.accountRepository = accountRepository;
         this.workingDaysRepository = workingDaysRepository;
     }
@@ -41,11 +31,8 @@ public class TimetableTabService implements DataService {
      *
      * @return обновленный объект из базы
      */
-    @Override
-    public WorkingDays executeAndGetOne() {
-        int idAccount = (int) clientDataStorageService.getData(ID_ACCOUNT);
+    public WorkingDays updateWorkingDays(int idAccount, WorkingDays workingDays) {
         logger.info("Saving workingDays info of user with id " + idAccount);
-        WorkingDays workingDays = (WorkingDays) clientDataStorageService.getData(WORKING_DAYS);
 
         Account account = accountRepository.findById(idAccount)
                 .orElseThrow(() -> new NoSuchDataException("Cannot find account with id " + idAccount));
@@ -74,8 +61,7 @@ public class TimetableTabService implements DataService {
      *
      * @return рабочие дни мастера
      */
-    public WorkingDays getWorkingDays() {
-        int idAccount = (int) clientDataStorageService.getData(ID_ACCOUNT);
+    public WorkingDays findWorkingDays(int idAccount) {
         logger.info("Searching workingDays info of user with id " + idAccount);
 
         Account account = accountRepository.findById(idAccount)

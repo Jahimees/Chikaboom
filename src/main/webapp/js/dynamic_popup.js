@@ -49,7 +49,7 @@ function confirmEdit() {
         }
 
         $.ajax({
-            type: "POST",
+            type: "PUT",
             url: url,
             contentType: "application/json",
             dataType: "json",

@@ -1,8 +1,7 @@
 package net.chikaboom.model.database;
 
+import jakarta.persistence.*;
 import lombok.Data;
-
-import javax.persistence.*;
 
 import static net.chikaboom.util.constant.DbNamesConstant.*;
 

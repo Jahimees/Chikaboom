@@ -1,8 +1,8 @@
 package net.chikaboom.model.database;
 
+import jakarta.persistence.*;
 import lombok.Data;
 
-import javax.persistence.*;
 import java.sql.Timestamp;
 
 import static net.chikaboom.util.constant.DbNamesConstant.*;
@@ -14,6 +14,7 @@ import static net.chikaboom.util.constant.DbNamesConstant.*;
 @Entity
 @Table(name = ACCOUNT_STATUS)
 public class AccountStatus implements BaseEntity {
+
     /**
      * id сущности account_status
      */

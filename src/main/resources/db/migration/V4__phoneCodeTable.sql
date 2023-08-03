@@ -33,4 +33,5 @@ CHANGE COLUMN `phone_code` `phone_code` INT NOT NULL ;
 
 UPDATE account SET account.phone_code = (select phone_code.idphonecode from phone_code where account.phone_code = phone_code.phone_code);
 
+ALTER TABLE `chikaboom`.`account`
 CHANGE COLUMN `phone_code` `idphonecode` INT NOT NULL ;

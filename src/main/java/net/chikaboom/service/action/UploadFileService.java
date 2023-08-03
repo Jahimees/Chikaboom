@@ -1,9 +1,7 @@
 package net.chikaboom.service.action;
 
 import net.chikaboom.exception.NoSuchDataException;
-import net.chikaboom.service.ClientDataStorageService;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,33 +14,18 @@ import java.io.*;
  */
 @Service
 @Transactional
-public class UploadFileService implements ActionService {
+public class UploadFileService {
 
-    @Value("${attr.file}")
-    private String FILE;
-    @Value("${attr.fileName}")
-    private String FILE_NAME;
-    @Value("${attr.idAccount}")
-    private String ID_ACCOUNT;
     @Value("${url.user.folder}")
     private String USER_FOLDER;
 
-    private ClientDataStorageService clientDataStorageService;
-    private Logger logger = Logger.getLogger(this.getClass());
-
-    @Autowired
-    public UploadFileService(ClientDataStorageService clientDataStorageService) {
-        this.clientDataStorageService = clientDataStorageService;
-    }
+    private final Logger logger = Logger.getLogger(this.getClass());
 
     /**
      * Сервис выполняет инициализацию папки пользователя, если такой нет и сохраняет в неё загруженный файл
      */
-    @Override
-    public void execute() {
-        MultipartFile file = (MultipartFile) clientDataStorageService.getData(FILE);
-        String fileName = clientDataStorageService.getData(FILE_NAME).toString();
-        int idAccount = (int) clientDataStorageService.getData(ID_ACCOUNT);
+//    TODO FIXME NEW доработать. Нужно сохранять куда-то название файлов
+    public void uploadFile(int idAccount, String fileName, MultipartFile multipartFile) {
         logger.info("Saving file data of user with id " + idAccount);
 
         File path = new File(USER_FOLDER + idAccount);
@@ -56,7 +39,7 @@ public class UploadFileService implements ActionService {
                         new File(USER_FOLDER + idAccount + "/" + fileName)))) {
 
             logger.info("Trying to save user file into system");
-            byte[] bytes = file.getBytes();
+            byte[] bytes = multipartFile.getBytes();
             stream.write(bytes);
 
         } catch (FileNotFoundException ex) {

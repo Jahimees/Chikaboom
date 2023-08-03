@@ -3,7 +3,6 @@ package net.chikaboom.controller.tab.setting_tab;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.chikaboom.model.database.Account;
-import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.action.AccountInfoLoaderService;
 import net.chikaboom.service.action.tab.EditSettingsTabService;
 import org.apache.log4j.Logger;
@@ -22,6 +21,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/chikaboom/personality/{idAccount}/settings")
 public class SettingTabController {
+//    TODO NEW idAccount проверки?
 
     @Value("${tab.settings}")
     private String SETTINGS_TAB;
@@ -29,22 +29,15 @@ public class SettingTabController {
     private String GENERAL_SETTINGS_TAB;
     @Value("${tab.settings.profile}")
     private String PROFILE_SETTINGS_TAB;
-    @Value("${attr.customAccount}")
-    private String CUSTOM_ACCOUNT;
-    @Value("${attr.idAccount}")
-    private String ID_ACCOUNT;
 
-    private final ClientDataStorageService clientDataStorageService;
     private final EditSettingsTabService editSettingsTabService;
     private final AccountInfoLoaderService accountInfoLoaderService;
 
     private final Logger logger = Logger.getLogger(SettingTabController.class);
 
     @Autowired
-    public SettingTabController(ClientDataStorageService clientDataStorageService,
-                                EditSettingsTabService editSettingsTabService,
+    public SettingTabController(EditSettingsTabService editSettingsTabService,
                                 AccountInfoLoaderService accountInfoLoaderService) {
-        this.clientDataStorageService = clientDataStorageService;
         this.editSettingsTabService = editSettingsTabService;
         this.accountInfoLoaderService = accountInfoLoaderService;
     }
@@ -89,19 +82,17 @@ public class SettingTabController {
      * @param changedAccount новый измененный аккаунт в виде пар ключ-значение
      * @return сохраненный объект в виде json
      */
-    @PostMapping
+//        TODO NEW Исправить. Сделать PATCH запрос. Туториал на офф сайте спринга
+    @PutMapping
     public ResponseEntity<String> updateSettingTab(@PathVariable int idAccount,
                                                    @RequestBody Map<String, Object> changedAccount) {
         logger.info("Editing user data. idUser: " + idAccount);
         logger.info("New data: " + changedAccount);
 
-        clientDataStorageService.setData(CUSTOM_ACCOUNT, changedAccount);
-        clientDataStorageService.setData(ID_ACCOUNT, idAccount);
-
-        editSettingsTabService.executeAndGetOne();
+        editSettingsTabService.updateAccountSettings(changedAccount);
 
         logger.info("Reloading personality page.");
-        Account account = accountInfoLoaderService.executeAndGetOne();
+        Account account = accountInfoLoaderService.findAccountById(idAccount);
         ObjectMapper mapper = new ObjectMapper();
 
         String accountJSON = null;
@@ -110,8 +101,6 @@ public class SettingTabController {
         } catch (JsonProcessingException e) {
             logger.error(e.getMessage());
         }
-
-        clientDataStorageService.clearAllData();
 
         return new ResponseEntity<>(accountJSON, HttpStatus.OK);
     }

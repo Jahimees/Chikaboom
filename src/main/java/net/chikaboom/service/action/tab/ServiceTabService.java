@@ -9,11 +9,8 @@ import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.repository.ServiceRepository;
 import net.chikaboom.repository.SubserviceRepository;
 import net.chikaboom.repository.UserServiceRepository;
-import net.chikaboom.service.ClientDataStorageService;
-import net.chikaboom.service.action.DataService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,46 +19,30 @@ import java.util.List;
  * Сервис для работы с данными услуг
  */
 @org.springframework.stereotype.Service
-public class ServiceTabService implements DataService {
-
-    @Value("${attr.idAccount}")
-    private String ID_ACCOUNT;
-    @Value("${attr.userService}")
-    private String USER_SERVICE;
-    @Value("${attr.idUserService}")
-    private String ID_USER_SERVICE;
-    @Value("${attr.idService}")
-    private String ID_SERVICE;
-    @Value("${attr.subserviceIdList}")
-    private String SUBSERVICE_ID_LIST;
+public class ServiceTabService {
 
     private final UserServiceRepository userServiceRepository;
-    private final ClientDataStorageService clientDataStorageService;
     private final AccountRepository accountRepository;
     private final SubserviceRepository subserviceRepository;
     private final ServiceRepository serviceRepository;
     private final Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
-    public ServiceTabService(UserServiceRepository userServiceRepository, ClientDataStorageService clientDataStorageService,
+    public ServiceTabService(UserServiceRepository userServiceRepository,
                              AccountRepository accountRepository, ServiceRepository serviceRepository,
                              SubserviceRepository subserviceRepository) {
         this.userServiceRepository = userServiceRepository;
-        this.clientDataStorageService = clientDataStorageService;
         this.accountRepository = accountRepository;
         this.subserviceRepository = subserviceRepository;
         this.serviceRepository = serviceRepository;
     }
 
     /**
-     * Выполняет поиск всех услуг пользователя
+     * Выполняет поиск всех услуг определенного мастера
      *
-     * @return коллекцию пользовательских услуг
+     * @return коллекцию пользовательских услуг (услуг мастера)
      */
-    @Override
-    public List<UserService> executeAndGetList() {
-        int idAccount = (int) clientDataStorageService.getData(ID_ACCOUNT);
-
+    public List<UserService> findAllUserServicesByIdAccount(int idAccount) {
         logger.info("Searching all userServices of user with id " + idAccount);
         Account account = accountRepository.findById(idAccount).
                 orElseThrow(() -> new NoSuchDataException("Cannot find account with id " + idAccount));
@@ -83,8 +64,7 @@ public class ServiceTabService implements DataService {
      *
      * @return созданную услугу
      */
-    public UserService saveUserService() {
-        UserService userService = (UserService) clientDataStorageService.getData(USER_SERVICE);
+    public UserService saveUserService(UserService userService) {
         logger.info("Saving userService " + userService.getUserServiceName() + " of user with id " + userService.getAccount().getIdAccount());
 
         return userServiceRepository.save(userService);
@@ -93,8 +73,7 @@ public class ServiceTabService implements DataService {
     /**
      * Удаляет пользовательскую услугу
      */
-    public void deleteUserService() {
-        int idUserService = (int) clientDataStorageService.getData(ID_USER_SERVICE);
+    public void deleteUserService(int idUserService) {
         logger.info("Deleting userService with id " + idUserService);
 
         userServiceRepository.deleteById(idUserService);
@@ -105,8 +84,7 @@ public class ServiceTabService implements DataService {
      *
      * @return коллекцию подуслуг
      */
-    public List<Subservice> getSubservices() {
-        int idService = (int) clientDataStorageService.getData(ID_SERVICE);
+    public List<Subservice> findAllSubservices(int idService) {
         logger.info("Searching all subservices of service with id " + idService);
         Service service = serviceRepository.findById(idService).
                 orElseThrow(() -> new NoSuchDataException("Cannot find service with id " + idService));
@@ -120,17 +98,15 @@ public class ServiceTabService implements DataService {
      *
      * @return коллекцию пользовательских услуг
      */
-    public List<UserService> getUserServicesByServiceIds() {
-        Integer[] subserviceIdArray = (Integer[]) clientDataStorageService.getData(SUBSERVICE_ID_LIST);
-        int idService = (int) clientDataStorageService.getData(ID_SERVICE);
-        logger.info("Searching all userServices which match their idSubservice to subserviceIdList");
+    public List<UserService> getUserServicesByServiceIds(int[] subserviceIdArray, int idService) {
+        logger.info("Searching all userServices which match their idSubservice to subserviceIdArray");
 
         List<UserService> userServiceList = new ArrayList<>();
 
         if (subserviceIdArray.length != 0) {
             logger.info("Found " + subserviceIdArray.length + " selected subservices. Searching data...");
-            for (Integer integer : subserviceIdArray) {
-                Subservice subservice = subserviceRepository.findById(integer).
+            for (int idSubservice : subserviceIdArray) {
+                Subservice subservice = subserviceRepository.findById(idSubservice).
                         orElseThrow(() -> new NoSuchDataException("Cannot find subservice with"));
                 userServiceList.addAll(userServiceRepository.findAllBySubservice(subservice));
             }

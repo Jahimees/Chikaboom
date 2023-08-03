@@ -1,8 +1,7 @@
 package net.chikaboom.model.database;
 
+import jakarta.persistence.*;
 import lombok.Data;
-
-import javax.persistence.*;
 
 import static net.chikaboom.util.constant.DbNamesConstant.*;
 
@@ -18,6 +17,7 @@ public class WorkingDays implements BaseEntity {
 
     }
 
+//    TODO NEW REFACTOR!!!
     public WorkingDays(int workingDayStart, int workingDayEnd) {
         this.workingDayStart = workingDayStart;
         this.workingDayEnd = workingDayEnd;
