@@ -18,7 +18,7 @@ import javax.sql.DataSource;
 @Configuration
 @PropertySource("classpath:application.properties")
 @PropertySource("classpath:constants.properties")
-public class ApplicationConfiguration {
+public class ApplicationConfig {
 
     @Value("${spring.datasource.driver-class-name}")
     private String driverClassName;

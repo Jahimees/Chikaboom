@@ -21,7 +21,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script rel="script" src="/js/jquery-ui-1.10.4.custom.min.js">
 
-    <script src="/js/countries.js"></script>
+        <script src="/js/countries.js"></script>
     <script src="/js/phonecode.js"></script>
     <script>
         $(function () {
@@ -51,9 +51,10 @@
         <div class="menu-right">
             <c:choose>
                 <c:when test="${session==null}">
-                    <div class="open-login-popup" onclick="openPopup('login-popup')"><a href="#">Вход</a></div>
-                    <div class="open-register-popup" onclick="openPopup('register-popup')"><a href="#">Регистрация</a></div>
-<%--                    <div><a href="/chikaboom/under_construction">Быстрая запись</a></div>--%>
+                    <div class="open-login-popup" onclick="openPopup('login-popup')"><a href="#login">Вход</a></div>
+                    <div class="open-register-popup" onclick="openPopup('register-popup')"><a href="#register">Регистрация</a>
+                    </div>
+                    <%--                    <div><a href="/chikaboom/under_construction">Быстрая запись</a></div>--%>
                 </c:when>
                 <c:otherwise>
                     <div><a href="/chikaboom/personality/${idAccount}?tabName=my-appointments">Мои записи</a></div>
@@ -174,3 +175,19 @@
 
 <script type="text/javascript" src="/js/static_popup.js"></script>
 <script type="text/javascript" src="/js/dynamic_popup.js"></script>
+
+<script>
+    $(document).ready(function () {
+        var url = window.location.href;
+        var hash = window.location.hash;
+
+
+        if (hash == '#login') {
+            openPopup('login-popup')
+        }
+
+        if (hash == '#register') {
+            openPopup('register-popup')
+        }
+    });
+</script>

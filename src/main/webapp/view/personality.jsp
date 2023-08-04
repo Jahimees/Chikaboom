@@ -48,7 +48,8 @@
             </div>
 
             <c:set var="accountObj" value="${mapper.readValue(account, accountObj.getClass())}"/>
-            <c:if test="${accountObj.role.idRole == 1}">
+<%--            //TODO NEW FIXME hardcode --%>
+<%--            <c:if test="${accountObj.roles.contains(new Role(1)) == 1}">--%>
                 <div id="services-btn" class="menu-child button" selected="false">
                     <div><img class="small-icon" src="/image/icon/service_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Услуги</a></div>
@@ -77,7 +78,7 @@
                     <div><img class="small-icon" src="/image/icon/review_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Отзывы</a></div>
                 </div>
-            </c:if>
+<%--            </c:if>--%>
             <div id="my-appointments-btn" class="menu-child button" selected="false">
                 <div><img class="small-icon" src="/image/icon/notebook_icon_2.svg" alt="no_image"></div>
                 <div class="menu-text"><a href="#">Мои записи</a></div>

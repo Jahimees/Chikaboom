@@ -1,13 +1,13 @@
 package net.chikaboom.model.database;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
 
-import static net.chikaboom.util.constant.DbNamesConstant.ID_ROLE;
-import static net.chikaboom.util.constant.DbNamesConstant.ROLE;
+import java.util.Set;
+
+import static net.chikaboom.util.constant.DbNamesConstant.*;
 
 /**
  * Определяет модель таблицы Role в базе данных
@@ -15,7 +15,7 @@ import static net.chikaboom.util.constant.DbNamesConstant.ROLE;
 @Data
 @Entity
 @Table(name = ROLE)
-public class Role implements BaseEntity {
+public class Role implements BaseEntity, GrantedAuthority {
 
     public Role() {
 
@@ -25,17 +25,17 @@ public class Role implements BaseEntity {
         switch (idRole) {
             case 1: {
                 this.idRole = idRole;
-                this.role = "master";
+                this.name = "ROLE_MASTER";
                 break;
             }
             case 2: {
                 this.idRole = idRole;
-                this.role = "client";
+                this.name = "ROLE_CLIENT";
                 break;
             }
             default:
                 this.idRole = 2;
-                role = "client";
+                this.name = "ROLE_CLIENT";
         }
     }
 
@@ -49,6 +49,16 @@ public class Role implements BaseEntity {
     /**
      * Имя роли пользователя
      */
-    @Column(name = ROLE)
-    private String role;
+    @Column(name = NAME)
+    private String name;
+
+    @Transient
+    @ManyToMany(mappedBy = ROLES)
+    private Set<Account> accounts;
+
+    @JsonIgnore
+    @Override
+    public String getAuthority() {
+        return getName();
+    }
 }

@@ -1,10 +1,15 @@
 package net.chikaboom.model.database;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Timestamp;
+import java.util.Collection;
+import java.util.Set;
 
 import static net.chikaboom.util.constant.DbNamesConstant.*;
 
@@ -15,7 +20,7 @@ import static net.chikaboom.util.constant.DbNamesConstant.*;
 @Entity
 @Table(name = ACCOUNT)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Account implements BaseEntity {
+public class Account implements BaseEntity, UserDetails {
 
     /**
      * id аккаунта
@@ -24,6 +29,10 @@ public class Account implements BaseEntity {
     @Column(name = ID_ACCOUNT)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idAccount;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = ID_PHONE_CODE)
+    private PhoneCode phoneCode;
 
     /**
      * Номер телефона владельца аккаунта
@@ -61,13 +70,9 @@ public class Account implements BaseEntity {
     @Column(name = EMAIL)
     private String email;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = ID_ROLE)
-    private Role role;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = ID_PHONE_CODE)
-    private PhoneCode phoneCode;
+    @ManyToMany(fetch = FetchType.EAGER)
+    //    @JoinColumn(name = ID_ROLE)
+    private Set<Role> roles;
 
     @Column(name = ADDRESS)
     private String address;
@@ -84,4 +89,39 @@ public class Account implements BaseEntity {
     @JoinColumn(name = ID_WORKING_DAYS)
     private WorkingDays workingDays;
 
+    @JsonIgnore
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return getRoles();
+    }
+
+    @JsonIgnore
+    @Override
+    public String getUsername() {
+        return getNickname();
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
