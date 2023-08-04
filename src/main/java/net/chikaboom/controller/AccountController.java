@@ -3,7 +3,6 @@ package net.chikaboom.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.chikaboom.model.database.Account;
-import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.action.AccountInfoLoaderService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,18 +22,14 @@ public class AccountController {
 
     @Value("${page.account}")
     private String ACCOUNT_PAGE;
-    @Value("${attr.idAccount}")
-    private String ID_ACCOUNT;
     @Value("${attr.account}")
     private String ACCOUNT;
 
-    private final ClientDataStorageService clientDataStorageService;
     private final AccountInfoLoaderService accountInfoLoaderService;
     private final Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
-    public AccountController(ClientDataStorageService clientDataStorageService, AccountInfoLoaderService accountInfoLoaderService) {
-        this.clientDataStorageService = clientDataStorageService;
+    public AccountController(AccountInfoLoaderService accountInfoLoaderService) {
         this.accountInfoLoaderService = accountInfoLoaderService;
     }
 
@@ -47,9 +42,8 @@ public class AccountController {
     public ModelAndView openAccountPage(@PathVariable int idAccount) {
         logger.info("Loading account page for account with id " + idAccount);
         ModelAndView modelAndView = new ModelAndView(ACCOUNT_PAGE);
-        clientDataStorageService.setData(ID_ACCOUNT, idAccount);
 
-        Account account = accountInfoLoaderService.executeAndGetOne();
+        Account account = accountInfoLoaderService.findAccountById(idAccount);
         ObjectMapper mapper = new ObjectMapper();
 
         String result = "";

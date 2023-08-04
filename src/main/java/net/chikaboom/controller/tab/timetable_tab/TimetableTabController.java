@@ -3,7 +3,6 @@ package net.chikaboom.controller.tab.timetable_tab;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.chikaboom.model.database.WorkingDays;
-import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.action.tab.TimetableTabService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,18 +22,14 @@ public class TimetableTabController {
 
     @Value("${tab.timetable}")
     private String TIMETABLE_TAB;
-    @Value("${attr.idAccount}")
-    private String ID_ACCOUNT;
     @Value("${attr.workingDays}")
     private String WORKING_DAYS;
 
-    private final ClientDataStorageService clientDataStorageService;
     private final TimetableTabService timetableTabService;
     private final Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
-    public TimetableTabController(ClientDataStorageService clientDataStorageService, TimetableTabService timetableTabService) {
-        this.clientDataStorageService = clientDataStorageService;
+    public TimetableTabController(TimetableTabService timetableTabService) {
         this.timetableTabService = timetableTabService;
     }
 
@@ -48,13 +43,9 @@ public class TimetableTabController {
      */
     @GetMapping
     public ModelAndView openTimetableTab(@PathVariable int idAccount) {
-        logger.info("Loading timetableTab.");
         ModelAndView modelAndView = new ModelAndView(TIMETABLE_TAB);
-        clientDataStorageService.setData(ID_ACCOUNT, idAccount);
 
-        WorkingDays workingDays = timetableTabService.getWorkingDays();
-
-        clientDataStorageService.clearAllData();
+        WorkingDays workingDays = timetableTabService.findWorkingDays(idAccount);
 
         ObjectMapper mapper = new ObjectMapper();
 
@@ -82,16 +73,13 @@ public class TimetableTabController {
      * @param workingDays объект рабочих дней
      * @return объект рабочих дней с HTTP статусом 200
      */
+//    TODO FIXME NEW PUT OR PATCH MAPPING!
     @PostMapping
     public ResponseEntity<WorkingDays> updateWorkingDays(@PathVariable int idAccount,
                                                          @RequestBody WorkingDays workingDays) {
         logger.info("Updating workingDays data of user with id " + idAccount);
-        clientDataStorageService.setData(ID_ACCOUNT, idAccount);
-        clientDataStorageService.setData(WORKING_DAYS, workingDays);
 
-        WorkingDays workingDaysObj = timetableTabService.executeAndGetOne();
-
-        clientDataStorageService.clearAllData();
+        WorkingDays workingDaysObj = timetableTabService.updateWorkingDays(idAccount, workingDays);
 
         return new ResponseEntity<>(workingDaysObj, HttpStatus.OK);
     }

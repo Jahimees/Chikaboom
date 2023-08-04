@@ -7,10 +7,8 @@ import net.chikaboom.model.database.UserService;
 import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.repository.AppointmentRepository;
 import net.chikaboom.repository.UserServiceRepository;
-import net.chikaboom.service.ClientDataStorageService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,49 +17,30 @@ import java.util.List;
  * Сервис предоставляет возможность обработки данных пользовательских записей на услуги
  */
 @Service
-public class AppointmentService implements DataService {
+public class AppointmentService {
 
-    @Value("${attr.idAppointment}")
-    private String ID_APPOINTMENT;
-    @Value("${attr.idAccountMaster}")
-    private String ID_ACCOUNT_MASTER;
-    @Value("${attr.idAccountClient}")
-    private String ID_ACCOUNT_CLIENT;
-    @Value("${attr.idUserService}")
-    private String ID_USER_SERVICE;
-    @Value("${attr.appointmentDate}")
-    private String APPOINTMENT_DATE;
-    @Value("${attr.appointmentTime}")
-    private String APPOINTMENT_TIME;
-
-    private final ClientDataStorageService clientDataStorageService;
     private final AppointmentRepository appointmentRepository;
     private final AccountRepository accountRepository;
     private final UserServiceRepository userServiceRepository;
     private final Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
-    public AppointmentService(ClientDataStorageService clientDataStorageService, AppointmentRepository appointmentRepository,
+    public AppointmentService(AppointmentRepository appointmentRepository,
                               AccountRepository accountRepository, UserServiceRepository userServiceRepository) {
-        this.clientDataStorageService = clientDataStorageService;
         this.appointmentRepository = appointmentRepository;
         this.accountRepository = accountRepository;
         this.userServiceRepository = userServiceRepository;
     }
 
     /**
-     * Осуществляет сохранение записи на услугу
+     * TODO NEW изменение? UPDATE операция
+     * Осуществляет создание записи на услугу
      *
      * @return сохраненную запись
      * @throws NoSuchDataException возникает, если по одному из переданных параметров не была найдена информация
      */
-    @Override
-    public Appointment executeAndGetOne() throws NoSuchDataException {
-        int idAccountMaster = (int) clientDataStorageService.getData(ID_ACCOUNT_MASTER);
-        int idAccountClient = (int) clientDataStorageService.getData(ID_ACCOUNT_CLIENT);
-        int idUserService = (int) clientDataStorageService.getData(ID_USER_SERVICE);
-        String appointmentDate = clientDataStorageService.getData(APPOINTMENT_DATE).toString();
-        String appointmentTime = clientDataStorageService.getData(APPOINTMENT_TIME).toString();
+    public Appointment createAppointment(int idAccountMaster, int idAccountClient, int idUserService, String appointmentDate,
+                                         String appointmentTime) throws NoSuchDataException {
 
         logger.info("Saving appointment for master (idAccountMaster=" + idAccountMaster + ") and for client (idAccountClient=" + idAccountClient + ").");
 
@@ -74,10 +53,6 @@ public class AppointmentService implements DataService {
 
         Appointment appointment = new Appointment();
 
-        if (clientDataStorageService.getData(ID_APPOINTMENT) != null) {
-            appointment.setIdAppointment((int) clientDataStorageService.getData(ID_APPOINTMENT));
-        }
-
         appointment.setMasterAccount(master);
         appointment.setClientAccount(client);
         appointment.setUserService(userService);
@@ -88,48 +63,35 @@ public class AppointmentService implements DataService {
     }
 
     /**
-     * Производит поиск по идентификатору аккаунта мастера и возвращает все записи к указанному мастеру.
+     * Производит поиск по идентификатору аккаунта и возвращает все записи на услуги.
      *
-     * @return коллекцию записей мастера
-     * @throws NoSuchDataException возникает, если аккаунт мастера не был найден
+     * @return коллекцию записей на услуги
+     * @throws NoSuchDataException возникает, если аккаунт не был найден
      */
-    @Override
-    public List<Appointment> executeAndGetList() throws NoSuchDataException {
-        int idAccountMaster = (int) clientDataStorageService.getData(ID_ACCOUNT_MASTER);
-        logger.info("Searching master appointments for master with id " + idAccountMaster);
+    public List<Appointment> findAllByIdAccount(int idAccount, boolean isClient) {
+        logger.info("Searching master appointments for master with id " + idAccount);
 
-        Account master = accountRepository.findById(idAccountMaster)
-                .orElseThrow(() -> new NoSuchDataException("Cannot find account with id " + idAccountMaster));
+        Account account = accountRepository.findById(idAccount)
+                .orElseThrow(() -> new NoSuchDataException("Cannot find account with id " + idAccount));
 
-        return appointmentRepository.findAllByMasterAccount(master);
+        List<Appointment> appointmentList;
+        if (isClient) {
+            appointmentList = appointmentRepository.findAllByClientAccount(account);
+        } else {
+            appointmentList = appointmentRepository.findAllByMasterAccount(account);
+        }
+
+        return appointmentList;
     }
 
     /**
-     * Производит поиск по идентификатору аккаунта клиента и возвращает все записи клиента на услуги.
-     *
-     * @return коллецию записей клиента
-     * @throws NoSuchDataException возникает, если аккаунт клиента не был найден
+     * Удаляет выбранную запись по её идентификатору //TODO уведомление клиенту и мастеру
      */
-    public List<Appointment> executeAndGetClientList() throws NoSuchDataException {
-        int idAccountClient = (int) clientDataStorageService.getData(ID_ACCOUNT_CLIENT);
-        logger.info("Searching client appointments for client with id " + idAccountClient);
-
-        Account client = accountRepository.findById(idAccountClient)
-                .orElseThrow(() -> new NoSuchDataException("Cannot find account with id " + idAccountClient));
-
-        return appointmentRepository.findAllByClientAccount(client);
-    }
-
-    /**
-     * Удаляет выбранную запись //TODO уведомление клиенту и мастеру
-     */
-    public void deleteAppointment() {
-        int idAppointment = (int) clientDataStorageService.getData(ID_APPOINTMENT);
+    public void deleteAppointment(int idAppointment) {
         logger.info("Deleting appointment with id " + idAppointment);
 
         Appointment appointment = appointmentRepository.findById(idAppointment)
                 .orElseThrow(() -> new NoSuchDataException("Cannot find appointment with id " + idAppointment));
-        ;
 
         appointmentRepository.delete(appointment);
     }

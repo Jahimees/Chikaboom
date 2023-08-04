@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.chikaboom.model.database.Subservice;
 import net.chikaboom.model.database.UserService;
-import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.action.tab.ServiceTabService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,23 +27,15 @@ public class ServiceTabController {
     private String SERVICE_TAB;
     @Value("${tab.service.general}")
     private String GENERAL_SERVICE_TAB;
-    @Value("${attr.idAccount}")
-    private String ID_ACCOUNT;
     @Value("${attr.subservices}")
     private String SUBSERVICES;
-    @Value("${attr.userService}")
-    private String USER_SERVICE;
-    @Value("${attr.idUserService}")
-    private String ID_USER_SERVICE;
 
     private final ServiceTabService serviceTabService;
-    private final ClientDataStorageService clientDataStorageService;
     private final Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
-    public ServiceTabController(ServiceTabService serviceTabService, ClientDataStorageService clientDataStorageService) {
+    public ServiceTabController(ServiceTabService serviceTabService) {
         this.serviceTabService = serviceTabService;
-        this.clientDataStorageService = clientDataStorageService;
     }
 
     /**
@@ -55,6 +46,7 @@ public class ServiceTabController {
      */
     @GetMapping
     public ModelAndView openServiceTab(@PathVariable int idAccount) {
+//        TODO NEW проверка доступа? по ID account
         logger.info("Opening serviceTab");
         List<Subservice> subservices = serviceTabService.findAllSubservices();
 
@@ -73,6 +65,8 @@ public class ServiceTabController {
 
         return modelAndView;
     }
+
+//    TODO NEW что почему и как? Слить с loadUserServicesInfo
 
     /**
      * Загружает основную вкладку услуг в личном кабинете мастера
@@ -94,8 +88,7 @@ public class ServiceTabController {
     @GetMapping("/info")
     public ResponseEntity<String> loadUserServicesInfo(@PathVariable int idAccount) {
         logger.info("Getting full info about userServices of account with id " + idAccount);
-        clientDataStorageService.setData(ID_ACCOUNT, idAccount);
-        List<UserService> userServiceList = serviceTabService.executeAndGetList();
+        List<UserService> userServiceList = serviceTabService.findAllUserServicesByIdAccount(idAccount);
 
         logger.info("User (idAccount=" + idAccount + ") have " + userServiceList.size() + " userServices");
 
@@ -107,8 +100,6 @@ public class ServiceTabController {
         } catch (JsonProcessingException e) {
             logger.error(e.getMessage());
         }
-
-        clientDataStorageService.clearAllData();
 
         return new ResponseEntity<>(userServicesJson, HttpStatus.OK);
     }
@@ -123,11 +114,8 @@ public class ServiceTabController {
     @PostMapping
     public ResponseEntity<UserService> createOrUpdateUserService(@PathVariable int idAccount, @RequestBody UserService userService) {
         logger.info("Creating or updating userService of user with id " + idAccount);
-        clientDataStorageService.setData(USER_SERVICE, userService);
 
-        UserService userServiceToSend = serviceTabService.saveUserService();
-
-        clientDataStorageService.clearAllData();
+        UserService userServiceToSend = serviceTabService.saveUserService(userService);
 
         return new ResponseEntity<>(userServiceToSend, HttpStatus.CREATED);
     }
@@ -137,16 +125,14 @@ public class ServiceTabController {
      *
      * @param idAccount     идентификатор мастера
      * @param idUserService идентификатор услуги, которую необходимо удалить
-     * @return строку, содержащую результат удаления TODO
+     * @return строку, содержащую результат удаления
      */
     @DeleteMapping("/{idUserService}")
     public ResponseEntity<String> deleteUserService(@PathVariable int idAccount, @PathVariable int idUserService) {
+//        TODO NEW проверка idAccount???
         logger.info("Deleting userService (idUserService=" + idUserService + ") of user with id " + idUserService);
-        clientDataStorageService.setData(ID_USER_SERVICE, idUserService);
 
-        serviceTabService.deleteUserService();
-
-        clientDataStorageService.clearAllData();
+        serviceTabService.deleteUserService(idUserService);
 
 //        TODO доделать возвращаемый элемент
         return new ResponseEntity<>("Dropper", HttpStatus.ACCEPTED);

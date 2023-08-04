@@ -2,9 +2,9 @@ package net.chikaboom.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import net.chikaboom.exception.IllegalAccessException;
 import net.chikaboom.model.database.Account;
-import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.action.AccountInfoLoaderService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -30,13 +28,11 @@ public class PersonalityController {
     @Value("${attr.idAccount}")
     private String ID_ACCOUNT;
 
-    private final ClientDataStorageService clientDataStorageService;
     private final AccountInfoLoaderService accountInfoLoaderService;
     private final Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
-    public PersonalityController(ClientDataStorageService clientDataStorageService, AccountInfoLoaderService accountInfoLoaderService) {
-        this.clientDataStorageService = clientDataStorageService;
+    public PersonalityController(AccountInfoLoaderService accountInfoLoaderService) {
         this.accountInfoLoaderService = accountInfoLoaderService;
     }
 
@@ -63,9 +59,8 @@ public class PersonalityController {
         }
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName(PERSONALITY_PAGE);
-        clientDataStorageService.setData(ID_ACCOUNT, idAccount);
 
-        Account account = accountInfoLoaderService.executeAndGetOne();
+        Account account = accountInfoLoaderService.findAccountById(idAccount);
         ObjectMapper mapper = new ObjectMapper();
         String accountJSON = null;
 

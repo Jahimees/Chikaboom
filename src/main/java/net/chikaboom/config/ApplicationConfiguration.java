@@ -1,5 +1,6 @@
 package net.chikaboom.config;
 
+import jakarta.servlet.MultipartConfigElement;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
@@ -9,7 +10,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.util.unit.DataSize;
 
-import javax.servlet.MultipartConfigElement;
 import javax.sql.DataSource;
 
 /**

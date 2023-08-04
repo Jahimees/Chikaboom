@@ -99,6 +99,5 @@ ADD COLUMN `idsocial_network` VARCHAR(45) NULL AFTER `idAddress`;
 ALTER TABLE `chikaboom`.`account`
     CHANGE COLUMN `idAddress` `address` VARCHAR(45) NULL DEFAULT NULL ;
 
-ALTER TABLE 'chikaboom'.'address'
-DROP TABLE if exists `chikaboom`.address;
+DROP TABLE `chikaboom`.`address`;
 

@@ -3,10 +3,8 @@ package net.chikaboom.service.action;
 import net.chikaboom.exception.NoSuchDataException;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.repository.AccountRepository;
-import net.chikaboom.service.ClientDataStorageService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,20 +13,15 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional
-public class AccountInfoLoaderService implements DataService {
-
-    @Value("${attr.idAccount}")
-    private String ID_ACCOUNT;
+public class AccountInfoLoaderService {
 
     private final AccountRepository accountRepository;
-    private final ClientDataStorageService clientDataStorageService;
 
     private final Logger logger = Logger.getLogger(AccountInfoLoaderService.class);
 
     @Autowired
-    public AccountInfoLoaderService(AccountRepository accountRepository, ClientDataStorageService clientDataStorageService) {
+    public AccountInfoLoaderService(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
-        this.clientDataStorageService = clientDataStorageService;
     }
 
     /**
@@ -37,9 +30,7 @@ public class AccountInfoLoaderService implements DataService {
      * @return найденный аккаунт
      * @throws NoSuchDataException возникает, если аккаунт не был найден
      */
-    @Override
-    public Account executeAndGetOne() throws NoSuchDataException {
-        Integer idAccount = Integer.valueOf(clientDataStorageService.getData(ID_ACCOUNT).toString());
+    public Account findAccountById(int idAccount) {
         logger.info("Loading account info with id " + idAccount);
 
         return accountRepository.findById(idAccount)

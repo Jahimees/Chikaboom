@@ -1,11 +1,12 @@
 package net.chikaboom.service.action;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import net.chikaboom.exception.IncorrectInputDataException;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.PhoneCode;
 import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.repository.PhoneCodeRepository;
-import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.HashPasswordService;
 import net.chikaboom.util.PhoneNumberConverter;
 import org.apache.log4j.Logger;
@@ -14,15 +15,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 /**
  * Сервис реализует авторизацию пользователя на сайте
  */
 @Service
 @Transactional
-public class AuthorizationActionService implements ActionService {
+public class AuthorizationActionService {
 
     @Value("${attr.idAccount}")
     private String ID_ACCOUNT;
@@ -30,14 +28,7 @@ public class AuthorizationActionService implements ActionService {
     private String PHONE;
     @Value("${page.account}")
     private String ACCOUNT_PAGE;
-    @Value("${attr.phoneCode}")
-    private String PHONE_CODE;
-    @Value("${attr.servletRequest}")
-    private String SERVLET_REQUEST;
-    @Value("${attr.password}")
-    private String PASSWORD;
 
-    private final ClientDataStorageService clientDataStorageService;
     private final HashPasswordService hashPasswordService;
     private final AccountRepository accountRepository;
     private final PhoneCodeRepository phoneCodeRepository;
@@ -45,9 +36,7 @@ public class AuthorizationActionService implements ActionService {
     private final Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
-    public AuthorizationActionService(ClientDataStorageService clientDataStorageService, AccountRepository accountRepository,
-                                      HashPasswordService hashPasswordService, PhoneCodeRepository phoneCodeRepository) {
-        this.clientDataStorageService = clientDataStorageService;
+    public AuthorizationActionService(AccountRepository accountRepository, HashPasswordService hashPasswordService, PhoneCodeRepository phoneCodeRepository) {
         this.accountRepository = accountRepository;
         this.hashPasswordService = hashPasswordService;
         this.phoneCodeRepository = phoneCodeRepository;
@@ -59,34 +48,26 @@ public class AuthorizationActionService implements ActionService {
      * @return возвращает страницу пользователя в случае совпадения паролей,
      * выбрасывает ошибку некорректного ввода данных в случае нудачи.
      */
-    @Override
-    public String executeAndGetPage() {
+    public String authorize(String phoneCodeString, String phone, String password, HttpServletRequest servletRequest) {
         logger.info("Login procedure started");
+        int phoneCodeNumber = Integer.parseInt(phoneCodeString);
 
-        int phoneCodeNumber = Integer.parseInt(clientDataStorageService.getData(PHONE_CODE).toString());
         PhoneCode phoneCode = phoneCodeRepository.findOneByPhoneCode(phoneCodeNumber);
-
-        String phone = clientDataStorageService.getData(PHONE).toString();
         phone = PhoneNumberConverter.clearPhoneNumber(phone);
-
         Account account = accountRepository.findOneByPhoneAndPhoneCode(phone, phoneCode);
 
         if (account != null) {
-            String actualPassword = hashPasswordService.convertPasswordForComparing(
-                    clientDataStorageService.getData(PASSWORD).toString(), account.getSalt());
+            String actualPassword = hashPasswordService.convertPasswordForComparing(password, account.getSalt());
 
             if (account.getPassword().equals(actualPassword)) {
 //                TODO Убрать сессию
                 logger.info("User logged in");
-                initSession((HttpServletRequest) clientDataStorageService.getData(SERVLET_REQUEST), account);
-
-                clientDataStorageService.clearAllData();
+                initSession(servletRequest, account);
 
                 return ACCOUNT_PAGE + "/" + account.getIdAccount();
             }
         }
 
-        clientDataStorageService.clearAllData();
         logger.info("User has NOT logged in. Password or phone is incorrect.");
 
         throw new IncorrectInputDataException("Phone and/or password are/is incorrect");

@@ -4,14 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.chikaboom.exception.IncorrectInputDataException;
 import net.chikaboom.model.database.About;
 import net.chikaboom.model.database.Account;
-import net.chikaboom.model.database.PhoneCode;
 import net.chikaboom.repository.AboutRepository;
 import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.repository.PhoneCodeRepository;
 import net.chikaboom.repository.RoleRepository;
-import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.HashPasswordService;
-import net.chikaboom.service.action.DataService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,25 +20,19 @@ import java.util.Map;
  * Сервис для изменения данных клиентом на странице "Настройки - основные"
  */
 @Service
-public class EditSettingsTabService implements DataService {
+public class EditSettingsTabService {
 
-    @Value("${attr.customAccount}")
-    private String CUSTOM_ACCOUNT;
     @Value("${attr.oldPassword}")
     private String OLD_PASSWORD;
     @Value("${attr.newPassword}")
     private String NEW_PASSWORD;
     @Value("${attr.phoneCode}")
     private String PHONE_CODE;
-    @Value("${attr.phone}")
-    private String PHONE;
-
     @Value("${converted_password}")
     private String CONVERTED_PASSWORD;
     @Value("${salt}")
     private String SALT;
 
-    private final ClientDataStorageService clientDataStorageService;
     private final AccountRepository accountRepository;
     private final PhoneCodeRepository phoneCodeRepository;
     private final HashPasswordService hashPasswordService;
@@ -51,10 +42,9 @@ public class EditSettingsTabService implements DataService {
     private final Logger logger = Logger.getLogger(EditSettingsTabService.class);
 
     @Autowired
-    public EditSettingsTabService(ClientDataStorageService clientDataStorageService, AccountRepository accountRepository,
-                                  PhoneCodeRepository phoneCodeRepository, HashPasswordService hashPasswordService,
+    public EditSettingsTabService(AccountRepository accountRepository, PhoneCodeRepository phoneCodeRepository,
+                                  HashPasswordService hashPasswordService,
                                   AboutRepository aboutRepository, RoleRepository roleRepository) {
-        this.clientDataStorageService = clientDataStorageService;
         this.accountRepository = accountRepository;
         this.phoneCodeRepository = phoneCodeRepository;
         this.hashPasswordService = hashPasswordService;
@@ -68,10 +58,8 @@ public class EditSettingsTabService implements DataService {
      *
      * @return новый сохраненный объект
      */
-    @Override
-    public Account executeAndGetOne() {
+    public Account updateAccountSettings(Map<String, Object> accountParameters) {
         logger.info("Starting to change account parameter.");
-        Map<String, Object> accountParameters = (Map<String, Object>) clientDataStorageService.getData(CUSTOM_ACCOUNT);
 
 //        TODO REFACTORING
         ObjectMapper mapper = new ObjectMapper();
@@ -104,7 +92,7 @@ public class EditSettingsTabService implements DataService {
      * Производит операции сравнения паролей и преобразование нового пароля для хранения в базе данных
      *
      * @param accountParameters измененные параметры аккаунта
-     * @param resultAccount конечный объект для сохранения
+     * @param resultAccount     конечный объект для сохранения
      */
     private void savePasswordData(Map<String, Object> accountParameters, Account resultAccount) {
         String actualPassword = hashPasswordService.convertPasswordForComparing(

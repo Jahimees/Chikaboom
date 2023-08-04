@@ -3,11 +3,9 @@ package net.chikaboom.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.chikaboom.model.database.Appointment;
-import net.chikaboom.service.ClientDataStorageService;
 import net.chikaboom.service.action.AppointmentService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,33 +19,17 @@ import java.util.List;
 @RequestMapping("/chikaboom/appointment/{idAccountMaster}")
 public class AppointmentController {
 
-    @Value("${attr.idAccountMaster}")
-    private String ID_ACCOUNT_MASTER;
-    @Value("${attr.idAccountClient}")
-    private String ID_ACCOUNT_CLIENT;
-    @Value("${attr.idUserService}")
-    private String ID_USER_SERVICE;
-    @Value("${attr.idAppointment}")
-    private String ID_APPOINTMENT;
-    @Value("${attr.appointmentDate}")
-    private String APPOINTMENT_DATE;
-    @Value("${attr.appointmentTime}")
-    private String APPOINTMENT_TIME;
-
-    private final ClientDataStorageService clientDataStorageService;
     private final AppointmentService appointmentService;
     private final Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
-    public AppointmentController(ClientDataStorageService clientDataStorageService, AppointmentService appointmentService) {
-        this.clientDataStorageService = clientDataStorageService;
+    public AppointmentController(AppointmentService appointmentService) {
         this.appointmentService = appointmentService;
     }
 
     /**
      * Создает запись на услугу по параметрам, выбранными клиентом.
-     * Данные сохраняются в {@link ClientDataStorageService} и управление передается {@link AppointmentService} для
-     * сохранения данных.
+     * Управление передается {@link AppointmentService} для создания данных.
      *
      * @param idAccountMaster идентификатор аккаунта мастера (к кому запись)
      * @param idAccountClient идентификатор аккаунта клиента (кто совершает запись)
@@ -61,15 +43,9 @@ public class AppointmentController {
                                                        @RequestParam int idUserService, @RequestParam String appointmentDate,
                                                        @RequestParam String appointmentTime) {
         logger.info("Making appointment for client (idClient=" + idAccountClient + ") to master (idMaster=" + idAccountMaster + ").");
-        clientDataStorageService.setData(ID_ACCOUNT_MASTER, idAccountMaster);
-        clientDataStorageService.setData(ID_ACCOUNT_CLIENT, idAccountClient);
-        clientDataStorageService.setData(ID_USER_SERVICE, idUserService);
-        clientDataStorageService.setData(APPOINTMENT_DATE, appointmentDate);
-        clientDataStorageService.setData(APPOINTMENT_TIME, appointmentTime);
 
-        Appointment appointment = appointmentService.executeAndGetOne();
-
-        clientDataStorageService.clearAllData();
+        Appointment appointment = appointmentService.createAppointment(idAccountMaster, idAccountClient, idUserService,
+                appointmentDate, appointmentTime);
 
         return new ResponseEntity<>(appointment, HttpStatus.OK);
     }
@@ -83,11 +59,8 @@ public class AppointmentController {
     @GetMapping
     public ResponseEntity<String> getAllMasterAppointments(@PathVariable int idAccountMaster) {
         logger.info("Getting full info about appointments of master with id " + idAccountMaster);
-        clientDataStorageService.setData(ID_ACCOUNT_MASTER, idAccountMaster);
 
-        List<Appointment> appointmentList = appointmentService.executeAndGetList();
-
-        clientDataStorageService.clearAllData();
+        List<Appointment> appointmentList = appointmentService.findAllByIdAccount(idAccountMaster, false);
 
         ObjectMapper mapper = new ObjectMapper();
 
@@ -107,17 +80,15 @@ public class AppointmentController {
      * Обрабатывает запрос на удаление записи клиента к мастеру //TODO доработка уведомления клиента и мастера
      *
      * @param idAccountMaster идентификатор аккаунта мастера
-     * @param idAppointment идентификатор записи
+     * @param idAppointment   идентификатор записи
      * @return строку результата удаления с соответствующим HTTP-кодом
      */
     @DeleteMapping("/{idAppointment}")
     public ResponseEntity<String> deleteAppointment(@PathVariable int idAccountMaster, @PathVariable int idAppointment) {
+//        TODO проверка аккаунта мастера?
         logger.info("Starting deleting appointment with id " + idAppointment);
-        clientDataStorageService.setData(ID_APPOINTMENT, idAppointment);
 
-        appointmentService.deleteAppointment();
-
-        clientDataStorageService.clearAllData();
+        appointmentService.deleteAppointment(idAppointment);
 
         return new ResponseEntity<>("Appointment deleted", HttpStatus.OK);
     }
