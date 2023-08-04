@@ -81,7 +81,7 @@ public class EditSettingsTabService {
                 ? accountFromParameters.getAbout() : new About());
         accountFromParameters.setAbout(about);
         accountRepository.save(accountFromParameters);
-        roleRepository.save(accountFromParameters.getRole());
+//        roleRepository.save(accountFromParameters.getRole());  TODO FIXME NEW!!!!! Не работает
         phoneCodeRepository.save(accountFromParameters.getPhoneCode());
 
         logger.info("Account data saved");

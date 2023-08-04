@@ -51,19 +51,22 @@ $("#confirm-register").on("click", function () {
     }
 });
 
+// TODO NEW Перевести на Spring forms
 $("#confirm-login").on("click", function () {
     if (validateAllAuthorizeFields()) {
-        var phoneCode = $("#country-phone-login > .country-phone-selector > .country-phone-selected > span")[0].firstChild.textContent;
-        var phone = $("#l-input-phone")[0].value;
+        // var phoneCode = $("#country-phone-login > .country-phone-selector > .country-phone-selected > span")[0].firstChild.textContent;
+        // var phone = $("#l-input-phone")[0].value;
+        var nickname = $("#l-input-nickname")[0].value;
         var password = $("#l-input-password")[0].value;
         $.ajax({
-            type: "GET",
-            url: "/chikaboom/authorization", //TODO выглядит не ок прям совсем
+            type: "POST",
+            url: "/login", //TODO выглядит не ок прям совсем
             contentType: "application/text",
             dataType: "text",
             data: {
-                phoneCode: phoneCode,
-                phone: phone,
+                nickname: nickname,
+                // phoneCode: phoneCode,
+                // phone: phone,
                 password: password,
             },
             success: function (data) {
@@ -76,10 +79,13 @@ $("#confirm-login").on("click", function () {
     }
 });
 
-$("#l-input-phone").on("keyup", function () {
-    validateAuthorizeField(this);
-});
+// $("#l-input-phone").on("keyup", function () {
+//     validateAuthorizeField(this);
+// });
 
+$("#l-input-nickname").on("keyup", function () {
+    validateAuthorizeField(this);
+})
 $("#l-input-password").on("keyup", function () {
     validateAuthorizeField(this);
 });
@@ -165,8 +171,11 @@ function validateAuthorizeField(field) {
 
     if (field.value == null || field.value === "") {
         field.setAttribute("reason", "empty");
-    } else if (field.id === "l-input-phone" && !/^(\s*)?([- _():=+]??\d[- _():=+]?){9,14}(\s*)?$/.test(field.value)) {
-        field.setAttribute("reason", "incorrect");
+    }
+    // } else if (field.id === "l-input-phone" && !/^(\s*)?([- _():=+]??\d[- _():=+]?){9,14}(\s*)?$/.test(field.value)) {
+    //     field.setAttribute("reason", "incorrect");
+    else if (field.id === "l-input-nickname" && !/^[a-zA-ZА-Яа-я]+\s{0,1}[a-zA-ZА-Яа-я]+$/.test(field.value)) {
+            field.setAttribute("reason", "incorrect");
     } else {
         field.style.borderColor = ""
         field.setAttribute("valid", true);

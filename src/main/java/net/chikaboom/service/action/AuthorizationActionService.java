@@ -4,14 +4,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import net.chikaboom.exception.IncorrectInputDataException;
 import net.chikaboom.model.database.Account;
-import net.chikaboom.model.database.PhoneCode;
 import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.repository.PhoneCodeRepository;
 import net.chikaboom.service.HashPasswordService;
-import net.chikaboom.util.PhoneNumberConverter;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,14 +31,20 @@ public class AuthorizationActionService {
     private final HashPasswordService hashPasswordService;
     private final AccountRepository accountRepository;
     private final PhoneCodeRepository phoneCodeRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final HttpServletRequest servletRequest;
 
     private final Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
-    public AuthorizationActionService(AccountRepository accountRepository, HashPasswordService hashPasswordService, PhoneCodeRepository phoneCodeRepository) {
+    public AuthorizationActionService(AccountRepository accountRepository, HashPasswordService hashPasswordService,
+                                      PhoneCodeRepository phoneCodeRepository, BCryptPasswordEncoder passwordEncoder,
+                                      HttpServletRequest httpServletRequest) {
         this.accountRepository = accountRepository;
         this.hashPasswordService = hashPasswordService;
         this.phoneCodeRepository = phoneCodeRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.servletRequest = httpServletRequest;
     }
 
     /**
@@ -48,21 +53,17 @@ public class AuthorizationActionService {
      * @return возвращает страницу пользователя в случае совпадения паролей,
      * выбрасывает ошибку некорректного ввода данных в случае нудачи.
      */
-    public String authorize(String phoneCodeString, String phone, String password, HttpServletRequest servletRequest) {
+    public String authorize(String nickname, String password) {
         logger.info("Login procedure started");
-        int phoneCodeNumber = Integer.parseInt(phoneCodeString);
 
-        PhoneCode phoneCode = phoneCodeRepository.findOneByPhoneCode(phoneCodeNumber);
-        phone = PhoneNumberConverter.clearPhoneNumber(phone);
-        Account account = accountRepository.findOneByPhoneAndPhoneCode(phone, phoneCode);
+        Account account = accountRepository.findAccountByNickname(nickname);
 
         if (account != null) {
-            String actualPassword = hashPasswordService.convertPasswordForComparing(password, account.getSalt());
 
-            if (account.getPassword().equals(actualPassword)) {
+            if (passwordEncoder.matches(password, account.getPassword())) {
 //                TODO Убрать сессию
                 logger.info("User logged in");
-                initSession(servletRequest, account);
+                initSession(account);
 
                 return ACCOUNT_PAGE + "/" + account.getIdAccount();
             }
@@ -76,11 +77,10 @@ public class AuthorizationActionService {
     /**
      * Метод для инициализации сессии параметрами пользователя
      *
-     * @param request запрос, в котором передана сессия
      * @param account аккаунт пользователя
      */
-    private void initSession(HttpServletRequest request, Account account) {
-        HttpSession session = request.getSession();
+    private void initSession(Account account) {
+        HttpSession session = servletRequest.getSession();
 
         session.setAttribute(PHONE, account.getPhone());
         session.setAttribute(ID_ACCOUNT, account.getIdAccount());

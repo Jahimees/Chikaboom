@@ -6,6 +6,7 @@ import net.chikaboom.model.database.PhoneCode;
 import net.chikaboom.model.database.Role;
 import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.repository.PhoneCodeRepository;
+import net.chikaboom.service.AccountService;
 import net.chikaboom.service.HashPasswordService;
 import net.chikaboom.util.PhoneNumberConverter;
 import net.chikaboom.util.constant.ApplicationRole;
@@ -17,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Map;
 
 /**
  * Сервис реализует создание нового аккаунта
@@ -35,16 +35,18 @@ public class RegistrationActionService {
 
     private final HashPasswordService hashPasswordService;
     private final AccountRepository accountRepository;
+    private final AccountService accountService;
     private final PhoneCodeRepository phoneCodeRepository;
     private final Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
     public RegistrationActionService(HashPasswordService hashPasswordService,
                                      AccountRepository accountRepository,
-                                     PhoneCodeRepository phoneCodeRepository) {
+                                     PhoneCodeRepository phoneCodeRepository, AccountService accountService) {
         this.hashPasswordService = hashPasswordService;
         this.accountRepository = accountRepository;
         this.phoneCodeRepository = phoneCodeRepository;
+        this.accountService = accountService;
     }
 
     /**
@@ -62,21 +64,21 @@ public class RegistrationActionService {
             throw new UserAlreadyExistsException("User with phone +" + phoneCodeNumbers + " " + phone + " already exists");
         }
 
-        Map<String, Object> complexPassword = hashPasswordService.convertPasswordForStorage(clearPassword);
 
         int idRole = ApplicationRole.valueOf(roleString.toUpperCase()).getValue();
         Role role = new Role(idRole);
 
         Account account = new Account();
         account.setPhone(phone);
-        account.setPassword(complexPassword.get(CONVERTED_PASSWORD).toString());
-        account.setSalt(complexPassword.get(SALT).toString());
+        account.setPassword(clearPassword);
+//        account.setPassword(complexPassword.get(CONVERTED_PASSWORD).toString());
+//        account.setSalt(complexPassword.get(SALT).toString());
         account.setRegistrationDate(Timestamp.valueOf(LocalDateTime.now()));
-        account.setRole(role);
+//        account.setRole(role);
         account.setNickname(nickname);
         account.setPhoneCode(phoneCode);
 
-        accountRepository.save(account);
+        accountService.saveAccount(account);
 
         logger.info("New account created");
 
