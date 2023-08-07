@@ -30,16 +30,6 @@ public class Account implements BaseEntity, UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idAccount;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = ID_PHONE_CODE)
-    private PhoneCode phoneCode;
-
-    /**
-     * Номер телефона владельца аккаунта
-     */
-    @Column(name = PHONE)
-    private String phone;
-
     /**
      * Пароль от аккаунта
      */
@@ -88,6 +78,16 @@ public class Account implements BaseEntity, UserDetails {
     @OneToOne
     @JoinColumn(name = ID_WORKING_DAYS)
     private WorkingDays workingDays;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = ID_PHONE_CODE)
+    private PhoneCode phoneCode;
+
+    /**
+     * Номер телефона владельца аккаунта
+     */
+    @Column(name = PHONE)
+    private String phone;
 
     @JsonIgnore
     @Override

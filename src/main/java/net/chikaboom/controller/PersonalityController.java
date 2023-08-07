@@ -5,10 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import net.chikaboom.exception.IllegalAccessException;
 import net.chikaboom.model.database.Account;
-import net.chikaboom.service.action.AccountInfoLoaderService;
+import net.chikaboom.repository.AccountRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,19 +22,18 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @RestController
 @RequestMapping("/chikaboom/personality/{idAccount}")
+//@PreAuthorize("hasAnyRole('MASTER', 'CLIENT')")
 public class PersonalityController {
 
     @Value("${attr.account}")
     private String ACCOUNT;
-    @Value("${attr.idAccount}")
-    private String ID_ACCOUNT;
 
-    private final AccountInfoLoaderService accountInfoLoaderService;
+    private final AccountRepository accountRepository;
     private final Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
-    public PersonalityController(AccountInfoLoaderService accountInfoLoaderService) {
-        this.accountInfoLoaderService = accountInfoLoaderService;
+    public PersonalityController(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
     }
 
     @Value("${page.personality}")
@@ -51,22 +51,25 @@ public class PersonalityController {
     public ModelAndView openPersonalityPage(@PathVariable int idAccount, HttpServletRequest request) throws IllegalAccessException {
         logger.info("Opening personality page...");
 
+        Account requestedAccount = accountRepository.findByIdAccount(idAccount);
+        Account authorizedAccount = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
 //        TODO FILTER! Сделать аннотацию, аспект мб. Который проверяет данные на совпадение.
-        if (request.getSession().getAttribute(ID_ACCOUNT) == null ||
-                (int) request.getSession().getAttribute(ID_ACCOUNT) != idAccount) {
-            throw new IllegalAccessException("User with id " + request.getSession().getAttribute(ID_ACCOUNT) + " trying " +
-                    "to open page of user with id " + idAccount + "!");
+        if (authorizedAccount.getIdAccount() != requestedAccount.getIdAccount()) {
+            throw new IllegalAccessException("User with name " + requestedAccount.getNickname() + " trying " +
+                    "to open page someone else's page!");
         }
+
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName(PERSONALITY_PAGE);
 
-        Account account = accountInfoLoaderService.findAccountById(idAccount);
+
         ObjectMapper mapper = new ObjectMapper();
         String accountJSON = null;
 
         try {
             logger.info("Trying to convert account data to JSON format.");
-            accountJSON = mapper.writeValueAsString(account);
+            accountJSON = mapper.writeValueAsString(requestedAccount);
         } catch (JsonProcessingException e) {
             logger.error(e.getMessage());
         }
