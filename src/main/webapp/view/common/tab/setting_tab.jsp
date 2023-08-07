@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <div class="menu-box-horizontal">
     <div id="general-setting-tab" class="horizontal-menu-child" selected="true">
@@ -7,18 +8,20 @@
     <div id="profile-setting-tab" class="horizontal-menu-child" selected="false">
         <div class="horizontal-menu-text"><a href="#">Профиль</a></div>
     </div>
-    <div id="personalization-setting-tab" class="horizontal-menu-child master-only" selected="false">
-        <div class="horizontal-menu-text"><a href="#">Персонализация</a></div>
-    </div>
-    <div id="security-setting-tab" class="horizontal-menu-child master-only" selected="false">
-        <div class="horizontal-menu-text"><a href="#">Безопасность</a></div>
-    </div>
-    <div id="notification-setting-tab" class="horizontal-menu-child master-only" selected="false">
-        <div class="horizontal-menu-text"><a href="#">Уведомления</a></div>
-    </div>
-    <div id="payment-details-setting-tab" class="horizontal-menu-child master-only" selected="false">
-        <div class="horizontal-menu-text"><a href="#">Реквизиты</a></div>
-    </div>
+    <sec:authorize access="hasRole('ROLE_MASTER')">
+        <div id="personalization-setting-tab" class="horizontal-menu-child" selected="false">
+            <div class="horizontal-menu-text"><a href="#">Персонализация</a></div>
+        </div>
+        <div id="security-setting-tab" class="horizontal-menu-child" selected="false">
+            <div class="horizontal-menu-text"><a href="#">Безопасность</a></div>
+        </div>
+        <div id="notification-setting-tab" class="horizontal-menu-child" selected="false">
+            <div class="horizontal-menu-text"><a href="#">Уведомления</a></div>
+        </div>
+        <div id="payment-details-setting-tab" class="horizontal-menu-child" selected="false">
+            <div class="horizontal-menu-text"><a href="#">Реквизиты</a></div>
+        </div>
+    </sec:authorize>
 </div>
 
 <div id="setting-content-placeholder" class="setting-content-placeholder">
@@ -68,9 +71,5 @@
 
     $(document).ready(function () {
         loadSettingTab("general");
-
-        if (accountJson.role.role === 'client') {
-            $(".master-only").remove();
-        }
     })
 </script>

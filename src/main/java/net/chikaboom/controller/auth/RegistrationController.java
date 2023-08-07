@@ -1,4 +1,4 @@
-package net.chikaboom.controller;
+package net.chikaboom.controller.auth;
 
 import net.chikaboom.controller.error.AdviceController;
 import net.chikaboom.service.action.RegistrationActionService;

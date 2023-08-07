@@ -3,6 +3,7 @@ package net.chikaboom.model.database;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import net.chikaboom.util.constant.ApplicationRole;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Set;
@@ -22,21 +23,25 @@ public class Role implements BaseEntity, GrantedAuthority {
     }
 
     public Role(int idRole) {
+        this.idRole = idRole;
         switch (idRole) {
             case 1: {
-                this.idRole = idRole;
-                this.name = "ROLE_MASTER";
+                this.name = ApplicationRole.ROLE_MASTER.name();
                 break;
             }
             case 2: {
-                this.idRole = idRole;
-                this.name = "ROLE_CLIENT";
+                this.name = ApplicationRole.ROLE_CLIENT.name();
                 break;
             }
             default:
                 this.idRole = 2;
-                this.name = "ROLE_CLIENT";
+                this.name = ApplicationRole.ROLE_CLIENT.name();
         }
+    }
+
+    public Role(ApplicationRole role) {
+        this.idRole = role.getValue();
+        this.name = role.name();
     }
 
     /**

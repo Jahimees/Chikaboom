@@ -1,7 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <!DOCTYPE HTML>
 <html lang="ru">
@@ -46,7 +45,8 @@
                 <div class="d-flex flex-row-reverse master-only">
                     <img src="/image/icon/edit_icon.svg">
                     <!-- Кнопка-триггер модального окна -->
-                    <button id="make-appointment-btn" type="button" class="purple-button m-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <button id="make-appointment-btn" type="button" class="purple-button m-2" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal">
                         ЗАПИСАТЬСЯ
                     </button>
                 </div>
@@ -205,11 +205,9 @@
     $("#profession-placeholder")[0].innerText = accountJson.about !== null ? accountJson.about.profession : "";
 
     $(document).ready(function () {
-        if (accountJson.role.role === 'client') {
-            if (accountJson.role.role === 'client') {
-                $(".master-only").remove();
-                $(".main-information").css("height", "auto");
-            }
+        if (accountJson.roles[0].name === 'client') {
+            $(".master-only").remove();
+            $(".main-information").css("height", "auto");
         } else {
             loadUserServices(accountJson.idAccount);
             loadMasterAppointments(accountJson.idAccount);

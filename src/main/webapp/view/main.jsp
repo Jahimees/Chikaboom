@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <!DOCTYPE HTML>
 <html lang="ru">
@@ -40,28 +41,27 @@
 </head>
 <body>
 <div class="content">
-
-    <c:set var="session" value="${idAccount}"/>
     <div class="main-header">
         <div class="menu-top">
-            <c:if test="${session!=null}">
-                <div><a href="/chikaboom/personality/${idAccount}">▸Личный кабинет◂</a></div>
-            </c:if>
+            <sec:authorize access="isAuthenticated()">
+                <div><a href="/chikaboom/personality/<sec:authentication property="principal.idAccount"/>">▸Личный
+                    кабинет◂</a></div>
+            </sec:authorize>
         </div>
         <div class="menu-right">
-            <c:choose>
-                <c:when test="${session==null}">
-                    <div class="open-login-popup" onclick="openPopup('login-popup')"><a href="#login">Вход</a></div>
-                    <div class="open-register-popup" onclick="openPopup('register-popup')"><a href="#register">Регистрация</a>
-                    </div>
-                    <%--                    <div><a href="/chikaboom/under_construction">Быстрая запись</a></div>--%>
-                </c:when>
-                <c:otherwise>
-                    <div><a href="/chikaboom/personality/${idAccount}?tabName=my-appointments">Мои записи</a></div>
-                    <div><a href="/chikaboom/logout">Выйти из аккаунта</a></div>
-                    <div><a href="/chikaboom/under_construction">Избранное</a></div>
-                </c:otherwise>
-            </c:choose>
+            <sec:authorize access="!isAuthenticated()">
+                <div class="open-login-popup" onclick="openPopup('login-popup')"><a href="#login">Вход</a></div>
+                <div class="open-register-popup" onclick="openPopup('register-popup')"><a
+                        href="#register">Регистрация</a>
+                </div>
+            </sec:authorize>
+            <sec:authorize access="isAuthenticated()">
+                <div>
+                    <a href="/chikaboom/personality/<sec:authentication property="principal.idAccount"/>?tabName=my-appointments">Мои
+                        записи</a></div>
+                <div><a href="/logout">Выйти из аккаунта</a></div>
+                <div><a href="/chikaboom/under_construction">Избранное</a></div>
+            </sec:authorize>
         </div>
     </div>
 

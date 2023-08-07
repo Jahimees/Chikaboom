@@ -1,10 +1,6 @@
-<jsp:useBean id="mapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
-<jsp:useBean id="accountObj" class="net.chikaboom.model.database.Account"/>
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <!DOCTYPE HTML>
 <html lang="ru">
@@ -47,9 +43,7 @@
                 <div class="menu-text"><a href="/chikaboom/account/${idAccount}">Профиль</a></div>
             </div>
 
-            <c:set var="accountObj" value="${mapper.readValue(account, accountObj.getClass())}"/>
-<%--            //TODO NEW FIXME hardcode --%>
-<%--            <c:if test="${accountObj.roles.contains(new Role(1)) == 1}">--%>
+            <sec:authorize access="hasRole('ROLE_MASTER')">
                 <div id="services-btn" class="menu-child button" selected="false">
                     <div><img class="small-icon" src="/image/icon/service_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Услуги</a></div>
@@ -58,10 +52,10 @@
                     <div><img class="small-icon" src="/image/icon/statistic_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Статистика</a></div>
                 </div>
-            <div id="appointments-btn" class="menu-child button" selected="false">
-                <div><img class="small-icon" src="/image/icon/notebook_icon.svg" alt="no_image"></div>
-                <div class="menu-text"><a href="#">Записи ко мне</a></div>
-            </div>
+                <div id="appointments-btn" class="menu-child button" selected="false">
+                    <div><img class="small-icon" src="/image/icon/notebook_icon.svg" alt="no_image"></div>
+                    <div class="menu-text"><a href="#">Записи ко мне</a></div>
+                </div>
                 <div id="timetable-btn" class="menu-child button" selected="false">
                     <div><img class="small-icon" src="/image/icon/calendar_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">График</a></div>
@@ -78,14 +72,14 @@
                     <div><img class="small-icon" src="/image/icon/review_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Отзывы</a></div>
                 </div>
-<%--            </c:if>--%>
+            </sec:authorize>
             <div id="my-appointments-btn" class="menu-child button" selected="false">
                 <div><img class="small-icon" src="/image/icon/notebook_icon_2.svg" alt="no_image"></div>
                 <div class="menu-text"><a href="#">Мои записи</a></div>
             </div>
             <div id="logout-btn" onclick="" class="menu-child button" selected="false">
-                <div><img  class="small-icon" src="/image/icon/exit_icon.svg" alt="no_image"></div>
-                <div class="menu-text"><a href="/chikaboom/logout">Выйти</a></div>
+                <div><img class="small-icon" src="/image/icon/exit_icon.svg" alt="no_image"></div>
+                <div class="menu-text"><a href="/logout">Выйти</a></div>
             </div>
         </div>
     </div>
@@ -98,19 +92,16 @@
     <jsp:include page="common/popup/edit_popup.jsp"/>
     <jsp:include page="common/popup/message_popup.jsp"/>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous">
 </script>
-
 </body>
 </html>
 
 <script type="text/javascript" src="/js/personality.js"></script>
 
 <script>
-
     var accountJson = ${account};
 
     function loadSettingsTab() {

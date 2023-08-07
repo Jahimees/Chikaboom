@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <%--TODO Стили--%>
 <div class="header">
@@ -25,16 +26,14 @@
         </a>
     </div>
     <div class="right-header-box">
-        <c:choose>
-            <c:when test="${sessionScope.idAccount == null}">
+        <sec:authorize access="!isAuthenticated()">
                 <div class="header-menu-link open-login-popup" onclick="openPopup('login-popup')">
-                    <b><a href="#">Войти</a></b>
+                    <b><a href="#login">Войти</a></b>
                 </div>
-            </c:when>
-            <c:otherwise>
-                <div class="header-menu-link"><a href="/chikaboom/logout">Выйти</a></div>
-            </c:otherwise>
-        </c:choose>
+        </sec:authorize>
+        <sec:authorize access="isAuthenticated()">
+                <div class="header-menu-link"><a href="/logout">Выйти</a></div>
+        </sec:authorize>
 
     </div>
 

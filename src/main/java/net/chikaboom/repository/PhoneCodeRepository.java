@@ -16,5 +16,5 @@ public interface PhoneCodeRepository extends JpaRepository<PhoneCode, Integer> {
      * @param phoneCode телефонный код
      * @return сущность телефонного кода
      */
-    PhoneCode findOneByPhoneCode(int phoneCode);
+    PhoneCode findFirstByPhoneCode(int phoneCode);
 }

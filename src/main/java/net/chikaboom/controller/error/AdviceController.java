@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -34,6 +35,13 @@ public class AdviceController {
      */
     @ExceptionHandler(IncorrectInputDataException.class)
     public ResponseEntity<Error> incorrectInputData(IncorrectInputDataException ex) {
+        logger.warn(ex.getMessage());
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<Error> badCredentials(BadCredentialsException ex) {
         logger.warn(ex.getMessage());
 
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
