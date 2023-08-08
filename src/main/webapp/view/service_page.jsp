@@ -33,8 +33,7 @@
 <div class="medium-text padding-0-5 full-width-inline-box">
     <a href="/chikaboom/main" style="text-decoration: none; color: #5F4E7D">Главная</a>
     <div style="padding: 0 15px">></div>
-    <a href="/chikaboom/service" style="text-decoration: none; color: #5F4E7D">
-        Услуги</a>
+    <a href="/chikaboom/service" style="text-decoration: none; color: #5F4E7D">Услуги</a>
 </div>
 <hr>
 <div class="service-block-all row">

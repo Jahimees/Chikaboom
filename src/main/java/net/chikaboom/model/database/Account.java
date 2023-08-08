@@ -3,8 +3,12 @@ package net.chikaboom.model.database;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Timestamp;
+import java.util.Collection;
+import java.util.Set;
 
 import static net.chikaboom.util.constant.DbNamesConstant.*;
 
@@ -15,7 +19,7 @@ import static net.chikaboom.util.constant.DbNamesConstant.*;
 @Entity
 @Table(name = ACCOUNT)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Account implements BaseEntity {
+public class Account implements BaseEntity, UserDetails {
 
     /**
      * id аккаунта
@@ -26,28 +30,16 @@ public class Account implements BaseEntity {
     private int idAccount;
 
     /**
-     * Номер телефона владельца аккаунта
-     */
-    @Column(name = PHONE)
-    private String phone;
-
-    /**
      * Пароль от аккаунта
      */
     @Column(name = PASSWORD)
     private String password;
 
     /**
-     * Соль для пароля
-     */
-    @Column(name = SALT)
-    private String salt;
-
-    /**
      * Имя пользователя
      */
-    @Column(name = NICKNAME)
-    private String nickname;
+    @Column(name = USERNAME)
+    private String username;
 
     /**
      * Дата регистрации аккаунта
@@ -61,27 +53,85 @@ public class Account implements BaseEntity {
     @Column(name = EMAIL)
     private String email;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = ID_ROLE)
-    private Role role;
+    /**
+     * Содержит все роли пользователя
+     */
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<Role> roles;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = ID_PHONE_CODE)
-    private PhoneCode phoneCode;
-
+    /**
+     * Адрес пользователя
+     */
     @Column(name = ADDRESS)
     private String address;
 
+    /**
+     * Общедоступная информация о пользователе
+     */
     @OneToOne
     @JoinColumn(name = ID_ABOUT)
     private About about;
 
+    /**
+     * Ссылки на социальные сети пользователя
+     */
     @OneToOne
     @JoinColumn(name = ID_SOCIAL_NETWORK)
     private SocialNetwork socialNetwork;
 
+    /**
+     * Рабочий график мастера
+     */
     @OneToOne
     @JoinColumn(name = ID_WORKING_DAYS)
     private WorkingDays workingDays;
 
+    /**
+     * Код телефона пользователя
+     */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = ID_PHONE_CODE)
+    private PhoneCode phoneCode;
+
+    /**
+     * Номер телефона владельца аккаунта
+     */
+    @Column(name = PHONE)
+    private String phone;
+
+    @JsonIgnore
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return getRoles();
+    }
+
+    @JsonIgnore
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

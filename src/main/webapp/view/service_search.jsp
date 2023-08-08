@@ -93,7 +93,7 @@
             contentType: "application/text",
             dataType: "text",
             data: {
-                subserviceIdList: JSON.stringify(subserviceIdList),
+                subserviceIdListJSON: JSON.stringify(subserviceIdList),
             },
             success: function (data) {
                 userServicesListJson = JSON.parse(data);
@@ -111,7 +111,7 @@
                 let price = userService.price;
                 let userServiceName = userService.userServiceName;
                 let idMasterAccount = userService.account.idAccount
-                let masterName = userService.account.nickname;
+                let masterName = userService.account.username;
 
                 let accountHref = document.createElement("a");
                 accountHref.setAttribute("href", "/chikaboom/account/" + idMasterAccount);

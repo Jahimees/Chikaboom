@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <div class="content">
 
@@ -20,40 +21,42 @@
         <div class="col-4 common-black-text">
             Имя пользователя:
         </div>
-        <div id="nickname-placeholder" class="col-4 common-text placeholder">
+        <div id="username-placeholder" class="col-4 common-text placeholder">
         </div>
-        <div id="change-nickname-btn" onclick="openEditNicknamePopup()" class="col-1 edit-button">
+        <div id="change-username-btn" onclick="openEditUsernamePopup()" class="col-1 edit-button">
             <img src="/image/icon/edit_icon.svg">
         </div>
     </div>
     <hr>
-    <div class="row w-100 input-box master-only">
-        <div class="col-4 common-black-text">
-            Адрес:
+    <sec:authorize access="hasRole('ROLE_MASTER')">
+        <div class="row w-100 input-box">
+            <div class="col-4 common-black-text">
+                Адрес:
+            </div>
+            <div id="address-placeholder" class="col-4 common-text placeholder">
+            </div>
+            <div id="change-address-btn" onclick="openEditAddressPopup()" class="col-1 edit-button">
+                <img src="/image/icon/edit_icon.svg">
+            </div>
         </div>
-        <div id="address-placeholder" class="col-4 common-text placeholder">
+        <hr>
+        <div class="row w-100 input-box">
+            <div class="col-4 common-black-text">
+                О себе:
+            </div>
+            <div id="about-text-placeholder" class="col-4 common-text placeholder">
+            </div>
+            <div id="change-about-text-btn" onclick="openEditAboutPopup()" class="col-1 edit-button">
+                <img src="/image/icon/edit_icon.svg">
+            </div>
         </div>
-        <div id="change-address-btn" onclick="openEditAddressPopup()" class="col-1 edit-button">
-            <img src="/image/icon/edit_icon.svg">
-        </div>
-    </div>
-    <hr class="master-only">
-    <div class="row w-100 input-box master-only">
-        <div class="col-4 common-black-text">
-            О себе:
-        </div>
-        <div id="about-text-placeholder" class="col-4 common-text placeholder">
-        </div>
-        <div id="change-about-text-btn" onclick="openEditAboutPopup()" class="col-1 edit-button">
-            <img src="/image/icon/edit_icon.svg">
-        </div>
-    </div>
+    </sec:authorize>
 </div>
 
 <script>
-    function openEditNicknamePopup() {
+    function openEditUsernamePopup() {
         dropAllFields();
-        addField("Имя пользователя", "nickname", "text", "Rosalline", false,
+        addField("Имя пользователя", "username", "text", "Rosalline", false,
             [new Validation("Поле не может быть пустым", InvalidReason.EMPTY),
                 new Validation("Имя слишком короткое", InvalidReason.SHORT)]);
         openPopup("edit-popup");
@@ -138,15 +141,14 @@
     $(document).ready(function () {
         let aboutProfession;
         let aboutText;
-        if (accountJson.role.role === 'client') {
-            $(".master-only").remove();
-        } else {
+
+        if (accountJson.roles[0].name === "ROLE_MASTER") {
             aboutProfession = accountJson.about != null && typeof accountJson.about != 'undefined' ? accountJson.about.profession : "";
             aboutText = accountJson.about != null && typeof accountJson.about != 'undefined' ? accountJson.about.text : "";
             $("#address-placeholder")[0].innerText = accountJson.address;
             $("#about-text-placeholder")[0].innerText = aboutProfession != null ? aboutProfession : "" + "\n" + aboutText != null ? aboutText : "";
         }
 
-        $("#nickname-placeholder")[0].innerText = accountJson.nickname;
+        $("#username-placeholder")[0].innerText = accountJson.username;
     });
 </script>

@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <!-- Модальное окно -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -30,10 +32,9 @@
         </div>
     </div>
 </div>
-
 <script>
     function makeAppointment() {
-        let clientId = ${sessionScope.idAccount == null ? 0 : sessionScope.idAccount};
+        let clientId = ${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.idAccount};
         let masterId = accountJson.idAccount;
 
         let idUserService = parseInt($("#services-select")[0].value);

@@ -3,10 +3,11 @@ package net.chikaboom.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.chikaboom.model.database.Account;
-import net.chikaboom.service.action.AccountInfoLoaderService;
+import net.chikaboom.service.AccountService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @RestController
 @RequestMapping("/chikaboom/account/{idAccount}")
+//@PreAuthorize("permitAll()")
 public class AccountController {
 
     @Value("${page.account}")
@@ -25,12 +27,12 @@ public class AccountController {
     @Value("${attr.account}")
     private String ACCOUNT;
 
-    private final AccountInfoLoaderService accountInfoLoaderService;
+    private final AccountService accountService;
     private final Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
-    public AccountController(AccountInfoLoaderService accountInfoLoaderService) {
-        this.accountInfoLoaderService = accountInfoLoaderService;
+    public AccountController(AccountService accountService) {
+        this.accountService = accountService;
     }
 
     /**
@@ -38,12 +40,13 @@ public class AccountController {
      *
      * @return путь к странице аккаунта
      */
+    @PreAuthorize("permitAll()")
     @GetMapping
     public ModelAndView openAccountPage(@PathVariable int idAccount) {
         logger.info("Loading account page for account with id " + idAccount);
         ModelAndView modelAndView = new ModelAndView(ACCOUNT_PAGE);
 
-        Account account = accountInfoLoaderService.findAccountById(idAccount);
+        Account account = accountService.findAccountById(idAccount);
         ObjectMapper mapper = new ObjectMapper();
 
         String result = "";

@@ -17,6 +17,10 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
      * @param phone номер телефона
      * @return найденного пользователя
      */
-    Account findOneByPhoneAndPhoneCode(String phone, PhoneCode phoneCode);
+    Account findFirstByPhoneAndPhoneCode(String phone, PhoneCode phoneCode);
+
+    Account findAccountByUsername(String username);
+
+    Account findByIdAccount(int idAccount);
 
 }

@@ -22,8 +22,8 @@ $("#confirm-register").on("click", function () {
         var phoneCode = $("#country-phone-register > .country-phone-selector > .country-phone-selected > span")[0].firstChild.textContent;
         var phone = $("#r-input-phone")[0].value;
         var password = $("#r-input-password")[0].value;
-        var nickname = $("#r-input-nickname")[0].value;
-        var role = $("role :checked, :radio")[0].checked ? "client" : "master";
+        var username = $("#r-input-username")[0].value;
+        var role = $("role :checked, :radio")[0].checked ? "ROLE_CLIENT" : "ROLE_MASTER";
         $.ajax({
             type: "GET",
             url: "/chikaboom/registration",
@@ -33,7 +33,7 @@ $("#confirm-register").on("click", function () {
                 phoneCode: phoneCode,
                 phone: phone,
                 password: password,
-                nickname: nickname,
+                username: username,
                 role: role
             },
             success: function () {
@@ -51,35 +51,28 @@ $("#confirm-register").on("click", function () {
     }
 });
 
-$("#confirm-login").on("click", function () {
-    if (validateAllAuthorizeFields()) {
-        var phoneCode = $("#country-phone-login > .country-phone-selector > .country-phone-selected > span")[0].firstChild.textContent;
-        var phone = $("#l-input-phone")[0].value;
-        var password = $("#l-input-password")[0].value;
-        $.ajax({
-            type: "GET",
-            url: "/chikaboom/authorization", //TODO выглядит не ок прям совсем
-            contentType: "application/text",
-            dataType: "text",
-            data: {
-                phoneCode: phoneCode,
-                phone: phone,
-                password: password,
-            },
-            success: function (data) {
-                window.location.replace(data);
-            },
-            error: function () {
-                showWarnWrongLoginData();
-            }
-        });
-    }
+$("#login-form").submit(function (e) {
+    e.preventDefault();
+    $.ajax({
+        url: "/login",
+        type: 'POST',
+        beforeSend: function (xhr) {
+            xhr.withCredentials = true;
+        },
+        data: $('#login-form').serialize(),
+        success: function () {
+            var hrefParts = location.href.split("#")
+            location.href = hrefParts[0];
+        },
+        error: function () {
+            showWarnWrongLoginData();
+        }
+    });
 });
 
-$("#l-input-phone").on("keyup", function () {
+$("#l-input-username").on("keyup", function () {
     validateAuthorizeField(this);
-});
-
+})
 $("#l-input-password").on("keyup", function () {
     validateAuthorizeField(this);
 });
@@ -88,7 +81,7 @@ $("#r-input-phone").on("keyup", function () {
     validateRegisterField(this);
 });
 
-$("#r-input-nickname").on("keyup", function () {
+$("#r-input-username").on("keyup", function () {
     validateRegisterField(this);
 });
 
@@ -136,16 +129,16 @@ function validateRegisterField(field) {
         field.setAttribute("reason", "empty");
     } else if (field.value.length < 9
         && field.id !== "r-input-confirm-password" && field.id !== "r-input-password"
-        && field.id !== "r-input-nickname"
+        && field.id !== "r-input-username"
     ) {
         field.setAttribute("reason", "short");
-    } else if (field.value.length < 2 && field.id === "r-input-nickname") {
+    } else if (field.value.length < 2 && field.id === "r-input-username") {
         field.setAttribute("reason", "short");
     } else if (field.value.length < 5 && field.id === "r-input-password") {
         field.setAttribute("reason", "short");
     } else if (field.id === "r-input-phone" && !/^(\s*)?([- _():=+]??\d[- _():=+]?){9,14}(\s*)?$/.test(field.value)) {
         field.setAttribute("reason", "incorrect");
-    } else if (field.id === "r-input-nickname" && !/^[a-zA-ZА-Яа-я]+\s{0,1}[a-zA-ZА-Яа-я]+$/.test(field.value)) {
+    } else if (field.id === "r-input-username" && !/^[a-zA-ZА-Яа-я]+\s{0,1}[a-zA-ZА-Яа-я]+$/.test(field.value)) {
         field.setAttribute("reason", "incorrect");
     } else if (field.id === "r-input-confirm-password" && $("#" + field.id)[0].value !== $("#r-input-password")[0].value) {
         field.setAttribute("reason", "different");
@@ -165,7 +158,8 @@ function validateAuthorizeField(field) {
 
     if (field.value == null || field.value === "") {
         field.setAttribute("reason", "empty");
-    } else if (field.id === "l-input-phone" && !/^(\s*)?([- _():=+]??\d[- _():=+]?){9,14}(\s*)?$/.test(field.value)) {
+    }
+    else if (field.id === "l-input-username" && !/^[a-zA-ZА-Яа-я]+\s{0,1}[a-zA-ZА-Яа-я]+$/.test(field.value)) {
         field.setAttribute("reason", "incorrect");
     } else {
         field.style.borderColor = ""

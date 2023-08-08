@@ -2,13 +2,12 @@ package net.chikaboom.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpServletRequest;
-import net.chikaboom.exception.IllegalAccessException;
 import net.chikaboom.model.database.Account;
-import net.chikaboom.service.action.AccountInfoLoaderService;
+import net.chikaboom.repository.AccountRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,15 +24,13 @@ public class PersonalityController {
 
     @Value("${attr.account}")
     private String ACCOUNT;
-    @Value("${attr.idAccount}")
-    private String ID_ACCOUNT;
 
-    private final AccountInfoLoaderService accountInfoLoaderService;
+    private final AccountRepository accountRepository;
     private final Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
-    public PersonalityController(AccountInfoLoaderService accountInfoLoaderService) {
-        this.accountInfoLoaderService = accountInfoLoaderService;
+    public PersonalityController(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
     }
 
     @Value("${page.personality}")
@@ -43,24 +40,19 @@ public class PersonalityController {
      * Производит подготовку данных и открытие страницы личного кабинета мастера. Также проверяет аутентификацию пользователя
      *
      * @param idAccount идентификатор пользователя
-     * @param request   запрос с клиента
      * @return представление личного кабинета, а также json аккаунта пользователя
-     * @throws IllegalAccessException возникает в случае, если доступ пытается получить неавторизованный пользователь
      */
+    @PreAuthorize("hasAnyRole('MASTER', 'CLIENT') and #idAccount == authentication.principal.idAccount")
     @GetMapping
-    public ModelAndView openPersonalityPage(@PathVariable int idAccount, HttpServletRequest request) throws IllegalAccessException {
+    public ModelAndView openPersonalityPage(@PathVariable int idAccount) {
         logger.info("Opening personality page...");
 
-//        TODO FILTER! Сделать аннотацию, аспект мб. Который проверяет данные на совпадение.
-        if (request.getSession().getAttribute(ID_ACCOUNT) == null ||
-                (int) request.getSession().getAttribute(ID_ACCOUNT) != idAccount) {
-            throw new IllegalAccessException("User with id " + request.getSession().getAttribute(ID_ACCOUNT) + " trying " +
-                    "to open page of user with id " + idAccount + "!");
-        }
+        Account account = accountRepository.findByIdAccount(idAccount);
+
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName(PERSONALITY_PAGE);
 
-        Account account = accountInfoLoaderService.findAccountById(idAccount);
+
         ObjectMapper mapper = new ObjectMapper();
         String accountJSON = null;
 

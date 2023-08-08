@@ -9,6 +9,8 @@ public final class DbNamesConstant {
     public static final String ACCOUNT_STATUS = "account_status";
     public static final String ADDRESS = "address";
     public static final String ROLE = "role";
+    public static final String NAME = "name";
+    public static final String ROLES = "roles";
     public static final String SOCIAL_NETWORK = "social_network";
     public static final String STATUS = "status";
     public static final String SERVICE = "service";
@@ -23,10 +25,10 @@ public final class DbNamesConstant {
 
     public static final String ID_ACCOUNT = "idaccount";
     public static final String PHONE_CODE = "phone_code";
+    public static final String PHONE_CODE_NAME = "phone_code_name";
     public static final String PHONE = "phone";
     public static final String PASSWORD = "password";
-    public static final String SALT = "salt";
-    public static final String NICKNAME = "nickname";
+    public static final String USERNAME = "username";
     public static final String REGISTRATION_DATE = "registration_date";
     public static final String EMAIL = "email";
 
@@ -65,6 +67,9 @@ public final class DbNamesConstant {
     public static final String ID_ACCOUNT_CLIENT = "idaccount_client";
     public static final String APPOINTMENT_DATE = "appointment_date";
     public static final String APPOINTMENT_TIME = "appointment_time";
+
+    public static final String ACCOUNT_ROLES = "account_roles";
+    public static final String ID_ACCOUNT_ROLES = "idaccount_roles";
 
     private DbNamesConstant() {
     }

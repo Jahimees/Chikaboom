@@ -1,13 +1,14 @@
 package net.chikaboom.model.database;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.Data;
+import net.chikaboom.util.constant.ApplicationRole;
+import org.springframework.security.core.GrantedAuthority;
 
-import static net.chikaboom.util.constant.DbNamesConstant.ID_ROLE;
-import static net.chikaboom.util.constant.DbNamesConstant.ROLE;
+import java.util.Set;
+
+import static net.chikaboom.util.constant.DbNamesConstant.*;
 
 /**
  * Определяет модель таблицы Role в базе данных
@@ -15,28 +16,32 @@ import static net.chikaboom.util.constant.DbNamesConstant.ROLE;
 @Data
 @Entity
 @Table(name = ROLE)
-public class Role implements BaseEntity {
+public class Role implements BaseEntity, GrantedAuthority {
 
     public Role() {
 
     }
 
     public Role(int idRole) {
+        this.idRole = idRole;
         switch (idRole) {
             case 1: {
-                this.idRole = idRole;
-                this.role = "master";
+                this.name = ApplicationRole.ROLE_MASTER.name();
                 break;
             }
             case 2: {
-                this.idRole = idRole;
-                this.role = "client";
+                this.name = ApplicationRole.ROLE_CLIENT.name();
                 break;
             }
             default:
                 this.idRole = 2;
-                role = "client";
+                this.name = ApplicationRole.ROLE_CLIENT.name();
         }
+    }
+
+    public Role(ApplicationRole role) {
+        this.idRole = role.getValue();
+        this.name = role.name();
     }
 
     /**
@@ -49,6 +54,19 @@ public class Role implements BaseEntity {
     /**
      * Имя роли пользователя
      */
-    @Column(name = ROLE)
-    private String role;
+    @Column(name = NAME)
+    private String name;
+
+    /**
+     * Ссылки на аккаунты, у которых есть данная роль
+     */
+    @Transient
+    @ManyToMany(mappedBy = ROLES)
+    private Set<Account> accounts;
+
+    @JsonIgnore
+    @Override
+    public String getAuthority() {
+        return getName();
+    }
 }

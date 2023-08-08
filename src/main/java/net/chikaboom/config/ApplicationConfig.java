@@ -18,7 +18,7 @@ import javax.sql.DataSource;
 @Configuration
 @PropertySource("classpath:application.properties")
 @PropertySource("classpath:constants.properties")
-public class ApplicationConfiguration {
+public class ApplicationConfig {
 
     @Value("${spring.datasource.driver-class-name}")
     private String driverClassName;
@@ -31,7 +31,7 @@ public class ApplicationConfiguration {
     @Value("${data.size}")
     private String dataSize;
 
-    private final org.apache.log4j.Logger logger = Logger.getLogger(this.getClass());
+    private final Logger logger = Logger.getLogger(this.getClass());
 
     /**
      * Конфигурация бина подключения к базе данных.

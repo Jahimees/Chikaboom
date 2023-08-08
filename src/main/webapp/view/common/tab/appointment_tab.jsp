@@ -25,7 +25,7 @@
                     <div class="col-1">${appointment.userService.time}</div>
                     <div class="col-2">
                         +${appointment.clientAccount.phoneCode.phoneCode} ${appointment.clientAccount.phone}</div>
-                    <div class="col-2">${appointment.clientAccount.nickname}</div>
+                    <div class="col-2">${appointment.clientAccount.username}</div>
 <%--                    TODO небезопасно. Пользователь видит callConfirmDeletePopup(3) и может поменятЬ!--%>
                     <div class="col-1 edit-button" onclick="callConfirmDeletePopup(${appointment.masterAccount.idAccount},${appointment.idAppointment})"><img
                             src="/image/icon/cross_icon.svg" style="width: 15px;"></div>

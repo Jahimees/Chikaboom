@@ -34,6 +34,9 @@ public class AccountStatus implements BaseEntity {
     @Column(name = TO_DATE)
     private Timestamp toDate;
 
+    /**
+     * Ссылка на аккаунт
+     */
     @OneToOne
     @JoinColumn(name = ID_ACCOUNT)
     private Account account;

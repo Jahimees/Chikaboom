@@ -5,6 +5,7 @@ import net.chikaboom.service.action.AppointmentService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,6 +46,7 @@ public class AppointmentTabController {
      * @param idAccount идентификатор аккаунта
      * @return модель (содержит данные записей к мастеру) и представление (содержит путь к вкладке записей)
      */
+    @PreAuthorize("#idAccount == authentication.principal.idAccount and hasRole('MASTER')")
     @GetMapping(value = "/appointment")
     public ModelAndView openAppointmentTab(@PathVariable int idAccount) {
         logger.info("Opening appointment tab.");
@@ -65,6 +67,7 @@ public class AppointmentTabController {
      * @return модель (содержит данные записей клиента) и представление (содержит путь к вкладке моих записей)
      */
 //    TODO FIXME NEW переделать путь
+    @PreAuthorize("#idAccount == authentication.principal.idAccount")
     @GetMapping(value = "/myappointment")
     public ModelAndView openMyAppointmentTab(@PathVariable int idAccount) {
         logger.info("Opening myappointment tab.");

@@ -6,18 +6,20 @@ import net.chikaboom.model.database.PhoneCode;
 import net.chikaboom.model.database.Role;
 import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.repository.PhoneCodeRepository;
-import net.chikaboom.service.HashPasswordService;
 import net.chikaboom.util.PhoneNumberConverter;
 import net.chikaboom.util.constant.ApplicationRole;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Сервис реализует создание нового аккаунта
@@ -28,23 +30,23 @@ public class RegistrationActionService {
 
     @Value("${page.main}")
     private String MAIN_PAGE;
-    @Value("${converted_password}")
-    private String CONVERTED_PASSWORD;
-    @Value("${salt}")
-    private String SALT;
+    @Value("${attr.role_master}")
+    private String ROLE_MASTER;
+    @Value("${attr.role_client}")
+    private String ROLE_CLIENT;
 
-    private final HashPasswordService hashPasswordService;
     private final AccountRepository accountRepository;
     private final PhoneCodeRepository phoneCodeRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
+
     private final Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
-    public RegistrationActionService(HashPasswordService hashPasswordService,
-                                     AccountRepository accountRepository,
-                                     PhoneCodeRepository phoneCodeRepository) {
-        this.hashPasswordService = hashPasswordService;
+    public RegistrationActionService(AccountRepository accountRepository, PhoneCodeRepository phoneCodeRepository,
+                                     BCryptPasswordEncoder passwordEncoder) {
         this.accountRepository = accountRepository;
         this.phoneCodeRepository = phoneCodeRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -53,29 +55,35 @@ public class RegistrationActionService {
      * @return возвращает главную страницу. В случае неудачи выбрасывает исключение попытки создания существующего
      * пользователя
      */
-    public String register(String phoneCodeString, String phone, String clearPassword, String nickname, String roleString) {
+    public String register(String phoneCodeString, String phone, String clearPassword, String username, String roleString) {
         int phoneCodeNumbers = Integer.parseInt(phoneCodeString);
-        PhoneCode phoneCode = phoneCodeRepository.findOneByPhoneCode(phoneCodeNumbers);
+        PhoneCode phoneCode = phoneCodeRepository.findFirstByPhoneCode(phoneCodeNumbers);
 
         phone = PhoneNumberConverter.clearPhoneNumber(phone);
-        if (isUserAlreadyExists(phone, phoneCode)) {
+        if (isUserAlreadyExists(phone, phoneCode, username)) {
             throw new UserAlreadyExistsException("User with phone +" + phoneCodeNumbers + " " + phone + " already exists");
         }
 
-        Map<String, Object> complexPassword = hashPasswordService.convertPasswordForStorage(clearPassword);
-
-        int idRole = ApplicationRole.valueOf(roleString.toUpperCase()).getValue();
+        int idRole = ApplicationRole.valueOf(roleString).getValue();
         Role role = new Role(idRole);
 
         Account account = new Account();
         account.setPhone(phone);
-        account.setPassword(complexPassword.get(CONVERTED_PASSWORD).toString());
-        account.setSalt(complexPassword.get(SALT).toString());
+        account.setPassword(clearPassword);
         account.setRegistrationDate(Timestamp.valueOf(LocalDateTime.now()));
-        account.setRole(role);
-        account.setNickname(nickname);
+        account.setUsername(username);
         account.setPhoneCode(phoneCode);
 
+        Set<Role> roleSet = new HashSet<>();
+        if (role.getName().equals(ROLE_MASTER)) {
+            roleSet.addAll(Arrays.asList(role, new Role(ApplicationRole.ROLE_CLIENT)));
+            account.setRoles(roleSet);
+        } else if (role.getName().equals(ROLE_CLIENT)) {
+            roleSet.add(role);
+        }
+
+        account.setRoles(roleSet);
+        account.setPassword(passwordEncoder.encode(account.getPassword()));
         accountRepository.save(account);
 
         logger.info("New account created");
@@ -83,7 +91,8 @@ public class RegistrationActionService {
         return MAIN_PAGE;
     }
 
-    private boolean isUserAlreadyExists(String phone, PhoneCode phoneCode) {
-        return accountRepository.findOneByPhoneAndPhoneCode(phone, phoneCode) != null;
+    private boolean isUserAlreadyExists(String phone, PhoneCode phoneCode, String username) {
+        return accountRepository.findFirstByPhoneAndPhoneCode(phone, phoneCode) != null
+                || accountRepository.findAccountByUsername(username) != null;
     }
 }
