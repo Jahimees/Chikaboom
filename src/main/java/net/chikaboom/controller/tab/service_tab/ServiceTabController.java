@@ -87,7 +87,7 @@ public class ServiceTabController {
      * @param idAccount идентификатор аккаунта
      * @return полную информацию в формате JSON обо всех созданных пользователем услугах.
      */
-    @PreAuthorize("#idAccount == authentication.principal.idAccount and hasRole('MASTER')")
+    @PreAuthorize("permitAll()")
     @GetMapping("/info")
     public ResponseEntity<String> loadServicesInfo(@PathVariable int idAccount) {
         logger.info("Getting full info about services of account with id " + idAccount);

@@ -22,8 +22,8 @@
                 <div>Время</div>
                 <select class="middle-box w-80" style="display: block" id="working-time-select"></select>
                 <hr>
-                <div id="service-type-time-placeholder"></div>
-                <div id="service-type-cost-placeholder"></div>
+                <div id="service-time-placeholder"></div>
+                <div id="service-cost-placeholder"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="popup-btn" data-bs-dismiss="modal">Закрыть</button>

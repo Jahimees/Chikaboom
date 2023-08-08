@@ -98,7 +98,7 @@ function fillServiceTable(servicesJson, isAccountPage) {
             orderTag.setAttribute("data-bs-toggle", "modal");
             orderTag.setAttribute("data-bs-target", "#exampleModal");
             orderTag.onclick = function () {
-                $("#service-types-select")[0].value = service.idService;
+                $("#services-select")[0].value = service.idService;
             }
             orderTag.innerHTML = "Записаться";
 
@@ -334,14 +334,14 @@ function searchService(idService) {
 
 // Модальное окно записи
 function fillServicesModal(servicesJson) {
-    let serviceTypesSelect = $("#service-types-select")[0];
+    let servicesSelect = $("#services-select")[0];
 
     servicesJson.forEach(function (service) {
         let option = document.createElement("option");
         option.value = service.idService;
         option.innerHTML = service.name;
 
-        serviceTypesSelect.appendChild(option);
+        servicesSelect.appendChild(option);
     })
 }
 
@@ -360,7 +360,7 @@ function fillWorkingDays() {
     })
 }
 
-$("#service-types-select").on("click", function (ev) {
+$("#services-select").on("click", function (ev) {
     calculateServiceTime();
     let chosenIdService = ev.currentTarget.value;
     let chosenService;
@@ -451,7 +451,7 @@ function calculateServiceTime() {
         }
     })
 
-    let idService = parseInt($("#service-types-select")[0].value);
+    let idService = parseInt($("#services-select")[0].value);
     let currentService;
 
     servicesJson.forEach(function (service) {

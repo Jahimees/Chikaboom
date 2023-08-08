@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,7 +59,7 @@ public class AppointmentController {
      * @param idAccountMaster идентификатор аккаунта мастера
      * @return все записи к мастеру в формате JSON
      */
-    @PostAuthorize("#idAccountMaster == authentication.principal.idAccount")
+    @PreAuthorize("permitAll()")
     @GetMapping
     public ResponseEntity<String> getAllMasterAppointments(@PathVariable int idAccountMaster) {
         logger.info("Getting full info about appointments of master with id " + idAccountMaster);
@@ -88,7 +87,7 @@ public class AppointmentController {
      * @param idAppointment   идентификатор записи
      * @return строку результата удаления с соответствующим HTTP-кодом
      */
-    @PostAuthorize("#idAccountMaster == authentication.principal.idAccount")
+    @PreAuthorize("#idAccountMaster == authentication.principal.idAccount")
     @DeleteMapping("/{idAppointment}")
     public ResponseEntity<String> deleteAppointment(@PathVariable int idAccountMaster, @PathVariable int idAppointment) {
         logger.info("Starting deleting appointment with id " + idAppointment);

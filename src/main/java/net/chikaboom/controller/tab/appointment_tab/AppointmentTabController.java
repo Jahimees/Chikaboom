@@ -46,7 +46,7 @@ public class AppointmentTabController {
      * @param idAccount идентификатор аккаунта
      * @return модель (содержит данные записей к мастеру) и представление (содержит путь к вкладке записей)
      */
-    @PreAuthorize("#idAccount == authentication.principal.idAccount and hasRole('MASTER')")
+    @PreAuthorize("#idAccount == authentication.principal.idAccount")
     @GetMapping(value = "/appointment")
     public ModelAndView openAppointmentTab(@PathVariable int idAccount) {
         logger.info("Opening appointment tab.");

@@ -191,7 +191,7 @@
 
 <script type="text/javascript" src="/js/static_popup.js"></script>
 <script type="text/javascript" src="/js/dynamic_popup.js"></script>
-<script type="text/javascript" src="/js/serviceType.js"></script>
+<script type="text/javascript" src="/js/service.js"></script>
 <script>
     var accountJson = JSON.parse(JSON.stringify(${account}));
     var servicesJson = "";
