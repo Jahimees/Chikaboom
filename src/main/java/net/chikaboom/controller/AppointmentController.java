@@ -36,7 +36,7 @@ public class AppointmentController {
      *
      * @param idAccountMaster идентификатор аккаунта мастера (к кому запись)
      * @param idAccountClient идентификатор аккаунта клиента (кто совершает запись)
-     * @param idUserService   идентификатор пользовательской услуги, на которую совершается запись
+     * @param idService       идентификатор пользовательской услуги, на которую совершается запись
      * @param appointmentDate дата записи
      * @param appointmentTime время записи
      * @return сохраненный объект записи
@@ -44,11 +44,11 @@ public class AppointmentController {
     @PreAuthorize("#idAccountClient == authentication.principal.idAccount and #idAccountClient != #idAccountMaster")
     @PostMapping
     public ResponseEntity<Appointment> makeAppointment(@PathVariable int idAccountMaster, @RequestParam int idAccountClient,
-                                                       @RequestParam int idUserService, @RequestParam String appointmentDate,
+                                                       @RequestParam int idService, @RequestParam String appointmentDate,
                                                        @RequestParam String appointmentTime) {
         logger.info("Making appointment for client (idClient=" + idAccountClient + ") to master (idMaster=" + idAccountMaster + ").");
 
-        Appointment appointment = appointmentService.createAppointment(idAccountMaster, idAccountClient, idUserService,
+        Appointment appointment = appointmentService.createAppointment(idAccountMaster, idAccountClient, idService,
                 appointmentDate, appointmentTime);
 
         return new ResponseEntity<>(appointment, HttpStatus.OK);

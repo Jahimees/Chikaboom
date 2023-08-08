@@ -39,8 +39,8 @@ public class Appointment implements BaseEntity {
      * Пользовательская услуга, на которую записывается клиент
      */
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = ID_USER_SERVICE)
-    private UserService userService;
+    @JoinColumn(name = ID_SERVICE)
+    private Service service;
 
     /**
      * Дата записи на услугу

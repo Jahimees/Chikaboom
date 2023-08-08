@@ -34,24 +34,24 @@ var loadMasterAppointments = function () {
         data: {},
         success: function (masterAppointments) {
             masterAppointments.forEach(function (masterAppointment) {
-                let title = masterAppointment.userService.userServiceName + " - " + masterAppointment.clientAccount.username;
+                let title = masterAppointment.service.name + " - " + masterAppointment.clientAccount.username;
                 let appointmentDate = new Date(masterAppointment.appointmentDate);
 
                 let splittedAppointmentTime = masterAppointment.appointmentTime.split(":");
                 appointmentDate.setHours(splittedAppointmentTime[0]);
                 appointmentDate.setMinutes(splittedAppointmentTime[1]);
 
-                let userServiceTime = masterAppointment.userService.time;
-                let userServiceDurationTime = userServiceTime.replace(' минут', '').split(' час');
+                let serviceTime = masterAppointment.service.time;
+                let serviceDurationTime = serviceTime.replace(' минут', '').split(' час');
                 let duration;
 
-                if (userServiceDurationTime.length === 1) {
+                if (serviceDurationTime.length === 1) {
                     duration = 1;
                 } else {
-                    userServiceDurationTime[1] = userServiceDurationTime[1].replace('а', '');
+                    serviceDurationTime[1] = serviceDurationTime[1].replace('а', '');
 
-                    duration = userServiceDurationTime[0] * 60;
-                    duration += userServiceDurationTime[1] === '' ? 0 : 30;
+                    duration = serviceDurationTime[0] * 60;
+                    duration += serviceDurationTime[1] === '' ? 0 : 30;
                 }
 
                 let appointmentEnd = new Date(masterAppointment.appointmentDate);

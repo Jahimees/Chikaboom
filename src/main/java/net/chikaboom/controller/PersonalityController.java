@@ -52,7 +52,6 @@ public class PersonalityController {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName(PERSONALITY_PAGE);
 
-
         ObjectMapper mapper = new ObjectMapper();
         String accountJSON = null;
 

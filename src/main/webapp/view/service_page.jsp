@@ -36,15 +36,15 @@
     <a href="/chikaboom/service" style="text-decoration: none; color: #5F4E7D">Услуги</a>
 </div>
 <hr>
-<div class="service-block-all row">
+<div class="service-type-block-all row">
     <c:set var="counter" value="1"/>
     <c:forTokens var="i"
                  items="Ногтевой сервис,Парикмахерские услуги,Ресницы,Брови,Визаж,Барбершоп,Депиляция/Эпиляция,Косметология/Уход за телом,Тату/татуаж,Массаж"
                  delims=",">
-        <div class="col-xl-4 service-outer-image">
+        <div class="col-xl-4 service-type-outer-image">
             <a style="display: inline-flex" href="/chikaboom/service/search/${counter}">
-                <img class="service-image" src="/image/service/service_icon_${counter}.png" alt="no_image">
-                <div class="service-item">
+                <img class="service-type-image" src="/image/serviceType/service_icon_${counter}.png" alt="no_image">
+                <div class="service-type-item">
                     <p><c:out value="${i}"/></p>
                 </div>
             </a>

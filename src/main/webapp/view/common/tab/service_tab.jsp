@@ -6,7 +6,7 @@
     </div>
 </div>
 
-<div id="service-content-placeholder" class="setting-content-placeholder">
+<div id="service-type-content-placeholder" class="setting-content-placeholder">
 
 </div>
 
@@ -16,9 +16,9 @@
 <script src="/js/service.js"></script>
 <script>
 
-    var userServicesJson;
-    var subservices = JSON.parse(JSON.stringify(${subservices}));
-    var services;
+    var servicesJson;
+    var serviceSubtypes = JSON.parse(JSON.stringify(${serviceSubtypes}));
+    var serviceTypes;
 
     function loadServiceTab(tabName) {
         $.ajax({
@@ -29,8 +29,8 @@
             data: {},
             success: function (data) {
                 setCurrentTabName(tabName);
-                console.log("Load service tab " + tabName);
-                $("#service-content-placeholder").html(data);
+                console.log("Load serviceType tab " + tabName);
+                $("#service-type-content-placeholder").html(data);
             },
             error: function () {
                 loadUnderConstruction();

@@ -1,5 +1,6 @@
 package net.chikaboom.model.database;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -105,7 +106,6 @@ public class Account implements BaseEntity, UserDetails {
         return getRoles();
     }
 
-    @JsonIgnore
     @Override
     public String getUsername() {
         return username;

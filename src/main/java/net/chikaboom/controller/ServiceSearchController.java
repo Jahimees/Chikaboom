@@ -2,8 +2,8 @@ package net.chikaboom.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.chikaboom.model.database.Subservice;
-import net.chikaboom.model.database.UserService;
+import net.chikaboom.model.database.Service;
+import net.chikaboom.model.database.ServiceSubtype;
 import net.chikaboom.service.action.tab.ServiceTabService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +27,8 @@ public class ServiceSearchController {
     private String SERVICE_SEARCH_PAGE;
     @Value("${page.service_page}")
     private String SERVICE_PAGE;
-    @Value("${attr.subserviceList}")
-    private String SUBSERVICE_LIST;
+    @Value("${attr.serviceSubtypeList}")
+    private String SERVICE_SUBTYPE_LIST;
 
     private final ServiceTabService serviceTabService;
     private final Logger logger = Logger.getLogger(this.getClass());
@@ -52,18 +52,18 @@ public class ServiceSearchController {
     /**
      * Загружает все подуслуги, выбранной услуги для дальнейшего поиска
      *
-     * @param idService идентификатор услуги
+     * @param idServiceType идентификатор типа услуги
      * @return модель с данными подуслуг и представление страницы поиска мастеров
      */
     @PreAuthorize("permitAll()")
-    @GetMapping(value = "/search/{idService}")
-    public ModelAndView getServiceSearchPage(@PathVariable int idService) {
-        logger.info("Loading subservices with idService " + idService);
+    @GetMapping(value = "/search/{idServiceType}")
+    public ModelAndView getServiceSearchPage(@PathVariable int idServiceType) {
+        logger.info("Loading service subtypes with idServiceType " + idServiceType);
 
-        List<Subservice> subserviceList = serviceTabService.findAllSubservices(idService);
+        List<ServiceSubtype> serviceSubtypeList = serviceTabService.findAllServiceSubtypesByIdServiceType(idServiceType);
 
         ModelAndView modelAndView = new ModelAndView(SERVICE_SEARCH_PAGE);
-        modelAndView.addObject(SUBSERVICE_LIST, subserviceList);
+        modelAndView.addObject(SERVICE_SUBTYPE_LIST, serviceSubtypeList);
 
         return modelAndView;
     }
@@ -72,30 +72,30 @@ public class ServiceSearchController {
      * Осуществляет непосредственно поиск по выбранным подуслугам. Если ни одна подуслуга не была выбрана, поиск ведется
      * по всем возможным подуслугам.
      *
-     * @param idService             идентификатор услуги
-     * @param subserviceIdListJSON набор идентификаторов подуслуг в формате JSON
+     * @param idServiceType            идентификатор услуги
+     * @param serviceSubtypeIdListJson набор идентификаторов подуслуг в формате JSON
      * @return данные о пользовательских услугах, отвечающие заданным параметрам поиска
      */
     @PreAuthorize("permitAll()")
-    @GetMapping(value = "/search/{idService}/dosearch")
-    public ResponseEntity<String> getUserServicesBySubserviceIds(@PathVariable int idService, @RequestParam String subserviceIdListJSON) {
-        logger.info("Searching userServices by subserviceIdArray");
+    @GetMapping(value = "/search/{idServiceType}/dosearch")
+    public ResponseEntity<String> getServicesByServiceSubtypeIds(@PathVariable int idServiceType, @RequestParam String serviceSubtypeIdListJson) {
+        logger.info("Searching services by serviceSubtypeIds");
 
-        int[] subserviceIdArray = new int[0];
+        int[] serviceSubtypeIdArray = new int[0];
         try {
-            logger.info("Trying to parse subserviceIdArray");
-            subserviceIdArray = new ObjectMapper().readValue(subserviceIdListJSON, int[].class);
+            logger.info("Trying to parse serviceSubtypeIdList");
+            serviceSubtypeIdArray = new ObjectMapper().readValue(serviceSubtypeIdListJson, int[].class);
         } catch (JsonProcessingException e) {
             logger.error(e.getMessage());
         }
 
-        List<UserService> userServiceList = serviceTabService.getUserServicesByServiceIds(subserviceIdArray, idService);
+        List<Service> serviceList = serviceTabService.getServicesByServiceSubtypeIds(serviceSubtypeIdArray, idServiceType);
         String result = "";
         ObjectMapper mapper = new ObjectMapper();
 
         try {
-            logger.info("Trying to convert userServiceList to JSON format");
-            result = mapper.writeValueAsString(userServiceList);
+            logger.info("Trying to convert serviceList to JSON format");
+            result = mapper.writeValueAsString(serviceList);
         } catch (JsonProcessingException e) {
             logger.error(e.getMessage());
         }

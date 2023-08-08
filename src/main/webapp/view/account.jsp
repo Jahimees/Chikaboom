@@ -94,7 +94,7 @@
             <div class="chapter-header medium-text">
                 ЦЕНЫ И УСЛУГИ
             </div>
-            <div id="user-service-placeholder" class="d-block w-100">
+            <div id="service-placeholder" class="d-block w-100">
             </div>
         </div>
 
@@ -107,16 +107,16 @@
             </div>
             <div class="d-inline-flex w-100" style="justify-content: center;">
                 <div>
-                    <img class="gallery_image" src="/image/service/service_icon_4.png">
+                    <img class="gallery_image" src="/image/serviceType/service_icon_4.png">
                 </div>
                 <div>
-                    <img class="gallery_image" src="/image/service/service_icon_2.png">
+                    <img class="gallery_image" src="/image/serviceType/service_icon_2.png">
                 </div>
                 <div>
-                    <img class="gallery_image" src="/image/service/service_icon_7.png">
+                    <img class="gallery_image" src="/image/serviceType/service_icon_7.png">
                 </div>
                 <div>
-                    <img class="gallery_image" src="/image/service/service_icon_10.png">
+                    <img class="gallery_image" src="/image/serviceType/service_icon_10.png">
                 </div>
             </div>
         </div>
@@ -191,10 +191,10 @@
 
 <script type="text/javascript" src="/js/static_popup.js"></script>
 <script type="text/javascript" src="/js/dynamic_popup.js"></script>
-<script type="text/javascript" src="/js/service.js"></script>
+<script type="text/javascript" src="/js/serviceType.js"></script>
 <script>
     var accountJson = JSON.parse(JSON.stringify(${account}));
-    var userServicesJson = "";
+    var servicesJson = "";
     var masterAppointmentsJson = "";
     var address = accountJson.address != null ? accountJson.address : "";
 
@@ -209,7 +209,7 @@
             $(".master-only").remove();
             $(".main-information").css("height", "auto");
         } else {
-            loadUserServices(accountJson.idAccount);
+            loadServices(accountJson.idAccount);
             loadMasterAppointments(accountJson.idAccount);
         }
     })

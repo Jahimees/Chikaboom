@@ -29,7 +29,7 @@
 <body>
 <jsp:include page="common/common_header.jsp"/>
 <div class="big-text padding-0-5">
-    ${subserviceList[0].service.serviceName}
+    ${serviceSubtypeList[0].serviceType.name}
 </div>
 <div class="medium-text padding-0-5 full-width-inline-box">
     <a href="/chikaboom/main" style="text-decoration: none; color: #5F4E7D">Главная</a>
@@ -37,7 +37,7 @@
     <a href="/chikaboom/service" style="text-decoration: none; color: #5F4E7D">
     Услуги</a>
     <div style="padding: 0 15px">></div>
-    ${subserviceList[0].service.serviceName}
+    ${serviceSubtypeList[0].serviceType.name}
 </div>
 <hr>
 <div class="row">
@@ -48,11 +48,11 @@
         <div class="common-text">
             Тип услуги
         </div>
-        <div id="subservice-block">
-            <c:forEach items="${subserviceList}" var="subservice">
+        <div id="service-subtype-block">
+            <c:forEach items="${serviceSubtypeList}" var="serviceSubtype">
                 <div class="medium-text">
-                    <input type="checkbox" class="subservice-checkbox" id="${subservice.idSubservice}">
-                    <label for="${subservice.idSubservice}">${subservice.subserviceName}</label>
+                    <input type="checkbox" class="service-subtype-checkbox" id="${serviceSubtype.idServiceSubtype}">
+                    <label for="${serviceSubtype.idServiceSubtype}">${serviceSubtype.name}</label>
                 </div>
             </c:forEach>
 
@@ -72,46 +72,46 @@
 
 
 <script>
-    var userServicesListJson;
+    var serviceListJson;
 
     $("#do-search-btn").on("click", function () {
         doSearch();
     })
 
     function doSearch() {
-        let subserviceIdList = [];
+        let serviceSubtypeIdList = [];
 
-        Array.from($(".subservice-checkbox")).forEach(function (subserviceCheckbox) {
-            if (subserviceCheckbox.checked) {
-                subserviceIdList.push(subserviceCheckbox.getAttribute("id"));
+        Array.from($(".service-subtype-checkbox")).forEach(function (serviceSubtypeCheckbox) {
+            if (serviceSubtypeCheckbox.checked) {
+                serviceSubtypeIdList.push(serviceSubtypeCheckbox.getAttribute("id"));
             }
         })
 
         $.ajax({
             type: "get",
-            url: "/chikaboom/service/search/${idService}/dosearch",
+            url: "/chikaboom/service/search/${idServiceType}/dosearch",
             contentType: "application/text",
             dataType: "text",
             data: {
-                subserviceIdListJSON: JSON.stringify(subserviceIdList),
+                serviceSubtypeIdListJson: JSON.stringify(serviceSubtypeIdList),
             },
             success: function (data) {
-                userServicesListJson = JSON.parse(data);
-                fillResultSearchTable(userServicesListJson)
+                serviceListJson = JSON.parse(data);
+                fillResultSearchTable(serviceListJson)
             }
         })
     }
 
-    function fillResultSearchTable(userServiceListJson) {
+    function fillResultSearchTable(serviceListJson) {
         let searchResultPlaceHolder = $("#search-result-placeholder")[0];
         searchResultPlaceHolder.innerHTML = "";
 
-        if (userServiceListJson.length !== 0) {
-            userServiceListJson.forEach(function (userService) {
-                let price = userService.price;
-                let userServiceName = userService.userServiceName;
-                let idMasterAccount = userService.account.idAccount
-                let masterName = userService.account.username;
+        if (serviceListJson.length !== 0) {
+            serviceListJson.forEach(function (service) {
+                let price = service.price;
+                let serviceName = service.name;
+                let idMasterAccount = service.account.idAccount
+                let masterName = service.account.username;
 
                 let accountHref = document.createElement("a");
                 accountHref.setAttribute("href", "/chikaboom/account/" + idMasterAccount);
@@ -131,9 +131,9 @@
                 let divInfo = document.createElement("div");
                 divInfo.setAttribute("class", "result-item");
 
-                let pUserServiceName = document.createElement("p");
-                pUserServiceName.setAttribute("class", "small-white-text");
-                pUserServiceName.innerText = userServiceName;
+                let pServiceName = document.createElement("p");
+                pServiceName.setAttribute("class", "small-white-text");
+                pServiceName.innerText = serviceName;
 
                 let pPrice = document.createElement("p");
                 pPrice.setAttribute("class", "small-text");
@@ -142,7 +142,7 @@
 
                 divName.appendChild(pName);
 
-                divInfo.appendChild(pUserServiceName);
+                divInfo.appendChild(pServiceName);
                 divInfo.appendChild(pPrice);
 
                 accountHref.appendChild(img);
