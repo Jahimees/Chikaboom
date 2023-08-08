@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -44,9 +45,9 @@ public class ServiceTabController {
      * @param idAccount идентификатор пользователя
      * @return представление вкладки и json всех подуслуг
      */
+    @PreAuthorize("#idAccount == authentication.principal.idAccount and hasRole('MASTER')")
     @GetMapping
     public ModelAndView openServiceTab(@PathVariable int idAccount) {
-//        TODO NEW проверка доступа? по ID account
         logger.info("Opening serviceTab");
         List<Subservice> subservices = serviceTabService.findAllSubservices();
 
@@ -74,6 +75,7 @@ public class ServiceTabController {
      * @param idAccount идентификатор мастера
      * @return json, содержащий все услуги, которые предоставляет мастер
      */
+    @PreAuthorize("#idAccount == authentication.principal.idAccount")
     @GetMapping("/general")
     public String loadGeneralServiceTab(@PathVariable int idAccount) {
         return GENERAL_SERVICE_TAB;
@@ -85,6 +87,7 @@ public class ServiceTabController {
      * @param idAccount идентификатор аккаунта
      * @return полную информацию в формате JSON обо всех созданных пользователем услугах.
      */
+    @PreAuthorize("#idAccount == authentication.principal.idAccount and hasRole('MASTER')")
     @GetMapping("/info")
     public ResponseEntity<String> loadUserServicesInfo(@PathVariable int idAccount) {
         logger.info("Getting full info about userServices of account with id " + idAccount);
@@ -111,6 +114,7 @@ public class ServiceTabController {
      * @param userService услуга, которую предоставляет мастер
      * @return обновленная услуга
      */
+    @PreAuthorize("#idAccount == authentication.principal.idAccount and hasRole('MASTER')")
     @PostMapping
     public ResponseEntity<UserService> createOrUpdateUserService(@PathVariable int idAccount, @RequestBody UserService userService) {
         logger.info("Creating or updating userService of user with id " + idAccount);
@@ -127,9 +131,9 @@ public class ServiceTabController {
      * @param idUserService идентификатор услуги, которую необходимо удалить
      * @return строку, содержащую результат удаления
      */
+    @PreAuthorize("#idAccount == authentication.principal.idAccount and hasRole('MASTER')")
     @DeleteMapping("/{idUserService}")
     public ResponseEntity<String> deleteUserService(@PathVariable int idAccount, @PathVariable int idUserService) {
-//        TODO NEW проверка idAccount???
         logger.info("Deleting userService (idUserService=" + idUserService + ") of user with id " + idUserService);
 
         serviceTabService.deleteUserService(idUserService);

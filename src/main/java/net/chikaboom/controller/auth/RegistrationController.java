@@ -29,23 +29,23 @@ public class RegistrationController {
     }
 
     /**
-     * Сохраняет параметры клиента и передает управление в сервис {@link RegistrationActionService}
+     * Передает управление и данные в сервис {@link RegistrationActionService}
      *
      * @param phoneCode параметр кода страны
      * @param phone     параметр номера телефона пользователя
      * @param password  параметр пароля
-     * @param nickname  имя регистрируемого пользователя
+     * @param username  имя регистрируемого пользователя
      * @param role      тип регистрируемого аккаунта
      * @return объект-ответ, содержащий название страницы, на которую должен будет осуществлен переход и http статус.
      * В случае ошибки возвращает объект-ответ-ошибки с помощью {@link AdviceController}
      */
     @GetMapping
     public ResponseEntity<?> register(@RequestParam String phoneCode, @RequestParam String phone,
-                                      @RequestParam String password, @RequestParam String nickname,
+                                      @RequestParam String password, @RequestParam String username,
                                       @RequestParam String role) {
         logger.info("Start registration process.");
 
         return new ResponseEntity<>("/chikaboom/" + registrationActionService
-                .register(phoneCode, phone, password, nickname, role), HttpStatus.OK);
+                .register(phoneCode, phone, password, username, role), HttpStatus.OK);
     }
 }

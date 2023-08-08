@@ -21,9 +21,9 @@
         <div class="col-4 common-black-text">
             Имя пользователя:
         </div>
-        <div id="nickname-placeholder" class="col-4 common-text placeholder">
+        <div id="username-placeholder" class="col-4 common-text placeholder">
         </div>
-        <div id="change-nickname-btn" onclick="openEditNicknamePopup()" class="col-1 edit-button">
+        <div id="change-username-btn" onclick="openEditUsernamePopup()" class="col-1 edit-button">
             <img src="/image/icon/edit_icon.svg">
         </div>
     </div>
@@ -54,9 +54,9 @@
 </div>
 
 <script>
-    function openEditNicknamePopup() {
+    function openEditUsernamePopup() {
         dropAllFields();
-        addField("Имя пользователя", "nickname", "text", "Rosalline", false,
+        addField("Имя пользователя", "username", "text", "Rosalline", false,
             [new Validation("Поле не может быть пустым", InvalidReason.EMPTY),
                 new Validation("Имя слишком короткое", InvalidReason.SHORT)]);
         openPopup("edit-popup");
@@ -149,6 +149,6 @@
             $("#about-text-placeholder")[0].innerText = aboutProfession != null ? aboutProfession : "" + "\n" + aboutText != null ? aboutText : "";
         }
 
-        $("#nickname-placeholder")[0].innerText = accountJson.nickname;
+        $("#username-placeholder")[0].innerText = accountJson.username;
     });
 </script>

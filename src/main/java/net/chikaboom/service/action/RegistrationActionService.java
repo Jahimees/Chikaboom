@@ -55,12 +55,12 @@ public class RegistrationActionService {
      * @return возвращает главную страницу. В случае неудачи выбрасывает исключение попытки создания существующего
      * пользователя
      */
-    public String register(String phoneCodeString, String phone, String clearPassword, String nickname, String roleString) {
+    public String register(String phoneCodeString, String phone, String clearPassword, String username, String roleString) {
         int phoneCodeNumbers = Integer.parseInt(phoneCodeString);
         PhoneCode phoneCode = phoneCodeRepository.findFirstByPhoneCode(phoneCodeNumbers);
 
         phone = PhoneNumberConverter.clearPhoneNumber(phone);
-        if (isUserAlreadyExists(phone, phoneCode, nickname)) {
+        if (isUserAlreadyExists(phone, phoneCode, username)) {
             throw new UserAlreadyExistsException("User with phone +" + phoneCodeNumbers + " " + phone + " already exists");
         }
 
@@ -71,7 +71,7 @@ public class RegistrationActionService {
         account.setPhone(phone);
         account.setPassword(clearPassword);
         account.setRegistrationDate(Timestamp.valueOf(LocalDateTime.now()));
-        account.setNickname(nickname);
+        account.setUsername(username);
         account.setPhoneCode(phoneCode);
 
         Set<Role> roleSet = new HashSet<>();
@@ -91,8 +91,8 @@ public class RegistrationActionService {
         return MAIN_PAGE;
     }
 
-    private boolean isUserAlreadyExists(String phone, PhoneCode phoneCode, String nickname) {
+    private boolean isUserAlreadyExists(String phone, PhoneCode phoneCode, String username) {
         return accountRepository.findFirstByPhoneAndPhoneCode(phone, phoneCode) != null
-                || accountRepository.findAccountByNickname(nickname) != null;
+                || accountRepository.findAccountByUsername(username) != null;
     }
 }

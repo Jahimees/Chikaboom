@@ -37,16 +37,10 @@ public class Account implements BaseEntity, UserDetails {
     private String password;
 
     /**
-     * Соль для пароля
-     */
-    @Column(name = SALT)
-    private String salt;
-
-    /**
      * Имя пользователя
      */
-    @Column(name = NICKNAME)
-    private String nickname;
+    @Column(name = USERNAME)
+    private String username;
 
     /**
      * Дата регистрации аккаунта
@@ -60,25 +54,42 @@ public class Account implements BaseEntity, UserDetails {
     @Column(name = EMAIL)
     private String email;
 
+    /**
+     * Содержит все роли пользователя
+     */
     @ManyToMany(fetch = FetchType.EAGER)
-    //    @JoinColumn(name = ID_ROLE)
     private Set<Role> roles;
 
+    /**
+     * Адрес пользователя
+     */
     @Column(name = ADDRESS)
     private String address;
 
+    /**
+     * Общедоступная информация о пользователе
+     */
     @OneToOne
     @JoinColumn(name = ID_ABOUT)
     private About about;
 
+    /**
+     * Ссылки на социальные сети пользователя
+     */
     @OneToOne
     @JoinColumn(name = ID_SOCIAL_NETWORK)
     private SocialNetwork socialNetwork;
 
+    /**
+     * Рабочий график мастера
+     */
     @OneToOne
     @JoinColumn(name = ID_WORKING_DAYS)
     private WorkingDays workingDays;
 
+    /**
+     * Код телефона пользователя
+     */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = ID_PHONE_CODE)
     private PhoneCode phoneCode;
@@ -98,7 +109,7 @@ public class Account implements BaseEntity, UserDetails {
     @JsonIgnore
     @Override
     public String getUsername() {
-        return getNickname();
+        return username;
     }
 
     @JsonIgnore

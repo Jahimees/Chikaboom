@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,6 +37,7 @@ public class UploadFileController {
      * @param file      сохраняемый файл
      * @return объект ответа с кодом 201, если файл загружен успешно, 400 - в ином случае
      */
+    @PreAuthorize("hasAnyRole('MASTER', 'CLIENT') and #idAccount == authentication.principal.idAccount")
     @PostMapping
     public ResponseEntity<String> handleImageUpload(@PathVariable int idAccount,
                                                     @RequestParam String fileName,

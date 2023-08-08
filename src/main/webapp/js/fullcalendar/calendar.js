@@ -34,7 +34,7 @@ var loadMasterAppointments = function () {
         data: {},
         success: function (masterAppointments) {
             masterAppointments.forEach(function (masterAppointment) {
-                let title = masterAppointment.userService.userServiceName + " - " + masterAppointment.clientAccount.nickname;
+                let title = masterAppointment.userService.userServiceName + " - " + masterAppointment.clientAccount.username;
                 let appointmentDate = new Date(masterAppointment.appointmentDate);
 
                 let splittedAppointmentTime = masterAppointment.appointmentTime.split(":");

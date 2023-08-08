@@ -57,6 +57,9 @@ public class Role implements BaseEntity, GrantedAuthority {
     @Column(name = NAME)
     private String name;
 
+    /**
+     * Ссылки на аккаунты, у которых есть данная роль
+     */
     @Transient
     @ManyToMany(mappedBy = ROLES)
     private Set<Account> accounts;

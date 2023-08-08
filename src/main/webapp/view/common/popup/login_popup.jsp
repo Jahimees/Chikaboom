@@ -8,11 +8,11 @@
     <form id="login-form">
         <div class="popup-body">
             <div class="common-black-text">Имя пользователя</div>
-            <label class="invalid-field-label-popup" id="l-input-nickname-empty">Поле не может быть пустым</label>
-            <label class="invalid-field-label-popup" id="l-input-nickname-incorrect">Можно использовать только буквы и 1
+            <label class="invalid-field-label-popup" id="l-input-username-empty">Поле не может быть пустым</label>
+            <label class="invalid-field-label-popup" id="l-input-username-incorrect">Можно использовать только буквы и 1
                 пробел между словами</label>
             <div class="popup-image">
-                <input id="l-input-nickname" class="popup-input-field" name="nickname" required placeholder="Rosaline"
+                <input id="l-input-username" class="popup-input-field" name="username" required placeholder="Rosaline"
                        valid="false">
             </div>
             <div class="common-black-text">Пароль</div>

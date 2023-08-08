@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -37,12 +38,12 @@ public class ServiceSearchController {
         this.serviceTabService = serviceTabService;
     }
 
-
     /**
      * Загружает страницу со всеми услугами
      *
      * @return пустую модель и представление страницы услуг
      */
+    @PreAuthorize("permitAll()")
     @GetMapping
     public ModelAndView getServicePage() {
         return new ModelAndView(SERVICE_PAGE);
@@ -54,6 +55,7 @@ public class ServiceSearchController {
      * @param idService идентификатор услуги
      * @return модель с данными подуслуг и представление страницы поиска мастеров
      */
+    @PreAuthorize("permitAll()")
     @GetMapping(value = "/search/{idService}")
     public ModelAndView getServiceSearchPage(@PathVariable int idService) {
         logger.info("Loading subservices with idService " + idService);
@@ -71,17 +73,18 @@ public class ServiceSearchController {
      * по всем возможным подуслугам.
      *
      * @param idService             идентификатор услуги
-     * @param subserviceIdArrayJSON набор идентификаторов подуслуг в формате JSON
+     * @param subserviceIdListJSON набор идентификаторов подуслуг в формате JSON
      * @return данные о пользовательских услугах, отвечающие заданным параметрам поиска
      */
+    @PreAuthorize("permitAll()")
     @GetMapping(value = "/search/{idService}/dosearch")
-    public ResponseEntity<String> getUserServicesBySubserviceIds(@PathVariable int idService, @RequestParam String subserviceIdArrayJSON) {
+    public ResponseEntity<String> getUserServicesBySubserviceIds(@PathVariable int idService, @RequestParam String subserviceIdListJSON) {
         logger.info("Searching userServices by subserviceIdArray");
 
         int[] subserviceIdArray = new int[0];
         try {
             logger.info("Trying to parse subserviceIdArray");
-            subserviceIdArray = new ObjectMapper().readValue(subserviceIdArrayJSON, int[].class);
+            subserviceIdArray = new ObjectMapper().readValue(subserviceIdListJSON, int[].class);
         } catch (JsonProcessingException e) {
             logger.error(e.getMessage());
         }

@@ -11,6 +11,9 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+/**
+ * Собственная реализация аутентификации пользователя
+ */
 @Service
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
@@ -23,15 +26,22 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
+    /**
+     * Производит аутентификацию пользователя. Сверяет имя пользователя, а также хэшированные пароли
+     *
+     * @param authentication аутентификация из {@link org.springframework.security.core.context.SecurityContextHolder}
+     * @return объект аутентификации с данными аутентифицированного пользователя
+     * @throws AuthenticationException возникает при неверно введенных данных
+     */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String nickname = authentication.getName();
+        String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
-        Account account = accountRepository.findAccountByNickname(nickname);
+        Account account = accountRepository.findAccountByUsername(username);
 
         if (account == null) {
-            throw new BadCredentialsException("Unknown user " + nickname);
+            throw new BadCredentialsException("Unknown user " + username);
         }
 
         if (!bCryptPasswordEncoder.matches(password, account.getPassword())) {

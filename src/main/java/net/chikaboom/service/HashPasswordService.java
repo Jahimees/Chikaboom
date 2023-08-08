@@ -13,7 +13,11 @@ import java.util.Map;
 /**
  * Данный сервис предназначен для хэширования пароля с целью повышения безопасности.
  * Помимо обычного хэширования пароли "засаливаются"
+ *
+ * @deprecated Более не используется из-за использования {@link org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder}.
+ * Однако может пригодится в будущих проектах
  */
+@Deprecated
 @Service
 public class HashPasswordService {
 

@@ -8,6 +8,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +19,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/chikaboom/appointment/{idAccountMaster}")
+@PreAuthorize("isAuthenticated()")
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
@@ -38,6 +41,7 @@ public class AppointmentController {
      * @param appointmentTime время записи
      * @return сохраненный объект записи
      */
+    @PreAuthorize("#idAccountClient == authentication.principal.idAccount and #idAccountClient != #idAccountMaster")
     @PostMapping
     public ResponseEntity<Appointment> makeAppointment(@PathVariable int idAccountMaster, @RequestParam int idAccountClient,
                                                        @RequestParam int idUserService, @RequestParam String appointmentDate,
@@ -56,6 +60,7 @@ public class AppointmentController {
      * @param idAccountMaster идентификатор аккаунта мастера
      * @return все записи к мастеру в формате JSON
      */
+    @PostAuthorize("#idAccountMaster == authentication.principal.idAccount")
     @GetMapping
     public ResponseEntity<String> getAllMasterAppointments(@PathVariable int idAccountMaster) {
         logger.info("Getting full info about appointments of master with id " + idAccountMaster);
@@ -83,9 +88,9 @@ public class AppointmentController {
      * @param idAppointment   идентификатор записи
      * @return строку результата удаления с соответствующим HTTP-кодом
      */
+    @PostAuthorize("#idAccountMaster == authentication.principal.idAccount")
     @DeleteMapping("/{idAppointment}")
     public ResponseEntity<String> deleteAppointment(@PathVariable int idAccountMaster, @PathVariable int idAppointment) {
-//        TODO проверка аккаунта мастера?
         logger.info("Starting deleting appointment with id " + idAppointment);
 
         appointmentService.deleteAppointment(idAppointment);

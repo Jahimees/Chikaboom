@@ -17,6 +17,7 @@ public class MainController {
     @Value("${page.main}")
     private String MAIN_PAGE;
 
+    @PreAuthorize("permitAll()")
     @GetMapping
     public String openMainPage() {
         return MAIN_PAGE;

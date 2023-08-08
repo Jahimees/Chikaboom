@@ -31,7 +31,7 @@ public class ApplicationConfig {
     @Value("${data.size}")
     private String dataSize;
 
-    private final org.apache.log4j.Logger logger = Logger.getLogger(this.getClass());
+    private final Logger logger = Logger.getLogger(this.getClass());
 
     /**
      * Конфигурация бина подключения к базе данных.

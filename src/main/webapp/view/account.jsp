@@ -53,7 +53,7 @@
             </div>
             <div class="main-information-block">
                 <b>
-                    <div id="nickname-placeholder" class="common-black-text">
+                    <div id="username-placeholder" class="common-black-text">
                     </div>
                 </b>
                 <div id="profession-placeholder" class="small-text master-only"></div>
@@ -200,7 +200,7 @@
 
     $("#about-text-placeholder")[0].innerText = accountJson.about !== null ? accountJson.about.text : "";
     $("#phone-placeholder")[0].innerText = "Телефон: " + "+" + accountJson.phoneCode.phoneCode + " " + accountJson.phone;
-    $("#nickname-placeholder")[0].innerText = accountJson.nickname;
+    $("#username-placeholder")[0].innerText = accountJson.username;
     $("#address-placeholder")[0].innerText = "Адрес: " + address;
     $("#profession-placeholder")[0].innerText = accountJson.about !== null ? accountJson.about.profession : "";
 
