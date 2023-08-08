@@ -68,13 +68,13 @@ body {
     color: white;
 }
 
-.service-block {
+.service-type-block {
     width: 100%;
     color: black;
     margin-top: 6%;
 }
 
-.service-block-name div {
+.service-type-block-name div {
     font-family: Manrope, serif;
     font-size: 44px;
     padding: 0 1.5% 0 1.5%;
@@ -83,15 +83,15 @@ body {
     letter-spacing: calc(1em / 10);
 }
 
-.service-block-all {
+.service-type-block-all {
     margin: 2% 3% 0 3% !important;
 }
 
-.service-outer-image {
+.service-type-outer-image {
     padding: 0 0 3% 0;
 }
 
-.service-item {
+.service-type-item {
     margin: 2% 0 0 0;
     padding-left: 45%;
     height: 175px;
@@ -104,7 +104,7 @@ body {
     align-items: center;
 }
 
-.service-image {
+.service-type-image {
     margin: 0 0 0 1%;
     position: absolute;
     width: 200px;
@@ -112,13 +112,13 @@ body {
     border-radius: 100%;
 }
 
-.service-item p {
+.service-type-item p {
     margin: 0;
     letter-spacing: calc(1em / 10);
     color: #FFE4FE;
 }
 
-.service-block-button {
+.service-type-block-button {
     background-color: rgba(0, 0, 0, 0.8);
     color: #FFE4FE;
     font-size: 28px;
@@ -170,7 +170,7 @@ body {
     color: black;
 }
 
-.service-image:hover {
+.service-type-image:hover {
     transition: 0.3s;
     transform: scale(1.1);
 }

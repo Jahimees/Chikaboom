@@ -22,8 +22,8 @@
                 <div>Время</div>
                 <select class="middle-box w-80" style="display: block" id="working-time-select"></select>
                 <hr>
-                <div id="service-time-placeholder"></div>
-                <div id="service-cost-placeholder"></div>
+                <div id="service-type-time-placeholder"></div>
+                <div id="service-type-cost-placeholder"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="popup-btn" data-bs-dismiss="modal">Закрыть</button>
@@ -37,7 +37,7 @@
         let clientId = ${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.idAccount};
         let masterId = accountJson.idAccount;
 
-        let idUserService = parseInt($("#services-select")[0].value);
+        let idService = parseInt($("#services-select")[0].value);
         let workingDayVal = $("#working-day-select")[0].value;
         let workingTimeVal = $("#working-time-select")[0].value;
 
@@ -63,7 +63,7 @@
             $.post("/chikaboom/appointment/" + masterId,
                 {
                     idAccountClient: clientId,
-                    idUserService: idUserService,
+                    idService: idService,
                     appointmentDate: workingDayVal,
                     appointmentTime: workingTimeVal
                 }, function () {

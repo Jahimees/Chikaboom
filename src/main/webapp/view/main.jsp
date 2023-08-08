@@ -65,20 +65,20 @@
         </div>
     </div>
 
-    <div class="service-block">
-        <div class="service-block-name">
+    <div class="service-type-block">
+        <div class="service-type-block-name">
             <div>Запишитесь на самые</div>
             <div>популярные бьюти услуги</div>
         </div>
-        <div class="service-block-all row">
+        <div class="service-type-block-all row">
             <c:set var="counter" value="1"/>
             <c:forTokens var="i"
                          items="Ногтевой сервис,Парикмахерские услуги,Ресницы,Брови,Визаж,Барбершоп"
                          delims=",">
-                <div class="col-xl-4 service-outer-image">
+                <div class="col-xl-4 service-type-outer-image">
                     <a style="display: inline-flex" href="/chikaboom/service/search/${counter}">
-                        <img class="service-image" src="/image/service/service_icon_${counter}.png" alt="no_image">
-                        <div class="service-item">
+                        <img class="service-type-image" src="/image/serviceType/service_icon_${counter}.png" alt="no_image">
+                        <div class="service-type-item">
                             <p><c:out value="${i}"/></p>
                         </div>
                     </a>
@@ -88,7 +88,7 @@
         </div>
 
         <div style="display: flex">
-            <a class="service-block-button" href="/chikaboom/service">ВСЕ УСЛУГИ</a>
+            <a class="service-type-block-button" href="/chikaboom/service">ВСЕ УСЛУГИ</a>
         </div>
 
     </div>
@@ -97,7 +97,7 @@
         <div class="block-big-part">
             <div class="block-title">Найдите мастера близко к дому</div>
             <div class="block-text">Все мастера Минска на одной карте!</div>
-            <div class="service-block-button"><a href="/chikaboom/under_construction">СМОТРЕТЬ</a></div>
+            <div class="service-type-block-button"><a href="/chikaboom/under_construction">СМОТРЕТЬ</a></div>
         </div>
     </div>
 
@@ -105,7 +105,7 @@
         <div class="block-big-part">
             <div class="block-title">Обучение у лучших мастеров Минска</div>
             <div class="block-text">Не пропустите ни один курс или мастер-класс!</div>
-            <div class="service-block-button"><a href="/chikaboom/under_construction">УЗНАТЬ БОЛЬШЕ</a></div>
+            <div class="service-type-block-button"><a href="/chikaboom/under_construction">УЗНАТЬ БОЛЬШЕ</a></div>
         </div>
         <div class="img-block"><img src="/image/course.png" alt="no_image"></div>
     </div>

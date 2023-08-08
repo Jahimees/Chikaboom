@@ -2,8 +2,8 @@ package net.chikaboom.controller.tab.service_tab;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.chikaboom.model.database.Subservice;
-import net.chikaboom.model.database.UserService;
+import net.chikaboom.model.database.Service;
+import net.chikaboom.model.database.ServiceSubtype;
 import net.chikaboom.service.action.tab.ServiceTabService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +24,12 @@ import java.util.List;
 @RequestMapping("/chikaboom/personality/{idAccount}/services")
 public class ServiceTabController {
 
-    @Value("${tab.service}")
+    @Value("${tab.serviceType}")
     private String SERVICE_TAB;
-    @Value("${tab.service.general}")
+    @Value("${tab.serviceType.general}")
     private String GENERAL_SERVICE_TAB;
-    @Value("${attr.subservices}")
-    private String SUBSERVICES;
+    @Value("${attr.service_subtypes}")
+    private String SERVICE_SUBTYPES;
 
     private final ServiceTabService serviceTabService;
     private final Logger logger = Logger.getLogger(this.getClass());
@@ -49,20 +49,20 @@ public class ServiceTabController {
     @GetMapping
     public ModelAndView openServiceTab(@PathVariable int idAccount) {
         logger.info("Opening serviceTab");
-        List<Subservice> subservices = serviceTabService.findAllSubservices();
+        List<ServiceSubtype> serviceSubtypes = serviceTabService.findAllServiceSubtypesByIdServiceType();
 
-        String subservicesJson = "";
+        String serviceSubtypesJson = "";
         ObjectMapper mapper = new ObjectMapper();
 
         try {
-            logger.info("Trying to convert subserviceList to JSON format");
-            subservicesJson = mapper.writeValueAsString(subservices);
+            logger.info("Trying to convert serviceSubtypeList to JSON format");
+            serviceSubtypesJson = mapper.writeValueAsString(serviceSubtypes);
         } catch (JsonProcessingException e) {
             logger.error(e.getMessage());
         }
 
         ModelAndView modelAndView = new ModelAndView(SERVICE_TAB);
-        modelAndView.addObject(SUBSERVICES, subservicesJson);
+        modelAndView.addObject(SERVICE_SUBTYPES, serviceSubtypesJson);
 
         return modelAndView;
     }
@@ -89,54 +89,54 @@ public class ServiceTabController {
      */
     @PreAuthorize("#idAccount == authentication.principal.idAccount and hasRole('MASTER')")
     @GetMapping("/info")
-    public ResponseEntity<String> loadUserServicesInfo(@PathVariable int idAccount) {
-        logger.info("Getting full info about userServices of account with id " + idAccount);
-        List<UserService> userServiceList = serviceTabService.findAllUserServicesByIdAccount(idAccount);
+    public ResponseEntity<String> loadServicesInfo(@PathVariable int idAccount) {
+        logger.info("Getting full info about services of account with id " + idAccount);
+        List<Service> serviceList = serviceTabService.findAllServicesByIdAccount(idAccount);
 
-        logger.info("User (idAccount=" + idAccount + ") have " + userServiceList.size() + " userServices");
+        logger.info("User (idAccount=" + idAccount + ") have " + serviceList.size() + " services");
 
         ObjectMapper mapper = new ObjectMapper();
-        String userServicesJson = "";
+        String servicesJson = "";
         try {
-            logger.info("Trying to convert userServiceList to JSON format");
-            userServicesJson = mapper.writeValueAsString(userServiceList);
+            logger.info("Trying to convert serviceList to JSON format");
+            servicesJson = mapper.writeValueAsString(serviceList);
         } catch (JsonProcessingException e) {
             logger.error(e.getMessage());
         }
 
-        return new ResponseEntity<>(userServicesJson, HttpStatus.OK);
+        return new ResponseEntity<>(servicesJson, HttpStatus.OK);
     }
 
     /**
      * Создает либо обновляет данные об услуге мастера
      *
      * @param idAccount   идентификатор мастера
-     * @param userService услуга, которую предоставляет мастер
+     * @param service услуга, которую предоставляет мастер
      * @return обновленная услуга
      */
     @PreAuthorize("#idAccount == authentication.principal.idAccount and hasRole('MASTER')")
     @PostMapping
-    public ResponseEntity<UserService> createOrUpdateUserService(@PathVariable int idAccount, @RequestBody UserService userService) {
-        logger.info("Creating or updating userService of user with id " + idAccount);
+    public ResponseEntity<Service> createOrUpdateService(@PathVariable int idAccount, @RequestBody Service service) {
+        logger.info("Creating or updating service of user with id " + idAccount);
 
-        UserService userServiceToSend = serviceTabService.saveUserService(userService);
+        Service serviceToSend = serviceTabService.saveService(service);
 
-        return new ResponseEntity<>(userServiceToSend, HttpStatus.CREATED);
+        return new ResponseEntity<>(serviceToSend, HttpStatus.CREATED);
     }
 
     /**
      * Удаляет из базы данных указанную услугу
      *
-     * @param idAccount     идентификатор мастера
-     * @param idUserService идентификатор услуги, которую необходимо удалить
+     * @param idAccount идентификатор мастера
+     * @param idService идентификатор услуги, которую необходимо удалить
      * @return строку, содержащую результат удаления
      */
     @PreAuthorize("#idAccount == authentication.principal.idAccount and hasRole('MASTER')")
-    @DeleteMapping("/{idUserService}")
-    public ResponseEntity<String> deleteUserService(@PathVariable int idAccount, @PathVariable int idUserService) {
-        logger.info("Deleting userService (idUserService=" + idUserService + ") of user with id " + idUserService);
+    @DeleteMapping("/{idService}")
+    public ResponseEntity<String> deleteService(@PathVariable int idAccount, @PathVariable int idService) {
+        logger.info("Deleting service (idService=" + idService + ")");
 
-        serviceTabService.deleteUserService(idUserService);
+        serviceTabService.deleteService(idService);
 
 //        TODO доделать возвращаемый элемент
         return new ResponseEntity<>("Dropper", HttpStatus.ACCEPTED);

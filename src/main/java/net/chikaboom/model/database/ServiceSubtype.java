@@ -6,32 +6,32 @@ import lombok.Data;
 import static net.chikaboom.util.constant.DbNamesConstant.*;
 
 /**
- * Определяет модель таблицы Subservice в базе данных
+ * Определяет модель таблицы ServiceSubtype в базе данных
  */
 @Data
 @Entity
-@Table(name = SUBSERVICE)
-public class Subservice implements BaseEntity {
+@Table(name = SERVICE_SUBTYPE)
+public class ServiceSubtype implements BaseEntity {
 
     /**
-     * id сущности в табилце subservice
+     * id сущности в табилце serviceSubtype
      */
     @Id
-    @Column(name = ID_SUBSERVICE)
+    @Column(name = ID_SERVICE_SUBTYPE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int idSubservice;
+    private int idServiceSubtype;
 
     /**
      * Наименование подуслуги
      */
-    @Column(name = SUBSERVICE_NAME)
-    private String subserviceName;
+    @Column(name = NAME)
+    private String name;
 
     /**
      * Родительский тип услуги для данной подуслуги
      */
     @ManyToOne
-    @JoinColumn(name = ID_SERVICE)
-    private Service service;
+    @JoinColumn(name = ID_SERVICE_TYPE)
+    private ServiceType serviceType;
 
 }
