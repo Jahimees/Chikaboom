@@ -16,6 +16,8 @@ import static net.chikaboom.util.constant.DbNamesConstant.*;
 @Table(name = PHONE_CODE)
 public class PhoneCode implements BaseEntity {
 
+    private static final long serialVersionUID = 1;
+
     /**
      * id сущности в таблице phone_code
      */

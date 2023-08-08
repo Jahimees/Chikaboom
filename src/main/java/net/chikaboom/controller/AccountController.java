@@ -19,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @RestController
 @RequestMapping("/chikaboom/account/{idAccount}")
+//@PreAuthorize("permitAll()")
 public class AccountController {
 
     @Value("${page.account}")
