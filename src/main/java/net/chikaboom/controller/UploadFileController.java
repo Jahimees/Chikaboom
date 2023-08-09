@@ -1,7 +1,7 @@
 package net.chikaboom.controller;
 
 import net.chikaboom.exception.IncorrectInputDataException;
-import net.chikaboom.service.action.UploadFileService;
+import net.chikaboom.service.UploadFileService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

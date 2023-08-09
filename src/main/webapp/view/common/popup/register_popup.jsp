@@ -1,12 +1,15 @@
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 
 <div class="popup register-popup">
     <div class="popup-title">
         <h3>Регистрация</h3>
     </div>
+    <%--    <form:form method="post" modelAttribute="accountRegForm" action="/chikaboom/registration" id="regForm">--%>
     <div class="popup-body">
         <div class="common-black-text">Имя пользователя</div>
-        <label class="invalid-field-label-popup" id="r-input-username-short">Имя пользователя слишком короткое</label>
+        <label class="invalid-field-label-popup" id="r-input-username-short">Имя пользователя слишком
+            короткое</label>
         <label class="invalid-field-label-popup" id="r-input-username-incorrect">Можно использовать только буквы и 1
             пробел между словами</label>
         <label class="invalid-field-label-popup" id="r-input-username-empty">Поле не может быть пустым</label>
@@ -20,6 +23,7 @@
         <label class="invalid-field-label-popup" id="r-input-phone-empty">Поле не может быть пустым</label>
         <label class="invalid-field-label-popup" id="r-input-phone-short">Номер телефона должен быть длиннее 8
             символов</label>
+        <input id="phoneCode" name="phoneCode" hidden>
         <div class="popup-image">
             <input id="r-input-phone" class="phone-input-popup" name="phone" required placeholder="(29) 111-11-11"
                    valid="false" maxlength="30">
@@ -36,16 +40,18 @@
         </div>
 
         <div class="common-black-text">Подтверждение пароля</div>
-        <label class="invalid-field-label-popup" id="r-input-confirm-password-empty">Поле не может быть пустым</label>
+        <label class="invalid-field-label-popup" id="r-input-confirm-password-empty">Поле не может быть
+            пустым</label>
         <label class="invalid-field-label-popup" id="r-input-confirm-password-different">Пароли не совпадают</label>
         <div class="popup-image">
-            <input id="r-input-confirm-password" class="popup-input-field" type="password" required placeholder="*****"
+            <input id="r-input-confirm-password" class="popup-input-field" type="password" required
+                   placeholder="*****"
                    maxlength="50">
         </div>
 
         <div>
-            <label><input type="radio" name="role" checked value="client"> Я клиент</label>
-            <label><input type="radio" name="role" value="master"> Я мастер</label>
+            <label><input type="radio" name="roles" checked value="2"> Я клиент</label>
+            <label><input type="radio" name="roles" value="1"> Я мастер</label>
         </div>
 
         <div>

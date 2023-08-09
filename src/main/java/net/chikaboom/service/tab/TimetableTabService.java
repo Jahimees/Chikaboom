@@ -1,4 +1,4 @@
-package net.chikaboom.service.action.tab;
+package net.chikaboom.service.tab;
 
 import net.chikaboom.exception.NoSuchDataException;
 import net.chikaboom.model.database.Account;

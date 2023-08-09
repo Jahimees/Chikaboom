@@ -1,7 +1,7 @@
 package net.chikaboom.controller.tab.appointment_tab;
 
 import net.chikaboom.model.database.Appointment;
-import net.chikaboom.service.action.AppointmentService;
+import net.chikaboom.service.data.AppointmentDataService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,17 +31,17 @@ public class AppointmentTabController {
     @Value("${attr.appointmentList}")
     private String APPOINTMENT_LIST;
 
-    private final AppointmentService appointmentService;
+    private final AppointmentDataService appointmentDataService;
     private final Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
-    public AppointmentTabController(AppointmentService appointmentService) {
-        this.appointmentService = appointmentService;
+    public AppointmentTabController(AppointmentDataService appointmentDataService) {
+        this.appointmentDataService = appointmentDataService;
     }
 
     /**
      * Загружает вкладку записей к мастеру и передает на неё данные обо всех записях к мастеру.
-     * Сохраняет параметры с клиента и передает управление сервису {@link  AppointmentService} для загрузки данных.
+     * Сохраняет параметры с клиента и передает управление сервису {@link  AppointmentDataService} для загрузки данных.
      *
      * @param idAccount идентификатор аккаунта
      * @return модель (содержит данные записей к мастеру) и представление (содержит путь к вкладке записей)
@@ -52,7 +52,7 @@ public class AppointmentTabController {
         logger.info("Opening appointment tab.");
         ModelAndView modelAndView = new ModelAndView(APPOINTMENT_TAB);
 
-        List<Appointment> appointmentList = appointmentService.findAllByIdAccount(idAccount, false);
+        List<Appointment> appointmentList = appointmentDataService.findAllByIdAccount(idAccount, false);
 
         modelAndView.addObject(APPOINTMENT_LIST, appointmentList);
 
@@ -61,7 +61,7 @@ public class AppointmentTabController {
 
     /**
      * Загружает вкладку записей клиента и передает на неё данные обо всех записях клиента к мастерам/салонам.
-     * Сохраняет параметры с клиента и передает управление сервису {@link  AppointmentService} для загрузки данных
+     * Сохраняет параметры с клиента и передает управление сервису {@link  AppointmentDataService} для загрузки данных
      *
      * @param idAccount идентификатор аккаунта
      * @return модель (содержит данные записей клиента) и представление (содержит путь к вкладке моих записей)
@@ -73,7 +73,7 @@ public class AppointmentTabController {
         logger.info("Opening myappointment tab.");
         ModelAndView modelAndView = new ModelAndView(MY_APPOINTMENT_TAB);
 
-        List<Appointment> appointmentList = appointmentService.findAllByIdAccount(idAccount, true);
+        List<Appointment> appointmentList = appointmentDataService.findAllByIdAccount(idAccount, true);
 
         modelAndView.addObject(APPOINTMENT_LIST, appointmentList);
 

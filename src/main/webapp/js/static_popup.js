@@ -19,13 +19,14 @@ $('.popup-bg').on('click', function () {
 
 $("#confirm-register").on("click", function () {
     if (validateAllRegisterFields()) {
+        // TODO NEW JSON
         var phoneCode = $("#country-phone-register > .country-phone-selector > .country-phone-selected > span")[0].firstChild.textContent;
         var phone = $("#r-input-phone")[0].value;
         var password = $("#r-input-password")[0].value;
         var username = $("#r-input-username")[0].value;
         var role = $("role :checked, :radio")[0].checked ? "ROLE_CLIENT" : "ROLE_MASTER";
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: "/chikaboom/registration",
             contentType: "application/text",
             dataType: "text",

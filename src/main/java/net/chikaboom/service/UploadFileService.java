@@ -1,4 +1,4 @@
-package net.chikaboom.service.action;
+package net.chikaboom.service;
 
 import net.chikaboom.exception.NoSuchDataException;
 import org.apache.log4j.Logger;

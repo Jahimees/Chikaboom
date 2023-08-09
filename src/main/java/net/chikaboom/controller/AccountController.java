@@ -2,10 +2,11 @@ package net.chikaboom.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import net.chikaboom.exception.NoSuchDataException;
 import net.chikaboom.model.database.Account;
-import net.chikaboom.service.AccountService;
+import net.chikaboom.service.data.AccountDataService;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @RestController
 @RequestMapping("/chikaboom/account/{idAccount}")
+@RequiredArgsConstructor
 public class AccountController {
 
     @Value("${page.account}")
@@ -26,13 +28,9 @@ public class AccountController {
     @Value("${attr.account}")
     private String ACCOUNT;
 
-    private final AccountService accountService;
+    private final ObjectMapper objectMapper;
+    private final AccountDataService accountDataService;
     private final Logger logger = Logger.getLogger(this.getClass());
-
-    @Autowired
-    public AccountController(AccountService accountService) {
-        this.accountService = accountService;
-    }
 
     /**
      * Перенаправляет на страницу аккаунта
@@ -45,13 +43,13 @@ public class AccountController {
         logger.info("Loading account page for account with id " + idAccount);
         ModelAndView modelAndView = new ModelAndView(ACCOUNT_PAGE);
 
-        Account account = accountService.findAccountById(idAccount);
-        ObjectMapper mapper = new ObjectMapper();
+        Account account = accountDataService.findById(idAccount)
+                .orElseThrow(() -> new NoSuchDataException("Cannot find account with id " + idAccount));;
 
         String result = "";
         try {
             logger.info("Trying to convert account to JSON form.");
-            result = mapper.writeValueAsString(account);
+            result = objectMapper.writeValueAsString(account);
         } catch (JsonProcessingException e) {
             logger.error(e.getMessage());
         }

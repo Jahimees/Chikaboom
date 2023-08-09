@@ -1,4 +1,4 @@
-package net.chikaboom.service.action;
+package net.chikaboom.service;
 
 import net.chikaboom.exception.UserAlreadyExistsException;
 import net.chikaboom.model.database.Account;

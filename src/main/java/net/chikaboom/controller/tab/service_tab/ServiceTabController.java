@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.chikaboom.model.database.Service;
 import net.chikaboom.model.database.ServiceSubtype;
-import net.chikaboom.service.action.tab.ServiceTabService;
+import net.chikaboom.service.tab.ServiceTabService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

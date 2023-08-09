@@ -3,7 +3,7 @@ package net.chikaboom.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.chikaboom.model.database.Appointment;
-import net.chikaboom.service.action.AppointmentService;
+import net.chikaboom.service.data.AppointmentDataService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,17 +21,17 @@ import java.util.List;
 @PreAuthorize("isAuthenticated()")
 public class AppointmentController {
 
-    private final AppointmentService appointmentService;
+    private final AppointmentDataService appointmentDataService;
     private final Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
-    public AppointmentController(AppointmentService appointmentService) {
-        this.appointmentService = appointmentService;
+    public AppointmentController(AppointmentDataService appointmentDataService) {
+        this.appointmentDataService = appointmentDataService;
     }
 
     /**
      * Создает запись на услугу по параметрам, выбранными клиентом.
-     * Управление передается {@link AppointmentService} для создания данных.
+     * Управление передается {@link AppointmentDataService} для создания данных.
      *
      * @param idAccountMaster идентификатор аккаунта мастера (к кому запись)
      * @param idAccountClient идентификатор аккаунта клиента (кто совершает запись)
@@ -47,7 +47,7 @@ public class AppointmentController {
                                                        @RequestParam String appointmentTime) {
         logger.info("Making appointment for client (idClient=" + idAccountClient + ") to master (idMaster=" + idAccountMaster + ").");
 
-        Appointment appointment = appointmentService.createAppointment(idAccountMaster, idAccountClient, idService,
+        Appointment appointment = appointmentDataService.createAppointmentOld(idAccountMaster, idAccountClient, idService,
                 appointmentDate, appointmentTime);
 
         return new ResponseEntity<>(appointment, HttpStatus.OK);
@@ -64,7 +64,7 @@ public class AppointmentController {
     public ResponseEntity<String> getAllMasterAppointments(@PathVariable int idAccountMaster) {
         logger.info("Getting full info about appointments of master with id " + idAccountMaster);
 
-        List<Appointment> appointmentList = appointmentService.findAllByIdAccount(idAccountMaster, false);
+        List<Appointment> appointmentList = appointmentDataService.findAllByIdAccount(idAccountMaster, false);
 
         ObjectMapper mapper = new ObjectMapper();
 
@@ -92,7 +92,7 @@ public class AppointmentController {
     public ResponseEntity<String> deleteAppointment(@PathVariable int idAccountMaster, @PathVariable int idAppointment) {
         logger.info("Starting deleting appointment with id " + idAppointment);
 
-        appointmentService.deleteAppointment(idAppointment);
+        appointmentDataService.deleteById(idAppointment);
 
         return new ResponseEntity<>("Appointment deleted", HttpStatus.OK);
     }

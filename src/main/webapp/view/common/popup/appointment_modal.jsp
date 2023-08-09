@@ -34,7 +34,8 @@
 </div>
 <script>
     function makeAppointment() {
-        let clientId = ${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.idAccount};
+        let clientId = ${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.idAccount != 0
+        ? sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.idAccount : 0};
         let masterId = accountJson.idAccount;
 
         let idService = parseInt($("#services-select")[0].value);

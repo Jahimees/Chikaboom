@@ -2,11 +2,12 @@ package net.chikaboom.controller.tab.setting_tab;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import net.chikaboom.exception.NoSuchDataException;
 import net.chikaboom.model.database.Account;
-import net.chikaboom.service.AccountService;
-import net.chikaboom.service.action.tab.EditSettingsTabService;
+import net.chikaboom.service.data.AccountDataService;
+import net.chikaboom.service.tab.EditSettingsTabService;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import java.util.Map;
 /**
  * Обрабатывает запросы, связанные с вкладкой настроек
  */
+@RequiredArgsConstructor
 @Controller
 @RequestMapping("/chikaboom/personality/{idAccount}/settings")
 public class SettingTabController {
@@ -31,16 +33,10 @@ public class SettingTabController {
     private String PROFILE_SETTINGS_TAB;
 
     private final EditSettingsTabService editSettingsTabService;
-    private final AccountService accountService;
+    private final AccountDataService accountDataService;
+    private final ObjectMapper objectMapper;
 
     private final Logger logger = Logger.getLogger(SettingTabController.class);
-
-    @Autowired
-    public SettingTabController(EditSettingsTabService editSettingsTabService,
-                                AccountService accountService) {
-        this.editSettingsTabService = editSettingsTabService;
-        this.accountService = accountService;
-    }
 
     /**
      * Открывает саму вкладку настроек пользователя.
@@ -90,22 +86,26 @@ public class SettingTabController {
     @PutMapping
     public ResponseEntity<String> updateSettingTab(@PathVariable int idAccount,
                                                    @RequestBody Map<String, Object> changedAccount) {
-        logger.info("Editing user data. idUser: " + idAccount);
-        logger.info("New data: " + changedAccount);
-
-        editSettingsTabService.updateAccountSettings(changedAccount);
-
-        logger.info("Reloading personality page.");
-        Account account = accountService.findAccountById(idAccount);
-        ObjectMapper mapper = new ObjectMapper();
-
-        String accountJSON = null;
         try {
-            accountJSON = mapper.writeValueAsString(account);
-        } catch (JsonProcessingException e) {
-            logger.error(e.getMessage());
-        }
+            logger.info("Editing user data. idUser: " + idAccount);
+            logger.info("New data: " + changedAccount);
 
-        return new ResponseEntity<>(accountJSON, HttpStatus.OK);
+            editSettingsTabService.updateAccountSettings(changedAccount);
+
+            logger.info("Reloading personality page.");
+            Account account = accountDataService.findById(idAccount)
+                    .orElseThrow(() -> new NoSuchDataException("Account with id " + idAccount + " not found"));
+
+            String accountJSON = null;
+            try {
+                accountJSON = objectMapper.writeValueAsString(account);
+            } catch (JsonProcessingException e) {
+                logger.error(e.getMessage());
+            }
+            return new ResponseEntity<>(accountJSON, HttpStatus.OK);
+
+        } catch (NoSuchDataException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

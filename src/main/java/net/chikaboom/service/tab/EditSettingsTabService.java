@@ -1,4 +1,4 @@
-package net.chikaboom.service.action.tab;
+package net.chikaboom.service.tab;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.chikaboom.exception.IncorrectInputDataException;

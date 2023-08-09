@@ -11,6 +11,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 /**
  * Собственная реализация аутентификации пользователя
  */
@@ -38,18 +40,20 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
-        Account account = accountRepository.findAccountByUsername(username);
+        Optional<Account> accountOptional = accountRepository.findAccountByUsername(username);
 
-        if (account == null) {
+        if (!accountOptional.isPresent()) {
             throw new BadCredentialsException("Unknown user " + username);
         }
+
+        Account account = accountOptional.get();
 
         if (!bCryptPasswordEncoder.matches(password, account.getPassword())) {
             throw new BadCredentialsException("Bad password");
         }
 
         return new UsernamePasswordAuthenticationToken(
-                account, password, account.getAuthorities());
+                accountOptional, password, account.getAuthorities());
     }
 
     @Override
