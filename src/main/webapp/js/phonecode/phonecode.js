@@ -39,7 +39,7 @@ var countryRequesting = false;
         _loadData : function() {
             var self = this;
             if(!countryCache && !countryRequesting) {
-                countryRequesting = $.getJSON('/js/countries.json', {})
+                countryRequesting = $.getJSON('/js/phonecode/countries.json', {})
                     .done(function(json) {
                         self.data = json;
                         countryCache = self.data;

@@ -41,8 +41,8 @@
 
 <script rel="script" src="/js/jquery-ui-1.10.4.custom.min.js"></script>
 
-<script src="/js/countries.js"></script>
-<script src="/js/phonecode.js"></script>
+<script src="/js/phonecode/countries.js"></script>
+<script src="/js/phonecode/phonecode.js"></script>
 
 <script>
     function openEditEmailPopup() {
