@@ -24,14 +24,13 @@ var initializeCalendar = function (appointmentsForCalendar) {
 var obj;
 var obj1;
 
-var loadMasterAppointments = function () {
+function loadMasterAppointments() {
     let appointmentsForCalendar = [];
     $.ajax({
         type: "get",
         url: "/chikaboom/appointment/" + accountJson.idAccount,
         contentType: "application/json",
         dataType: "json",
-        data: {},
         success: function (masterAppointments) {
             masterAppointments.forEach(function (masterAppointment) {
                 let title = masterAppointment.service.name + " - " + masterAppointment.clientAccount.username;

@@ -99,9 +99,10 @@
 </html>
 
 <script type="text/javascript" src="/js/personality.js"></script>
+<script type="text/javascript" src="/js/account.js"></script>
 
 <script>
-    var accountJson = ${account};
+    var accountJson;
 
     function loadSettingsTab() {
         $.ajax({
@@ -126,7 +127,6 @@
             url: "/chikaboom/personality/${idAccount}/services",
             contentType: "application/text",
             dataType: "text",
-            data: {},
             success: function (data) {
                 $("#content-placeholder").html(data);
             },
@@ -209,6 +209,7 @@
     }
 
     $(document).ready(function () {
+        accountJson = loadAccount(${idAccount});
         let url = new URL(window.location.href);
         var currentTab = url.searchParams.get("tabName")
         if (currentTab === null) {

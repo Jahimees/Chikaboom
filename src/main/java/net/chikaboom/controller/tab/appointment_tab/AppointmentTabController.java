@@ -24,10 +24,10 @@ import java.util.List;
 @RequestMapping("/chikaboom/personality/{idAccount}")
 public class AppointmentTabController {
 
-    @Value("${tab.appointment}")
-    private String APPOINTMENT_TAB;
-    @Value("${tab.my_appointment}")
-    private String MY_APPOINTMENT_TAB;
+    @Value("${tab.income_appointment}")
+    private String INCOME_APPOINTMENT_TAB;
+    @Value("${tab.outcome_appointment}")
+    private String OUTCOME_APPOINTMENT_TAB;
     @Value("${attr.appointmentList}")
     private String APPOINTMENT_LIST;
 
@@ -50,7 +50,7 @@ public class AppointmentTabController {
     @GetMapping(value = "/appointment")
     public ModelAndView openAppointmentTab(@PathVariable int idAccount) {
         logger.info("Opening appointment tab.");
-        ModelAndView modelAndView = new ModelAndView(APPOINTMENT_TAB);
+        ModelAndView modelAndView = new ModelAndView(INCOME_APPOINTMENT_TAB);
 
         List<Appointment> appointmentList = appointmentDataService.findAllByIdAccount(idAccount, false);
 
@@ -71,7 +71,7 @@ public class AppointmentTabController {
     @GetMapping(value = "/myappointment")
     public ModelAndView openMyAppointmentTab(@PathVariable int idAccount) {
         logger.info("Opening myappointment tab.");
-        ModelAndView modelAndView = new ModelAndView(MY_APPOINTMENT_TAB);
+        ModelAndView modelAndView = new ModelAndView(OUTCOME_APPOINTMENT_TAB);
 
         List<Appointment> appointmentList = appointmentDataService.findAllByIdAccount(idAccount, true);
 

@@ -1,21 +1,22 @@
 package net.chikaboom.controller.auth;
 
+import lombok.RequiredArgsConstructor;
 import net.chikaboom.controller.error.AdviceController;
+import net.chikaboom.model.database.Account;
 import net.chikaboom.service.RegistrationActionService;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * Класс-контроллер, отвечающий за регистрацию пользователя.
  * <p>
  * Контроллер передает управление в {@link RegistrationActionService}
  */
+@RequiredArgsConstructor
 @Controller
 @RequestMapping("/chikaboom/registration")
 public class RegistrationController {
@@ -23,32 +24,17 @@ public class RegistrationController {
     private final RegistrationActionService registrationActionService;
     private final Logger logger = Logger.getLogger(this.getClass());
 
-    @Autowired
-    public RegistrationController(RegistrationActionService registrationActionService) {
-        this.registrationActionService = registrationActionService;
-    }
-
     /**
      * Передает управление и данные в сервис {@link RegistrationActionService}
-     * <p>
-     * //     * @param phoneCode параметр кода страны
-     * //     * @param phone     параметр номера телефона пользователя
-     * //     * @param password  параметр пароля
-     * //     * @param username  имя регистрируемого пользователя
-     * //     * @param role      тип регистрируемого аккаунта
-     *
-     * @return объект-ответ, содержащий название страницы, на которую должен будет осуществлен переход и http статус.
      * В случае ошибки возвращает объект-ответ-ошибки с помощью {@link AdviceController}
+     *
+     * @param account объект регистрируемого аккаунта
+     * @return объект-ответ, содержащий название страницы, на которую должен будет осуществлен переход и http статус.
      */
     @PostMapping
-    public ResponseEntity<?> register(
-            @RequestParam String phoneCode, @RequestParam String phone,
-            @RequestParam String password, @RequestParam String username,
-            @RequestParam String role
-    ) {
+    public ResponseEntity<?> register(@RequestBody Account account) {
         logger.info("Start registration process.");
 
-        return new ResponseEntity<>("/chikaboom/" + registrationActionService
-                .register(phoneCode, phone, password, username, role), HttpStatus.OK);
+        return ResponseEntity.ok(registrationActionService.register(account));
     }
 }

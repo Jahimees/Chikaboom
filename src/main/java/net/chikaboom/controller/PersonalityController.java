@@ -3,6 +3,7 @@ package net.chikaboom.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import net.chikaboom.exception.NoSuchDataException;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.service.data.AccountDataService;
 import org.apache.log4j.Logger;
@@ -29,6 +30,7 @@ public class PersonalityController {
     private String ACCOUNT;
 
     private final AccountDataService accountDataService;
+    private final ObjectMapper objectMapper;
     private final Logger logger = Logger.getLogger(this.getClass());
 
     @Value("${page.personality}")
@@ -46,22 +48,24 @@ public class PersonalityController {
     public ModelAndView openPersonalityPage(@PathVariable int idAccount) {
         logger.info("Opening personality page...");
 
-        Optional<Account> account = accountDataService.findById(idAccount);
+        Optional<Account> accountOptional = accountDataService.findById(idAccount);
+
+        if (!accountOptional.isPresent()) {
+            logger.warn("Account (id=" + idAccount + ") does not exist");
+            throw new NoSuchDataException("Account (id=" + idAccount + ") does not exist");
+        }
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName(PERSONALITY_PAGE);
 
-        ObjectMapper mapper = new ObjectMapper();
-        String accountJSON = null;
-
         try {
+
             logger.info("Trying to convert account data to JSON format.");
-            accountJSON = mapper.writeValueAsString(account);
+            String accountJSON = objectMapper.writeValueAsString(accountOptional.get());
+            modelAndView.addObject(ACCOUNT, accountJSON);
         } catch (JsonProcessingException e) {
             logger.error(e.getMessage());
         }
-
-        modelAndView.addObject(ACCOUNT, accountJSON);
 
         return modelAndView;
     }

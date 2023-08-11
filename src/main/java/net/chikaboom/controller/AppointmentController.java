@@ -87,6 +87,7 @@ public class AppointmentController {
      * @param idAppointment   идентификатор записи
      * @return строку результата удаления с соответствующим HTTP-кодом
      */
+//    TODO NEW РАботает странно PreAuthorize неправильный вообще
     @PreAuthorize("#idAccountMaster == authentication.principal.idAccount")
     @DeleteMapping("/{idAppointment}")
     public ResponseEntity<String> deleteAppointment(@PathVariable int idAccountMaster, @PathVariable int idAppointment) {

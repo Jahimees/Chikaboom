@@ -3,11 +3,11 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <!-- Модальное окно -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Записаться к мастеру</h5>
+                <h5 class="modal-title" id="appointmentModalLabel">Записаться к мастеру</h5>
                 <button id="close-modal-btn" type="button" class="btn-close" data-bs-dismiss="modal"
                         aria-label="Закрыть"></button>
             </div>
@@ -33,9 +33,12 @@
     </div>
 </div>
 <script>
+
+    let clientId;
+
     function makeAppointment() {
-        let clientId = ${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.idAccount != 0
-        ? sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.idAccount : 0};
+        clientId = ${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.idAccount != 0
+                            ? sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.idAccount : 0} + 0;
         let masterId = accountJson.idAccount;
 
         let idService = parseInt($("#services-select")[0].value);
@@ -44,7 +47,7 @@
 
         if (workingTimeVal === '') {
             $("#appointment-warn").css("display", "block");
-        } else if (clientId === 0) {
+        } else if (typeof clientId === 'undefined' || clientId === 0) {
             $("#close-modal-btn").click();
 
             repairDefaultMessagePopup();
@@ -60,7 +63,7 @@
             openPopup('message-popup');
         } else {
             $("#appointment-warn").css("display", "none");
-
+            console.log("here")
             $.post("/chikaboom/appointment/" + masterId,
                 {
                     idAccountClient: clientId,
@@ -74,7 +77,7 @@
                     $("#popup-message-text")[0].innerText = "Вы успешно записались на услугу!"
                     $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Запись оформлена!";
                     openPopup('message-popup');
-                    loadMasterAppointments(accountJson.idAccount);
+                    masterAppointmentsJson = loadMastersAppointments(accountJson.idAccount);
                     calculateServiceTime();
                 }, 'text'
             )

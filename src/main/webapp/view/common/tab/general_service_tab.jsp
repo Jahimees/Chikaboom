@@ -59,10 +59,9 @@
     function loadServiceTab() {
         $.ajax({
             type: "get",
-            url: "/chikaboom/personality/${idAccount}/services/info",
+            url: "/accounts/${idAccount}/services",
             contentType: "application/text",
             dataType: "text",
-            data: {},
             success: function (data) {
                 servicesJson = JSON.parse(data);
                 console.log("general serviceType tab successfully loaded");
@@ -74,7 +73,6 @@
             }
         });
     }
-
 
     $(document).ready(function () {
         loadServiceTab();

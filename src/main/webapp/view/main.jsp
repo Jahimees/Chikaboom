@@ -178,7 +178,6 @@
 
 <script>
     $(document).ready(function () {
-        var url = window.location.href;
         var hash = window.location.hash;
 
 

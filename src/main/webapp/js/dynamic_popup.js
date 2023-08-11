@@ -26,34 +26,35 @@ function closePopup(popupName) {
  */
 function confirmEdit() {
     if (validateAllFields()) {
-        let url = "/chikaboom/personality/" + accountJson.idAccount + "/settings";
-        let updatedAccountJson = JSON.parse(JSON.stringify(accountJson));
+        let url = "/accounts/" + accountJson.idAccount;
+
+        let accountJsonPatch = {}
 
         Array.from($(".popup-input-field")).forEach(field => {
             let nestedObject = field.getAttribute("nestedObject");
             let fieldValue = field.value !== null ? field.value : "";
 
             if (nestedObject != null && nestedObject !== "") {
-                if (updatedAccountJson[nestedObject] == null) {
-                    updatedAccountJson[nestedObject] = {};
+                if (accountJsonPatch[nestedObject] == null) {
+                    accountJsonPatch[nestedObject] = {};
                 }
-                updatedAccountJson[nestedObject][field.name] = fieldValue;
+                accountJsonPatch[nestedObject][field.name] = fieldValue;
             } else {
-                updatedAccountJson[field.name] = fieldValue;
+                accountJsonPatch[field.name] = fieldValue;
             }
         });
 
         let phoneCodeField = $(".country-phone-selected > span")[0];
         if (typeof phoneCodeField !== "undefined") {
-            updatedAccountJson["phoneCode"] = phoneCodeField.firstChild.textContent;
+            accountJsonPatch["phoneCode"] = phoneCodeField.firstChild.textContent;
         }
 
         $.ajax({
-            type: "PUT",
+            type: "PATCH",
             url: url,
             contentType: "application/json",
             dataType: "json",
-            data: JSON.stringify(updatedAccountJson),
+            data: JSON.stringify(accountJsonPatch),
             success: function (data) {
                 closePopup('edit-popup');
                 repairDefaultMessagePopup();

@@ -6,7 +6,7 @@
         <div class="big-text">Мои записи на услуги</div>
 
         <div id="appointment-placeholder" class="d-block w-100">
-            <div class="service-type-row row" style="background-color: #5f4e7d; color: white">
+            <div class="service-row row" style="background-color: #5f4e7d; color: white">
                 <div class="col-2">Название услуги</div>
                 <div class="col-2">Дата услуги</div>
                 <div class="col-1">Время записи</div>
@@ -16,7 +16,7 @@
                 <div class="col-2">Имя мастера</div>
             </div>
             <c:forEach items="${appointmentList}" var="appointment">
-                <div class="service-type-row row">
+                <div class="service-row row">
                     <c:set var="appointmentDate" value="${appointment.appointmentDate}"/>
                     <div class="col-2">${appointment.service.name}</div>
                     <div class="col-2">${appointmentDate.substring(8, 10)}.${appointmentDate.substring(5, 7)}.${appointmentDate.substring(0, 4)}</div>

@@ -97,8 +97,8 @@ public class AppointmentDataService implements DataService<Appointment> {
      * @return коллекцию записей на услуги
      * @throws NoSuchDataException возникает, если аккаунт не был найден
      */
-    public List<Appointment> findAllByIdAccount(int idAccount, boolean isClient) {
-        logger.info("Searching master appointments for master with id " + idAccount);
+    public List<Appointment> findAllByIdAccount(int idAccount, boolean isClient) throws NoSuchDataException {
+        logger.info("Searching appointments for account with id " + idAccount);
 
         Account account = accountRepository.findById(idAccount)
                 .orElseThrow(() -> new NoSuchDataException("Cannot find account with id " + idAccount));

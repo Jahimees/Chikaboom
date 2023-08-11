@@ -1,7 +1,10 @@
 package net.chikaboom.service.data;
 
 import lombok.RequiredArgsConstructor;
+import net.chikaboom.exception.NoSuchDataException;
+import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.Service;
+import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.repository.ServiceRepository;
 import org.apache.log4j.Logger;
 
@@ -13,6 +16,7 @@ import java.util.Optional;
 public class ServiceDataService implements DataService<Service> {
 
     private final ServiceRepository serviceRepository;
+    private final AccountRepository accountRepository;
     private final Logger logger = Logger.getLogger(this.getClass());
 
     @Override
@@ -41,5 +45,18 @@ public class ServiceDataService implements DataService<Service> {
     @Override
     public Service create(Service service) {
         return serviceRepository.save(service);
+    }
+
+    /**
+     * Выполняет поиск всех услуг определенного мастера
+     *
+     * @return коллекцию пользовательских услуг (услуг мастера)
+     */
+    public List<Service> findAllServicesByIdAccount(int idAccount) {
+        logger.info("Searching all services of user with id " + idAccount);
+        Account account = accountRepository.findById(idAccount).
+                orElseThrow(() -> new NoSuchDataException("Cannot find account with id " + idAccount));
+
+        return serviceRepository.findAllByAccount(account);
     }
 }

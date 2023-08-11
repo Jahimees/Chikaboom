@@ -1,21 +1,16 @@
 package net.chikaboom.controller.tab.setting_tab;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import net.chikaboom.exception.NoSuchDataException;
-import net.chikaboom.model.database.Account;
 import net.chikaboom.service.data.AccountDataService;
 import net.chikaboom.service.tab.EditSettingsTabService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * Обрабатывает запросы, связанные с вкладкой настроек
@@ -72,40 +67,5 @@ public class SettingTabController {
     @GetMapping("/profile")
     public String loadProfileSettingTab(@PathVariable int idAccount) {
         return PROFILE_SETTINGS_TAB;
-    }
-
-    /**
-     * Изменяет выбранное(ые) поле(я) аккаунта, после чего перезагружает данные на представлении.
-     *
-     * @param idAccount      идентификатор изменяемого аккаунта
-     * @param changedAccount новый измененный аккаунт в виде пар ключ-значение
-     * @return сохраненный объект в виде json
-     */
-//        TODO NEW Исправить. Сделать PATCH запрос. Туториал на офф сайте спринга
-    @PreAuthorize("#idAccount == authentication.principal.idAccount")
-    @PutMapping
-    public ResponseEntity<String> updateSettingTab(@PathVariable int idAccount,
-                                                   @RequestBody Map<String, Object> changedAccount) {
-        try {
-            logger.info("Editing user data. idUser: " + idAccount);
-            logger.info("New data: " + changedAccount);
-
-            editSettingsTabService.updateAccountSettings(changedAccount);
-
-            logger.info("Reloading personality page.");
-            Account account = accountDataService.findById(idAccount)
-                    .orElseThrow(() -> new NoSuchDataException("Account with id " + idAccount + " not found"));
-
-            String accountJSON = null;
-            try {
-                accountJSON = objectMapper.writeValueAsString(account);
-            } catch (JsonProcessingException e) {
-                logger.error(e.getMessage());
-            }
-            return new ResponseEntity<>(accountJSON, HttpStatus.OK);
-
-        } catch (NoSuchDataException e) {
-            return ResponseEntity.notFound().build();
-        }
     }
 }

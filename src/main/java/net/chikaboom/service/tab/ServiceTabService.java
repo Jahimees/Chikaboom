@@ -1,7 +1,6 @@
 package net.chikaboom.service.tab;
 
 import net.chikaboom.exception.NoSuchDataException;
-import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.Service;
 import net.chikaboom.model.database.ServiceSubtype;
 import net.chikaboom.model.database.ServiceType;
@@ -35,19 +34,6 @@ public class ServiceTabService {
         this.accountRepository = accountRepository;
         this.serviceSubtypeRepository = serviceSubtypeRepository;
         this.serviceTypeRepository = serviceTypeRepository;
-    }
-
-    /**
-     * Выполняет поиск всех услуг определенного мастера
-     *
-     * @return коллекцию пользовательских услуг (услуг мастера)
-     */
-    public List<Service> findAllServicesByIdAccount(int idAccount) {
-        logger.info("Searching all services of user with id " + idAccount);
-        Account account = accountRepository.findById(idAccount).
-                orElseThrow(() -> new NoSuchDataException("Cannot find account with id " + idAccount));
-
-        return serviceRepository.findAllByAccount(account);
     }
 
     /**

@@ -2,6 +2,7 @@ package net.chikaboom.service.data;
 
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.model.database.ServiceSubtype;
+import net.chikaboom.repository.ServiceSubtypeRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,6 +12,8 @@ import java.util.Optional;
 @Service
 public class ServiceSubtypeDataService implements DataService<ServiceSubtype> {
 
+    private final ServiceSubtypeRepository serviceSubtypeRepository;
+
 //    TODO in progress
     @Override
     public Optional<ServiceSubtype> findById(int id) {
@@ -19,7 +22,7 @@ public class ServiceSubtypeDataService implements DataService<ServiceSubtype> {
 
     @Override
     public List<ServiceSubtype> findAll() {
-        return null;
+        return serviceSubtypeRepository.findAll();
     }
 
     @Override

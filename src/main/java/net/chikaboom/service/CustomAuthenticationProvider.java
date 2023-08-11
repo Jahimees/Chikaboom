@@ -53,7 +53,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         }
 
         return new UsernamePasswordAuthenticationToken(
-                accountOptional, password, account.getAuthorities());
+                account, password, account.getAuthorities());
     }
 
     @Override

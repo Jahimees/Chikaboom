@@ -34,23 +34,12 @@
 <script src="/js/setting_tab.js"></script>
 
 <script>
+    $(document).ready(function () {
+        loadSettingTab("general");
+    })
 
     function loadSettingTab(tabName) {
-        $.ajax({
-            type: "get",
-            url: "/chikaboom/personality/${idAccount}/settings/" + tabName,
-            contentType: "application/text",
-            dataType: "text",
-            data: {},
-            success: function (data) {
-                setCurrentTabName(tabName);
-                console.log("Load setting tab " + tabName);
-                $("#setting-content-placeholder").html(data);
-            },
-            error: function () {
-                loadUnderConstruction();
-            }
-        });
+       loadSettingTabForAccount(tabName, ${idAccount})
     }
 
     function loadUnderConstruction() {
@@ -68,8 +57,4 @@
             }
         });
     }
-
-    $(document).ready(function () {
-        loadSettingTab("general");
-    })
 </script>
