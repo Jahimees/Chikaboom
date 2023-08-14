@@ -1,6 +1,5 @@
 package net.chikaboom.controller.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.model.database.Appointment;
 import net.chikaboom.service.data.AppointmentDataService;
@@ -16,7 +15,6 @@ import java.util.Optional;
 public class AppointmentRestController {
 
     private final AppointmentDataService appointmentDataService;
-    private final ObjectMapper objectMapper;
 
     @GetMapping("/appointments/{idAppointment}")
     public ResponseEntity<Appointment> findAppointment(@PathVariable int idAppointment) {

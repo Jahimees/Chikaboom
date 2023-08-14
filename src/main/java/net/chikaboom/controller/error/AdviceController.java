@@ -25,7 +25,7 @@ import java.net.URISyntaxException;
 @ControllerAdvice
 public class AdviceController extends ResponseEntityExceptionHandler {
 
-    private final Logger logger = Logger.getLogger(AdviceController.class);
+    private final Logger logger = Logger.getLogger(this.getClass());
 
     /**
      * Перехватывает исключение некорректно-введенных данных пользователем

@@ -1,34 +1,29 @@
-$("#general-setting-tab").on("click", function () {
-    selectCurrentSetting(this);
-    loadSettingTab("general");
-});
+function selectCurrentTab(thisObj) {
+    Array.from($(".menu-box-horizontal > div")).forEach(function (elem) {
+        elem.setAttribute("selected", "false");
+    });
 
-$("#profile-setting-tab").on("click", function () {
-    selectCurrentSetting(this);
-    loadSettingTab("profile");
-});
+    thisObj.setAttribute("selected", "true");
+}
 
-$("#personalization-setting-tab").on("click", function () {
-    selectCurrentSetting(this);
-    loadUnderConstruction();
-});
+function loadAppointmentConcreteTab(tabName, idAccount) {
+    $.ajax({
+        type: "get",
+        url: "/chikaboom/personality/" + idAccount + "/appointment/" + tabName,
+        contentType: "application/text",
+        dataType: "text",
+        success: function (data) {
+            setCurrentTabName(tabName);
+            console.log("Load appointment tab: " + tabName);
+            $("#appointment-content-placeholder").html(data);
+        },
+        error: function () {
+            loadUnderConstruction();
+        }
+    })
+}
 
-$("#security-setting-tab").on("click", function () {
-    selectCurrentSetting(this);
-    loadUnderConstruction();
-});
-
-$("#notification-setting-tab").on("click", function () {
-    selectCurrentSetting(this);
-    loadUnderConstruction();
-});
-
-$("#payment-details-setting-tab").on("click", function () {
-    selectCurrentSetting(this);
-    loadUnderConstruction();
-});
-
-function loadSettingTabForAccount(tabName, idAccount) {
+function loadSettingTab(tabName, idAccount) {
     $.ajax({
         type: "get",
         url: "/chikaboom/personality/" + idAccount + "/settings/" + tabName,
@@ -66,14 +61,6 @@ function openPasswordEditPopup() {
     openPopup("edit-popup");
 }
 
-function selectCurrentSetting(thisObj) {
-    Array.from($(".menu-box-horizontal > div")).forEach(function (elem) {
-        elem.setAttribute("selected", "false");
-    });
-
-    thisObj.setAttribute("selected", "true");
-}
-
 function fillGeneralSettingTab(idAccount) {
     $.ajax({
         method: "get",
@@ -94,4 +81,20 @@ function fillGeneralSettingTab(idAccount) {
             openPopup('message-popup');
         }
     })
+}
+
+function loadUnderConstruction() {
+    $.ajax({
+        type: "get",
+        url: "/chikaboom/under_construction",
+        contentType: "application/text",
+        dataType: "text",
+        data: {},
+        success: function (data) {
+            $("#setting-content-placeholder").html(data);
+        },
+        error: function () {
+            console.error("ERROR")
+        }
+    });
 }

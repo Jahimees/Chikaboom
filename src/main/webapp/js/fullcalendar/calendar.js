@@ -28,7 +28,8 @@ function loadMasterAppointments() {
     let appointmentsForCalendar = [];
     $.ajax({
         type: "get",
-        url: "/chikaboom/appointment/" + accountJson.idAccount,
+        // url: "/chikaboom/appointment/" + accountJson.idAccount,
+        url: "/accounts/" + accountJson.idAccount + "/income-appointments",
         contentType: "application/json",
         dataType: "json",
         success: function (masterAppointments) {

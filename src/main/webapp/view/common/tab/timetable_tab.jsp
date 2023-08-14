@@ -62,7 +62,7 @@
                 }, (1000))
             },
             error: function () {
-                loadUnderConstruction();
+                underConstruction();
             }
         })
 

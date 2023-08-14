@@ -32,16 +32,18 @@
         </div>
     </div>
 </div>
+<jsp:useBean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
 <script>
 
     let clientId;
+    let appointmentToSend;
+    let client
 
     function makeAppointment() {
         clientId = ${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.idAccount != 0
-                            ? sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.idAccount : 0} + 0;
+                            ? sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.idAccount : 0} +0;
         let masterId = accountJson.idAccount;
 
-        let idService = parseInt($("#services-select")[0].value);
         let workingDayVal = $("#working-day-select")[0].value;
         let workingTimeVal = $("#working-time-select")[0].value;
 
@@ -63,24 +65,43 @@
             openPopup('message-popup');
         } else {
             $("#appointment-warn").css("display", "none");
-            console.log("here")
-            $.post("/chikaboom/appointment/" + masterId,
-                {
-                    idAccountClient: clientId,
-                    idService: idService,
-                    appointmentDate: workingDayVal,
-                    appointmentTime: workingTimeVal
-                }, function () {
+            client = ${objectMapper.writeValueAsString(sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal)};
+            let master = accountJson;
+
+            let idService = parseInt($("#services-select")[0].value);
+            let service
+            servicesJson.forEach(function (serv) {
+                if (serv.idService === idService) {
+                    service = serv
+                }
+            })
+
+            appointmentToSend = {
+                clientAccount: client,
+                masterAccount: master,
+                service: service,
+                appointmentDate: workingDayVal,
+                appointmentTime: workingTimeVal
+            }
+
+            $.ajax({
+                method: "post",
+                url: "/appointments",
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify(appointmentToSend),
+                success: function () {
                     $("#close-modal-btn").click();
 
                     repairDefaultMessagePopup();
                     $("#popup-message-text")[0].innerText = "Вы успешно записались на услугу!"
                     $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Запись оформлена!";
                     openPopup('message-popup');
+
                     masterAppointmentsJson = loadMastersAppointments(accountJson.idAccount);
                     calculateServiceTime();
-                }, 'text'
-            )
+                }
+            })
         }
 
     }

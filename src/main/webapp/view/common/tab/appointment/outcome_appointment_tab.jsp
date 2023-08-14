@@ -3,7 +3,7 @@
 
 <div class="content">
     <div>
-        <div class="big-text">Записи на мои услуги</div>
+        <div class="big-text">Мои записи на услуги</div>
 
         <div id="appointment-placeholder" class="d-block w-100">
             <div class="service-row row" style="background-color: #5f4e7d; color: white">
@@ -12,8 +12,8 @@
                 <div class="col-1">Время записи</div>
                 <div class="col-1">Цена услуги</div>
                 <div class="col-1">Время на услугу</div>
-                <div class="col-2">Телефон клиента</div>
-                <div class="col-2">Имя клиента</div>
+                <div class="col-2">Телефон мастера</div>
+                <div class="col-2">Имя мастера</div>
             </div>
             <c:forEach items="${appointmentList}" var="appointment">
                 <div class="service-row row">
@@ -24,10 +24,10 @@
                     <div class="col-1">${appointment.service.price} р.</div>
                     <div class="col-1">${appointment.service.time}</div>
                     <div class="col-2">
-                        +${appointment.clientAccount.phoneCode.phoneCode} ${appointment.clientAccount.phone}</div>
-                    <div class="col-2">${appointment.clientAccount.username}</div>
-<%--                    TODO небезопасно. Пользователь видит callConfirmDeletePopup(3) и может поменятЬ!--%>
-                    <div class="col-1 edit-button" onclick="callConfirmDeletePopup(${appointment.masterAccount.idAccount},${appointment.idAppointment})"><img
+                        +${appointment.masterAccount.phoneCode.phoneCode} ${appointment.masterAccount.phone}</div>
+                    <div class="col-2">${appointment.masterAccount.username}</div>
+                        <%--                    TODO небезопасно. Пользователь видит callConfirmDeletePopup(3) и может поменятЬ!--%>
+                    <div class="col-1 edit-button" onclick="callConfirmDeletePopup(${appointment.clientAccount.idAccount},${appointment.idAppointment})"><img
                             src="/image/icon/cross_icon.svg" style="width: 15px;"></div>
                 </div>
             </c:forEach>
@@ -38,12 +38,13 @@
 </div>
 
 <script>
-    var devAppointments;
+
+    let devAppointments;
 
     $(document).ready(function () {
         $.ajax({
             method: "get",
-            url: "/accounts/${idAccount}/income-appointments",
+            url: "/accounts/${idAccount}/outcome-appointments",
             contentType: "application/json",
             dataType: "json",
             success: function (json) {
@@ -52,20 +53,20 @@
         })
     })
 
-    function callConfirmDeletePopup(idAccountMaster, idAppointment) {
+    function callConfirmDeletePopup(idAccountClient, idAppointment) {
         repairDefaultMessagePopup();
         $("#decline-message-btn")[0].style.display = "block";
-        $("#confirm-message-btn")[0].setAttribute("onclick", "deleteAppointment(" + idAccountMaster + "," + idAppointment + ")");
+        $("#confirm-message-btn")[0].setAttribute("onclick", "deleteMyAppointment(" + idAccountClient + "," + idAppointment + ")");
 
         $("#popup-message-text")[0].innerText = "Вы действительно хотите удалить запись на услугу?";
         $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Удаление";
         openPopup("message-popup");
     }
 
-    function deleteAppointment(idAccountMaster, idAppointment) {
+    function deleteMyAppointment(idAccountClient, idAppointment) {
         $.ajax({
             type: "delete",
-            url: "/chikaboom/appointment/" + idAccountMaster + "/" + idAppointment,
+            url: "/chikaboom/appointment/" + idAccountClient + "/" + idAppointment,
             contentType: "application/text",
             dataType: "text",
             success: function () {

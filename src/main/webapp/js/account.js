@@ -1,3 +1,25 @@
+function initializePage(idAccount) {
+    accountJson = loadAccount(idAccount);
+
+    if (isMaster(accountJson)) {
+        servicesJson = loadMastersServices(accountJson.idAccount);
+        fillServiceTable(servicesJson, true);
+        fillServicesModal(servicesJson);
+        fillWorkingDays(accountJson);
+
+        masterAppointmentsJson = loadMastersAppointments(accountJson.idAccount);
+        $("#address-placeholder")[0].innerText = "Адрес: " + accountJson.address != null ? accountJson.address : "";
+        $("#profession-placeholder")[0].innerText = accountJson.about !== null ? accountJson.about.profession : "";
+        $("#about-text-placeholder")[0].innerText = accountJson.about !== null ? accountJson.about.text : "";
+    } else {
+        $(".master-only").remove();
+        $(".main-information").css("height", "auto");
+    }
+
+    $("#username-placeholder")[0].innerText = accountJson.username;
+    $("#phone-placeholder")[0].innerText = "Телефон: " + "+" + accountJson.phoneCode.phoneCode + " " + accountJson.phone;
+}
+
 function loadAccount(idAccount) {
     var accountJson
 

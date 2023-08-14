@@ -54,33 +54,6 @@ public class AppointmentController {
     }
 
     /**
-     * Обрабатывает запрос на получение всех записей к указанному мастеру.
-     *
-     * @param idAccountMaster идентификатор аккаунта мастера
-     * @return все записи к мастеру в формате JSON
-     */
-    @PreAuthorize("permitAll()")
-    @GetMapping
-    public ResponseEntity<String> getAllMasterAppointments(@PathVariable int idAccountMaster) {
-        logger.info("Getting full info about appointments of master with id " + idAccountMaster);
-
-        List<Appointment> appointmentList = appointmentDataService.findAllByIdAccount(idAccountMaster, false);
-
-        ObjectMapper mapper = new ObjectMapper();
-
-        String appointmentListJson = "";
-
-        try {
-            logger.info("Trying to convert appointmentList to JSON format");
-            appointmentListJson = mapper.writeValueAsString(appointmentList);
-        } catch (JsonProcessingException e) {
-            logger.error(e.getMessage());
-        }
-
-        return new ResponseEntity<>(appointmentListJson, HttpStatus.OK);
-    }
-
-    /**
      * Обрабатывает запрос на удаление записи клиента к мастеру //TODO доработка уведомления клиента и мастера
      *
      * @param idAccountMaster идентификатор аккаунта мастера
