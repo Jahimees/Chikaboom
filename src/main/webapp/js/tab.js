@@ -7,6 +7,7 @@ function selectCurrentTab(thisObj) {
 }
 
 function loadAppointmentConcreteTab(tabName, idAccount) {
+    console.log("load concrete tab")
     $.ajax({
         type: "get",
         url: "/chikaboom/personality/" + idAccount + "/appointment/" + tabName,
@@ -15,7 +16,7 @@ function loadAppointmentConcreteTab(tabName, idAccount) {
         success: function (data) {
             setCurrentTabName(tabName);
             console.log("Load appointment tab: " + tabName);
-            $("#appointment-content-placeholder").html(data);
+            $("#appointment-tab-placeholder").html(data);
         },
         error: function () {
             loadUnderConstruction();

@@ -1,6 +1,7 @@
 package net.chikaboom.controller.rest;
 
 import lombok.RequiredArgsConstructor;
+import net.chikaboom.exception.NoSuchDataException;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.Service;
 import net.chikaboom.service.data.ServiceDataService;
@@ -13,12 +14,21 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * REST контроллер для взаимодействия с сущностями типа {@link Service}
+ */
 @RequiredArgsConstructor
 @RestController
 public class ServiceRestController {
 
     private final ServiceDataService serviceDataService;
 
+    /**
+     * Производит поиск услуге по его id.
+     *
+     * @param idService идентификатор услуги
+     * @return услуга в json-формате
+     */
     @PreAuthorize("permitAll()")
     @GetMapping("/services/{idService}")
     public ResponseEntity<Service> findService(@PathVariable int idService) {
@@ -27,17 +37,24 @@ public class ServiceRestController {
         return serviceOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PreAuthorize("permitAll()")
+    /**
+     * Производит поиск всех возможных услуг. Необходимо быть авторизованным.
+     *
+     * @return все пользовательские услуги.
+     * @deprecated нет необходимости в поиске сразу всех сервисов
+     */
+    @Deprecated
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/services")
     public ResponseEntity<List<Service>> findAllServices() {
         return ResponseEntity.ok(serviceDataService.findAll());
     }
 
     /**
-     * Создает данные об услуге мастера
+     * Создает данные об услуге мастера. Необходимо иметь роль мастера. Невозможно создать услугу другому пользователю
      *
      * @param service услуга, которую предоставляет мастер
-     * @return обновленная услуга
+     * @return созданная услуга
      */
     @PreAuthorize("hasRole('MASTER')")
     @PostMapping("/services")
@@ -46,14 +63,19 @@ public class ServiceRestController {
         Account authorizedAccount = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (authorizedAccount.getIdAccount() != masterAccount.getIdAccount()) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        if (!service.getAccount().equals(authorizedAccount)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         return ResponseEntity.ok(serviceDataService.create(service));
     }
 
     /**
-     * Обновляет данные об услуге мастера
+     * Обновляет данные об услуге мастера (полная замена). Необходимо иметь роль мастера. Невозможно изменить услугу
+     * другому пользователю.
      *
      * @param service услуга, которую предоставляет мастер
      * @return обновленная услуга
@@ -67,11 +89,11 @@ public class ServiceRestController {
             return ResponseEntity.notFound().build();
         }
 
-        Account masterAccount = service.getAccount();
         Account authorizedAccount = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (authorizedAccount.getIdAccount() != masterAccount.getIdAccount()) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        if (!service.getAccount().equals(authorizedAccount)
+                || !serviceOptional.get().getAccount().equals(authorizedAccount)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         service.setIdService(idService);
@@ -80,10 +102,10 @@ public class ServiceRestController {
     }
 
     /**
-     * Удаляет из базы данных указанную услугу
+     * Удаляет из базы данных указанную услугу. Необходимо иметь роль мастера. Невозможно удалить чужую услугу.
      *
      * @param idService идентификатор услуги, которую необходимо удалить
-     * @return строку, содержащую результат удаления
+     * @return json-ответ с кодом
      */
     @PreAuthorize("hasRole('MASTER')")
     @DeleteMapping("/services/{idService}")
@@ -94,11 +116,10 @@ public class ServiceRestController {
             return ResponseEntity.notFound().build();
         }
 
-        Account masterAccount = serviceOptional.get().getAccount();
         Account authorizedAccount = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (authorizedAccount.getIdAccount() != masterAccount.getIdAccount()) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        if (serviceOptional.get().getAccount().equals(authorizedAccount)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         serviceDataService.deleteById(idService);
@@ -107,14 +128,40 @@ public class ServiceRestController {
     }
 
     /**
-     * Загружает информацию обо всех услугах, который создал пользователь (idAccount - идентифицирует пользователя).
+     * Загружает информацию обо всех услугах, которыесоздал пользователь.
      *
      * @param idAccount идентификатор аккаунта
-     * @return полную информацию в формате JSON обо всех созданных пользователем услугах.
+     * @return полную информацию в формате JSON обо всех созданных пользователем услугах
      */
     @PreAuthorize("permitAll()")
     @GetMapping("/accounts/{idAccount}/services")
-    public List<Service> findAllServicesById(@PathVariable int idAccount) {
-        return serviceDataService.findAllServicesByIdAccount(idAccount);
+    public ResponseEntity<List<Service>> findAllServicesByIdAccount(@PathVariable int idAccount) {
+        return ResponseEntity.ok(serviceDataService.findAllServicesByIdAccount(idAccount));
+    }
+
+    /**
+     * Поиск всех услуг по перечню подтипов услуг конкретного типа услуги.
+     * Выбирается тип услуги (напр. Барбершоп), выбирается несколько подтипом (Стрижка бороды, усов) и по этим
+     * параметрам производится поиск созданных пользовательских услуг.
+     * В случае, если передается пустой массив идентификаторов подтипов услуг, производится поиск всех услуг
+     * только по типу услуг.
+     * Если в массиве присутствуют идентификаторы подтипов услуг, которые не относятся к выбранной услуге,
+     * то они игнорируются.
+     *
+     * @param idServiceType     идентификатор типа услуги
+     * @param serviceSubtypeIds массив идентификаторов подтипов услуг
+     * @return список найденных услуг в формате json
+     */
+    @PreAuthorize("permitAll()")
+    @GetMapping("/service-types/{idServiceType}/service-subtypes/services")
+    public ResponseEntity<List<Service>> findAllServicesByServiceSubtypeIds(
+            @PathVariable int idServiceType, @RequestParam int[] serviceSubtypeIds) {
+        List<Service> serviceList;
+        try {
+            serviceList = serviceDataService.findServicesByServiceSubtypeIds(serviceSubtypeIds, idServiceType);
+        } catch (NoSuchDataException e) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(serviceList);
     }
 }

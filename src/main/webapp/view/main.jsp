@@ -73,7 +73,7 @@
         <div class="service-type-block-all row">
             <c:set var="counter" value="1"/>
             <c:forTokens var="i"
-                         items="Ногтевой сервис,Парикмахерские услуги,Ресницы,Брови,Визаж,Барбершоп"
+                         items="Ногтевой сервис,Парикмахерские услуги,Ресницы,Брови,Визаж,Депиляция/эпиляция"
                          delims=",">
                 <div class="col-xl-4 service-type-outer-image">
                     <a style="display: inline-flex" href="/chikaboom/service/search/${counter}">

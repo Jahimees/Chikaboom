@@ -1,10 +1,5 @@
 package net.chikaboom.controller.tab.setting_tab;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
-import net.chikaboom.service.data.AccountDataService;
-import net.chikaboom.service.tab.EditSettingsTabService;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -13,9 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * Обрабатывает запросы, связанные с вкладкой настроек
+ * Отвечает за отрисовку вкладки настроек
  */
-@RequiredArgsConstructor
 @Controller
 @RequestMapping("/chikaboom/personality/{idAccount}/settings")
 public class SettingTabController {
@@ -27,17 +21,11 @@ public class SettingTabController {
     @Value("${tab.settings.profile}")
     private String PROFILE_SETTINGS_TAB;
 
-    private final EditSettingsTabService editSettingsTabService;
-    private final AccountDataService accountDataService;
-    private final ObjectMapper objectMapper;
-
-    private final Logger logger = Logger.getLogger(SettingTabController.class);
-
     /**
      * Открывает саму вкладку настроек пользователя.
      *
      * @param idAccount идентификатор аккаунта, чьи настройки необходимо открыть
-     * @return ссылку на вкладку с настройками
+     * @return путь к вкладке с настройками
      */
     @PreAuthorize("#idAccount == authentication.principal.idAccount")
     @GetMapping
@@ -46,10 +34,10 @@ public class SettingTabController {
     }
 
     /**
-     * Возвращает представление основных настроек (подвкладка вкладки настроек).
+     * Возвращает представление основных настроек (подвкладка настроек).
      *
      * @param idAccount идентификатор пользователя
-     * @return ссылку на страницу
+     * @return путь к подвкладке основных настроек
      */
     @PreAuthorize("#idAccount == authentication.principal.idAccount")
     @GetMapping("/general")
@@ -61,7 +49,7 @@ public class SettingTabController {
      * Возвращает представление настроек профиля (подвкладка вкладки настроек)
      *
      * @param idAccount идентификатор пользователя
-     * @return ссылку на страницу
+     * @return путь к подвкладке настроек профиля
      */
     @PreAuthorize("#idAccount == authentication.principal.idAccount")
     @GetMapping("/profile")

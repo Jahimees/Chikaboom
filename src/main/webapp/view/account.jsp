@@ -113,7 +113,7 @@
                     <img class="gallery_image" src="/image/serviceType/service_icon_2.png">
                 </div>
                 <div>
-                    <img class="gallery_image" src="/image/serviceType/service_icon_7.png">
+                    <img class="gallery_image" src="/image/serviceType/service_icon_6.png">
                 </div>
                 <div>
                     <img class="gallery_image" src="/image/serviceType/service_icon_10.png">

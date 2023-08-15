@@ -40,11 +40,17 @@ public class AdviceController extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Перехватывает исключение неверно введенных данных авторизации
+     *
+     * @param ex экземпляр исключения
+     * @return оюъект ошибки с кодом 403
+     */
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<Error> badCredentials(BadCredentialsException ex) {
         logger.warn(ex.getMessage());
 
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
     /**

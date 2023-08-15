@@ -1,8 +1,6 @@
 package net.chikaboom.controller.tab.service_tab;
 
 import lombok.RequiredArgsConstructor;
-import net.chikaboom.service.tab.ServiceTabService;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -11,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * Обрабатывает запросы, связанные с вкладкой услуг
+ * Отвечает за отрисовку вкладки услуг
  */
 @Controller
 @RequiredArgsConstructor
@@ -23,14 +21,11 @@ public class ServiceTabController {
     @Value("${tab.serviceType.general}")
     private String GENERAL_SERVICE_TAB;
 
-    private final ServiceTabService serviceTabService;
-    private final Logger logger = Logger.getLogger(this.getClass());
-
     /**
-     * Загружает вкладку услуг и отправляет на неё данные о всех имеющихся услугах и подуслугах в распоряжении мастера
+     * Загружает вкладку услуг
      *
      * @param idAccount идентификатор пользователя
-     * @return представление вкладки и json всех подуслуг
+     * @return путь к вкладке услуг
      */
     @PreAuthorize("#idAccount == authentication.principal.idAccount and hasRole('MASTER')")
     @GetMapping
@@ -39,10 +34,10 @@ public class ServiceTabController {
     }
 
     /**
-     * Загружает основную вкладку услуг в личном кабинете мастера
+     * Загружает основную подвкладку услуг в личном кабинете мастера
      *
      * @param idAccount идентификатор мастера
-     * @return json, содержащий все услуги, которые предоставляет мастер
+     * @return путь к основной подвкладке услуг
      */
     @PreAuthorize("#idAccount == authentication.principal.idAccount")
     @GetMapping("/general")

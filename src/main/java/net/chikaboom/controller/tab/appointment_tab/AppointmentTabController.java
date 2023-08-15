@@ -1,8 +1,5 @@
 package net.chikaboom.controller.tab.appointment_tab;
 
-import lombok.RequiredArgsConstructor;
-import net.chikaboom.model.database.Appointment;
-import net.chikaboom.service.data.AppointmentDataService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -10,17 +7,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
-
-import java.util.List;
 
 /**
- * Обрабатывает запросы, связанные с вкладкой записей.
+ * Отвечает за отрисовку вкладкок записей
  * <p>
- * Существует две вкладки записей: "Мои записи" и "Записи ко мне".
+ * На самой вкладке существуют две подвкладки записей: "Мои записи" и "Записи ко мне".
  * Первая отвечает за те записи, на которые записался сам клиент. Вторая, соответственно, за записи к конкретному мастеру.
  */
-@RequiredArgsConstructor
 @Controller
 @RequestMapping("/chikaboom/personality/{idAccount}")
 public class AppointmentTabController {
@@ -34,6 +27,12 @@ public class AppointmentTabController {
 
     private final Logger logger = Logger.getLogger(this.getClass());
 
+    /**
+     * Открывает главную вкладку записей
+     *
+     * @param idAccount идентификатор аккаунта, чьи записи необходимо открыть
+     * @return путь к вкладке записей
+     */
     @PreAuthorize("#idAccount == authentication.principal.idAccount")
     @GetMapping(value = "/appointment")
     public String openAppointmentTab(@PathVariable int idAccount) {
@@ -42,6 +41,12 @@ public class AppointmentTabController {
         return APPOINTMENT_TAB;
     }
 
+    /**
+     * Открывает подвкладку исходящих записей. Т.е. те записи, на которые записался клиент
+     *
+     * @param idAccount идентификатор аккаунта
+     * @return путь к подвкладке исходящих записей
+     */
     @PreAuthorize("#idAccount == authentication.principal.idAccount")
     @GetMapping("/appointment/outcome")
     public String openOutcomeAppointmentTab(@PathVariable int idAccount) {
@@ -50,6 +55,12 @@ public class AppointmentTabController {
         return OUTCOME_APPOINTMENT_TAB;
     }
 
+    /**
+     * Открывает подвкладку входящих записей. Т.е. те записи, на которые записались к мастеру
+     *
+     * @param idAccount идентификатор аккаунта
+     * @return путь к подвкладке входящих записей
+     */
     @PreAuthorize("#idAccount == authentication.principal.idAccount")
     @GetMapping("/appointment/income")
     public String openIncomeAppointmentTab(@PathVariable int idAccount) {

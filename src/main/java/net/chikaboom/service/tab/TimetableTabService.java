@@ -1,30 +1,24 @@
 package net.chikaboom.service.tab;
 
+import lombok.RequiredArgsConstructor;
 import net.chikaboom.exception.NoSuchDataException;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.WorkingDays;
 import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.repository.WorkingDaysRepository;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
  * Сервис для обработки логики на странице графика работы мастера
  */
+@RequiredArgsConstructor
 @Service
 public class TimetableTabService {
 
     private final AccountRepository accountRepository;
     private final WorkingDaysRepository workingDaysRepository;
     private final Logger logger = Logger.getLogger(this.getClass());
-
-    @Autowired
-    public TimetableTabService(AccountRepository accountRepository,
-                               WorkingDaysRepository workingDaysRepository) {
-        this.accountRepository = accountRepository;
-        this.workingDaysRepository = workingDaysRepository;
-    }
 
     /**
      * Выполняет сохранение объекта WorkingDays в базу данных
@@ -57,11 +51,11 @@ public class TimetableTabService {
 
     /**
      * Возвращает рабочие дни для выбранного мастера. В случае первого захода мастера на страницу графика
-     * устанавливает значения по умолчанию TODO FIXME так не должно быть
+     * устанавливает значения по умолчанию
      *
      * @return рабочие дни мастера
      */
-    public WorkingDays findWorkingDays(int idAccount) {
+    public WorkingDays findWorkingDaysByIdAccount(int idAccount) {
         logger.info("Searching workingDays info of user with id " + idAccount);
 
         Account account = accountRepository.findById(idAccount)
