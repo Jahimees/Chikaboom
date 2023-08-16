@@ -2,14 +2,12 @@ package net.chikaboom.service.data;
 
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.exception.NoSuchDataException;
-import net.chikaboom.exception.UserAlreadyExistsException;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.Appointment;
-import net.chikaboom.model.database.Service;
 import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.repository.AppointmentRepository;
-import net.chikaboom.repository.ServiceRepository;
 import org.apache.log4j.Logger;
+import org.springframework.security.acls.model.AlreadyExistsException;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,10 +21,15 @@ public class AppointmentDataService implements DataService<Appointment> {
 
     private final AppointmentRepository appointmentRepository;
     private final AccountRepository accountRepository;
-    private final ServiceRepository serviceRepository;
     private final Logger logger = Logger.getLogger(this.getClass());
 
 
+    /**
+     * Производит поиск записи по идентификатору.
+     *
+     * @param idAppointment идентификатор записи
+     * @return объект записи
+     */
     @Override
     public Optional<Appointment> findById(int idAppointment) {
         logger.info("Loading appointment info with id " + idAppointment);
@@ -34,61 +37,49 @@ public class AppointmentDataService implements DataService<Appointment> {
         return appointmentRepository.findById(idAppointment);
     }
 
+    /**
+     * Производит поиск всех записей.
+     *
+     * @return список всех существующих записей
+     */
     @Override
     public List<Appointment> findAll() {
         return appointmentRepository.findAll();
     }
 
     /**
-     * Удаляет выбранную запись по её идентификатору //TODO уведомление клиенту и мастеру
+     * Удаляет выбранную запись по её идентификатору. //TODO уведомление клиенту и мастеру
      */
     @Override
     public void deleteById(int idAppointment) {
         appointmentRepository.deleteById(idAppointment);
     }
 
+    /**
+     * Обновляет (полностью перезаписывает) запись на услугу в базе данных
+     *
+     * @param appointment обновленный объект записи
+     * @return сохранённый объект записи
+     */
     @Override
     public Appointment update(Appointment appointment) {
         return appointmentRepository.save(appointment);
     }
 
+    /**
+     * Создаёт объект записи на услугу в базе
+     *
+     * @param appointment создаваемый объект
+     * @return созданный объект записи на услугу
+     */
     @Override
     public Appointment create(Appointment appointment) {
-        if (isPossibleToCreateAppointment()) {
-            throw new UserAlreadyExistsException("The same user already exists");
+        if (isAppointmentExists(appointment)) {
+            throw new AlreadyExistsException("The same appointment already exists");
         }
+        appointment.setIdAppointment(0);
 
         return appointmentRepository.save(appointment);
-    }
-
-    /**
-     * TODO NEW изменение? UPDATE операция
-     * Осуществляет создание записи на услугу
-     *
-     * @return сохраненную запись
-     * @throws NoSuchDataException возникает, если по одному из переданных параметров не была найдена информация
-     */
-    public Appointment createAppointmentOld(int idAccountMaster, int idAccountClient, int idService, String appointmentDate,
-                                            String appointmentTime) throws NoSuchDataException {
-
-        logger.info("Saving appointment for master (idAccountMaster=" + idAccountMaster + ") and for client (idAccountClient=" + idAccountClient + ").");
-
-        Account master = accountRepository.findById(idAccountMaster)
-                .orElseThrow(() -> new NoSuchDataException("Cannot find account with id " + idAccountMaster));
-        Account client = accountRepository.findById(idAccountClient)
-                .orElseThrow(() -> new NoSuchDataException("Cannot find account with id " + idAccountClient));
-        Service service = serviceRepository.findById(idService)
-                .orElseThrow(() -> new NoSuchDataException("Cannot find service with id " + idService));
-
-        Appointment appointment = new Appointment();
-
-        appointment.setMasterAccount(master);
-        appointment.setClientAccount(client);
-        appointment.setService(service);
-        appointment.setAppointmentDate(appointmentDate);
-        appointment.setAppointmentTime(appointmentTime);
-
-        return appointmentRepository.saveAndFlush(appointment);
     }
 
     /**
@@ -113,8 +104,17 @@ public class AppointmentDataService implements DataService<Appointment> {
         return appointmentList;
     }
 
-    public boolean isPossibleToCreateAppointment() {
-        return false;
+    /**
+     * Проверяет, возможно ли создать запись с указанными параметрами. Метод требует доработки
+     *
+     * @param appointment проверяемы объект записи
+     * @return true - если запись можно создавать, false - в ином случае
+     */
+    public boolean isAppointmentExists(Appointment appointment) {
 //        TODO проверка по времени записи
+        return appointmentRepository.existsByAppointmentDateAndAppointmentTimeAndMasterAccount(
+                appointment.getAppointmentDate(),
+                appointment.getAppointmentTime(),
+                appointment.getMasterAccount());
     }
 }

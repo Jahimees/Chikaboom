@@ -2,37 +2,37 @@ package net.chikaboom.service.data;
 
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.model.database.ServiceType;
+import net.chikaboom.repository.ServiceTypeRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Сервис предоставляет возможность обработки данных типа услуг.
+ */
 @RequiredArgsConstructor
 @Service
-public class ServiceTypeDataService implements DataService<ServiceType> {
-//    TODO in progress
-    @Override
-    public Optional<ServiceType> findById(int id) {
-        return Optional.empty();
+public class ServiceTypeDataService {
+
+    private final ServiceTypeRepository serviceTypeRepository;
+
+    /**
+     * Производит поиск типа услуги по его идентификатору.
+     *
+     * @param idServiceType идентификатор типа услуги
+     * @return объект типа услуги
+     */
+    public Optional<ServiceType> findById(int idServiceType) {
+        return serviceTypeRepository.findById(idServiceType);
     }
 
-    @Override
+    /**
+     * Производит поиск всех типов услуг.
+     *
+     * @return список всех типов услуг
+     */
     public List<ServiceType> findAll() {
-        return null;
-    }
-
-    @Override
-    public void deleteById(int id) {
-
-    }
-
-    @Override
-    public ServiceType update(ServiceType o) {
-        return null;
-    }
-
-    @Override
-    public ServiceType create(ServiceType account) {
-        return null;
+        return serviceTypeRepository.findAll();
     }
 }

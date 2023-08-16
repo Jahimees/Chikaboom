@@ -1,6 +1,5 @@
 package net.chikaboom.controller.error;
 
-import net.chikaboom.exception.IncorrectInputDataException;
 import net.chikaboom.exception.NoSuchDataException;
 import net.chikaboom.exception.UserAlreadyExistsException;
 import org.apache.log4j.Logger;
@@ -33,8 +32,8 @@ public class AdviceController extends ResponseEntityExceptionHandler {
      * @param ex экземпляр исключения
      * @return объект ошибки с http кодом 400
      */
-    @ExceptionHandler(IncorrectInputDataException.class)
-    public ResponseEntity<Error> incorrectInputData(IncorrectInputDataException ex) {
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Error> illegalArgumentException(IllegalArgumentException ex) {
         logger.warn(ex.getMessage());
 
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

@@ -1,7 +1,6 @@
 package net.chikaboom.service.data;
 
 import lombok.RequiredArgsConstructor;
-import net.chikaboom.exception.IncorrectInputDataException;
 import net.chikaboom.exception.NoSuchDataException;
 import net.chikaboom.exception.UserAlreadyExistsException;
 import net.chikaboom.model.database.About;
@@ -10,6 +9,8 @@ import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.repository.PhoneCodeRepository;
 import net.chikaboom.util.PhoneNumberConverter;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,6 +26,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class AccountDataService implements UserDetailsService, DataService<Account> {
+
+    @Value("${regexp.email}")
+    private String EMAIL_REGEXP;
 
     private final AccountRepository accountRepository;
     private final PhoneCodeRepository phoneCodeRepository;
@@ -62,30 +66,59 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
         return accountRepository.findById(idAccount);
     }
 
+    /**
+     * Производит поиск всех аккаунтов
+     *
+     * @return список всех аккаунтов
+     */
     @Override
     public List<Account> findAll() {
         return accountRepository.findAll();
     }
 
+    /**
+     * Удаляет аккаунт по его идентификатору
+     *
+     * @param idAccount идентификатор аккаунта
+     */
     @Override
     public void deleteById(int idAccount) {
         accountRepository.deleteById(idAccount);
     }
 
+    /**
+     * Обновляет данные об аккаунте
+     *
+     * @param account объект аккаунта
+     * @return обновленный объект
+     */
     @Override
     public Account update(Account account) {
         return accountRepository.save(account);
     }
 
+    /**
+     * Создаёт новый объект аккаугта в базе.
+     *
+     * @param account создаваемый объект
+     * @return созданный объект
+     */
     @Override
     public Account create(Account account) {
         if (isAccountExists(account)) {
             throw new UserAlreadyExistsException("The same user already exists");
         }
+        account.setIdAccount(0);
 
         return accountRepository.save(account);
     }
 
+    /**
+     * Применяет частичное изменение объекта, игнорируя null поля и неизменные поля
+     *
+     * @param account новый аккаунт, который нужно изменить. Обязательно должен содержать idAccount != 0
+     * @return обновленный аккаунт
+     */
     public Account patch(Account account) {
         Account patchedAccount = accountRepository.findById(account.getIdAccount())
                 .orElseThrow(() -> new NoSuchDataException("This user doesn't exist"));
@@ -104,7 +137,7 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
             if (passwordEncoder.matches(account.getOldPassword(), patchedAccount.getPassword())) {
                 patchedAccount.setPassword(passwordEncoder.encode(account.getPassword()));
             } else {
-                throw new IncorrectInputDataException("Old password is incorrect");
+                throw new BadCredentialsException("Old password is incorrect");
             }
         }
 
@@ -118,12 +151,15 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
             }
         }
 
-//        TODO NEW Проверка на регулярку
         if (account.getEmail() != null && !account.getEmail().isEmpty()) {
             if (accountRepository.existsByEmail(account.getEmail())) {
                 throw new UserAlreadyExistsException("User with the same email already exists");
             } else {
-                patchedAccount.setEmail(account.getEmail());
+                if (account.getEmail().matches(EMAIL_REGEXP)) {
+                    patchedAccount.setEmail(account.getEmail());
+                } else {
+                    throw new IllegalArgumentException("This email value doesn't matches the template form.");
+                }
             }
         }
 
@@ -142,6 +178,12 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
         return accountRepository.save(patchedAccount);
     }
 
+    /**
+     * Проверяет, существует ли аккаунт в базе. Проверяет по id, имени пользователя и номеру телефона.
+     *
+     * @param account искомый аккаунт
+     * @return true - в случае, если такой аккаунт существует, false - в ином случае
+     */
     public boolean isAccountExists(Account account) {
         return accountRepository.existsById(account.getIdAccount())
                 || accountRepository.existsAccountByUsername(account.getUsername())

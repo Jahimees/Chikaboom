@@ -79,7 +79,7 @@ function loadMastersServices(idAccount) {
 }
 
 function loadMastersAppointments(idAccount) {
-    var masterAppointmentsJson;
+    let masterAppointmentsJson;
 
     $.ajax({
         type: "get",

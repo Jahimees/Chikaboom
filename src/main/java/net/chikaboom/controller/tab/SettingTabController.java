@@ -1,4 +1,4 @@
-package net.chikaboom.controller.tab.setting_tab;
+package net.chikaboom.controller.tab;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;

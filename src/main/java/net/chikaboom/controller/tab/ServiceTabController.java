@@ -1,4 +1,4 @@
-package net.chikaboom.controller.tab.service_tab;
+package net.chikaboom.controller.tab;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

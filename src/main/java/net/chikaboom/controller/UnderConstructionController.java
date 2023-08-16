@@ -16,6 +16,11 @@ public class UnderConstructionController {
     @Value("${page.under_construction}")
     private String UNDER_CONSTRUCTION_PAGE;
 
+    /**
+     * Возвращает страницу-заглушку
+     *
+     * @return путь к странице-заглушке
+     */
     @PreAuthorize("permitAll()")
     @GetMapping
     public String openUnderConstructionPage() {

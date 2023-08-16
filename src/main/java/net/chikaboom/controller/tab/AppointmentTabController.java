@@ -1,4 +1,4 @@
-package net.chikaboom.controller.tab.appointment_tab;
+package net.chikaboom.controller.tab;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;

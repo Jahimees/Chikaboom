@@ -12,18 +12,34 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Сервис предоставляет возможность обработки данных подтипа услугии.
+ * Пользователям не дана возможность создавать свои подтипы услуг.
+ */
 @RequiredArgsConstructor
 @Service
 public class ServiceSubtypeDataService {
 
     private final ServiceSubtypeRepository serviceSubtypeRepository;
     private final ServiceTypeRepository serviceTypeRepository;
+
     private final Logger logger = Logger.getLogger(this.getClass());
 
-    public Optional<ServiceSubtype> findById(int id) {
-        return serviceSubtypeRepository.findById(id);
+    /**
+     * Производит поиск подтипа услуги по его идентификатору
+     *
+     * @param idServiceSubtype идентификатор подтипа услуги
+     * @return найденный подтип услуги
+     */
+    public Optional<ServiceSubtype> findById(int idServiceSubtype) {
+        return serviceSubtypeRepository.findById(idServiceSubtype);
     }
 
+    /**
+     * Производит поиск всех подтипов услуг.
+     *
+     * @return список всех подтипов услуг
+     */
     public List<ServiceSubtype> findAll() {
         return serviceSubtypeRepository.findAll();
     }

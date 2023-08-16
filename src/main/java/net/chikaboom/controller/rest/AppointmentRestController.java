@@ -148,7 +148,7 @@ public class AppointmentRestController {
      * @param idAccount идентификатор аккаунта мастера
      * @return список записей к указанному мастеру
      */
-    @PreAuthorize("isAuthenticated() && #idAccount == authentication.principal.idAccount")
+    @PreAuthorize("permitAll()")
     @GetMapping("/accounts/{idAccount}/income-appointments")
     public ResponseEntity<List<Appointment>> findIncomeAppointments(@PathVariable int idAccount) {
         return findAppointmentsByIdAccount(idAccount, false);

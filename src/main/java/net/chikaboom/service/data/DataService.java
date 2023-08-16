@@ -3,6 +3,11 @@ package net.chikaboom.service.data;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Интерфейс с набором базовых методов
+ *
+ * @param <T> целевой класс сущности
+ */
 public interface DataService<T> {
 
     Optional<T> findById(int id);
