@@ -17,6 +17,11 @@ public class MainController {
     @Value("${page.main}")
     private String MAIN_PAGE;
 
+    /**
+     * Перенаправляет на главную страницу
+     *
+     * @return путь к главной странице
+     */
     @PreAuthorize("permitAll()")
     @GetMapping
     public String openMainPage() {

@@ -8,7 +8,8 @@
     </div>
     <div class="popup-body">
         <label class="invalid-field-label-popup" id="e-input-data-incorrect-label" style="display: none">
-            Проверьте введенные данные</label>
+            Проверьте введенные данные. Возможно, уже существует пользователь с такими данными
+        </label>
         <div id="field-box-placeholder">
         </div>
         <div class="button-box">

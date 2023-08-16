@@ -2,7 +2,6 @@ $(function () {
     showTodaysDate();
     loadMasterAppointments();
     // initializeCalendar();
-
 });
 
 var initializeCalendar = function (appointmentsForCalendar) {
@@ -24,14 +23,13 @@ var initializeCalendar = function (appointmentsForCalendar) {
 var obj;
 var obj1;
 
-var loadMasterAppointments = function () {
+function loadMasterAppointments() {
     let appointmentsForCalendar = [];
     $.ajax({
         type: "get",
-        url: "/chikaboom/appointment/" + accountJson.idAccount,
+        url: "/accounts/" + accountJson.idAccount + "/income-appointments",
         contentType: "application/json",
         dataType: "json",
-        data: {},
         success: function (masterAppointments) {
             masterAppointments.forEach(function (masterAppointment) {
                 let title = masterAppointment.service.name + " - " + masterAppointment.clientAccount.username;
@@ -136,8 +134,8 @@ function saveWorkingDays() {
     workingDays.workingDays = JSON.stringify(workingDays.workingDays);
 
     $.ajax({
-        type: "POST",
-        url: "/chikaboom/personality/" + accountJson.idAccount + "/timetable",
+        type: "PUT",
+        url: "/accounts/" + accountJson.idAccount+ "/workingDays",
         contentType: "application/json",
         dataType: "json",
         data: JSON.stringify(workingDays),
@@ -280,3 +278,123 @@ var disableEnter = function () {
         }
     });
 }
+
+function loadWorkingDaysData(idAccount) {
+    $.ajax({
+        method: "get",
+        url: "/accounts/" + idAccount + "/workingDays",
+        contentType: "application/json",
+        dataType: "json",
+        async: false,
+        success: function(data) {
+            workingDays = data;
+            loadAccountCalendar();
+        },
+        error: function() {
+            repairDefaultMessagePopup();
+            $("#popup-message-text")[0].innerText = "Невозможно загрузить расписание!"
+            $("#popup-message-header")[0].innerText = "Что-то пошло не так!";
+            openPopup('message-popup');
+        }
+    })
+}
+
+function loadAccountCalendar() {
+    if (workingDays !== null && workingDays.workingDays !== null) {
+        workingDays.workingDays = JSON.parse(workingDays.workingDays);
+    } else {
+        workingDays.workingDays = [];
+    }
+
+    reloadWorkingDayDuration();
+
+    $.ajax({
+        type: "get",
+        url: "/chikaboom/personality/calendar",
+        contentType: "application/text",
+        dataType: "text",
+        async: false,
+        data: {},
+        success: function (data) {
+            console.log("loading timetable");
+            $("#timetable-placeholder").html(data);
+
+            setTimeout(function () {
+                var button = document.createElement("button");
+                button.innerHTML = "Сделать рабочим";
+                button.setAttribute("class", "fc-button fc-state-default");
+                button.setAttribute("type", "button");
+                button.setAttribute("onclick", "addOrRemoveWorkingDate($('#calendar2 .fc-day')[0].getAttribute('data-date'))");
+                $("#calendar2 .fc-right").append(button);
+            }, (1000))
+        },
+        error: function () {
+            underConstruction();
+        }
+    })
+
+
+}
+
+function reloadWorkingDayDuration() {
+    var workingDayStartString = JSON.stringify(workingDays.workingDayStart);
+    var workingDayEndString = JSON.stringify(workingDays.workingDayEnd);
+
+    var startTime = workingDayStartString.length === 4 ?
+        workingDayStartString.substring(0, 2) + ":" + workingDayStartString.substring(2, 4)
+        : workingDayStartString.substring(0, 1) + ":" + workingDayStartString.substring(1, 3);
+    var endTime = +workingDayEndString.length === 4 ?
+        workingDayEndString.substring(0, 2) + ":" + workingDayEndString.substring(2, 4)
+        : workingDayEndString.substring(0, 1) + ":" + workingDayEndString.substring(1, 3)
+
+    $("#current-working-day-duration")[0].innerText = "Ваш текущий рабочий день: " + startTime + " - " + endTime;
+
+}
+
+$("#save-work-time-btn").on("click", function () {
+    var startVal = $("#working-day-start")[0].value;
+    var endVal = $("#working-day-end")[0].value;
+
+    var regexp = /^(?:\d|[01]\d|2[0-3]):[0-5]\d$/;
+
+    var startLbl = $("#working-day-start-warn");
+    var endLbl = $("#working-day-end-warn");
+    var totalLbl = $("#working-day-warn");
+
+    var startFlag = false;
+    var endFlag = false;
+
+    if (regexp.test(startVal)) {
+        startFlag = true;
+        startLbl.css("display", "none");
+    } else {
+        startLbl.css("display", "block");
+        startFlag = false;
+    }
+
+    if (regexp.test(endVal)) {
+        endLbl.css("display", "none");
+        endFlag = true;
+    } else {
+        endLbl.css("display", "block");
+        endFlag = false;
+    }
+
+    var startNumber = parseInt(startVal.replace(':', ''));
+    var endNumber = parseInt(endVal.replace(':', ''));
+
+    if (startNumber >= endNumber) {
+        totalLbl.css("display", "block");
+        startFlag = false;
+        endFlag = false;
+    } else {
+        totalLbl.css("display", "none");
+    }
+
+    if (startFlag && endFlag) {
+        workingDays.workingDayStart = startNumber;
+        workingDays.workingDayEnd = endNumber;
+        saveWorkingDays();
+        reloadWorkingDayDuration(workingDays);
+    }
+})

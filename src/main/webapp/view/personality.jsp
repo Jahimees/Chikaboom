@@ -33,7 +33,7 @@
         </div>
 
         <div class="menu-box">
-            <div id="settings-btn" class="menu-child button">
+            <div id="settings-btn" onclick="loadSettingsTab(${idAccount}, this)" class="menu-child button">
                 <div><img class="small-icon" src="/image/icon/settings_icon.svg" alt="no_image"></div>
                 <div class="menu-text"><a href="#">Настройки</a></div>
             </div>
@@ -41,42 +41,37 @@
                 <div><img class="small-icon" src="/image/icon/profile_icon_2.svg" alt="no_image"></div>
                 <div class="menu-text"><a href="/chikaboom/account/${idAccount}">Профиль</a></div>
             </div>
-
+            <div id="appointments-btn" onclick="loadAppointmentTab(${idAccount}, this)" class="menu-child button" selected="false">
+                <div><img class="small-icon" src="/image/icon/notebook_icon.svg" alt="no_image"></div>
+                <div class="menu-text"><a href="#">Записи</a></div>
+            </div>
             <sec:authorize access="hasRole('ROLE_MASTER')">
-                <div id="services-btn" class="menu-child button" selected="false">
+                <div id="services-btn" onclick="loadServicesTab(${idAccount}, this)" class="menu-child button" selected="false">
                     <div><img class="small-icon" src="/image/icon/service_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Услуги</a></div>
                 </div>
-                <div id="statistic-btn" class="menu-child button" selected="false">
+                <div id="statistic-btn" onclick="loadStatistic(${idAccount}, this)" class="menu-child button" selected="false">
                     <div><img class="small-icon" src="/image/icon/statistic_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Статистика</a></div>
                 </div>
-                <div id="appointments-btn" class="menu-child button" selected="false">
-                    <div><img class="small-icon" src="/image/icon/notebook_icon.svg" alt="no_image"></div>
-                    <div class="menu-text"><a href="#">Записи ко мне</a></div>
-                </div>
-                <div id="timetable-btn" class="menu-child button" selected="false">
+                <div id="timetable-btn" onclick="loadTimetableTab(${idAccount}, this)" class="menu-child button" selected="false">
                     <div><img class="small-icon" src="/image/icon/calendar_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">График</a></div>
                 </div>
-                <div id="clients-btn" class="menu-child button" selected="false">
+                <div id="clients-btn" onclick="loadClients(${idAccount}, this)" class="menu-child button" selected="false">
                     <div><img class="small-icon" src="/image/icon/cleitns_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Мои клиенты</a></div>
                 </div>
-                <div id="messages-btn" class="menu-child button" selected="false">
+                <div id="messages-btn" onclick="loadMessages(${idAccount}, this)" class="menu-child button" selected="false">
                     <div><img class="small-icon" src="/image/icon/message_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Сообщения</a></div>
                 </div>
-                <div id="reviews-btn" class="menu-child button" selected="false">
+                <div id="reviews-btn" onclick="loadReviews(${idAccount}, this)" class="menu-child button" selected="false">
                     <div><img class="small-icon" src="/image/icon/review_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Отзывы</a></div>
                 </div>
             </sec:authorize>
-            <div id="my-appointments-btn" class="menu-child button" selected="false">
-                <div><img class="small-icon" src="/image/icon/notebook_icon_2.svg" alt="no_image"></div>
-                <div class="menu-text"><a href="#">Мои записи</a></div>
-            </div>
-            <div id="logout-btn" onclick="" class="menu-child button" selected="false">
+            <div id="logout-btn" class="menu-child button" selected="false">
                 <div><img class="small-icon" src="/image/icon/exit_icon.svg" alt="no_image"></div>
                 <div class="menu-text"><a href="/logout">Выйти</a></div>
             </div>
@@ -99,116 +94,13 @@
 </html>
 
 <script type="text/javascript" src="/js/personality.js"></script>
+<script type="text/javascript" src="/js/account.js"></script>
 
 <script>
-    var accountJson = ${account};
-
-    function loadSettingsTab() {
-        $.ajax({
-            type: "get",
-            url: "/chikaboom/personality/${idAccount}/settings",
-            contentType: "application/text",
-            dataType: "text",
-            success: function (data) {
-                $("#content-placeholder").html(data);
-            },
-            error: function () {
-                $("#popup-message-text")[0].innerText = "Невозможно загрузить настройки!"
-                $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
-                openPopup('message-popup');
-            }
-        });
-    }
-
-    function loadServicesTab() {
-        $.ajax({
-            type: "get",
-            url: "/chikaboom/personality/${idAccount}/services",
-            contentType: "application/text",
-            dataType: "text",
-            data: {},
-            success: function (data) {
-                $("#content-placeholder").html(data);
-            },
-            error: function () {
-                $("#popup-message-text")[0].innerText = "Невозможно загрузить услуги!"
-                $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
-                openPopup('message-popup');
-            }
-        });
-    }
-
-    function loadTimetableTab() {
-        $.ajax({
-            type: "get",
-            url: "/chikaboom/personality/${idAccount}/timetable",
-            contentType: "application/text",
-            dataType: "text",
-            data: {},
-            success: function (data) {
-                $("#content-placeholder").html(data);
-            },
-            error: function () {
-                $("#popup-message-text")[0].innerText = "Невозможно загрузить вкладку график!"
-                $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
-                openPopup('message-popup');
-            }
-        });
-    }
-
-    function loadAppointmentTab() {
-        $.ajax({
-            type: "get",
-            url: "/chikaboom/personality/${idAccount}/appointment",
-            contentType: "application/text",
-            dataType: "text",
-            data: {},
-            success: function (data) {
-                $("#content-placeholder").html(data);
-            },
-            error: function () {
-                $("#popup-message-text")[0].innerText = "Невозможно загрузить вкладку записи!"
-                $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
-                openPopup('message-popup');
-            }
-        });
-    }
-
-    function loadMyAppointmentTab() {
-        $.ajax({
-            type: "get",
-            url: "/chikaboom/personality/${idAccount}/myappointment",
-            contentType: "application/text",
-            dataType: "text",
-            data: {},
-            success: function (data) {
-                $("#content-placeholder").html(data);
-            },
-            error: function () {
-                $("#popup-message-text")[0].innerText = "Невозможно загрузить вкладку ваших записей!"
-                $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
-                openPopup('message-popup');
-            }
-        });
-    }
-
-    function underConstruction() {
-        $.ajax({
-            type: "get",
-            url: "/chikaboom/under_construction",
-            contentType: "application/text",
-            dataType: "text",
-            data: {},
-            success: function (data) {
-                $("#content-placeholder").html(data);
-            },
-            error: function () {
-                console.error("ERROR")
-            }
-        });
-    }
+    var accountJson;
 
     $(document).ready(function () {
+        accountJson = loadAccount(${idAccount});
         let url = new URL(window.location.href);
         var currentTab = url.searchParams.get("tabName")
         if (currentTab === null) {

@@ -23,19 +23,21 @@ $("#confirm-register").on("click", function () {
         var phone = $("#r-input-phone")[0].value;
         var password = $("#r-input-password")[0].value;
         var username = $("#r-input-username")[0].value;
-        var role = $("role :checked, :radio")[0].checked ? "ROLE_CLIENT" : "ROLE_MASTER";
+        var roles = $("role :checked, :radio")[0].checked ?
+            [{name: "ROLE_CLIENT"}] : [{name: "ROLE_CLIENT"},{name: "ROLE_MASTER"}];
+        var account = {
+            phoneCode: phoneCode,
+            phone: phone,
+            password: password,
+            username: username,
+            roles: roles
+        }
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: "/chikaboom/registration",
-            contentType: "application/text",
-            dataType: "text",
-            data: {
-                phoneCode: phoneCode,
-                phone: phone,
-                password: password,
-                username: username,
-                role: role
-            },
+            contentType: "application/json",
+            dataType: "json",
+            data: JSON.stringify(account),
             success: function () {
                 closePopup('register-popup');
                 closePopup('login-popup');
@@ -158,8 +160,7 @@ function validateAuthorizeField(field) {
 
     if (field.value == null || field.value === "") {
         field.setAttribute("reason", "empty");
-    }
-    else if (field.id === "l-input-username" && !/^[a-zA-ZА-Яа-я]+\s{0,1}[a-zA-ZА-Яа-я]+$/.test(field.value)) {
+    } else if (field.id === "l-input-username" && !/^[a-zA-ZА-Яа-я]+\s{0,1}[a-zA-ZА-Яа-я]+$/.test(field.value)) {
         field.setAttribute("reason", "incorrect");
     } else {
         field.style.borderColor = ""

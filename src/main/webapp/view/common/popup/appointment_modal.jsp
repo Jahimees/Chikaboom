@@ -3,11 +3,11 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <!-- Модальное окно -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Записаться к мастеру</h5>
+                <h5 class="modal-title" id="appointmentModalLabel">Записаться к мастеру</h5>
                 <button id="close-modal-btn" type="button" class="btn-close" data-bs-dismiss="modal"
                         aria-label="Закрыть"></button>
             </div>
@@ -32,18 +32,24 @@
         </div>
     </div>
 </div>
+<jsp:useBean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
 <script>
+
+    let clientId;
+    let appointmentToSend;
+    let client
+
     function makeAppointment() {
-        let clientId = ${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.idAccount};
+        clientId = ${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.idAccount != 0
+                            ? sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.idAccount : 0} +0;
         let masterId = accountJson.idAccount;
 
-        let idService = parseInt($("#services-select")[0].value);
         let workingDayVal = $("#working-day-select")[0].value;
         let workingTimeVal = $("#working-time-select")[0].value;
 
         if (workingTimeVal === '') {
             $("#appointment-warn").css("display", "block");
-        } else if (clientId === 0) {
+        } else if (typeof clientId === 'undefined' || clientId === 0) {
             $("#close-modal-btn").click();
 
             repairDefaultMessagePopup();
@@ -59,24 +65,43 @@
             openPopup('message-popup');
         } else {
             $("#appointment-warn").css("display", "none");
+            client = ${objectMapper.writeValueAsString(sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal)};
+            let master = accountJson;
 
-            $.post("/chikaboom/appointment/" + masterId,
-                {
-                    idAccountClient: clientId,
-                    idService: idService,
-                    appointmentDate: workingDayVal,
-                    appointmentTime: workingTimeVal
-                }, function () {
+            let idService = parseInt($("#services-select")[0].value);
+            let service
+            servicesJson.forEach(function (serv) {
+                if (serv.idService === idService) {
+                    service = serv
+                }
+            })
+
+            appointmentToSend = {
+                clientAccount: client,
+                masterAccount: master,
+                service: service,
+                appointmentDate: workingDayVal,
+                appointmentTime: workingTimeVal
+            }
+
+            $.ajax({
+                method: "post",
+                url: "/appointments",
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify(appointmentToSend),
+                success: function () {
                     $("#close-modal-btn").click();
 
                     repairDefaultMessagePopup();
                     $("#popup-message-text")[0].innerText = "Вы успешно записались на услугу!"
                     $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Запись оформлена!";
                     openPopup('message-popup');
-                    loadMasterAppointments(accountJson.idAccount);
+
+                    masterAppointmentsJson = loadMastersAppointments(accountJson.idAccount);
                     calculateServiceTime();
-                }, 'text'
-            )
+                }
+            })
         }
 
     }

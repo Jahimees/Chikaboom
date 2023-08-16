@@ -5,7 +5,7 @@
 <%--TODO Стили--%>
 <div class="header">
     <div class="header-middle-box">
-        <a class="header-menu-link" href="/chikaboom/service/">
+        <a class="header-menu-link" href="/chikaboom/service">
             <b>Услуги</b>
         </a>
         <div style="font-size: 50px">|</div>

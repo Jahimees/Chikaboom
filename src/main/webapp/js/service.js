@@ -96,7 +96,7 @@ function fillServiceTable(servicesJson, isAccountPage) {
             orderTag.setAttribute("class", "purple-button col-2");
             orderTag.setAttribute("style", "font-size: 20px; padding: 0 0;");
             orderTag.setAttribute("data-bs-toggle", "modal");
-            orderTag.setAttribute("data-bs-target", "#exampleModal");
+            orderTag.setAttribute("data-bs-target", "#appointmentModal");
             orderTag.onclick = function () {
                 $("#services-select")[0].value = service.idService;
             }
@@ -104,7 +104,6 @@ function fillServiceTable(servicesJson, isAccountPage) {
 
             rowTag.appendChild(orderTag);
         }
-
 
         serviceSubtypeTag.appendChild(rowTag);
     })
@@ -224,8 +223,6 @@ function saveService() {
         return;
     }
 
-    idService = idService == null || idService === "" ? 0 : idService;
-
     let serviceSubtypeToSend;
 
     serviceSubtypes.forEach(function (serviceSubtype) {
@@ -234,18 +231,26 @@ function saveService() {
         }
     })
 
-    obj = {};
-    obj.account = accountJson;
-    obj.serviceSubtype = serviceSubtypeToSend;
-    obj.idService = idService;
-    obj.price = servicePrice;
-    obj.time = serviceTime;
-    obj.name = serviceName;
+    obj = {
+        account: accountJson,
+        serviceSubtype: serviceSubtypeToSend,
+        price: servicePrice,
+        time: serviceTime,
+        name: serviceName
+    };
 
-    let url = "/chikaboom/personality/" + accountJson.idAccount + "/services"
+    let method;
+    let url = "/services";
+    if (idService != null && idService !== "") {
+        method = "PUT";
+        url += "/" + idService;
+    } else {
+        method = "POST";
+    }
+
     repairDefaultMessagePopup();
     $.ajax({
-        type: "POST",
+        method: method,
         url: url,
         contentType: "application/json",
         dataType: "json",
@@ -267,7 +272,6 @@ function saveService() {
 function callConfirmDeletePopup(idService) {
     let serviceName = searchService(idService).name;
 
-
     repairDefaultMessagePopup();
     $("#decline-message-btn")[0].style.display = "block";
     $("#confirm-message-btn")[0].setAttribute("onclick", "deleteService(" + idService + ")");
@@ -283,7 +287,7 @@ function deleteService(idService) {
 
     $.ajax({
         type: "DELETE",
-        url: "/chikaboom/personality/" + accountJson.idAccount + "/services/" + idService,
+        url: "/services/" + idService,
         success: function () {
             $("#popup-message-text")[0].innerText = "Удаление прошло успешно!";
             $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Услуга удалена!";
@@ -345,7 +349,7 @@ function fillServicesModal(servicesJson) {
     })
 }
 
-function fillWorkingDays() {
+function fillWorkingDays(accountJson) {
     let workingDaySelect = $("#working-day-select")[0];
 
     let workingDays = JSON.parse(accountJson.workingDays.workingDays);
@@ -505,40 +509,4 @@ function calculateServiceTime() {
             timePosition = -1;
         }
     }
-}
-
-function loadMasterAppointments(idAccount) {
-
-    $.ajax({
-        type: "get",
-        url: "/chikaboom/appointment/" + idAccount,
-        contentType: "application/json",
-        dataType: "json",
-        data: {},
-        success: function (data) {
-            masterAppointmentsJson = data;
-        },
-        error: function () {
-            //TODO ERROR
-        }
-    })
-}
-
-function loadServices(idAccount) {
-    $.ajax({
-        type: "get",
-        url: "/chikaboom/personality/" + idAccount + "/services/info",
-        contentType: "application/json",
-        dataType: "json",
-        data: {},
-        success: function (data) {
-            servicesJson = data;
-            fillServiceTable(servicesJson, true);
-            fillServicesModal(servicesJson);
-            fillWorkingDays();
-        },
-        error: function () {
-            //TODO ERROR
-        }
-    });
 }

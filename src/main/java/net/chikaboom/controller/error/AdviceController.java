@@ -1,6 +1,5 @@
 package net.chikaboom.controller.error;
 
-import net.chikaboom.exception.IncorrectInputDataException;
 import net.chikaboom.exception.NoSuchDataException;
 import net.chikaboom.exception.UserAlreadyExistsException;
 import org.apache.log4j.Logger;
@@ -25,7 +24,7 @@ import java.net.URISyntaxException;
 @ControllerAdvice
 public class AdviceController extends ResponseEntityExceptionHandler {
 
-    private final Logger logger = Logger.getLogger(AdviceController.class);
+    private final Logger logger = Logger.getLogger(this.getClass());
 
     /**
      * Перехватывает исключение некорректно-введенных данных пользователем
@@ -33,18 +32,24 @@ public class AdviceController extends ResponseEntityExceptionHandler {
      * @param ex экземпляр исключения
      * @return объект ошибки с http кодом 400
      */
-    @ExceptionHandler(IncorrectInputDataException.class)
-    public ResponseEntity<Error> incorrectInputData(IncorrectInputDataException ex) {
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Error> illegalArgumentException(IllegalArgumentException ex) {
         logger.warn(ex.getMessage());
 
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Перехватывает исключение неверно введенных данных авторизации
+     *
+     * @param ex экземпляр исключения
+     * @return оюъект ошибки с кодом 403
+     */
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<Error> badCredentials(BadCredentialsException ex) {
         logger.warn(ex.getMessage());
 
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
     /**

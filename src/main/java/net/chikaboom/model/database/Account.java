@@ -36,6 +36,9 @@ public class Account implements BaseEntity, UserDetails {
     @Column(name = PASSWORD)
     private String password;
 
+    @Transient
+    private String oldPassword;
+
     /**
      * Имя пользователя
      */

@@ -23,7 +23,6 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
      * @param request   запрос, который был отправлен во время аутентификации.
      * @param response  ответ сервера.
      * @param exception исключение, возникающее при попытке неудачного входа.
-     * @throws IOException
      */
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,

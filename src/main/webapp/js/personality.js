@@ -1,47 +1,116 @@
-$("#settings-btn").on("click", function () {
-    selectCurrent(this);
-    loadSettingsTab()
-});
+function loadTimetableTab(idAccount, thisObj) {
+    selectCurrent(thisObj);
+    $.ajax({
+        type: "get",
+        url: "/chikaboom/personality/" + idAccount + "/timetable",
+        contentType: "application/text",
+        dataType: "text",
+        data: {},
+        success: function (data) {
+            $("#content-placeholder").html(data);
+        },
+        error: function () {
+            $("#popup-message-text")[0].innerText = "Невозможно загрузить вкладку график!"
+            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
+            openPopup('message-popup');
+        }
+    });
+}
 
-$("#services-btn").on("click", function () {
-    selectCurrent(this);
-    loadServicesTab();
-});
+function loadServicesTab(idAccount, thisObj) {
+    selectCurrent(thisObj)
 
-$("#statistic-btn").on("click", function () {
-    selectCurrent(this);
-    loadStatistic();
-});
+    $.ajax({
+        type: "get",
+        url: "/chikaboom/personality/" + idAccount + "/services",
+        contentType: "application/text",
+        dataType: "text",
+        success: function (data) {
+            $("#content-placeholder").html(data);
+        },
+        error: function () {
+            $("#popup-message-text")[0].innerText = "Невозможно загрузить услуги!"
+            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
+            openPopup('message-popup');
+        }
+    });
+}
 
-$("#appointments-btn").on("click", function () {
-    selectCurrent(this);
-    loadAppointmentTab()
-});
+function loadSettingsTab(idAccount, thisObj) {
+    selectCurrent(thisObj);
 
-$("#my-appointments-btn").on("click", function () {
-    selectCurrent(this);
-    loadMyAppointmentTab();
-});
+    $.ajax({
+        type: "get",
+        url: "/chikaboom/personality/" + idAccount + "/settings",
+        contentType: "application/text",
+        dataType: "text",
+        success: function (data) {
+            $("#content-placeholder").html(data);
+        },
+        error: function () {
+            $("#popup-message-text")[0].innerText = "Невозможно загрузить настройки!"
+            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
+            openPopup('message-popup');
+        }
+    });
+}
 
-$("#timetable-btn").on("click", function () {
-    selectCurrent(this);
-    loadTimetableTab();
-});
+function loadAppointmentTab(idAccount, thisObj) {
+    selectCurrent(thisObj);
 
-$("#clients-btn").on("click", function () {
-    selectCurrent(this);
-    loadClients();
-});
+    $.ajax({
+        type: "get",
+        url: "/chikaboom/personality/" + idAccount + "/appointment",
+        contentType: "application/text",
+        dataType: "text",
+        data: {},
+        success: function (data) {
+            $("#content-placeholder").html(data);
+        },
+        error: function () {
+            $("#popup-message-text")[0].innerText = "Невозможно загрузить вкладку записи!"
+            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
+            openPopup('message-popup');
+        }
+    });
+}
 
-$("#messages-btn").on("click", function () {
-    selectCurrent(this);
-    loadMessages();
-});
 
-$("#reviews-btn").on("click", function () {
-    selectCurrent(this);
-    loadReviews();
-});
+function loadStatistic(idAccount, thisObj) {
+    selectCurrent(thisObj);
+    underConstruction();
+}
+
+function loadClients(idAccount, thisObj) {
+    selectCurrent(thisObj)
+    underConstruction();
+}
+
+function loadMessages(idAccount, thisObj) {
+    selectCurrent(thisObj)
+    underConstruction();
+}
+
+function loadReviews(idAccount, thisObj) {
+    selectCurrent(thisObj)
+    underConstruction();
+}
+
+function underConstruction() {
+    $.ajax({
+        type: "get",
+        url: "/chikaboom/under_construction",
+        contentType: "application/text",
+        dataType: "text",
+        data: {},
+        success: function (data) {
+            $("#content-placeholder").html(data);
+        },
+        error: function () {
+            console.error("ERROR")
+        }
+    });
+}
 
 function selectCurrent(thisObj) {
     Array.from($(".menu-box > div")).forEach(function (elem) {
@@ -49,20 +118,4 @@ function selectCurrent(thisObj) {
     });
 
     thisObj.setAttribute("selected", "true");
-}
-
-function loadStatistic() {
-    underConstruction();
-}
-
-function loadClients() {
-    underConstruction();
-}
-
-function loadMessages() {
-    underConstruction();
-}
-
-function loadReviews() {
-    underConstruction();
 }

@@ -43,7 +43,9 @@ public class WebSecurityConfig {
                         .failureHandler(loginFailureHandler)
                         .usernameParameter("username")
                         .passwordParameter("password")
-                        .permitAll())
+                        .permitAll()
+
+                )
                 .logout(logout -> {
                     logout.permitAll();
                     logout.logoutSuccessUrl("/chikaboom/main");

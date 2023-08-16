@@ -1,7 +1,6 @@
 package net.chikaboom.controller;
 
-import net.chikaboom.exception.IncorrectInputDataException;
-import net.chikaboom.service.action.UploadFileService;
+import net.chikaboom.service.UploadFileService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.NoSuchElementException;
 
 /**
  * Контроллер позволяет пользователю загружать файлы на сервер. Например фотографии
@@ -49,7 +50,7 @@ public class UploadFileController {
 
             return new ResponseEntity<>("File successfully uploaded", HttpStatus.CREATED);
         } else {
-            throw new IncorrectInputDataException("File is empty. User has not chosen it");
+            throw new NoSuchElementException("File is empty. User has not chosen it");
         }
 //        TODO если неверный формат данных
     }

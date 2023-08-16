@@ -45,8 +45,8 @@
                 <div class="d-flex flex-row-reverse master-only">
                     <img src="/image/icon/edit_icon.svg">
                     <!-- Кнопка-триггер модального окна -->
-                    <button id="make-appointment-btn" type="button" class="purple-button m-2" data-bs-toggle="modal"
-                            data-bs-target="#exampleModal">
+                    <button id="make-appointment-btn" type="button" class="purple-button m-2 master-only" data-bs-toggle="modal"
+                            data-bs-target="#appointmentModal">
                         ЗАПИСАТЬСЯ
                     </button>
                 </div>
@@ -113,7 +113,7 @@
                     <img class="gallery_image" src="/image/serviceType/service_icon_2.png">
                 </div>
                 <div>
-                    <img class="gallery_image" src="/image/serviceType/service_icon_7.png">
+                    <img class="gallery_image" src="/image/serviceType/service_icon_6.png">
                 </div>
                 <div>
                     <img class="gallery_image" src="/image/serviceType/service_icon_10.png">
@@ -192,30 +192,15 @@
 <script type="text/javascript" src="/js/static_popup.js"></script>
 <script type="text/javascript" src="/js/dynamic_popup.js"></script>
 <script type="text/javascript" src="/js/service.js"></script>
-<script>
-    var accountJson = JSON.parse(JSON.stringify(${account}));
-    var servicesJson = "";
-    var masterAppointmentsJson = "";
-    var address = accountJson.address != null ? accountJson.address : "";
+<script type="text/javascript" src="/js/account.js"></script>
 
-    $("#about-text-placeholder")[0].innerText = accountJson.about !== null ? accountJson.about.text : "";
-    $("#phone-placeholder")[0].innerText = "Телефон: " + "+" + accountJson.phoneCode.phoneCode + " " + accountJson.phone;
-    $("#username-placeholder")[0].innerText = accountJson.username;
-    $("#address-placeholder")[0].innerText = "Адрес: " + address;
-    $("#profession-placeholder")[0].innerText = accountJson.about !== null ? accountJson.about.profession : "";
+<script>
+
+    var accountJson;
+    var servicesJson;
+    var masterAppointmentsJson;
 
     $(document).ready(function () {
-        if (accountJson.roles[0].name === 'client') {
-            $(".master-only").remove();
-            $(".main-information").css("height", "auto");
-        } else {
-            loadServices(accountJson.idAccount);
-            loadMasterAppointments(accountJson.idAccount);
-        }
+       initializePage(${idAccount});
     })
-
-    $("#make-appointment-btn").on("click", function () {
-        loadMasterAppointments(accountJson.idAccount);
-    })
-
 </script>

@@ -28,4 +28,15 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
      * @return коллекцию всех записей, на которые записался клиент
      */
     List<Appointment> findAllByClientAccount(Account clientAccount);
+
+    /**
+     * Проверяет, существует ли запись на указанное время и указанную дату у определенного мастера.
+     *
+     * @param appointmentDate дата записи
+     * @param appointmentTime время записи
+     * @param masterAccount аккаунт мастера
+     * @return true - если такая запись существует, false - в противном случае
+     */
+    boolean existsByAppointmentDateAndAppointmentTimeAndMasterAccount(String appointmentDate, String appointmentTime,
+                                                                      Account masterAccount);
 }
