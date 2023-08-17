@@ -1,11 +1,11 @@
 .menu-box {
-    background-color: #5F4E7D;
+    background-color: #523870;
     padding: 10px 0;
     height: 100%;
 }
 
 .menu-box-horizontal {
-    background-color: white;
+    margin-top: 30px;
     display: inline-flex;
     width: 100%;
     font-family: Manrope, serif;
@@ -13,13 +13,17 @@
 
 .horizontal-menu-text > a {
     margin: auto 10px auto 10px;
-    font-size: 25px;
-    color: #5F4E7D;
+    font-size: 16px;
+    color: #523870;
+    font-weight: bolder;
 }
 
 .horizontal-menu-child {
+    background-color: white;
+    border-radius: 30px;
     display: inline-flex;
-    padding: 15px;
+    padding: 10px 20px;
+    margin-left: 10px;
 }
 
 .menu-child {
@@ -29,16 +33,20 @@
 }
 
 .menu-text > a {
-    margin: auto 10px auto 10px;
-    font-size: 30px;
+    font-size: 16px;
     color: white;
-    font-family: Manrope, serif;
+    font-family: 'Source Sans Pro', sans-serif;
+    letter-spacing: 2px;
+    vertical-align: -webkit-baseline-middle;
 }
 
 .horizontal-menu-child[selected="true"] {
-    text-decoration: underline;
+    background-color: #523870;
+    .horizontal-menu-text > a {
+        color: white;
+    }
 }
 
 .menu-child[selected="true"] {
-    background-color: #AEA1C4;
+    background-color: #674D85;
 }

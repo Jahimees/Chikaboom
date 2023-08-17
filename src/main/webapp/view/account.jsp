@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="/css/popup.css">
     <link rel="stylesheet" href="/css/addition/phonecode.css"/>
 
+    <link href="https://fonts.cdnfonts.com/css/source-sans-pro" rel="stylesheet">
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script rel="script" src="/js/jquery-ui-1.10.4.custom.min.js"></script>
     <script src="/js/phonecode/countries.js"></script>
@@ -58,7 +60,7 @@
                 </b>
                 <div id="profession-placeholder" class="small-text master-only"></div>
                 <div class="main-information">
-                    <div id="phone-placeholder" class="medium-text">Телефон:</div>
+                    <div id="phone-placeholder" class="medium-text"></div>
                     <div id="address-placeholder" class="medium-text master-only">Адрес:</div>
                     <div class="d-inline-flex medium-text master-only">
                         <div class="chapter-header">

@@ -8,16 +8,19 @@ function initializePage(idAccount) {
         fillWorkingDays(accountJson);
 
         masterAppointmentsJson = loadMastersAppointments(accountJson.idAccount);
-        $("#address-placeholder")[0].innerText = "Адрес: " + accountJson.address != null ? accountJson.address : "";
-        $("#profession-placeholder")[0].innerText = accountJson.about !== null ? accountJson.about.profession : "";
-        $("#about-text-placeholder")[0].innerText = accountJson.about !== null ? accountJson.about.text : "";
+        let addressData = accountJson.address != null ? accountJson.address : "";
+        $("#address-placeholder").text("Адрес: " + addressData);
+        $("#profession-placeholder").text(accountJson.about !== null ? accountJson.about.profession : "");
+        $("#about-text-placeholder").text(accountJson.about !== null ? accountJson.about.text : "");
     } else {
         $(".master-only").remove();
         $(".main-information").css("height", "auto");
     }
 
-    $("#username-placeholder")[0].innerText = accountJson.username;
-    $("#phone-placeholder")[0].innerText = "Телефон: " + "+" + accountJson.phoneCode.phoneCode + " " + accountJson.phone;
+    $("#username-placeholder").text(accountJson.username);
+    if (accountJson.phoneVisible) {
+        $("#phone-placeholder").text("Телефон: " + "+" + accountJson.phoneCode.phoneCode + " " + accountJson.phone);
+    }
 }
 
 function loadAccount(idAccount) {
@@ -33,10 +36,7 @@ function loadAccount(idAccount) {
             return accountJson = data;
         },
         error: function () {
-            repairDefaultMessagePopup();
-            $("#popup-message-text")[0].innerText = "Что-то пошло не так. Невозможно загрузить аккаунт!"
-            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Невозможно загрузить аккаунт!";
-            openPopup('message-popup');
+            location.href = "/chikaboom/404";
         }
     });
 

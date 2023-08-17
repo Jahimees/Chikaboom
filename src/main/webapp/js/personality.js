@@ -119,3 +119,14 @@ function selectCurrent(thisObj) {
 
     thisObj.setAttribute("selected", "true");
 }
+
+///////////////////////////////WINDOW VIEW (RESIZE, STYLE)////////////////////////////////////////
+$(document).ready(function () {
+    resizeFlexBox();
+})
+
+
+function resizeFlexBox() {
+    let height = $(window).height();
+    $(".flex-box-purple").attr("style", "height: " + height + "px");
+}

@@ -64,7 +64,7 @@ function confirmEdit() {
 
                 accountJson = data;
 
-                loadSettingTab(currentTabName);
+                loadSettingTab(currentTabName, accountJson.idAccount);
             },
             error: function () {
                 $("#e-input-data-incorrect-label").css("display", "block");
@@ -145,7 +145,7 @@ function addField(labelText, fieldName, inputType, placeHolderText, isPhoneCode,
     return inputField;
 }
 
-const InvalidReason = {PHONE: 'phone', EMAIL: "email", EMPTY: "empty", SHORT: "short", LONG: "long"}
+const InvalidReason = {PHONE: 'phone', EMAIL: "email", EMPTY: "empty", SHORT: "short", LONG: "long", USERNAME: 'username'}
 
 class Validation {
     constructor(invalidMessage, InvalidReason) {
@@ -232,6 +232,14 @@ function validateField(thisField) {
                     $("#" + thisFieldName + "-" + InvalidReason.LONG).css("display", "none");
                 }
                 break;
+            }
+            case InvalidReason.USERNAME: {
+                if (!/^[a-zA-ZА-Яа-я]+\s{0,1}[a-zA-ZА-Яа-я]+$/.test(thisField.value)) {
+                    $("#" + thisFieldName + "-" + InvalidReason.USERNAME).css("display", "block");
+                    isReasonShouldBeEmpty = false;
+                } else {
+                    $("#" + thisFieldName + "-" + InvalidReason.USERNAME).css("display", "none");
+                }
             }
         }
     }

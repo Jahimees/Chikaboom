@@ -18,8 +18,6 @@ public class SettingTabController {
     private String SETTINGS_TAB;
     @Value("${tab.settings.general}")
     private String GENERAL_SETTINGS_TAB;
-    @Value("${tab.settings.profile}")
-    private String PROFILE_SETTINGS_TAB;
 
     /**
      * Открывает саму вкладку настроек пользователя.
@@ -45,15 +43,4 @@ public class SettingTabController {
         return GENERAL_SETTINGS_TAB;
     }
 
-    /**
-     * Возвращает представление настроек профиля (подвкладка вкладки настроек)
-     *
-     * @param idAccount идентификатор пользователя
-     * @return путь к подвкладке настроек профиля
-     */
-    @PreAuthorize("#idAccount == authentication.principal.idAccount")
-    @GetMapping("/profile")
-    public String loadProfileSettingTab(@PathVariable int idAccount) {
-        return PROFILE_SETTINGS_TAB;
-    }
 }

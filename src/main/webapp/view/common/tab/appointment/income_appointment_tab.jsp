@@ -6,7 +6,7 @@
         <div class="big-text">Записи на мои услуги</div>
 
         <div class="d-block w-100">
-            <div id="income-appointment-header" class="service-row row" style="background-color: #5f4e7d; color: white">
+            <div id="income-appointment-header" class="service-row row" style="background-color: #523870; color: white">
                 <div class="col-2">Название услуги</div>
                 <div class="col-2">Дата услуги</div>
                 <div class="col-1">Время записи</div>

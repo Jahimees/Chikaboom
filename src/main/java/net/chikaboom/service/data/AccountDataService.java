@@ -174,6 +174,10 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
             patchedAccount.setAddress(account.getAddress());
         }
 
+        if (account.isPhoneVisible() != patchedAccount.isPhoneVisible()) {
+            patchedAccount.setPhoneVisible(account.isPhoneVisible());
+        } 
+
         logger.info("Saving account...");
         return accountRepository.save(patchedAccount);
     }

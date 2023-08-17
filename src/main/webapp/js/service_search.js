@@ -55,7 +55,7 @@ function loadSubtypeData(idServiceType) {
                 $("#service-subtype-block")[0].appendChild(divMediumText);
                 let serviceTypeNamePlaceHolder = $("#service-type-name-placeholder")[0];
                 serviceTypeNamePlaceHolder.innerText = subtype.serviceType.name;
-                serviceTypeNamePlaceHolder.setAttribute("style", "text-decoration: none; color: #5F4E7D")
+                serviceTypeNamePlaceHolder.setAttribute("style", "text-decoration: none; color: #523870")
             })
         }
     })

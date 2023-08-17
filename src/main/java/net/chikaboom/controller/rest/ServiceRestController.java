@@ -66,7 +66,7 @@ public class ServiceRestController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        if (!service.getAccount().equals(authorizedAccount)) {
+        if (service.getAccount().getIdAccount() != authorizedAccount.getIdAccount()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -91,8 +91,8 @@ public class ServiceRestController {
 
         Account authorizedAccount = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (!service.getAccount().equals(authorizedAccount)
-                || !serviceOptional.get().getAccount().equals(authorizedAccount)) {
+        if (service.getAccount().getIdAccount() != authorizedAccount.getIdAccount()
+                || serviceOptional.get().getAccount().getIdAccount() != authorizedAccount.getIdAccount()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -118,7 +118,7 @@ public class ServiceRestController {
 
         Account authorizedAccount = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (serviceOptional.get().getAccount().equals(authorizedAccount)) {
+        if (serviceOptional.get().getAccount().getIdAccount() != authorizedAccount.getIdAccount()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 

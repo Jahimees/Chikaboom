@@ -6,7 +6,8 @@ function fillServiceTable(servicesJson, isAccountPage) {
 
     //TODO проверка на null
     servicesJson.forEach(function (service) {
-        if (!isObjectInSet(service.serviceSubtype.serviceType, serviceTypeSet, "service")) {
+        if (!isObjectInSet(service.serviceSubtype.serviceType, serviceTypeSet, "serviceType")) {
+            console.log(service.serviceSubtype.serviceType);
             serviceTypeSet.add(service.serviceSubtype.serviceType);
         }
         if (!isObjectInSet(service.serviceSubtype, serviceSubtypeSet, "serviceSubtype")) {
