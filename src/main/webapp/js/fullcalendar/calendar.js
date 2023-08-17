@@ -13,7 +13,7 @@ var initializeCalendar = function (appointmentsForCalendar) {
         firstDay: 1,
         defaultTimedEventDuration: '00:30:00',
         forceEventDuration: true,
-        eventBackgroundColor: '#5F4E7D',
+        eventBackgroundColor: '#523870',
         editable: false,
         height: screen.height - 160,
         timezone: 'Russia/Moscow',

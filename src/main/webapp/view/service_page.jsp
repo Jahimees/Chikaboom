@@ -22,6 +22,8 @@
     <link rel="stylesheet" href="/css/media/main_media.css">
     <link rel="stylesheet" href="/css/popup.css">
 
+    <link href="https://fonts.cdnfonts.com/css/source-sans-pro" rel="stylesheet">
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
 </head>
@@ -31,9 +33,9 @@
     Услуги
 </div>
 <div class="medium-text padding-0-5 full-width-inline-box">
-    <a href="/chikaboom/main" style="text-decoration: none; color: #5F4E7D">Главная</a>
+    <a href="/chikaboom/main" style="text-decoration: none; color: #523870">Главная</a>
     <div style="padding: 0 15px">></div>
-    <a href="/chikaboom/service" style="text-decoration: none; color: #5F4E7D">Услуги</a>
+    <a href="/chikaboom/service" style="text-decoration: none; color: #523870">Услуги</a>
 </div>
 <hr>
 <div class="service-type-block-all row">

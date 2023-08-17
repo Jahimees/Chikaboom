@@ -20,16 +20,27 @@
     <link rel="stylesheet" href="/css/addition/menu_bar.css">
     <link rel="stylesheet" href="/css/addition/phonecode.css"/>
 
+    <link href="https://fonts.cdnfonts.com/css/source-sans-pro" rel="stylesheet">
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
-<body>
-<div class="flex-box-gray">
-    <div class="w-20 me-1">
+<body onresize="resizeFlexBox()" style="overflow: hidden">
+<div class="flex-box-purple">
+    <div class="w-250-px">
+        <a href="/chikaboom/main">
+            <div id="home-button" class="margin-35-0-0-0-px light-small-text">
+                < На сайт
+            </div>
+        </a>
 
-        <div style="text-align: center; font-size: 3em; background-color: #5F4E7D;" id="logo">
-            <a href="/chikaboom/main">
-                <img style="width: 50%" src="/image/logo_gradient.svg">
-            </a>
+        <a href="/chikaboom/account/${idAccount}">
+            <div id="menu-photo-placeholder">
+                <img class="small-avatar-image" src="/image/user/${idAccount}/avatar.jpeg"
+                     onerror="this.src='/image/user/no_photo.jpg'" alt="error on load">
+            </div>
+        </a>
+
+        <div class="username-placeholder light-medium-text" style="text-align: center; margin-bottom: 40px">
         </div>
 
         <div class="menu-box">
@@ -41,32 +52,39 @@
                 <div><img class="small-icon" src="/image/icon/profile_icon_2.svg" alt="no_image"></div>
                 <div class="menu-text"><a href="/chikaboom/account/${idAccount}">Профиль</a></div>
             </div>
-            <div id="appointments-btn" onclick="loadAppointmentTab(${idAccount}, this)" class="menu-child button" selected="false">
+            <div id="appointments-btn" onclick="loadAppointmentTab(${idAccount}, this)" class="menu-child button"
+                 selected="false">
                 <div><img class="small-icon" src="/image/icon/notebook_icon.svg" alt="no_image"></div>
                 <div class="menu-text"><a href="#">Записи</a></div>
             </div>
             <sec:authorize access="hasRole('ROLE_MASTER')">
-                <div id="services-btn" onclick="loadServicesTab(${idAccount}, this)" class="menu-child button" selected="false">
+                <div id="services-btn" onclick="loadServicesTab(${idAccount}, this)" class="menu-child button"
+                     selected="false">
                     <div><img class="small-icon" src="/image/icon/service_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Услуги</a></div>
                 </div>
-                <div id="statistic-btn" onclick="loadStatistic(${idAccount}, this)" class="menu-child button" selected="false">
+                <div id="statistic-btn" onclick="loadStatistic(${idAccount}, this)" class="menu-child button"
+                     selected="false">
                     <div><img class="small-icon" src="/image/icon/statistic_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Статистика</a></div>
                 </div>
-                <div id="timetable-btn" onclick="loadTimetableTab(${idAccount}, this)" class="menu-child button" selected="false">
+                <div id="timetable-btn" onclick="loadTimetableTab(${idAccount}, this)" class="menu-child button"
+                     selected="false">
                     <div><img class="small-icon" src="/image/icon/calendar_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">График</a></div>
                 </div>
-                <div id="clients-btn" onclick="loadClients(${idAccount}, this)" class="menu-child button" selected="false">
+                <div id="clients-btn" onclick="loadClients(${idAccount}, this)" class="menu-child button"
+                     selected="false">
                     <div><img class="small-icon" src="/image/icon/cleitns_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Мои клиенты</a></div>
                 </div>
-                <div id="messages-btn" onclick="loadMessages(${idAccount}, this)" class="menu-child button" selected="false">
+                <div id="messages-btn" onclick="loadMessages(${idAccount}, this)" class="menu-child button"
+                     selected="false">
                     <div><img class="small-icon" src="/image/icon/message_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Сообщения</a></div>
                 </div>
-                <div id="reviews-btn" onclick="loadReviews(${idAccount}, this)" class="menu-child button" selected="false">
+                <div id="reviews-btn" onclick="loadReviews(${idAccount}, this)" class="menu-child button"
+                     selected="false">
                     <div><img class="small-icon" src="/image/icon/review_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Отзывы</a></div>
                 </div>
@@ -78,7 +96,7 @@
         </div>
     </div>
 
-    <div id="content-placeholder" class="w-80 content-placeholder">
+    <div id="content-placeholder" class="w-100 content-placeholder">
 
     </div>
     <script type="text/javascript" src="/js/dynamic_popup.js"></script>
@@ -103,6 +121,7 @@
         accountJson = loadAccount(${idAccount});
         let url = new URL(window.location.href);
         var currentTab = url.searchParams.get("tabName")
+        $(".username-placeholder").text(accountJson.username);
         if (currentTab === null) {
             $("#settings-btn").click();
         } else {

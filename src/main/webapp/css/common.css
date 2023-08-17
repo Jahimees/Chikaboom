@@ -1,7 +1,8 @@
-.flex-box-gray {
+.flex-box-purple {
     display: inline-flex;
-    background-color: #eaeaea;
+    background-color: #523870;
     width: 100%;
+    padding: 10px 10px 10px 0;
 }
 
 .flex-box-white {
@@ -17,10 +18,9 @@
 }
 
 .content {
-    background-color: #fff;
-    padding: 15px;
-    font-family: "Manrope", serif;
-    margin-left: 15px;
+    padding: 0 15px;
+    font-family: 'Source Sans Pro', sans-serif;
+    margin: 0 15px;
 }
 
 .margin-5-0 {
@@ -39,12 +39,24 @@
     margin: 0 20%;
 }
 
+.margin-35-0-0-0-px {
+    margin-top: 35px;
+}
+
 .padding-0-5 {
     padding: 0 5%;
 }
 
 .padding-0-0-0-5 {
     padding: 0 0 0 5%;
+}
+
+.padding-0-0-20-px {
+    padding-bottom: 20px;
+}
+
+.padding-0-0-10-px {
+    padding-bottom: 10px;
 }
 
 .w-flex_mrgn-2 {
@@ -57,11 +69,10 @@
 }
 
 .small-icon {
-    padding: 10px 5px 0 5px;
-    width: 45px;
+    width: 20px;
+    margin: 10px 20px 0 5px;
 }
 
-/*TODO media*/
 .little-icon {
     padding: 10px 5px 0 5px;
     width: 30px;
@@ -75,57 +86,112 @@ a {
     width: 20%;
 }
 
+.w-15 {
+    width: 15%;
+}
+
 .w-80 {
     width: 80% !important;
+}
+
+.w-250-px {
+    width: 250px;
 }
 
 /*TEXT*/
 
 .big-text {
-    font-family: Manrope, serif;
+    font-family: 'Source Sans Pro', sans-serif;
     margin-bottom: 0;
-    color: #5F4E7D;
+    color: #523870;
     font-size: 40px;
 }
 
-.common-text {
-    font-family: Manrope, serif;
+.big-black-text {
+    font-family: 'Source Sans Pro', sans-serif;
     margin-bottom: 0;
-    color: #5F4E7D;
+    color: black;
+    font-size: 40px;
+}
+
+.big-medium-black-text {
+    font-family: 'Source Sans Pro', sans-serif;
+    color: black;
+    font-size: 32px;
+    letter-spacing: 1px;
+    font-weight: bold;
+}
+
+
+.common-text {
+    font-family: 'Source Sans Pro', sans-serif;
+    margin-bottom: 0;
+    color: #523870;
     font-size: 25px;
 }
 
 .common-black-text {
-    font-family: Manrope, serif;
+    font-family: 'Source Sans Pro', sans-serif;
     margin-bottom: 0;
     color: #000;
-    font-size: 25px;
+    font-size: 20px;
+    font-weight: bolder;
+    letter-spacing: 0.5px;
 }
 
 .small-text {
     font-size: 0.8em;
 }
 
+.small-pink-text {
+    font-size: 12px;
+    color: #C8578D;
+    letter-spacing: 2px;
+    font-family: 'Source Sans Pro', sans-serif;
+    padding-bottom: 7px;
+}
+
+.small-black-text {
+    font-size: 14px;
+    color: black;
+    letter-spacing: 2px;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+.bordered-text {
+    background-color: #F6F7FB;
+    border-radius: 30px;
+    padding: 10px 20px;
+}
+
 .light-medium-text {
-    font-family: Manrope, serif;
+    font-family: 'Source Sans Pro', sans-serif;
     font-size: 20px;
     color: #ffffff;
 }
 
+.light-small-text {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 14px;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+}
+
 .medium-text {
-    font-family: Manrope, serif;
+    font-family: 'Source Sans Pro', sans-serif;
     font-size: 20px;
 }
 
 .smaller-medium-text {
-    font-family: Manrope, serif;
+    font-family: 'Source Sans Pro', sans-serif;
     font-size: 15px;
+    letter-spacing: 0.5px;
 }
 
 /*BUTTON*/
 
 .button {
-    font-family: Manrope, serif;
+    font-family: 'Source Sans Pro', sans-serif;
     font-size: 20px;
     width: 200px;
     text-align: center;
@@ -133,11 +199,11 @@ a {
 }
 
 .button:hover {
-    background-color: #AEA1C4;
+    background-color: #674D85;
 }
 
 .purple-button {
-    font-family: Manrope, serif;
+    font-family: 'Source Sans Pro', sans-serif;
     font-size: 25px;
     color: white;
     cursor: pointer;
@@ -149,16 +215,6 @@ a {
 
 .purple-button:hover {
     background-color: #cfc3e7;
-}
-
-.input-box {
-    margin: 10px 0;
-}
-
-.edit-button {
-    cursor: pointer;
-    display: block;
-    margin: 0 0 0 auto;
 }
 
 .button-box {
@@ -175,7 +231,7 @@ a {
 }
 
 .header-text {
-    font-family: Manrope, serif;
+    font-family: 'Source Sans Pro', sans-serif;
     font-size: 20px;
     padding: 0 20px;
     margin: auto 0;
@@ -223,4 +279,21 @@ a {
 
 .common-table tr {
     background-color: #F4F4F4;
+}
+
+.form-check-input {
+    background-color: #E3ABC6;
+    border: 0;
+    border-color: white;
+}
+
+.form-check-input:focus {
+    border-color: white;
+    outline: 0;
+    box-shadow: white;
+}
+
+.form-check-input:checked {
+    background-color: #C8578D;
+    border-color: white;
 }

@@ -1,5 +1,5 @@
 @font-face {
-    font-family: 'Manrope', serif; /* Гарнитура шрифта */
+    font-family: 'Source Sans Pro', sans-serif;
     src: local(pompadur), url(/font/PTF56F.woff); /* Для остальных браузеров */
 }
 
@@ -75,7 +75,7 @@ body {
 }
 
 .service-type-block-name div {
-    font-family: Manrope, serif;
+    font-family: 'Source Sans Pro', sans-serif;
     font-size: 44px;
     padding: 0 1.5% 0 1.5%;
     margin: 0.5% auto 0 auto;
@@ -211,8 +211,8 @@ body {
 
 .small-white-text {
     color: white;
-    size: 10px;
-    font-family: Manrope, serif;;
+    font-size: 10px;
+    font-family: 'Source Sans Pro', sans-serif;
 }
 
 .non-decorated-link {

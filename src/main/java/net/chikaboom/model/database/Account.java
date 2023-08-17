@@ -22,6 +22,8 @@ import static net.chikaboom.util.constant.DbNamesConstant.*;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Account implements BaseEntity, UserDetails {
 
+    private static final long serialVersionUID = 6815923411592154041l;
+
     /**
      * id аккаунта
      */
@@ -102,6 +104,9 @@ public class Account implements BaseEntity, UserDetails {
      */
     @Column(name = PHONE)
     private String phone;
+
+    @Column(name = IS_PHONE_VISIBLE)
+    private boolean isPhoneVisible;
 
     @JsonIgnore
     @Override

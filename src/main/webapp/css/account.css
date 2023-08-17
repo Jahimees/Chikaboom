@@ -63,7 +63,7 @@ p {
 }
 
 .avatar-image {
-    height: 400px;
+    height: 300px;
     width: 300px;
     object-fit: cover;
     border: solid;
@@ -86,8 +86,8 @@ p {
 .main-information {
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
     height: 35%;
+    margin-top: 40px;
 }
 
 .main-information-block {
@@ -116,7 +116,7 @@ p {
 }
 
 .vertical-blue-line {
-    background-color: #5F4E7D;
+    background-color: #523870;
     width: 5px;
     margin-right: 20px;
 }
@@ -128,7 +128,7 @@ p {
 }
 
 .horizontal-blue-line {
-    background-color: #5F4E7D;
+    background-color: #523870;
     width: 100px;
     height: 3px;
 }

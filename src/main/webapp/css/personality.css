@@ -1,10 +1,81 @@
 .content-placeholder {
-    padding: 10px;
+    background-color: #F6F7FB;
+    border-radius: 40px;
+    overflow: auto;
 }
 
 .setting-content-placeholder {
+    padding: 50px 0 0 0;
+}
+
+.news-data-box {
+    padding: 30px 0 0 50px;
+}
+
+.personality-avatar-image {
+    height: 175px;
+    width: 175px;
+    object-fit: cover;
+    border-radius: 100px;
+    margin: 0 auto;
+    display: block;
+    cursor: pointer;
+    border: solid 15px #F6F7FB;
+}
+
+.small-avatar-image {
+    height: 100px;
+    width: 100px;
+    object-fit: cover;
+    border-radius: 100px;
+    margin: 0 auto;
+    display: block;
+}
+
+.setting-placeholder-text-decorator {
+    margin-bottom: 20px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.input-box {
+    margin: 25px 25px;
     background-color: white;
-    margin-top: 10px;
-    height: 100%;
-    border-radius: 15px;
+    border-radius: 30px;
+    padding: 30px;
+    width: 300px;
+    display: grid;
+}
+
+.edit-button {
+    cursor: pointer;
+    display: block;
+    margin: 0 0 0 auto;
+}
+
+#first-row, #second-row {
+    display: inline-flex;
+}
+
+#first-row {
+    height: 350px;
+}
+
+#second-row {
+    height: 450px;
+}
+
+#home-button {
+    background-color: #674D85;
+    display: inline-flex;
+    padding: 10px 20px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border-radius: 0 10px 10px 0;
+    font-weight: bolder;
+}
+
+#menu-photo-placeholder {
+    margin-top: 50px;
 }

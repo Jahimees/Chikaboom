@@ -31,6 +31,7 @@ public final class DbNamesConstant {
     public static final String USERNAME = "username";
     public static final String REGISTRATION_DATE = "registration_date";
     public static final String EMAIL = "email";
+    public static final String IS_PHONE_VISIBLE = "is_phone_visible";
 
     public static final String ID_ACCOUNT_STATUS = "idaccount_status";
     public static final String SINCE_DATE = "since_date";

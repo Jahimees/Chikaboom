@@ -105,7 +105,8 @@ public class AppointmentRestController {
 
         if (principalAccount.getIdAccount() != masterAccount.getIdAccount()
                 && principalAccount.getIdAccount() != clientAccount.getIdAccount()
-                || (!masterAccount.equals(appointment.getMasterAccount()) || !clientAccount.equals(appointment.getClientAccount()))) {
+                || (masterAccount.getIdAccount() != appointment.getMasterAccount().getIdAccount())
+                || clientAccount.getIdAccount() == appointment.getClientAccount().getIdAccount()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         appointment.setIdAppointment(idAppointment);
@@ -134,7 +135,8 @@ public class AppointmentRestController {
         Account masterAccount = appointment.getMasterAccount();
         Account clientAccount = appointment.getClientAccount();
 
-        if (!principalAccount.equals(masterAccount) && !principalAccount.equals(clientAccount)) {
+        if (principalAccount.getIdAccount() != masterAccount.getIdAccount()
+                && principalAccount.getIdAccount() != clientAccount.getIdAccount()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 

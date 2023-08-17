@@ -11,26 +11,28 @@
 <div id="timetable-placeholder" style="background-color: white">
 
 </div>
-<div class="medium-text">Определите ваш рабочий день</div>
-<div id="current-working-day-duration" class="medium-text"></div>
-<label id="working-day-warn" class="invalid-field-label-popup small-text"
-       style="display: none">Начало рабочего дня не может быть позже конца рабочего дня!</label>
-<div class="row medium-text">
-    <div class="col-4">
-        <label for="working-day-start">Начало рабочего дня</label>
-        <label id="working-day-start-warn" class="invalid-field-label-popup small-text" for="working-day-start"
-               style="display: none">Не соответствует
-            шаблону!</label>
-        <input id="working-day-start" type="text" placeholder="9:00">
+<div class="padding-0-5">
+    <div class="medium-text">Определите ваш рабочий день</div>
+    <div id="current-working-day-duration" class="medium-text"></div>
+    <label id="working-day-warn" class="invalid-field-label-popup small-text"
+           style="display: none">Начало рабочего дня не может быть позже конца рабочего дня!</label>
+    <div class="row medium-text">
+        <div class="col-4">
+            <label for="working-day-start">Начало рабочего дня</label>
+            <label id="working-day-start-warn" class="invalid-field-label-popup small-text" for="working-day-start"
+                   style="display: none">Не соответствует
+                шаблону!</label>
+            <input id="working-day-start" type="text" placeholder="9:00">
+        </div>
+        <div class="col-4">
+            <label for="working-day-end">Конец рабочего дня</label>
+            <label id="working-day-end-warn" class="invalid-field-label-popup small-text" for="working-day-end"
+                   style="display: none">Не соответствует
+                шаблону!</label>
+            <input id="working-day-end" type="text" placeholder="17:00">
+        </div>
+        <input id="save-work-time-btn" type="button" class="button" value="Сохранить">
     </div>
-    <div class="col-4">
-        <label for="working-day-end">Конец рабочего дня</label>
-        <label id="working-day-end-warn" class="invalid-field-label-popup small-text" for="working-day-end"
-               style="display: none">Не соответствует
-            шаблону!</label>
-        <input id="working-day-end" type="text" placeholder="17:00">
-    </div>
-    <input id="save-work-time-btn" type="button" class="button" value="Сохранить">
 </div>
 </body>
 
