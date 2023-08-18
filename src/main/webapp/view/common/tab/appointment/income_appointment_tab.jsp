@@ -24,7 +24,6 @@
 
 <script>
     $(document).ready(function () {
-        console.log("aaaa")
         loadIncomeAppointmentsData(${idAccount});
     })
 </script>

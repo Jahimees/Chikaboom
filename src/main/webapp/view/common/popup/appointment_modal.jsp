@@ -44,12 +44,21 @@
                             ? sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.idAccount : 0} +0;
         let masterId = accountJson.idAccount;
 
-        let workingDayVal = $("#working-day-select")[0].value;
-        let workingTimeVal = $("#working-time-select")[0].value;
+        let workingDayVal = $("#working-day-select").val();
+        let workingTimeVal = $("#working-time-select").val();
+
 
         if (workingTimeVal === '') {
             $("#appointment-warn").css("display", "block");
-        } else if (typeof clientId === 'undefined' || clientId === 0) {
+        } else if ($("#working-day-select").val() === null) {
+            $("#close-modal-btn").click();
+
+            repairDefaultMessagePopup();
+            $("#popup-message-text")[0].innerText = "Не выбрана дата записи! Или, возможно, мастер ещё не настроил свой график работы!"
+            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Запись отклонена!";
+            openPopup('message-popup');
+        }
+        else if (typeof clientId === 'undefined' || clientId === 0) {
             $("#close-modal-btn").click();
 
             repairDefaultMessagePopup();
@@ -64,6 +73,11 @@
             $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Запись отклонена!";
             openPopup('message-popup');
         } else {
+            let appointmentDateTime = new Date(workingDayVal);
+            let splittedTime = workingTimeVal.split(":");
+            appointmentDateTime.setHours(splittedTime[0]);
+            appointmentDateTime.setMinutes(splittedTime[1]);
+
             $("#appointment-warn").css("display", "none");
             client = ${objectMapper.writeValueAsString(sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal)};
             let master = accountJson;
@@ -80,8 +94,7 @@
                 clientAccount: client,
                 masterAccount: master,
                 service: service,
-                appointmentDate: workingDayVal,
-                appointmentTime: workingTimeVal
+                appointmentDateTime: appointmentDateTime
             }
 
             $.ajax({
@@ -100,6 +113,12 @@
 
                     masterAppointmentsJson = loadMastersAppointments(accountJson.idAccount);
                     calculateServiceTime();
+                },
+                error: function () {
+                    repairDefaultMessagePopup();
+                    $("#popup-message-text")[0].innerText = "Не удалось записаться на услугу!"
+                    $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Произошла ошибка!";
+                    openPopup('message-popup');
                 }
             })
         }

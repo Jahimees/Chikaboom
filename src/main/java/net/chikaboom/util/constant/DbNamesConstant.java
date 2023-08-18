@@ -63,8 +63,7 @@ public final class DbNamesConstant {
     public static final String ID_APPOINTMENT = "idappointment";
     public static final String ID_ACCOUNT_MASTER = "idaccount_master";
     public static final String ID_ACCOUNT_CLIENT = "idaccount_client";
-    public static final String APPOINTMENT_DATE = "appointment_date";
-    public static final String APPOINTMENT_TIME = "appointment_time";
+    public static final String APPOINTMENT_DATE_TIME = "appointment_date_time";
 
     public static final String ACCOUNT_ROLES = "account_roles";
     public static final String ID_ACCOUNT_ROLES = "idaccount_roles";
