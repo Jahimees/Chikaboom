@@ -1,6 +1,11 @@
 function fillAppointmentsTable(appointmentsJSON, isIncomeAppointment) {
     $("#appointment-placeholder").empty();
 
+    let timeOptions = {
+        hour: 'numeric',
+        minute: 'numeric'
+    }
+
     appointmentsJSON.forEach(function (appointment) {
         let row = document.createElement("div");
         row.setAttribute("class", "service-row row");
@@ -12,11 +17,11 @@ function fillAppointmentsTable(appointmentsJSON, isIncomeAppointment) {
 
         let dateDiv = document.createElement("div");
         dateDiv.setAttribute("class", "col-2");
-        dateDiv.innerHTML = appointment.appointmentDate.substring(8, 10) + "." + appointment.appointmentDate.substring(5, 7) + "." + appointment.appointmentDate.substring(0, 4)
+        dateDiv.innerText = new Date(appointment.appointmentDateTime).toLocaleDateString("ru");
 
         let appointmentTimeDiv = document.createElement("div");
         appointmentTimeDiv.setAttribute("class", "col-1");
-        appointmentTimeDiv.innerHTML = appointment.appointmentTime;
+        appointmentTimeDiv.innerHTML = new Date(appointment.appointmentDateTime).toLocaleTimeString("ru", timeOptions);
 
         let priceDiv = document.createElement("div");
         priceDiv.setAttribute("class", "col-1");

@@ -4,12 +4,15 @@ import lombok.RequiredArgsConstructor;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.Appointment;
 import net.chikaboom.service.data.AppointmentDataService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +22,9 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 public class AppointmentRestController {
+
+    @Value("${one_hour_millis}")
+    private long ONE_HOUR_MILLIS;
 
     private final AppointmentDataService appointmentDataService;
 
@@ -76,6 +82,12 @@ public class AppointmentRestController {
 
         if (clientAccount.getIdAccount() != principalAccount.getIdAccount()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        Timestamp nowTime = Timestamp.valueOf(LocalDateTime.now());
+
+        if (appointment.getAppointmentDateTime().getTime() - nowTime.getTime() < ONE_HOUR_MILLIS) {
+            return ResponseEntity.badRequest().build();
         }
 
         return ResponseEntity.ok(appointmentDataService.create(appointment));

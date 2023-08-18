@@ -3,6 +3,8 @@ package net.chikaboom.model.database;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.sql.Timestamp;
+
 import static net.chikaboom.util.constant.DbNamesConstant.*;
 
 /**
@@ -43,15 +45,9 @@ public class Appointment implements BaseEntity {
     private Service service;
 
     /**
-     * Дата записи на услугу
+     * Дата и время записи на услугу
      */
-    @Column(name = APPOINTMENT_DATE)
-    private String appointmentDate;
-
-    /**
-     * Время записи на услугу
-     */
-    @Column(name = APPOINTMENT_TIME)
-    private String appointmentTime;
+    @Column(name = APPOINTMENT_DATE_TIME)
+    private Timestamp appointmentDateTime;
 
 }

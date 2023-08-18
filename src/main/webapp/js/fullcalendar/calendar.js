@@ -33,11 +33,7 @@ function loadMasterAppointments() {
         success: function (masterAppointments) {
             masterAppointments.forEach(function (masterAppointment) {
                 let title = masterAppointment.service.name + " - " + masterAppointment.clientAccount.username;
-                let appointmentDate = new Date(masterAppointment.appointmentDate);
-
-                let splittedAppointmentTime = masterAppointment.appointmentTime.split(":");
-                appointmentDate.setHours(splittedAppointmentTime[0]);
-                appointmentDate.setMinutes(splittedAppointmentTime[1]);
+                let appointmentDateTimeStart = new Date(masterAppointment.appointmentDateTime);
 
                 let serviceTime = masterAppointment.service.time;
                 let serviceDurationTime = serviceTime.replace(' минут', '').split(' час');
@@ -52,15 +48,15 @@ function loadMasterAppointments() {
                     duration += serviceDurationTime[1] === '' ? 0 : 30;
                 }
 
-                let appointmentEnd = new Date(masterAppointment.appointmentDate);
-                appointmentEnd.setHours(splittedAppointmentTime[0]);
-                appointmentEnd.setMinutes(splittedAppointmentTime[1] + duration);
-
+                let appointmentDateTimeEnd = new Date(masterAppointment.appointmentDateTime);
+                let minutes = appointmentDateTimeEnd.getMinutes() + duration;
+                appointmentDateTimeEnd.setMinutes(minutes);
+                console.log("hello");
                 let appointmentObj = {
                     id: masterAppointment.idAppointment,
                     title: title,
-                    start: appointmentDate,
-                    end: appointmentEnd
+                    start: appointmentDateTimeStart,
+                    end: appointmentDateTimeEnd
                 }
                 appointmentsForCalendar.push(appointmentObj)
             })
@@ -135,7 +131,7 @@ function saveWorkingDays() {
 
     $.ajax({
         type: "PUT",
-        url: "/accounts/" + accountJson.idAccount+ "/workingDays",
+        url: "/accounts/" + accountJson.idAccount + "/workingDays",
         contentType: "application/json",
         dataType: "json",
         data: JSON.stringify(workingDays),
@@ -286,11 +282,11 @@ function loadWorkingDaysData(idAccount) {
         contentType: "application/json",
         dataType: "json",
         async: false,
-        success: function(data) {
+        success: function (data) {
             workingDays = data;
             loadAccountCalendar();
         },
-        error: function() {
+        error: function () {
             repairDefaultMessagePopup();
             $("#popup-message-text")[0].innerText = "Невозможно загрузить расписание!"
             $("#popup-message-header")[0].innerText = "Что-то пошло не так!";

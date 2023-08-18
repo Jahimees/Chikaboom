@@ -7,7 +7,6 @@ function fillServiceTable(servicesJson, isAccountPage) {
     //TODO проверка на null
     servicesJson.forEach(function (service) {
         if (!isObjectInSet(service.serviceSubtype.serviceType, serviceTypeSet, "serviceType")) {
-            console.log(service.serviceSubtype.serviceType);
             serviceTypeSet.add(service.serviceSubtype.serviceType);
         }
         if (!isObjectInSet(service.serviceSubtype, serviceSubtypeSet, "serviceSubtype")) {
@@ -336,7 +335,6 @@ function searchService(idService) {
     return result;
 }
 
-
 // Модальное окно записи
 function fillServicesModal(servicesJson) {
     let servicesSelect = $("#services-select")[0];
@@ -356,12 +354,20 @@ function fillWorkingDays(accountJson) {
     let workingDays = JSON.parse(accountJson.workingDays.workingDays);
 
     workingDays.forEach(function (workingDay) {
+        let today = new Date();
         let workingDayObj = new Date(workingDay);
-        let option = document.createElement("option");
-        option.value = workingDay;
-        option.innerHTML = workingDayObj.getDate() + "." + (1 + workingDayObj.getMonth()) + "." + workingDayObj.getFullYear();
+        if (today.getFullYear() <= workingDayObj.getFullYear()) {
+            if (today.getMonth() <= workingDayObj.getMonth()) {
+                if (today.getDate() <= workingDayObj.getDate()) {
+                    let option = document.createElement("option");
+                    option.value = workingDay;
+                    option.innerHTML = workingDayObj.getDate() + "." + (1 + workingDayObj.getMonth()) + "." + workingDayObj.getFullYear();
 
-        workingDaySelect.appendChild(option);
+                    workingDaySelect.appendChild(option);
+                }
+            }
+
+        }
     })
 }
 
@@ -415,27 +421,53 @@ function calculateServiceTime() {
     iterator.setHours(workingDayStart.getHours());
     iterator.setMinutes(workingDayStart.getMinutes());
 
+    let chosenDate = new Date($("#working-day-select").val());
+    let todayIsChosenDay = false;
+    let today = new Date();
+
+    if (today.getDate() === chosenDate.getDate()
+    && today.getMonth() === chosenDate.getMonth()
+    && today.getFullYear() === chosenDate.getFullYear()) {
+        todayIsChosenDay = true;
+    }
+
     for (let i = 0; i < workingCellsCount; i++) {
         workingCells[i] = {
-            time: iterator.getHours() + ":" + (iterator.getMinutes() === 0 ? '00' : iterator.getMinutes()),
+            hours: iterator.getHours(),
+            minutes: iterator.getMinutes(),
+            time: iterator.getHours() + ":" + (iterator.getMinutes() === 0 ? '00' : iterator.getMinutes()), //deprecated
             value: true
         };
+
+        if (todayIsChosenDay) {
+            let todayTimeValue = today.getHours() * 60 + today.getMinutes();
+            let iteratorTimeValue = iterator.getHours() * 60 + iterator.getMinutes();
+            if (todayTimeValue >= iteratorTimeValue - 60) {
+                workingCells[i].value = false;
+            }
+        }
 
         iterator.setMinutes(iterator.getMinutes() + 30);
     }
 
-    let chosenDate = $("#working-day-select")[0].value;
-
     masterAppointmentsJson.forEach(function (masterAppointment) {
-        if (masterAppointment.appointmentDate === chosenDate) {
+        let appointmentDateTime = new Date(masterAppointment.appointmentDateTime);
+        if (appointmentDateTime.getDate() === chosenDate.getDate()
+            && appointmentDateTime.getMonth() === chosenDate.getMonth()
+            && appointmentDateTime.getFullYear() === chosenDate.getFullYear()) {
+
             let trueTimer = 0;
 
             for (let i = 0; i < workingCellsCount; i++) {
                 if (trueTimer > 0) {
+                    // Установка флага, что клеточка с конкретным временем занята
                     workingCells[i].value = false;
                     trueTimer--;
                 }
-                if (masterAppointment.appointmentTime === workingCells[i].time) {
+                if (appointmentDateTime.getHours() === workingCells[i].hours
+                    && appointmentDateTime.getMinutes() === workingCells[i].minutes) {
+
+                    // Подсчёт количества клеточек со свободным временем (каждая клетка - полчаса)
                     workingCells[i].value = false;
 
                     let serviceTime = masterAppointment.service.time;
@@ -453,6 +485,7 @@ function calculateServiceTime() {
                     trueTimer--;
                 }
             }
+            return;
         }
     })
 
@@ -477,37 +510,37 @@ function calculateServiceTime() {
         serviceDurationNumber += serviceDurationTime[1] === '' ? 0 : 1;
     }
 
-    for (let i = workingCells.length - 1; i > workingCells.length - serviceDurationNumber; i--) {
-        workingCells[i].value = false;
-    }
+    let $workingTimeSelect = $("#working-time-select");
+    $workingTimeSelect.html("");
 
-    let workingTimeSelect = $("#working-time-select")[0];
-    workingTimeSelect.innerHTML = "";
+    //запоминает позицию, с который начался просчёт ячеек для услуги
+    let posReminder = -1;
 
-    let timePosition = -1;
+    //количество "успешных ячеек". Например. услуга оказывается час. Значит нужно 2 ячейки по полчаса
+    //значит, нужно проверить, будут ли следующие две ячейки свободными (без записи)
     let durationCounter = 0;
     for (let i = 0; i < workingCells.length; i++) {
         if (workingCells[i].value) {
             durationCounter++;
             if (durationCounter === 1) {
-                timePosition = i;
+                posReminder = i;
             }
             if (durationCounter === serviceDurationNumber) {
                 let option = document.createElement("option");
-                option.value = workingCells[timePosition].time;
-                option.innerHTML = workingCells[timePosition].time;
+                option.value = workingCells[posReminder].time;
+                option.innerHTML = workingCells[posReminder].time;
 
-                workingTimeSelect.appendChild(option);
+                $workingTimeSelect.append(option);
                 durationCounter = 0;
-                i = timePosition;
-                timePosition = -1;
+                i = posReminder;
+                posReminder = -1;
             }
         } else {
             durationCounter = 0;
-            if (timePosition !== -1) {
-                i = timePosition;
+            if (posReminder !== -1) {
+                i = posReminder;
             }
-            timePosition = -1;
+            posReminder = -1;
         }
     }
 }

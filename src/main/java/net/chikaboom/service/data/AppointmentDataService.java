@@ -107,14 +107,13 @@ public class AppointmentDataService implements DataService<Appointment> {
     /**
      * Проверяет, возможно ли создать запись с указанными параметрами. Метод требует доработки
      *
-     * @param appointment проверяемы объект записи
+     * @param appointment проверяемый объект записи
      * @return true - если запись можно создавать, false - в ином случае
      */
     public boolean isAppointmentExists(Appointment appointment) {
 //        TODO проверка по времени записи
-        return appointmentRepository.existsByAppointmentDateAndAppointmentTimeAndMasterAccount(
-                appointment.getAppointmentDate(),
-                appointment.getAppointmentTime(),
+        return appointmentRepository.existsByAppointmentDateTimeAndMasterAccount(
+                appointment.getAppointmentDateTime(),
                 appointment.getMasterAccount());
     }
 }
