@@ -44,7 +44,9 @@
     border-radius: 30px;
     padding: 30px;
     width: 300px;
-    display: grid;
+    overflow: hidden;
+    align-content: flex-start;
+    display: inline-grid;
 }
 
 .edit-button {

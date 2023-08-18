@@ -21,8 +21,10 @@
     <link rel="stylesheet" href="/css/addition/phonecode.css"/>
 
     <link href="https://fonts.cdnfonts.com/css/source-sans-pro" rel="stylesheet">
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+    <link href="https://cdn.datatables.net/v/dt/dt-1.13.6/fh-3.4.0/sb-1.5.0/sp-2.2.0/datatables.min.css" rel="stylesheet">
+    <script src="https://cdn.datatables.net/v/dt/dt-1.13.6/fh-3.4.0/sb-1.5.0/sp-2.2.0/datatables.min.js"></script>
 </head>
 <body onresize="resizeFlexBox()" style="overflow: hidden">
 <div class="flex-box-purple">
