@@ -64,7 +64,6 @@
             dataType: "text",
             success: function (data) {
                 servicesJson = JSON.parse(data);
-                console.log("general serviceType tab successfully loaded");
                 fillServiceTable(servicesJson);
                 loadServiceTypeSelectOptions();
             },

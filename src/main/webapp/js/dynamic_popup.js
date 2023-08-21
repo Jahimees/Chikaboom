@@ -70,8 +70,6 @@ function confirmEdit() {
                 $("#e-input-data-incorrect-label").css("display", "block");
             }
         });
-    } else {
-        console.log("field is invalid");
     }
 }
 

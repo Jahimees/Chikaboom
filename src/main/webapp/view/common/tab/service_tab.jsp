@@ -29,7 +29,6 @@
             success: function (data) {
                 setCurrentTabName(tabName);
                 loadServiceSubtypes();
-                console.log("Load serviceType tab " + tabName);
                 $("#service-type-content-placeholder").html(data);
             },
             error: function () {
