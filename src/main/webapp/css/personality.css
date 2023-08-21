@@ -55,6 +55,10 @@
     margin: 0 0 0 auto;
 }
 
+.past-appointment {
+    background-color: #E3ABC6 !important;
+}
+
 #first-row, #second-row {
     display: inline-flex;
 }
@@ -80,4 +84,15 @@
 
 #menu-photo-placeholder {
     margin-top: 50px;
+}
+
+/*OVERRIDING*/
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    border-radius: 20px !important;
+    border: none !important;
+}
+.paginate_button:hover {
+    background: #674D85 !important;
+    color: white !important;
 }

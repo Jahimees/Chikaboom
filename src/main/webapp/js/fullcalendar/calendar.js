@@ -1,7 +1,6 @@
 $(function () {
     showTodaysDate();
     loadMasterAppointments();
-    // initializeCalendar();
 });
 
 var initializeCalendar = function (appointmentsForCalendar) {
@@ -19,9 +18,6 @@ var initializeCalendar = function (appointmentsForCalendar) {
         timezone: 'Russia/Moscow',
     });
 }
-
-var obj;
-var obj1;
 
 function loadMasterAppointments() {
     let appointmentsForCalendar = [];
@@ -51,7 +47,6 @@ function loadMasterAppointments() {
                 let appointmentDateTimeEnd = new Date(masterAppointment.appointmentDateTime);
                 let minutes = appointmentDateTimeEnd.getMinutes() + duration;
                 appointmentDateTimeEnd.setMinutes(minutes);
-                console.log("hello");
                 let appointmentObj = {
                     id: masterAppointment.idAppointment,
                     title: title,
@@ -68,8 +63,6 @@ function loadMasterAppointments() {
             disableEnter();
         }
     })
-
-    // return appointmentsForCalendar;
 }
 
 
@@ -96,9 +89,6 @@ var initializeRightCalendar = function () {
         },
     });
 }
-
-//Значения из базы о рабочих днях
-// var workingDays = [];
 
 function addOrRemoveWorkingDate(date) {
     var flag = true;
@@ -142,7 +132,6 @@ function saveWorkingDays() {
 
     workingDays.workingDays = JSON.parse(workingDays.workingDays);
 }
-
 
 /* -------------------manage cal1 (left pane)------------------- */
 var initializeLeftCalendar = function () {
@@ -312,7 +301,6 @@ function loadAccountCalendar() {
         async: false,
         data: {},
         success: function (data) {
-            console.log("loading timetable");
             $("#timetable-placeholder").html(data);
 
             setTimeout(function () {
