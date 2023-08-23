@@ -1,4 +1,4 @@
-package net.chikaboom.controller.auth;
+package net.chikaboom.controller;
 
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.controller.error.AdviceController;
