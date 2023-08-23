@@ -1,6 +1,7 @@
 package net.chikaboom.controller.rest;
 
 import lombok.RequiredArgsConstructor;
+import net.chikaboom.controller.RegistrationController;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.service.data.AccountDataService;
 import org.springframework.http.HttpStatus;
@@ -48,7 +49,7 @@ public class AccountRestController {
 
     /**
      * Создает аккаунт. Разрешено к использованию только администраторам.
-     * Для создания аккаунта см. {@link net.chikaboom.controller.auth.RegistrationController}.
+     * Для создания аккаунта см. {@link RegistrationController}.
      *
      * @param account создаваемый аккаунт
      * @return созданный аккаунта
@@ -103,6 +104,7 @@ public class AccountRestController {
     }
 
     //    TODO NEW LOGOUT!!!!
+
     /**
      * Производит удаление аккаунта. Доступно только администраторам.
      *

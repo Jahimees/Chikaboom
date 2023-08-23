@@ -3,6 +3,7 @@ package net.chikaboom.repository;
 import net.chikaboom.model.database.ServiceSubtype;
 import net.chikaboom.model.database.ServiceType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
  * Интерфейс для CRUD обработки таблицы ServiceSubtype
  */
 @Repository
-public interface ServiceSubtypeRepository extends JpaRepository<ServiceSubtype, Integer> {
+public interface ServiceSubtypeRepository extends JpaRepository<ServiceSubtype, Integer>, JpaSpecificationExecutor<ServiceSubtype> {
 
     List<ServiceSubtype> findAllByServiceType(ServiceType serviceType);
 }
