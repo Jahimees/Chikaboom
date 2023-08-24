@@ -112,6 +112,7 @@ public class AppointmentDataService implements DataService<Appointment> {
      */
     public boolean isAppointmentExists(Appointment appointment) {
 //        TODO проверка по времени записи
+//        TODO проверка на рамки рабочего дня
         return appointmentRepository.existsByAppointmentDateTimeAndMasterAccount(
                 appointment.getAppointmentDateTime(),
                 appointment.getMasterAccount());
