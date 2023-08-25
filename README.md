@@ -218,10 +218,8 @@
 <code>localhost:8080/accounts/{idAccount}</code>
 <br>
 Json-тело:
-<br>
 <code>
 {
-<br>
     "password": "12345",<br>
     "oldPassword": "bbbbb",<br>
     "username": "aaaaa",<br>
@@ -259,19 +257,19 @@ Json-тело:
 <code>/appointments permit=AUTHORIZED</code>
 <br>
 Json-тело:
-<br>
+
 <code>
-{<br>
-"masterAccount": {<br>
-"idAccount": 13<br>
-},<br>
-"clientAccount": {<br>
-"idAccount": 14<br>
-},<br>
-"service": {<br>
-"idService": 6<br>
-},<br>
-"appointmentDateTime": "2023-08-27T12:00:00.000+00:00"<br>
+{
+    "masterAccount": {<br>
+        "idAccount": 13<br>
+    },<br>
+    "clientAccount": {<br>
+        "idAccount": 14<br>
+    },<br>
+    "service": {<br>
+        "idService": 6<br>
+    },<br>
+    "appointmentDateTime": "2023-08-27T12:00:00.000+00:00"<br>
 }<br>
 </code>
 <p>Обратите внимание на формат даты! В базе, время хранится в нулевом часовом поясе.</p>
@@ -310,18 +308,18 @@ Json-тело:
 <code>/services permit=MASTER</code> - Создание услуги.
 <br>
 Тело запроса:
-<br>
+
 <code>
-{<br>
-"name": "Покрытие гель-лаком", //название услуги<br>
-"price": 123.0, //Цена<br>
-"time": "1 час 30 минут", //строго x час(а) или x час(а) xx минут. Время на услугу<br>
-"account": {<br>
-"idAccount": 13 //чей аккаунт<br>
-},<br>
-"serviceSubtype": {<br>
-"idServiceSubtype": 7 //id подтипа услуги<br>
-}<br>
+{
+    "name": "Покрытие гель-лаком", //название услуги<br>
+    "price": 123.0, //Цена<br>
+    "time": "1 час 30 минут", //строго x час(а) или x час(а) xx минут. Время на услугу<br>
+    "account": {<br>
+        "idAccount": 13 //чей аккаунт<br>
+    },<br>
+    "serviceSubtype": {<br>
+        "idServiceSubtype": 7 //id подтипа услуги<br>
+    }<br>
 }
 </code><br>
 Все поля обязательны
