@@ -24,8 +24,6 @@ public class ServiceDataService implements DataService<Service> {
 
     private final ServiceRepository serviceRepository;
     private final AccountRepository accountRepository;
-    private final ServiceTypeRepository serviceTypeRepository;
-    private final ServiceSubtypeRepository serviceSubtypeRepository;
 
     private final Logger logger = Logger.getLogger(this.getClass());
 
