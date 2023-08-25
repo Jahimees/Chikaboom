@@ -120,6 +120,106 @@ function selectCurrent(thisObj) {
     thisObj.setAttribute("selected", "true");
 }
 
+function setPhoneVisibility(isPhoneVisible, idAccount) {
+    $.ajax({
+        type: "PATCH",
+        url: "/accounts/" + idAccount,
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify({
+            phoneVisible: isPhoneVisible
+        }),
+        error: function () {
+            repairDefaultMessagePopup();
+            $("#popup-message-text")[0].innerText = "Что-то пошло не так! Невозможно установить видимость телефона"
+            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Проблема на сервере!";
+            openPopup('message-popup');
+        }
+    })
+}
+
+///////////////////////////////FILLING PROGRESS BAR///////////////////////////
+
+function progressView() {
+    let diagramBox = document.querySelectorAll('.diagram.progress');
+    diagramBox.forEach((box) => {
+        let deg = (360 * box.dataset.percent / 100) + 180;
+        if (box.dataset.percent >= 50) {
+            box.classList.add('over_50');
+        } else {
+            box.classList.remove('over_50');
+        }
+        box.querySelector('.piece.right').style.transform = 'rotate(' + deg + 'deg)';
+    });
+}
+
+function countPercentage() {
+    let usernameVal = $("#username-placeholder").val();
+    let emailVal = $("#email-placeholder").val();
+    let phoneVal = $("#phone-placeholder").val();
+    let photoSrc = $(".personality-avatar-image").attr("src");
+
+    let addressVal = false;
+
+    if (typeof $("#address-placeholder") !== "undefined") {
+        addressVal = $("#address-placeholder").val();
+    }
+
+    let aboutProfessionVal = false;
+    let aboutTextVal = false;
+
+    if (typeof $("#about-profession-placeholder") !== "undefined") {
+        aboutProfessionVal = $("#about-profession-placeholder").val();
+        aboutTextVal = $("#about-text-placeholder").val();
+    }
+
+    let piecesCount = 0;
+    let emptyPiecesCount = 0;
+
+    piecesCount++;
+    if (usernameVal === null || usernameVal === "") {
+        emptyPiecesCount++;
+    }
+
+    piecesCount++;
+    if (emailVal === null || emailVal === "") {
+        emptyPiecesCount++;
+    }
+
+    piecesCount++;
+    if (phoneVal === null || phoneVal === "") {
+        emptyPiecesCount++;
+    }
+
+    piecesCount++;
+    if (photoSrc === "/image/user/no_photo.jpg") {
+        emptyPiecesCount++;
+    }
+
+    if (addressVal !== false) {
+        piecesCount++;
+        if (addressVal === "") {
+            emptyPiecesCount++;
+        }
+    }
+
+    if (aboutProfessionVal !== false && aboutTextVal !== false) {
+        piecesCount++;
+        if (aboutProfessionVal === "") {
+            emptyPiecesCount++;
+        }
+
+        if (aboutTextVal === "") {
+            emptyPiecesCount++;
+        }
+    }
+
+    let percentage = Math.round(((piecesCount - emptyPiecesCount) * 100) / piecesCount);
+    $("#progress-percent-placeholder").text(percentage + "%");
+    $(".diagram").attr("data-percent", percentage);
+    progressView();
+}
+
 ///////////////////////////////WINDOW VIEW (RESIZE, STYLE)////////////////////////////////////////
 $(document).ready(function () {
     resizeFlexBox();

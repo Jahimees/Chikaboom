@@ -21,16 +21,16 @@
             <div class="small-pink-text">
                 Имя пользователя:
             </div>
-            <div id="username-placeholder" onclick="openEditUsernamePopup()"
-                 class="small-black-text bordered-text setting-placeholder-text-decorator">
-            </div>
+            <input id="username-placeholder" onclick="openEditUsernamePopup()"
+                   class="small-black-text bordered-text setting-placeholder-text-decorator"
+                   placeholder="Ваше имя пользователя" readonly>
             <sec:authorize access="hasRole('ROLE_MASTER')">
                 <div class="small-pink-text">
                     Адрес:
                 </div>
-                <div id="address-placeholder" onclick="openEditAddressPopup()"
-                     class="small-black-text bordered-text setting-placeholder-text-decorator">
-                </div>
+                <input id="address-placeholder" onclick="openEditAddressPopup()"
+                       class="small-black-text bordered-text setting-placeholder-text-decorator"
+                       placeholder="Адрес работы" readonly>
             </sec:authorize>
         </div>
     </div>
@@ -43,19 +43,18 @@
             <div class="small-pink-text">
                 Электронная почта:
             </div>
-            <div id="email-placeholder" onclick="openEditEmailPopup()" class="
-            small-black-text bordered-text setting-placeholder-text-decorator">
-            </div>
+            <input id="email-placeholder" onclick="openEditEmailPopup()" class="
+            small-black-text bordered-text setting-placeholder-text-decorator" placeholder="sample@com.ru" readonly>
 
             <div class="small-pink-text">
                 Номер телефона:
             </div>
-            <div id="phone-placeholder" onclick="openPhoneEditPopup()" class="
-        small-black-text bordered-text setting-placeholder-text-decorator">
-            </div>
+            <input id="phone-placeholder" onclick="openPhoneEditPopup()" class="
+        small-black-text bordered-text setting-placeholder-text-decorator" placeholder="11111111" readonly>
             <div class="form-check form-switch padding-0-0-20-px">
                 <input class="form-check-input" type="checkbox" id="phone-invisible-toggle" checked>
-                <label class="form-check-label small-black-text" for="phone-invisible-toggle">Отображать в профиле</label>
+                <label class="form-check-label small-black-text" for="phone-invisible-toggle">Отображать в
+                    профиле</label>
             </div>
 
             <div class="small-pink-text">
@@ -75,15 +74,19 @@
                 <div class="small-pink-text">
                     Вид деятельности:
                 </div>
-                <div id="about-profession-placeholder" onclick="openEditAboutPopup()" class="
-            small-black-text bordered-text setting-placeholder-text-decorator">
-                </div>
+                <input id="about-profession-placeholder"
+                       onclick="openEditAboutPopup()"
+                       class="small-black-text bordered-text setting-placeholder-text-decorator"
+                       placeholder="Мастер по маникюру"
+                       readonly>
                 <div class="small-pink-text">
                     О себе:
                 </div>
-                <div id="about-text-placeholder" onclick="openEditAboutPopup()" class="
-            small-black-text bordered-text setting-placeholder-text-decorator">
-                </div>
+                <textarea id="about-text-placeholder" onclick="openEditAboutPopup()"
+                          class="small-black-text bordered-text setting-placeholder-text-decorator"
+                          placeholder="Напишите пару слов о себе..."
+                          readonly>
+                </textarea>
             </div>
         </sec:authorize>
     </div>
@@ -97,29 +100,17 @@
 <script>
     $(document).ready(function () {
         fillGeneralSettingTab(${idAccount});
+
+        setTimeout(countPercentage, 500);
+        progressView();
     });
+
 
     $("#avatar-input").on("change", function () {
         uploadAvatarImage(${idAccount});
     })
 
-    $("#phone-invisible-toggle").on("click", function () {
-        let isPhoneVisible = $("#phone-invisible-toggle").prop("checked");
-
-        $.ajax({
-            type: "PATCH",
-            url: "/accounts/${idAccount}",
-            contentType: "application/json",
-            dataType: "json",
-            data: JSON.stringify({
-                phoneVisible: isPhoneVisible
-            }),
-            error: function () {
-                repairDefaultMessagePopup();
-                $("#popup-message-text")[0].innerText = "Что-то пошло не так! Невозможно установить видимость телефона"
-                $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Проблема на сервере!";
-                openPopup('message-popup');
-            }
-        })
+    $("#phone-invisible-toggle").on("click", function (e) {
+        setPhoneVisibility(e.target.checked, ${idAccount})
     })
 </script>

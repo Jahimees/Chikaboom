@@ -36,6 +36,7 @@
     margin-bottom: 20px;
     overflow: hidden;
     cursor: pointer;
+    border: none;
 }
 
 .input-box {
@@ -86,12 +87,123 @@
     margin-top: 50px;
 }
 
+#profile-filling-progress {
+    width: 400px;
+    border-radius: 30px;
+    background-color: white;
+    margin: 50px 0 0 0;
+    padding: 25px;
+    display: -webkit-inline-box;
+}
+
+#profile-filling-text {
+    width: 70%;
+    margin: auto 0 auto 20px;
+}
+
+#about-text-placeholder {
+    height: 200%;
+    resize: none;
+}
+
+/*КРУГОВОЙ PROGRESS BAR*/
+.diagram {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: #00C0EA;
+    position: sticky;
+    overflow: hidden;
+}
+
+.diagram::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    right: 15px;
+    bottom: 15px;
+    border-radius: 50%;
+    background: #FFF;
+    z-index: 3;
+    opacity: 1;
+}
+
+.diagram .piece {
+    width: 100%;
+    height: 100%;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+    position: absolute;
+}
+
+.diagram .piece::before {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 50%;
+    height: 100%;
+}
+
+.diagram .piece.left {
+    transform: rotate(0deg);
+    z-index: 2;
+    border-radius: 50%; /* only FireFox < 75.0v (fix bug)*/
+}
+
+.diagram.over_50 .piece.left {
+    transform: rotate(180deg);
+}
+
+.diagram .piece.right {
+    transform: rotate(180deg);
+    z-index: 1;
+    border-radius: 50%; /* only FireFox < 75.0v (fix bug)*/
+}
+
+.diagram.over_50 .piece.right {
+    transform: rotate(360deg);
+}
+
+.diagram .left::before {
+    background: #F6F7FB;
+}
+
+.diagram.over_50 .left::before {
+    background: #00C0EA;
+}
+
+.diagram .right::before {
+    background: #F6F7FB;
+}
+
+.diagram .text {
+    position: absolute;
+    z-index: 3;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.diagram .text span {
+    font-size: 16px;
+    display: block;
+}
+
 /*OVERRIDING*/
 
 .dataTables_wrapper .dataTables_paginate .paginate_button {
     border-radius: 20px !important;
     border: none !important;
 }
+
 .paginate_button:hover {
     background: #674D85 !important;
     color: white !important;

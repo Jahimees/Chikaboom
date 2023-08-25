@@ -65,6 +65,7 @@ function confirmEdit() {
                 accountJson = data;
 
                 loadSettingTab(currentTabName, accountJson.idAccount);
+                countPercentage();
             },
             error: function () {
                 $("#e-input-data-incorrect-label").css("display", "block");
@@ -143,7 +144,14 @@ function addField(labelText, fieldName, inputType, placeHolderText, isPhoneCode,
     return inputField;
 }
 
-const InvalidReason = {PHONE: 'phone', EMAIL: "email", EMPTY: "empty", SHORT: "short", LONG: "long", USERNAME: 'username'}
+const InvalidReason = {
+    PHONE: 'phone',
+    EMAIL: "email",
+    EMPTY: "empty",
+    SHORT: "short",
+    LONG: "long",
+    USERNAME: 'username'
+}
 
 class Validation {
     constructor(invalidMessage, InvalidReason) {

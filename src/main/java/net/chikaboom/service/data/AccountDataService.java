@@ -5,6 +5,7 @@ import net.chikaboom.exception.NoSuchDataException;
 import net.chikaboom.exception.UserAlreadyExistsException;
 import net.chikaboom.model.database.About;
 import net.chikaboom.model.database.Account;
+import net.chikaboom.repository.AboutRepository;
 import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.repository.PhoneCodeRepository;
 import net.chikaboom.util.PhoneNumberConverter;
@@ -31,6 +32,7 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
     private String EMAIL_REGEXP;
 
     private final AccountRepository accountRepository;
+    private final AboutRepository aboutRepository;
     private final PhoneCodeRepository phoneCodeRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final Logger logger = Logger.getLogger(this.getClass());
@@ -165,6 +167,11 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
 
         if (account.getAbout() != null) {
             About patchedAbout = account.getAbout();
+            if (patchedAccount.getAbout() == null) {
+                patchedAccount.setAbout(new About());
+                aboutRepository.saveAndFlush(patchedAccount.getAbout());
+            }
+
             patchedAccount.getAbout().setText(patchedAbout.getText());
             patchedAccount.getAbout().setProfession(patchedAbout.getProfession());
             patchedAccount.getAbout().setTags(patchedAbout.getTags());
@@ -176,7 +183,7 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
 
         if (account.isPhoneVisible() != patchedAccount.isPhoneVisible()) {
             patchedAccount.setPhoneVisible(account.isPhoneVisible());
-        } 
+        }
 
         logger.info("Saving account...");
         return accountRepository.save(patchedAccount);

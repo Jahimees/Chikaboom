@@ -105,20 +105,21 @@ function fillGeneralSettingTab(idAccount) {
         url: "/accounts/" + idAccount,
         contentType: "application/json",
         dataType: "json",
+        async: false,
         success: function (accountJson) {
 
             var accountData = accountJson;
             $("#greeting-info-box").text("Добро пожаловать, " + accountData.username);
-            $("#email-placeholder").text(accountData.email);
-            $("#phone-placeholder").text("+" + accountData.phoneCode.phoneCode + " " + accountData.phone);
+            $("#email-placeholder").val(accountData.email);
+            $("#phone-placeholder").val("+" + accountData.phoneCode.phoneCode + " " + accountData.phone);
             $("#phone-invisible-toggle").prop("checked", accountData.phoneVisible)
-            $("#username-placeholder").text(accountData.username);
+            $("#username-placeholder").val(accountData.username);
             if (accountData.roles[0].name === "ROLE_MASTER") {
                 let aboutProfession = accountJson.about != null && typeof accountJson.about != 'undefined' ? accountJson.about.profession : "";
                 let aboutText = accountJson.about != null && typeof accountJson.about != 'undefined' ? accountJson.about.text : "";
-                $("#address-placeholder").text(accountJson.address);
-                $("#about-profession-placeholder").text(aboutProfession != null ? aboutProfession : "");
-                $("#about-text-placeholder").text(aboutText != null && aboutText !== "" ? aboutText : "Информация о себе пуста");
+                $("#address-placeholder").val(accountJson.address);
+                $("#about-profession-placeholder").val(aboutProfession != null ? aboutProfession : "");
+                $("#about-text-placeholder").text(aboutText != null && aboutText !== "" ? aboutText : "");
             }
         },
         error: function (data) {

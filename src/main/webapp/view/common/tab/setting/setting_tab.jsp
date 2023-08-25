@@ -7,8 +7,23 @@
         <div id="greeting-info-box" class="big-medium-black-text padding-0-0-10-px">
             Добро пожаловать,
         </div>
-        <div id="" class="smaller-medium-text">
-            Sample text sample text sample text sample text sample text
+        <div class="smaller-medium-text">
+            Отличного дня и хорошего настроения!
+        </div>
+        <div id="profile-filling-progress">
+            <div class="diagram progress" data-percent="75.5">
+                <div class="piece left"></div>
+                <div class="piece right"></div>
+                <div class="text">
+                    <div>
+                        <span id="progress-percent-placeholder">100%</span>
+                    </div>
+                </div>
+            </div>
+            <div id="profile-filling-text">
+                <div class="small-black-text"><b>Прогресс заполнения</b></div>
+                <div class="small-black-text">Заполненный профиль вызывает доверие клиента!</div>
+            </div>
         </div>
     </div>
     <div class="col-6">
