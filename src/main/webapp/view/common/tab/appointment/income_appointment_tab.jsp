@@ -11,7 +11,7 @@
                     Отображать прошедшие записи
                 </label>
             </div>
-            <table id="appointment_table" class="display" style="width: 100%">
+            <table id="default_table" class="display" style="width: 100%">
                 <thead style="background-color: #523870; color: white">
                 <tr>
                     <th>Название услуги</th>
@@ -24,7 +24,7 @@
                     <th>Удалить</th>
                 </tr>
                 </thead>
-                <tbody id="appointment_table-tbody">
+                <tbody id="default_table-tbody">
                 </tbody>
             </table>
         </div>
@@ -37,8 +37,8 @@
         initDataTable();
         loadAppointmentsData(${idAccount}, true);
 
-        $("#appointment_table_wrapper, #past-appointment-toggle").on("click", function () {
-            $("#appointment_table").DataTable().draw();
+        $("#default_table_wrapper, #past-appointment-toggle").on("click", function () {
+            $("#default_table").DataTable().draw();
         })
     })
 </script>

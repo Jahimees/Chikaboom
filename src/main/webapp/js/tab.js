@@ -6,6 +6,25 @@ function selectCurrentTab(thisObj) {
     thisObj.setAttribute("selected", "true");
 }
 
+function loadClientInformation(idMasterAccount) {
+$.ajax({
+    type: "get",
+    url: "/accounts/" + idMasterAccount + "/clients",
+    contentType: "application/json",
+    dataType: "json",
+    async: false,
+    success: function (data) {
+        fillClientsTable(data);
+    },
+    error: function () {
+        repairDefaultMessagePopup();
+        $("#popup-message-text")[0].innerText = "Невозможно загрузить информацию о клиентах!"
+        $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
+        openPopup('message-popup');
+    }
+})
+}
+
 function loadAppointmentConcreteTab(tabName, idAccount) {
     $.ajax({
         type: "get",
@@ -17,7 +36,10 @@ function loadAppointmentConcreteTab(tabName, idAccount) {
             $("#appointment-tab-placeholder").html(data);
         },
         error: function () {
-            loadUnderConstruction();
+            repairDefaultMessagePopup();
+            $("#popup-message-text")[0].innerText = "Невозможно загрузить информацию о записях!"
+            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
+            openPopup('message-popup');
         }
     })
 }
@@ -33,10 +55,70 @@ function loadSettingTab(tabName, idAccount) {
             $("#setting-content-placeholder").html(data);
         },
         error: function () {
-            loadUnderConstruction();
+            repairDefaultMessagePopup();
+            $("#popup-message-text")[0].innerText = "Невозможно загрузить информацию о настройках!"
+            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
+            openPopup('message-popup');
         }
     });
 }
+
+///////////////////////////////////DATATABLE///////////////////////////////////////////////
+
+function initDataTable() {
+    new DataTable('#default_table', {
+        order: [[1, 'asc'], [2, 'asc']],
+        "language": {
+            "decimal": "",
+            "emptyTable": "Информации не найдено",
+            "info": "Показана страница _PAGE_ из _PAGES_",
+            "infoEmpty": "Данные не найдены",
+            "infoFiltered": "(отфильтровано из _MAX_ всех возможных данных)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Показывать _MENU_ на одной странице",
+            "loadingRecords": "Загрузка...",
+            "processing": "",
+            "search": "Поиск:",
+            "zeroRecords": "Совпадений не найдено",
+            "paginate": {
+                "first": "Первая",
+                "last": "Последняя",
+                "next": "Следующая",
+                "previous": "Предыдущая"
+            },
+            "aria": {
+                "sortAscending": ": активировать сортировку по возрастанию",
+                "sortDescending": ": активировать сортировку по убыванию"
+            }
+        }
+    })
+
+    initFilter();
+}
+
+function initFilter() {
+    $.fn.dataTable.ext.search.push(
+        function (settings, data, dataIndex) {
+            let $pastAppointmentToggle = $("#past-appointment-toggle");
+
+            let appDateArr = data[1].split(".");
+            let appointmentDate = new Date(appDateArr[2], appDateArr[1] - 1, appDateArr[0]);
+            let appTimeArr = data[2].split(":");
+            appointmentDate.setHours(appTimeArr[0]);
+            appointmentDate.setMinutes(appTimeArr[1]);
+
+            if ($pastAppointmentToggle.prop("checked")) {
+                return true;
+            } else {
+                if (appointmentDate.getTime() <= new Date().getTime()) {
+                    return false;
+                }
+            }
+            return true;
+        });
+}
+
 //////////////////////////////////SETTING TAB//////////////////////////////////////////////
 function openEditEmailPopup() {
     dropAllFields();

@@ -7,9 +7,13 @@ import net.chikaboom.model.database.About;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.repository.AboutRepository;
 import net.chikaboom.repository.AccountRepository;
+import net.chikaboom.repository.AppointmentRepository;
 import net.chikaboom.repository.PhoneCodeRepository;
 import net.chikaboom.util.PhoneNumberConverter;
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,8 +22,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static org.hibernate.type.StandardBasicTypes.INTEGER;
+import static org.hibernate.type.StandardBasicTypes.TIMESTAMP;
 
 /**
  * Сервис предназначен для получения информации об аккаунте.
@@ -32,9 +41,11 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
     private String EMAIL_REGEXP;
 
     private final AccountRepository accountRepository;
+    private final AppointmentRepository appointmentRepository;
     private final AboutRepository aboutRepository;
     private final PhoneCodeRepository phoneCodeRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final SessionFactory sessionFactory;
     private final Logger logger = Logger.getLogger(this.getClass());
 
     /**
@@ -187,6 +198,47 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
 
         logger.info("Saving account...");
         return accountRepository.save(patchedAccount);
+    }
+
+    public List<Account> findClientsWithExtraInfo(int idMasterAccount) {
+        Session session = sessionFactory.openSession();
+
+        Query query = session.createNativeQuery("SELECT count(*) as visitCount, appointment.idaccount_client as idClient, " +
+                        "max(appointment.appointment_date_time) as " +
+                        "lastVisitDate from account join appointment " +
+                        "on account.idaccount = appointment.idaccount_client where " +
+                        "appointment.idaccount_master = :idAccount group by appointment.idaccount_client")
+                .addScalar("visitCount", INTEGER)
+                .addScalar("idClient", INTEGER)
+                .addScalar("lastVisitDate", TIMESTAMP);
+        query.setParameter("idAccount", idMasterAccount);
+        List<Object> resultObjects = query.getResultList();
+
+        List<Integer> idClientAccountList = new ArrayList<>();
+        for (Object resultObject : resultObjects) {
+            Object[] resultObjectArr = (Object[]) resultObject;
+            idClientAccountList.add((int) resultObjectArr[1]);
+        }
+
+        query = session.createQuery("from Account where idAccount in :idAccountList", Account.class);
+        query.setParameter("idAccountList", idClientAccountList);
+        List<Account> accountList = query.list();
+        session.close();
+
+        List<Account> resultAccountList = new ArrayList<>();
+
+        for (Account account : accountList) {
+            for (Object resultObject : resultObjects) {
+                Object[] oarr = (Object[]) resultObject;
+                if ((int) oarr[1] == account.getIdAccount()) {
+                    resultAccountList.add(account);
+                    account.setVisitCount((Integer) oarr[0]);
+                    account.setLastVisitDate((Timestamp) oarr[2]);
+                }
+            }
+        }
+
+        return resultAccountList;
     }
 
     /**

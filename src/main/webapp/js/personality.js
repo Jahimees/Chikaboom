@@ -1,66 +1,9 @@
-function loadTimetableTab(idAccount, thisObj) {
-    selectCurrent(thisObj);
-    $.ajax({
-        type: "get",
-        url: "/chikaboom/personality/" + idAccount + "/timetable",
-        contentType: "application/text",
-        dataType: "text",
-        data: {},
-        success: function (data) {
-            $("#content-placeholder").html(data);
-        },
-        error: function () {
-            $("#popup-message-text")[0].innerText = "Невозможно загрузить вкладку график!"
-            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
-            openPopup('message-popup');
-        }
-    });
-}
-
-function loadServicesTab(idAccount, thisObj) {
+function loadConcreteTab(idAccount, thisObj, tabName) {
     selectCurrent(thisObj)
 
     $.ajax({
         type: "get",
-        url: "/chikaboom/personality/" + idAccount + "/services",
-        contentType: "application/text",
-        dataType: "text",
-        success: function (data) {
-            $("#content-placeholder").html(data);
-        },
-        error: function () {
-            $("#popup-message-text")[0].innerText = "Невозможно загрузить услуги!"
-            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
-            openPopup('message-popup');
-        }
-    });
-}
-
-function loadSettingsTab(idAccount, thisObj) {
-    selectCurrent(thisObj);
-
-    $.ajax({
-        type: "get",
-        url: "/chikaboom/personality/" + idAccount + "/settings",
-        contentType: "application/text",
-        dataType: "text",
-        success: function (data) {
-            $("#content-placeholder").html(data);
-        },
-        error: function () {
-            $("#popup-message-text")[0].innerText = "Невозможно загрузить настройки!"
-            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
-            openPopup('message-popup');
-        }
-    });
-}
-
-function loadAppointmentTab(idAccount, thisObj) {
-    selectCurrent(thisObj);
-
-    $.ajax({
-        type: "get",
-        url: "/chikaboom/personality/" + idAccount + "/appointment",
+        url: "/chikaboom/personality/" + idAccount + "/" + tabName,
         contentType: "application/text",
         dataType: "text",
         data: {},
@@ -68,21 +11,15 @@ function loadAppointmentTab(idAccount, thisObj) {
             $("#content-placeholder").html(data);
         },
         error: function () {
-            $("#popup-message-text")[0].innerText = "Невозможно загрузить вкладку записи!"
+            $("#popup-message-text")[0].innerText = "Невозможно загрузить вкладку " + tabName + "!"
             $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
             openPopup('message-popup');
         }
     });
 }
-
 
 function loadStatistic(idAccount, thisObj) {
     selectCurrent(thisObj);
-    underConstruction();
-}
-
-function loadClients(idAccount, thisObj) {
-    selectCurrent(thisObj)
     underConstruction();
 }
 

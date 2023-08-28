@@ -3,6 +3,7 @@ package net.chikaboom.repository;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.Appointment;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
@@ -12,7 +13,7 @@ import java.util.List;
  * Интерфейс для CRUD обработки таблицы Appointment
  */
 @Repository
-public interface AppointmentRepository extends JpaRepository<Appointment, Integer> {
+public interface AppointmentRepository extends JpaRepository<Appointment, Integer>, JpaSpecificationExecutor<Appointment> {
 
     /**
      * Метод для поиска всех записей к мастеру
@@ -29,6 +30,10 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
      * @return коллекцию всех записей, на которые записался клиент
      */
     List<Appointment> findAllByClientAccount(Account clientAccount);
+
+    int countAllByClientAccountAndMasterAccount(Account clientAccount, Account masterAccount);
+
+
 
     /**
      * Проверяет, существует ли запись на указанное время и указанную дату у определенного мастера.

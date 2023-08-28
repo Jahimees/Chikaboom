@@ -108,6 +108,12 @@ public class Account implements BaseEntity, UserDetails {
     @Column(name = IS_PHONE_VISIBLE)
     private boolean isPhoneVisible;
 
+    @Transient
+    private Timestamp lastVisitDate;
+
+    @Transient
+    private int visitCount;
+
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -45,7 +45,7 @@
         </div>
 
         <div class="menu-box">
-            <div id="settings-btn" onclick="loadSettingsTab(${idAccount}, this)" class="menu-child button">
+            <div id="settings-btn" onclick="loadConcreteTab(${idAccount}, this, 'settings')" class="menu-child button">
                 <div><img class="small-icon" src="/image/icon/settings_icon.svg" alt="no_image"></div>
                 <div class="menu-text"><a href="#">Настройки</a></div>
             </div>
@@ -53,13 +53,13 @@
                 <div><img class="small-icon" src="/image/icon/profile_icon_2.svg" alt="no_image"></div>
                 <div class="menu-text"><a href="/chikaboom/account/${idAccount}">Профиль</a></div>
             </div>
-            <div id="appointments-btn" onclick="loadAppointmentTab(${idAccount}, this)" class="menu-child button"
+            <div id="appointments-btn" onclick="loadConcreteTab(${idAccount}, this, 'appointment')" class="menu-child button"
                  selected="false">
                 <div><img class="small-icon" src="/image/icon/notebook_icon.svg" alt="no_image"></div>
                 <div class="menu-text"><a href="#">Записи</a></div>
             </div>
             <sec:authorize access="hasRole('ROLE_MASTER')">
-                <div id="services-btn" onclick="loadServicesTab(${idAccount}, this)" class="menu-child button"
+                <div id="services-btn" onclick="loadConcreteTab(${idAccount}, this, 'services')" class="menu-child button"
                      selected="false">
                     <div><img class="small-icon" src="/image/icon/service_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Услуги</a></div>
@@ -69,12 +69,12 @@
                     <div><img class="small-icon" src="/image/icon/statistic_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Статистика</a></div>
                 </div>
-                <div id="timetable-btn" onclick="loadTimetableTab(${idAccount}, this)" class="menu-child button"
+                <div id="timetable-btn" onclick="loadConcreteTab(${idAccount}, this, 'timetable')" class="menu-child button"
                      selected="false">
                     <div><img class="small-icon" src="/image/icon/calendar_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">График</a></div>
                 </div>
-                <div id="clients-btn" onclick="loadClients(${idAccount}, this)" class="menu-child button"
+                <div id="clients-btn" onclick="loadConcreteTab(${idAccount}, this, 'clients')" class="menu-child button"
                      selected="false">
                     <div><img class="small-icon" src="/image/icon/cleitns_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Мои клиенты</a></div>

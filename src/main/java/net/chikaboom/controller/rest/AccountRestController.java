@@ -36,6 +36,18 @@ public class AccountRestController {
         return accountOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("isAuthenticated() && #idAccount == authentication.principal.idAccount")
+    @GetMapping("/{idAccount}/clients")
+    public ResponseEntity<List<Account>> findClients(@PathVariable int idAccount) {
+        Optional<Account> accountOptional = accountDataService.findById(idAccount);
+
+        if (!accountOptional.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(accountDataService.findClientsWithExtraInfo(idAccount));
+    }
+
     /**
      * Производит поиск всех аккаунтов. Разрешено к использованию только администраторам
      *

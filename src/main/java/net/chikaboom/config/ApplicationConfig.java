@@ -9,16 +9,14 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import jakarta.servlet.MultipartConfigElement;
+import lombok.RequiredArgsConstructor;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.util.unit.DataSize;
-
-import javax.sql.DataSource;
 
 /**
  * Определяет базовую конфигурацию приложения, в том числе местанахождение используемых файлов properties.
@@ -26,6 +24,7 @@ import javax.sql.DataSource;
 @Configuration
 @PropertySource("classpath:application.properties")
 @PropertySource("classpath:constants.properties")
+@RequiredArgsConstructor
 public class ApplicationConfig {
 
     @Value("${spring.datasource.driver-class-name}")
@@ -39,26 +38,52 @@ public class ApplicationConfig {
     @Value("${data.size}")
     private String dataSize;
 
+//    private final EntityManagerFactory entityManagerFactory;
+
     private final Logger logger = Logger.getLogger(this.getClass());
+
+
+//    @Bean
+//    public SessionFactory sessionFactory() {
+//        if (entityManagerFactory.unwrap(SessionFactory.class) == null) {
+//            throw new NullPointerException("factory is not a hibernate factory");
+//        }
+//        return entityManagerFactory.unwrap(SessionFactory.class);
+//        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+//        sessionFactory.setDataSource(dataSource());
+//        sessionFactory.setPackagesToScan("net.chikaboom.model.database");
+//        sessionFactory.setHibernateProperties(hibernateProperties());
+//
+//        return sessionFactory;
+//    }
+
+
+//    @Bean
+//    public PlatformTransactionManager hibernateTransactionManager() {
+//        HibernateTransactionManager transactionManager = new HibernateTransactionManager();
+//        transactionManager.setSessionFactory(sessionFactory().getObject());
+//
+//        return transactionManager;
+//    }
 
     /**
      * Конфигурация бина подключения к базе данных.
      */
-    @Bean
-    public DataSource getDataSource() {
-        logger.info("Creating dataSource bean:");
-        logger.info("DriverClassName: " + driverClassName + "\nurl: " + url);
-
-        DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource();
-        driverManagerDataSource.setDriverClassName(driverClassName);
-        driverManagerDataSource.setUrl(url);
-        driverManagerDataSource.setUsername(username);
-        driverManagerDataSource.setPassword(password);
-
-        logger.info("DataSource bean created");
-
-        return driverManagerDataSource;
-    }
+//    @Bean
+//    public DataSource dataSource() {
+//        logger.info("Creating dataSource bean:");
+//        logger.info("DriverClassName: " + driverClassName + "\nurl: " + url);
+//
+//        DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource();
+//        driverManagerDataSource.setDriverClassName(driverClassName);
+//        driverManagerDataSource.setUrl(url);
+//        driverManagerDataSource.setUsername(username);
+//        driverManagerDataSource.setPassword(password);
+//
+//        logger.info("DataSource bean created");
+//
+//        return driverManagerDataSource;
+//    }
 
     /**
      * Конфигурация файлов, получаемых с клиента на сервер.
@@ -75,6 +100,15 @@ public class ApplicationConfig {
 
         return factory.createMultipartConfig();
     }
+
+//    private Properties hibernateProperties() {
+//        Properties properties = new Properties();
+//        properties.setProperty("hibernate.hbm2ddl.auto", "none");
+//        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySqlDialect");
+//        properties.setProperty("hibernate.show_sql", "true");
+//
+//        return properties;
+//    }
 
     @Bean
     private static ObjectMapper objectMapper() {
