@@ -8,11 +8,9 @@ function fillClientsTable(clientsJSON) {
 
         $("#default_table").DataTable().row.add([
             client.username,
-            client.phoneCode.phoneCode + " " + client.phone,
+            client.userDetails.phoneCode.phoneCode + " " + client.phone,
             client.visitCount,
             new Date(client.lastVisitDate).toLocaleDateString('ru')
-        ])
-            .draw()
-            .node();
+        ]).draw();
     })
 }

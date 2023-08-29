@@ -28,17 +28,21 @@ function confirmEdit() {
     if (validateAllFields()) {
         let url = "/accounts/" + accountJson.idAccount;
 
-        let accountJsonPatch = {}
+        let accountJsonPatch = {
+            userDetails: {}
+        }
 
         Array.from($(".popup-input-field")).forEach(field => {
-            let nestedObject = field.getAttribute("nestedObject");
+            let nestedObjectType = field.getAttribute("nestedObjectType");
             let fieldValue = field.value !== null ? field.value : "";
 
-            if (nestedObject != null && nestedObject !== "") {
-                if (accountJsonPatch[nestedObject] == null) {
-                    accountJsonPatch[nestedObject] = {};
+            if (field.name === 'phone') {
+                accountJsonPatch.userDetails[field.name] = fieldValue
+            } else if (nestedObjectType != null && nestedObjectType !== "") {
+                if (accountJsonPatch.userDetails[nestedObjectType] == null) {
+                    accountJsonPatch.userDetails[nestedObjectType] = {};
                 }
-                accountJsonPatch[nestedObject][field.name] = fieldValue;
+                accountJsonPatch.userDetails[nestedObjectType][field.name] = fieldValue;
             } else {
                 accountJsonPatch[field.name] = fieldValue;
             }
@@ -46,7 +50,7 @@ function confirmEdit() {
 
         let phoneCodeField = $(".country-phone-selected > span")[0];
         if (typeof phoneCodeField !== "undefined") {
-            accountJsonPatch["phoneCode"] = phoneCodeField.firstChild.textContent;
+            accountJsonPatch.userDetails["phoneCode"] = phoneCodeField.firstChild.textContent;
         }
 
         $.ajax({
@@ -94,7 +98,7 @@ function dropAllFields() {
  * @param isPhoneCode флаг, является ли поле номером телефона
  * @param validations массив правил валидации поля
  */
-function addField(labelText, fieldName, inputType, placeHolderText, isPhoneCode, validations, fieldType, nestedObject) {
+function addField(labelText, fieldName, inputType, placeHolderText, isPhoneCode, validations, fieldType, nestedObjectType) {
     let divLabel = document.createElement("div");
     divLabel.setAttribute("class", "common-black-text");
     divLabel.innerHTML = labelText;
@@ -105,8 +109,8 @@ function addField(labelText, fieldName, inputType, placeHolderText, isPhoneCode,
     }
 
     inputField.setAttribute("class", "popup-input-field");
-    if (nestedObject != null && nestedObject !== "") {
-        inputField.setAttribute("nestedObject", nestedObject);
+    if (nestedObjectType != null && nestedObjectType !== "") {
+        inputField.setAttribute("nestedObjectType", nestedObjectType);
     }
 
     inputField.type = inputType;

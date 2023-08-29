@@ -7,8 +7,8 @@ import net.chikaboom.model.database.About;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.repository.AboutRepository;
 import net.chikaboom.repository.AccountRepository;
-import net.chikaboom.repository.AppointmentRepository;
 import net.chikaboom.repository.PhoneCodeRepository;
+import net.chikaboom.repository.UserDetailsRepository;
 import net.chikaboom.util.PhoneNumberConverter;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -41,7 +41,7 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
     private String EMAIL_REGEXP;
 
     private final AccountRepository accountRepository;
-    private final AppointmentRepository appointmentRepository;
+    private final UserDetailsRepository userDetailsRepository;
     private final AboutRepository aboutRepository;
     private final PhoneCodeRepository phoneCodeRepository;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -123,6 +123,10 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
         }
         account.setIdAccount(0);
 
+        net.chikaboom.model.database.UserDetails userDetails = new net.chikaboom.model.database.UserDetails();
+        userDetails = userDetailsRepository.saveAndFlush(userDetails);
+        account.setUserDetails(userDetails);
+
         return accountRepository.save(account);
     }
 
@@ -136,13 +140,21 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
         Account patchedAccount = accountRepository.findById(account.getIdAccount())
                 .orElseThrow(() -> new NoSuchDataException("This user doesn't exist"));
 
+        net.chikaboom.model.database.UserDetails userDetails = account.getUserDetails();
 
-        if (account.getPhoneCode() != null && account.getPhone() != null && !account.getPhone().isEmpty()) {
-            if (accountRepository.existsAccountByPhoneCodeAndPhone(account.getPhoneCode(), account.getPhone())) {
+        if (userDetails != null &&
+                userDetails.getPhoneCode() != null
+                && userDetails.getPhone() != null
+                && !userDetails.getPhone().isEmpty()) {
+            if (userDetailsRepository.existsUserDetailsByPhoneCodeAndPhone(account.getUserDetails().getPhoneCode(),
+                    account.getUserDetails().getPhone())) {
                 throw new UserAlreadyExistsException("User with the same phone already exists");
             } else {
-                patchedAccount.setPhoneCode(phoneCodeRepository.findFirstByPhoneCode(account.getPhoneCode().getPhoneCode()));
-                patchedAccount.setPhone(PhoneNumberConverter.clearPhoneNumber(account.getPhone()));
+                net.chikaboom.model.database.UserDetails patchedUserDetails = patchedAccount.getUserDetails();
+                patchedUserDetails.setPhoneCode(
+                        phoneCodeRepository.findFirstByPhoneCode(
+                                userDetails.getPhoneCode().getPhoneCode()));
+                patchedUserDetails.setPhone(PhoneNumberConverter.clearPhoneNumber(userDetails.getPhone()));
             }
         }
 
@@ -176,16 +188,19 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
             }
         }
 
-        if (account.getAbout() != null) {
-            About patchedAbout = account.getAbout();
-            if (patchedAccount.getAbout() == null) {
-                patchedAccount.setAbout(new About());
-                aboutRepository.saveAndFlush(patchedAccount.getAbout());
+        if (userDetails != null
+                && userDetails.getAbout() != null) {
+            About patchedAbout = userDetails.getAbout();
+            if (patchedAccount.getUserDetails().getAbout() == null
+                    || patchedAccount.getUserDetails().getAbout().getIdAbout() == 0) {
+                patchedAccount.getUserDetails().setAbout(new About());
+                aboutRepository.saveAndFlush(patchedAccount.getUserDetails().getAbout());
             }
 
-            patchedAccount.getAbout().setText(patchedAbout.getText());
-            patchedAccount.getAbout().setProfession(patchedAbout.getProfession());
-            patchedAccount.getAbout().setTags(patchedAbout.getTags());
+            net.chikaboom.model.database.UserDetails patchedUserDetails = patchedAccount.getUserDetails();
+            patchedUserDetails.getAbout().setText(patchedAbout.getText());
+            patchedUserDetails.getAbout().setProfession(patchedAbout.getProfession());
+            patchedUserDetails.getAbout().setTags(patchedAbout.getTags());
         }
 
         if (account.getAddress() != null && !account.getAddress().isEmpty()) {
@@ -200,6 +215,13 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
         return accountRepository.save(patchedAccount);
     }
 
+    /**
+     * Производит поиск клиентов мастера, а также высчитывает общее количество посещений к этому мастеру и дату
+     * последнего визита
+     *
+     * @param idMasterAccount идентификатор мастера
+     * @return список клиентов мастера
+     */
     public List<Account> findClientsWithExtraInfo(int idMasterAccount) {
         Session session = sessionFactory.openSession();
 
@@ -250,6 +272,7 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
     public boolean isAccountExists(Account account) {
         return accountRepository.existsById(account.getIdAccount())
                 || accountRepository.existsAccountByUsername(account.getUsername())
-                || accountRepository.existsAccountByPhoneCodeAndPhone(account.getPhoneCode(), account.getPhone());
+                || userDetailsRepository.existsUserDetailsByPhoneCodeAndPhone(
+                account.getUserDetails().getPhoneCode(), account.getUserDetails().getPhone());
     }
 }

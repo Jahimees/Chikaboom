@@ -17,9 +17,9 @@ function fillAppointmentsTable(appointmentsJSON, isIncomeAppointment) {
             new Date(appointment.appointmentDateTime).toLocaleTimeString("ru", timeOptions),
             appointment.service.price,
             appointment.service.time,
-            isIncomeAppointment ? appointment.clientAccount.phoneCode.phoneCode + " "
-                + appointment.clientAccount.phone : appointment.masterAccount.phoneCode.phoneCode + " "
-                + appointment.masterAccount.phone,
+            isIncomeAppointment ? appointment.clientAccount.userDetails.phoneCode.phoneCode + " "
+                + appointment.clientAccount.userDetails.phone : appointment.masterAccount.userDetails.phoneCode.phoneCode + " "
+                + appointment.masterAccount.userDetails.phone,
             isIncomeAppointment ? appointment.clientAccount.username : appointment.masterAccount.username,
             isIncomeAppointment ?
                 "<img onclick='callConfirmDeleteIncomeAppointmentPopup(" + appointment.masterAccount.idAccount

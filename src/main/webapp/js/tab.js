@@ -7,22 +7,22 @@ function selectCurrentTab(thisObj) {
 }
 
 function loadClientInformation(idMasterAccount) {
-$.ajax({
-    type: "get",
-    url: "/accounts/" + idMasterAccount + "/clients",
-    contentType: "application/json",
-    dataType: "json",
-    async: false,
-    success: function (data) {
-        fillClientsTable(data);
-    },
-    error: function () {
-        repairDefaultMessagePopup();
-        $("#popup-message-text")[0].innerText = "Невозможно загрузить информацию о клиентах!"
-        $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
-        openPopup('message-popup');
-    }
-})
+    $.ajax({
+        type: "get",
+        url: "/accounts/" + idMasterAccount + "/clients",
+        contentType: "application/json",
+        dataType: "json",
+        async: false,
+        success: function (data) {
+            fillClientsTable(data);
+        },
+        error: function () {
+            repairDefaultMessagePopup();
+            $("#popup-message-text")[0].innerText = "Невозможно загрузить информацию о клиентах!"
+            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
+            openPopup('message-popup');
+        }
+    })
 }
 
 function loadAppointmentConcreteTab(tabName, idAccount) {
@@ -155,8 +155,8 @@ function openEditAboutPopup() {
     let professionInputField = addField("Вид деятельности", "profession", "text", "Мастер по маникюру", false,
         [new Validation("Название слишком длинное", InvalidReason.LONG)], "input", "about");
     let aboutTextInputField = addField("О себе", "text", "text", "Напишите пару слов о себе", false, [], "textarea", "about");
-    professionInputField.value = accountJson.about != null ? accountJson.about.profession : "";
-    aboutTextInputField.value = accountJson.about != null ? accountJson.about.text : "";
+    professionInputField.value = accountJson.userDetails.about != null ? accountJson.userDetails.about.profession : "";
+    aboutTextInputField.value = accountJson.userDetails.about != null ? accountJson.userDetails.about.text : "";
     openPopup("edit-popup");
 }
 
@@ -193,12 +193,28 @@ function fillGeneralSettingTab(idAccount) {
             var accountData = accountJson;
             $("#greeting-info-box").text("Добро пожаловать, " + accountData.username);
             $("#email-placeholder").val(accountData.email);
-            $("#phone-placeholder").val("+" + accountData.phoneCode.phoneCode + " " + accountData.phone);
+
+            let phoneCode;
+            let phone = accountData.userDetails.phone !== null ? accountData.userDetails.phone : " ";
+            if (accountData.userDetails.phoneCode !== null) {
+                phoneCode = accountData.userDetails.phoneCode.phoneCode;
+            } else {
+                phoneCode = "";
+            }
+            let phoneText = "+" + phoneCode + " " + phone;
+
+            $("#phone-placeholder").val(phoneText);
+
             $("#phone-invisible-toggle").prop("checked", accountData.phoneVisible)
             $("#username-placeholder").val(accountData.username);
             if (accountData.roles[0].name === "ROLE_MASTER") {
-                let aboutProfession = accountJson.about != null && typeof accountJson.about != 'undefined' ? accountJson.about.profession : "";
-                let aboutText = accountJson.about != null && typeof accountJson.about != 'undefined' ? accountJson.about.text : "";
+                let aboutProfession = accountJson.userDetails.about != null
+                && typeof accountJson.userDetails.about != 'undefined'
+                    ? accountJson.userDetails.about.profession : "";
+
+                let aboutText = accountJson.userDetails.about != null
+                && typeof accountJson.userDetails.about != 'undefined' ? accountJson.userDetails.about.text : "";
+
                 $("#address-placeholder").val(accountJson.address);
                 $("#about-profession-placeholder").val(aboutProfession != null ? aboutProfession : "");
                 $("#about-text-placeholder").text(aboutText != null && aboutText !== "" ? aboutText : "");
@@ -211,6 +227,10 @@ function fillGeneralSettingTab(idAccount) {
             openPopup('message-popup');
         }
     })
+}
+
+function extractPhoneCode(accountData) {
+
 }
 
 function uploadAvatarImage(idAccount) {

@@ -3,7 +3,10 @@ function initializePage(idAccount) {
 
     $("#username-placeholder").text(accountJson.username);
     if (accountJson.phoneVisible) {
-        $("#phone-placeholder").text("Телефон: " + "+" + accountJson.phoneCode.phoneCode + " " + accountJson.phone);
+        let phoneCode = accountJson.userDetails.phoneCode !== null ? accountJson.userDetails.phoneCode.phoneCode : "";
+        let phoneText = "Телефон: +"  + phoneCode + " " + accountJson.userDetails.phone
+
+        $("#phone-placeholder").text(phoneText)
     }
     if (isMaster(accountJson)) {
         servicesJson = loadMastersServices(accountJson.idAccount);
@@ -13,8 +16,8 @@ function initializePage(idAccount) {
         masterAppointmentsJson = loadMastersAppointments(accountJson.idAccount);
         let addressData = accountJson.address != null ? accountJson.address : "";
         $("#address-placeholder").text("Адрес: " + addressData);
-        $("#profession-placeholder").text(accountJson.about !== null ? accountJson.about.profession : "");
-        $("#about-text-placeholder").text(accountJson.about !== null ? accountJson.about.text : "");
+        $("#profession-placeholder").text(accountJson.userDetails.about !== null ? accountJson.userDetails.about.profession : "");
+        $("#about-text-placeholder").text(accountJson.userDetails.about !== null ? accountJson.userDetails.about.text : "");
         fillWorkingDays(accountJson);
     } else {
         $(".master-only").remove();
