@@ -356,19 +356,20 @@ function fillWorkingDays(accountJson) {
     workingDays.forEach(function (workingDay) {
         let today = new Date();
         let workingDayObj = new Date(workingDay);
-        if (today.getFullYear() <= workingDayObj.getFullYear()) {
-            if (today.getMonth() <= workingDayObj.getMonth()) {
-                if (today.getDate() <= workingDayObj.getDate()) {
-                    let option = document.createElement("option");
-                    option.value = workingDay;
-                    option.innerHTML = workingDayObj.getDate() + "." + (1 + workingDayObj.getMonth()) + "." + workingDayObj.getFullYear();
+        if ((today.getFullYear() < workingDayObj.getFullYear())
+            || (today.getFullYear() === workingDayObj.getFullYear()
+                && today.getMonth() < workingDayObj.getMonth())
+            || (today.getFullYear() === workingDayObj.getFullYear()
+                && today.getMonth() === workingDayObj.getMonth()
+                && today.getDate() <= workingDayObj.getDate())) {
 
-                    workingDaySelect.appendChild(option);
-                }
-            }
+            let option = document.createElement("option");
+            option.value = workingDay;
+            option.innerHTML = workingDayObj.getDate() + "." + (1 + workingDayObj.getMonth()) + "." + workingDayObj.getFullYear();
 
+            workingDaySelect.appendChild(option);
         }
-    })
+    });
 }
 
 $("#services-select").on("click", function (ev) {
@@ -426,8 +427,8 @@ function calculateServiceTime() {
     let today = new Date();
 
     if (today.getDate() === chosenDate.getDate()
-    && today.getMonth() === chosenDate.getMonth()
-    && today.getFullYear() === chosenDate.getFullYear()) {
+        && today.getMonth() === chosenDate.getMonth()
+        && today.getFullYear() === chosenDate.getFullYear()) {
         todayIsChosenDay = true;
     }
 

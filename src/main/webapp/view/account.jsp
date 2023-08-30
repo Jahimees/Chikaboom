@@ -195,11 +195,11 @@
 <script type="text/javascript" src="/js/dynamic_popup.js"></script>
 <script type="text/javascript" src="/js/service.js"></script>
 <script type="text/javascript" src="/js/account.js"></script>
+<script type="text/javascript" src="/js/appointment.js"></script>
 
 <script>
 
     var accountJson;
-    var servicesJson;
     var masterAppointmentsJson;
 
     $(document).ready(function () {

@@ -37,3 +37,19 @@ CREATE TABLE `chikaboom`.`user_details`
 
 ALTER TABLE `chikaboom`.`account`
     ADD COLUMN `iduser_details` INT NULL AFTER `is_phone_visible`;
+
+ALTER TABLE `chikaboom`.`appointment`
+    ADD COLUMN `iduser_details_client` INT NOT NULL AFTER `idaccount_master`;
+
+ALTER TABLE `chikaboom`.`appointment`
+    ADD CONSTRAINT `iduser_details_client_1`
+        FOREIGN KEY (`iduser_details_client`)
+            REFERENCES `chikaboom`.`user_details` (`iduser_details`)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION;
+
+ALTER TABLE `chikaboom`.`appointment`
+DROP FOREIGN KEY `idaccount_client`;
+ALTER TABLE `chikaboom`.`appointment`
+DROP COLUMN `idaccount_client`,
+DROP INDEX `idaccount_client_idx` ;

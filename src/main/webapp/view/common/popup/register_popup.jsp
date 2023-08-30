@@ -5,9 +5,8 @@
     <div class="popup-title">
         <h3>Регистрация</h3>
     </div>
-    <%--    <form:form method="post" modelAttribute="accountRegForm" action="/chikaboom/registration" id="regForm">--%>
     <div class="popup-body">
-        <div class="common-black-text">Имя пользователя</div>
+        <div class="common-black-text">Логин</div>
         <label class="invalid-field-label-popup" id="r-input-username-short">Имя пользователя слишком
             короткое</label>
         <label class="invalid-field-label-popup" id="r-input-username-incorrect">Можно использовать только буквы и 1
@@ -55,8 +54,8 @@
         </div>
 
         <div>
-            <label class="invalid-field-label-popup" id="r-phone-duplicate">Аккаунт с таким номером телефона уже
-                существует!</label>
+            <label class="invalid-field-label-popup" id="r-phone-duplicate">Аккаунт с таким номером телефона
+                или именем пользователя уже существует!</label>
         </div>
 
         <button id="confirm-register" class="btn btn-dark confirm-popup-btn">

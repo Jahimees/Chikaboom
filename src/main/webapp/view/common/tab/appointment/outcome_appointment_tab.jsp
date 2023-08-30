@@ -36,7 +36,7 @@
 <script>
 
     $(document).ready(function () {
-        initDataTable();
+        initDataTable("appointment");
         loadAppointmentsData(${idAccount}, false);
 
         $("#default_table_wrapper, #past-appointment-toggle").on("click", function () {

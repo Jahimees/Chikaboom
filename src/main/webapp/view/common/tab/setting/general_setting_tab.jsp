@@ -65,12 +65,19 @@
                 ********************
             </div>
         </div>
-        <sec:authorize access="hasRole('ROLE_MASTER')">
             <div class="input-box">
                 <div class="common-black-text padding-0-0-20-px">
                     Информация о себе
                 </div>
-
+                <div class="small-pink-text">
+                    Имя и фамилия:
+                </div>
+                <input id="name-placeholder"
+                       onclick="openEditFirstAndLastNamesPopup()"
+                       class="small-black-text bordered-text setting-placeholder-text-decorator"
+                       placeholder="Валерия Лаврушкина"
+                       readonly>
+                <sec:authorize access="hasRole('ROLE_MASTER')">
                 <div class="small-pink-text">
                     Вид деятельности:
                 </div>
@@ -87,15 +94,12 @@
                           placeholder="Напишите пару слов о себе..."
                           readonly>
                 </textarea>
+                </sec:authorize>
+
             </div>
-        </sec:authorize>
     </div>
 </div>
 
-<script rel="script" src="/js/jquery-ui-1.10.4.custom.min.js"></script>
-
-<script src="/js/phonecode/countries.js"></script>
-<script src="/js/phonecode/phonecode.js"></script>
 
 <script>
     $(document).ready(function () {

@@ -95,6 +95,7 @@ function countPercentage() {
     let emailVal = $("#email-placeholder").val();
     let phoneVal = $("#phone-placeholder").val();
     let photoSrc = $(".personality-avatar-image").attr("src");
+    let nameVal = $("#name-placeholder").val();
 
     let addressVal = false;
 
@@ -127,6 +128,12 @@ function countPercentage() {
     if (phoneVal === null || phoneVal === "") {
         emptyPiecesCount++;
     }
+
+    piecesCount++;
+    if (nameVal === null || nameVal === "") {
+        emptyPiecesCount++;
+    }
+
 
     piecesCount++;
     if (photoSrc === "/image/user/no_photo.jpg") {

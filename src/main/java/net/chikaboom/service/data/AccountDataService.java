@@ -11,9 +11,6 @@ import net.chikaboom.repository.PhoneCodeRepository;
 import net.chikaboom.repository.UserDetailsRepository;
 import net.chikaboom.util.PhoneNumberConverter;
 import org.apache.log4j.Logger;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,13 +19,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static org.hibernate.type.StandardBasicTypes.INTEGER;
-import static org.hibernate.type.StandardBasicTypes.TIMESTAMP;
 
 /**
  * Сервис предназначен для получения информации об аккаунте.
@@ -45,7 +37,6 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
     private final AboutRepository aboutRepository;
     private final PhoneCodeRepository phoneCodeRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final SessionFactory sessionFactory;
     private final Logger logger = Logger.getLogger(this.getClass());
 
     /**
@@ -122,8 +113,13 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
             throw new UserAlreadyExistsException("The same user already exists");
         }
         account.setIdAccount(0);
+        net.chikaboom.model.database.UserDetails userDetails = account.getUserDetails();
+        if (userDetails == null) {
+            userDetails = new net.chikaboom.model.database.UserDetails();
+        } else {
+            userDetails.setPhoneCode(phoneCodeRepository.findFirstByPhoneCode(userDetails.getPhoneCode().getPhoneCode()));
+        }
 
-        net.chikaboom.model.database.UserDetails userDetails = new net.chikaboom.model.database.UserDetails();
         userDetails = userDetailsRepository.saveAndFlush(userDetails);
         account.setUserDetails(userDetails);
 
@@ -140,21 +136,49 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
         Account patchedAccount = accountRepository.findById(account.getIdAccount())
                 .orElseThrow(() -> new NoSuchDataException("This user doesn't exist"));
 
+        net.chikaboom.model.database.UserDetails patchedUserDetails = patchedAccount.getUserDetails();
         net.chikaboom.model.database.UserDetails userDetails = account.getUserDetails();
 
-        if (userDetails != null &&
-                userDetails.getPhoneCode() != null
-                && userDetails.getPhone() != null
-                && !userDetails.getPhone().isEmpty()) {
-            if (userDetailsRepository.existsUserDetailsByPhoneCodeAndPhone(account.getUserDetails().getPhoneCode(),
-                    account.getUserDetails().getPhone())) {
-                throw new UserAlreadyExistsException("User with the same phone already exists");
-            } else {
-                net.chikaboom.model.database.UserDetails patchedUserDetails = patchedAccount.getUserDetails();
-                patchedUserDetails.setPhoneCode(
-                        phoneCodeRepository.findFirstByPhoneCode(
-                                userDetails.getPhoneCode().getPhoneCode()));
-                patchedUserDetails.setPhone(PhoneNumberConverter.clearPhoneNumber(userDetails.getPhone()));
+        if (patchedUserDetails == null) {
+            patchedUserDetails = new net.chikaboom.model.database.UserDetails();
+            patchedAccount.setUserDetails(patchedUserDetails);
+            userDetailsRepository.saveAndFlush(patchedUserDetails);
+        }
+
+        if (userDetails != null) {
+            if (userDetails.getPhoneCode() != null
+                    && userDetails.getPhone() != null
+                    && !userDetails.getPhone().isEmpty()) {
+                if (userDetailsRepository.existsUserDetailsByPhoneCodeAndPhone(account.getUserDetails().getPhoneCode(),
+                        account.getUserDetails().getPhone())) {
+                    throw new UserAlreadyExistsException("User with the same phone already exists");
+                } else {
+                    patchedUserDetails.setPhoneCode(
+                            phoneCodeRepository.findFirstByPhoneCode(
+                                    userDetails.getPhoneCode().getPhoneCode()));
+                    patchedUserDetails.setPhone(PhoneNumberConverter.clearPhoneNumber(userDetails.getPhone()));
+                }
+            }
+
+            if (userDetails.getAbout() != null) {
+                About patchedAbout = userDetails.getAbout();
+                if (patchedAccount.getUserDetails().getAbout() == null
+                        || patchedAccount.getUserDetails().getAbout().getIdAbout() == 0) {
+                    patchedAccount.getUserDetails().setAbout(new About());
+                    aboutRepository.saveAndFlush(patchedAccount.getUserDetails().getAbout());
+                }
+
+                patchedUserDetails.getAbout().setText(patchedAbout.getText());
+                patchedUserDetails.getAbout().setProfession(patchedAbout.getProfession());
+                patchedUserDetails.getAbout().setTags(patchedAbout.getTags());
+            }
+
+            if (userDetails.getFirstName() != null) {
+                patchedUserDetails.setFirstName(userDetails.getFirstName());
+            }
+
+            if (userDetails.getLastName() != null) {
+                patchedUserDetails.setLastName(userDetails.getLastName());
             }
         }
 
@@ -188,21 +212,6 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
             }
         }
 
-        if (userDetails != null
-                && userDetails.getAbout() != null) {
-            About patchedAbout = userDetails.getAbout();
-            if (patchedAccount.getUserDetails().getAbout() == null
-                    || patchedAccount.getUserDetails().getAbout().getIdAbout() == 0) {
-                patchedAccount.getUserDetails().setAbout(new About());
-                aboutRepository.saveAndFlush(patchedAccount.getUserDetails().getAbout());
-            }
-
-            net.chikaboom.model.database.UserDetails patchedUserDetails = patchedAccount.getUserDetails();
-            patchedUserDetails.getAbout().setText(patchedAbout.getText());
-            patchedUserDetails.getAbout().setProfession(patchedAbout.getProfession());
-            patchedUserDetails.getAbout().setTags(patchedAbout.getTags());
-        }
-
         if (account.getAddress() != null && !account.getAddress().isEmpty()) {
             patchedAccount.setAddress(account.getAddress());
         }
@@ -213,54 +222,6 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
 
         logger.info("Saving account...");
         return accountRepository.save(patchedAccount);
-    }
-
-    /**
-     * Производит поиск клиентов мастера, а также высчитывает общее количество посещений к этому мастеру и дату
-     * последнего визита
-     *
-     * @param idMasterAccount идентификатор мастера
-     * @return список клиентов мастера
-     */
-    public List<Account> findClientsWithExtraInfo(int idMasterAccount) {
-        Session session = sessionFactory.openSession();
-
-        Query query = session.createNativeQuery("SELECT count(*) as visitCount, appointment.idaccount_client as idClient, " +
-                        "max(appointment.appointment_date_time) as " +
-                        "lastVisitDate from account join appointment " +
-                        "on account.idaccount = appointment.idaccount_client where " +
-                        "appointment.idaccount_master = :idAccount group by appointment.idaccount_client")
-                .addScalar("visitCount", INTEGER)
-                .addScalar("idClient", INTEGER)
-                .addScalar("lastVisitDate", TIMESTAMP);
-        query.setParameter("idAccount", idMasterAccount);
-        List<Object> resultObjects = query.getResultList();
-
-        List<Integer> idClientAccountList = new ArrayList<>();
-        for (Object resultObject : resultObjects) {
-            Object[] resultObjectArr = (Object[]) resultObject;
-            idClientAccountList.add((int) resultObjectArr[1]);
-        }
-
-        query = session.createQuery("from Account where idAccount in :idAccountList", Account.class);
-        query.setParameter("idAccountList", idClientAccountList);
-        List<Account> accountList = query.list();
-        session.close();
-
-        List<Account> resultAccountList = new ArrayList<>();
-
-        for (Account account : accountList) {
-            for (Object resultObject : resultObjects) {
-                Object[] oarr = (Object[]) resultObject;
-                if ((int) oarr[1] == account.getIdAccount()) {
-                    resultAccountList.add(account);
-                    account.setVisitCount((Integer) oarr[0]);
-                    account.setLastVisitDate((Timestamp) oarr[2]);
-                }
-            }
-        }
-
-        return resultAccountList;
     }
 
     /**

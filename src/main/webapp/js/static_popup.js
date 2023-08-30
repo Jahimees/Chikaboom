@@ -26,8 +26,10 @@ $("#confirm-register").on("click", function () {
         var roles = $("role :checked, :radio")[0].checked ?
             [{name: "ROLE_CLIENT"}] : [{name: "ROLE_CLIENT"},{name: "ROLE_MASTER"}];
         var account = {
-            phoneCode: phoneCode,
-            phone: phone,
+            userDetails: {
+                phoneCode: phoneCode,
+                phone: phone,
+            },
             password: password,
             username: username,
             roles: roles

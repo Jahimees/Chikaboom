@@ -82,14 +82,8 @@ public class Account implements BaseEntity, UserDetails {
     private boolean isPhoneVisible;
 
     @OneToOne
-    @JoinColumn(name = "iduser_details")
+    @JoinColumn(name = ID_USER_DETAILS)
     private net.chikaboom.model.database.UserDetails userDetails;
-
-    @Transient
-    private Timestamp lastVisitDate;
-
-    @Transient
-    private int visitCount;
 
     @JsonIgnore
     @Override

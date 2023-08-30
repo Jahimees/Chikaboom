@@ -37,7 +37,6 @@
 </body>
 
 <script>
-    var workingDays;
 
     $(document).ready(function () {
         loadWorkingDaysData(${idAccount});

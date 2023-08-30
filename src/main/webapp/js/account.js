@@ -1,10 +1,15 @@
 function initializePage(idAccount) {
     accountJson = loadAccount(idAccount);
 
-    $("#username-placeholder").text(accountJson.username);
+    let nameText;
+    if (accountJson.userDetails != null) {
+        nameText = (accountJson.userDetails.firstName ? accountJson.userDetails.firstName + " " : "")
+            + (accountJson.userDetails.lastName ? accountJson.userDetails.lastName + " " : "")
+    }
+    $("#username-placeholder").text(nameText ? nameText : "@" + accountJson.username);
     if (accountJson.phoneVisible) {
         let phoneCode = accountJson.userDetails.phoneCode !== null ? accountJson.userDetails.phoneCode.phoneCode : "";
-        let phoneText = "Телефон: +"  + phoneCode + " " + accountJson.userDetails.phone
+        let phoneText = "Телефон: +" + phoneCode + " " + accountJson.userDetails.phone
 
         $("#phone-placeholder").text(phoneText)
     }

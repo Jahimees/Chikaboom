@@ -3,7 +3,9 @@ package net.chikaboom.controller.rest;
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.controller.RegistrationController;
 import net.chikaboom.model.database.Account;
+import net.chikaboom.model.database.UserDetails;
 import net.chikaboom.service.data.AccountDataService;
+import net.chikaboom.service.data.UserDetailsDataService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,6 +23,7 @@ import java.util.Optional;
 public class AccountRestController {
 
     private final AccountDataService accountDataService;
+    private final UserDetailsDataService userDetailsDataService;
 
     /**
      * Производит поиск аккаунта по его id
@@ -38,14 +41,14 @@ public class AccountRestController {
 
     @PreAuthorize("isAuthenticated() && #idAccount == authentication.principal.idAccount")
     @GetMapping("/{idAccount}/clients")
-    public ResponseEntity<List<Account>> findClients(@PathVariable int idAccount) {
+    public ResponseEntity<List<UserDetails>> findClients(@PathVariable int idAccount) {
         Optional<Account> accountOptional = accountDataService.findById(idAccount);
 
         if (!accountOptional.isPresent()) {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(accountDataService.findClientsWithExtraInfo(idAccount));
+        return ResponseEntity.ok(userDetailsDataService.findClientsWithExtraInfo(idAccount));
     }
 
     /**

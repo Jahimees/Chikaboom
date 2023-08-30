@@ -33,6 +33,12 @@ public final class DbNamesConstant {
     public static final String EMAIL = "email";
     public static final String IS_PHONE_VISIBLE = "is_phone_visible";
 
+    public static final String USER_DETAILS = "user_details";
+    public static final String ID_USER_DETAILS = "iduser_details";
+    public static final String ID_ACCOUNT_OWNER = "idaccount_owner";
+    public static final String FIRST_NAME = "first_name";
+    public static final String LAST_NAME = "last_name";
+
     public static final String ID_ACCOUNT_STATUS = "idaccount_status";
     public static final String SINCE_DATE = "since_date";
     public static final String TO_DATE = "to_date";
@@ -64,6 +70,7 @@ public final class DbNamesConstant {
     public static final String ID_ACCOUNT_MASTER = "idaccount_master";
     public static final String ID_ACCOUNT_CLIENT = "idaccount_client";
     public static final String APPOINTMENT_DATE_TIME = "appointment_date_time";
+    public static final String ID_USER_DETAILS_CLIENT = "iduser_details_client";
 
     public static final String ACCOUNT_ROLES = "account_roles";
     public static final String ID_ACCOUNT_ROLES = "idaccount_roles";

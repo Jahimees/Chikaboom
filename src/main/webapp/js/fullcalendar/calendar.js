@@ -28,7 +28,8 @@ function loadMasterAppointments() {
         dataType: "json",
         success: function (masterAppointments) {
             masterAppointments.forEach(function (masterAppointment) {
-                let title = masterAppointment.service.name + " - " + masterAppointment.clientAccount.username;
+                let visitorName = masterAppointment.userDetailsClient.firstName ? masterAppointment.userDetailsClient.firstName : "Неизвестный";
+                let title = masterAppointment.service.name + " - " + visitorName;
                 let appointmentDateTimeStart = new Date(masterAppointment.appointmentDateTime);
 
                 let serviceTime = masterAppointment.service.time;

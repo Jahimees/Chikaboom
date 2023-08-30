@@ -3,20 +3,24 @@ package net.chikaboom.model.database;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.sql.Timestamp;
+
 import static net.chikaboom.util.constant.DbNamesConstant.*;
 
 @Data
-@Table(name = "user_details")
+@Table(name = USER_DETAILS)
 @Entity
 public class UserDetails implements BaseEntity {
 
+    private static final long serialVersionUID = 150570965476655532l;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "iduser_details")
+    @Column(name = ID_USER_DETAILS)
     private int idUserDetails;
 
     @OneToOne
-    @JoinColumn(name = "idaccount_owner")
+    @JoinColumn(name = ID_ACCOUNT_OWNER)
     private Account masterOwner;
 
     /**
@@ -46,10 +50,16 @@ public class UserDetails implements BaseEntity {
     @Column(name = PHONE)
     private String phone;
 
-    @Column(name = "first_name")
+    @Column(name = FIRST_NAME)
     private String firstName;
 
-    @Column(name = "last_name")
+    @Column(name = LAST_NAME)
     private String lastName;
+
+    @Transient
+    private Timestamp lastVisitDate;
+
+    @Transient
+    private int visitCount;
 
 }

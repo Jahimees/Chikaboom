@@ -96,7 +96,7 @@ public class AppointmentDataService implements DataService<Appointment> {
 
         List<Appointment> appointmentList;
         if (isClient) {
-            appointmentList = appointmentRepository.findAllByClientAccount(account);
+            appointmentList = appointmentRepository.findAllByUserDetailsClient(account.getUserDetails());
         } else {
             appointmentList = appointmentRepository.findAllByMasterAccount(account);
         }

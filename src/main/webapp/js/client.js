@@ -4,13 +4,20 @@ function fillClientsTable(clientsJSON) {
         $("#default_table").DataTable().data().clear();
     }
 
-    clientsJSON.forEach(function (client) {
+    clientsJSON.forEach(function (clientDetails) {
+        let phoneText = "";
+        if (clientDetails.userDetails !== null) {
+            phoneText = clientDetails.phoneCode ? "+" + clientDetails.phoneCode.phoneCode + " " + clientDetails.phone : " ";
+        }
+
+        let name = (clientDetails.firstName ? clientDetails.firstName + " " : " ")
+        + (clientDetails.lastName ? clientDetails.lastName : "");
 
         $("#default_table").DataTable().row.add([
-            client.username,
-            client.userDetails.phoneCode.phoneCode + " " + client.phone,
-            client.visitCount,
-            new Date(client.lastVisitDate).toLocaleDateString('ru')
+            name ? name : "Безымянный",
+            phoneText,
+            clientDetails.visitCount,
+            new Date(clientDetails.lastVisitDate).toLocaleDateString('ru')
         ]).draw();
     })
 }

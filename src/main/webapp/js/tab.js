@@ -65,7 +65,7 @@ function loadSettingTab(tabName, idAccount) {
 
 ///////////////////////////////////DATATABLE///////////////////////////////////////////////
 
-function initDataTable() {
+function initDataTable(tableType) {
     new DataTable('#default_table', {
         order: [[1, 'asc'], [2, 'asc']],
         "language": {
@@ -94,7 +94,9 @@ function initDataTable() {
         }
     })
 
-    initFilter();
+    if (tableType === "appointment") {
+        initFilter();
+    }
 }
 
 function initFilter() {
@@ -129,7 +131,7 @@ function openEditEmailPopup() {
 function openPhoneEditPopup() {
     dropAllFields();
     addField("Номер телефона", "phone", "text", "(44) 111-11-11", true, [new Validation("Неверный шаблон телефона", InvalidReason.PHONE),
-        new Validation("Поле не может быть пустым", InvalidReason.EMPTY)]);
+        new Validation("Поле не может быть пустым", InvalidReason.EMPTY)], 'input', 'userDetails');
     openPopup("edit-popup");
 }
 
@@ -146,7 +148,7 @@ function openEditUsernamePopup() {
     addField("Имя пользователя", "username", "text", "Rosalline", false,
         [new Validation("Поле не может быть пустым", InvalidReason.EMPTY),
             new Validation("Имя слишком короткое", InvalidReason.SHORT),
-            new Validation("Можно использовать только буквы и 1 пробел между словами", InvalidReason.USERNAME)]);
+            new Validation("Можно использовать только латинские буквы и цифры", InvalidReason.USERNAME)]);
     openPopup("edit-popup");
 }
 
@@ -157,6 +159,24 @@ function openEditAboutPopup() {
     let aboutTextInputField = addField("О себе", "text", "text", "Напишите пару слов о себе", false, [], "textarea", "about");
     professionInputField.value = accountJson.userDetails.about != null ? accountJson.userDetails.about.profession : "";
     aboutTextInputField.value = accountJson.userDetails.about != null ? accountJson.userDetails.about.text : "";
+    openPopup("edit-popup");
+}
+
+function openEditFirstAndLastNamesPopup() {
+    dropAllFields();
+    let firstNameInputField = addField("Имя", "firstName", "text", "Валерия", false,
+        [new Validation("Название слишком длинное", InvalidReason.LONG),
+            new Validation("Имя может содержать только буквы", InvalidReason.NAME)], "input", 'userDetails');
+    let lastNameInputField = addField("Фамилия", "lastName", "text", "Лаврушкина", false,
+        [new Validation("Название слишком длинное", InvalidReason.LONG),
+            new Validation("Фамилия может содержать только буквы", InvalidReason.NAME)], "input", 'userDetails');
+    if (accountJson.userDetails !== null) {
+        firstNameInputField.value = accountJson.userDetails.firstName != null ? accountJson.userDetails.firstName : "";
+        lastNameInputField.value = accountJson.userDetails.lastName != null ? accountJson.userDetails.lastName : "";
+    } else {
+        firstNameInputField.value = "";
+        lastNameInputField.value = "";
+    }
     openPopup("edit-popup");
 }
 
@@ -190,24 +210,28 @@ function fillGeneralSettingTab(idAccount) {
         async: false,
         success: function (accountJson) {
 
-            var accountData = accountJson;
-            $("#greeting-info-box").text("Добро пожаловать, " + accountData.username);
-            $("#email-placeholder").val(accountData.email);
+            $("#email-placeholder").val(accountJson.email);
 
-            let phoneCode;
-            let phone = accountData.userDetails.phone !== null ? accountData.userDetails.phone : " ";
-            if (accountData.userDetails.phoneCode !== null) {
-                phoneCode = accountData.userDetails.phoneCode.phoneCode;
-            } else {
-                phoneCode = "";
+            let phoneText = "";
+            if (accountJson.userDetails === null) {
+                accountJson.userDetails = {};
             }
-            let phoneText = "+" + phoneCode + " " + phone;
+
+            if (accountJson.userDetails.phoneCode !== null && typeof accountJson.userDetails.phoneCode !== "undefined") {
+                let phoneCode = accountJson.userDetails.phoneCode.phoneCode;
+                let phone = accountJson.userDetails.phone !== null ? accountJson.userDetails.phone : " ";
+                phoneText = "+" + phoneCode + " " + phone;
+            }
 
             $("#phone-placeholder").val(phoneText);
+            $("#phone-invisible-toggle").prop("checked", accountJson.phoneVisible)
+            $("#username-placeholder").val(accountJson.username);
+            let nameText = (accountJson.userDetails.firstName ? accountJson.userDetails.firstName + " " : "") +
+                (accountJson.userDetails.lastName ? accountJson.userDetails.lastName : "");
+            $("#name-placeholder").val(nameText);
+            $("#greeting-info-box").text("Добро пожаловать, " + (nameText ? nameText : accountJson.username) + "!");
 
-            $("#phone-invisible-toggle").prop("checked", accountData.phoneVisible)
-            $("#username-placeholder").val(accountData.username);
-            if (accountData.roles[0].name === "ROLE_MASTER") {
+            if (accountJson.roles[0].name === "ROLE_MASTER") {
                 let aboutProfession = accountJson.userDetails.about != null
                 && typeof accountJson.userDetails.about != 'undefined'
                     ? accountJson.userDetails.about.profession : "";
@@ -227,10 +251,6 @@ function fillGeneralSettingTab(idAccount) {
             openPopup('message-popup');
         }
     })
-}
-
-function extractPhoneCode(accountData) {
-
 }
 
 function uploadAvatarImage(idAccount) {

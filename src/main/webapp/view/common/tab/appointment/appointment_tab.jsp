@@ -16,7 +16,6 @@
 
 </div>
 
-<script src="/js/tab.js"></script>
 <script src="/js/appointment.js"></script>
 <script src="https://cdn.datatables.net/v/dt/dt-1.13.6/fh-3.4.0/sb-1.5.0/sp-2.2.0/datatables.min.js"></script>
 

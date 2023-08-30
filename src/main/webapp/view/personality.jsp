@@ -22,8 +22,18 @@
 
     <link href="https://fonts.cdnfonts.com/css/source-sans-pro" rel="stylesheet">
     <link href="https://cdn.datatables.net/v/dt/dt-1.13.6/fh-3.4.0/sb-1.5.0/sp-2.2.0/datatables.min.css" rel="stylesheet">
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script rel="script" src="/js/jquery-ui-1.10.4.custom.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/css/suggestions.min.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
+    <script src="/js/tab.js"></script>
+    <script src="/js/jquery-ui-1.10.4.custom.min.js"></script>
+    <script src="/js/phonecode/phonecode.js"></script>
+    <script src="/js/phonecode/countries.js"></script>
+    <script src="/js/client.js"></script>
+    <script src="/js/tab.js"></script>
 </head>
 <body onresize="resizeFlexBox()" style="overflow: hidden">
 <div class="flex-box-purple">
@@ -100,10 +110,13 @@
     <div id="content-placeholder" class="w-100 content-placeholder">
 
     </div>
+
     <script type="text/javascript" src="/js/dynamic_popup.js"></script>
 
+    <jsp:include page="common/popup/create_client_modal.jsp"/>
     <jsp:include page="common/popup/edit_popup.jsp"/>
     <jsp:include page="common/popup/message_popup.jsp"/>
+
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"

@@ -36,13 +36,15 @@ function confirmEdit() {
             let nestedObjectType = field.getAttribute("nestedObjectType");
             let fieldValue = field.value !== null ? field.value : "";
 
-            if (field.name === 'phone') {
-                accountJsonPatch.userDetails[field.name] = fieldValue
-            } else if (nestedObjectType != null && nestedObjectType !== "") {
-                if (accountJsonPatch.userDetails[nestedObjectType] == null) {
-                    accountJsonPatch.userDetails[nestedObjectType] = {};
+            if (nestedObjectType != null && nestedObjectType !== "") {
+                if (nestedObjectType === 'userDetails') {
+                    accountJsonPatch.userDetails[field.name] = fieldValue;
+                } else {
+                    if (accountJsonPatch.userDetails[nestedObjectType] == null) {
+                        accountJsonPatch.userDetails[nestedObjectType] = {};
+                    }
+                    accountJsonPatch.userDetails[nestedObjectType][field.name] = fieldValue;
                 }
-                accountJsonPatch.userDetails[nestedObjectType][field.name] = fieldValue;
             } else {
                 accountJsonPatch[field.name] = fieldValue;
             }
@@ -149,12 +151,13 @@ function addField(labelText, fieldName, inputType, placeHolderText, isPhoneCode,
 }
 
 const InvalidReason = {
-    PHONE: 'phone',
+    PHONE: "phone",
     EMAIL: "email",
     EMPTY: "empty",
     SHORT: "short",
     LONG: "long",
-    USERNAME: 'username'
+    USERNAME: "username",
+    NAME: "name"
 }
 
 class Validation {
@@ -181,6 +184,8 @@ function validateAllFields() {
 
     return flag
 }
+
+let temp;
 
 /**
  * Валидация конкретного поля
@@ -234,7 +239,8 @@ function validateField(thisField) {
                 break;
             }
             case InvalidReason.LONG: {
-                if (thisField.innerHTML.trim().length > 30) {
+                temp = thisField;
+                if (thisField.value.trim().length > 30) {
                     thisField.setAttribute("reason", InvalidReason.LONG)
                     $("#" + thisFieldName + "-" + InvalidReason.LONG).css("display", "block");
                     isReasonShouldBeEmpty = false;
@@ -244,13 +250,25 @@ function validateField(thisField) {
                 break;
             }
             case InvalidReason.USERNAME: {
-                if (!/^[a-zA-ZА-Яа-я]+\s{0,1}[a-zA-ZА-Яа-я]+$/.test(thisField.value)) {
+                if (!/^[a-zA-Z0-9]+$/.test(thisField.value)) {
+                    thisField.setAttribute("reason", InvalidReason.USERNAME)
                     $("#" + thisFieldName + "-" + InvalidReason.USERNAME).css("display", "block");
                     isReasonShouldBeEmpty = false;
                 } else {
                     $("#" + thisFieldName + "-" + InvalidReason.USERNAME).css("display", "none");
                 }
+                break;
             }
+            case InvalidReason.NAME: {
+                if (!/^[a-zA-Zа-яА-Я]+$/.test(thisField.value)) {
+                    thisField.setAttribute("reason", InvalidReason.NAME)
+                    $("#" + thisFieldName + "-" + InvalidReason.NAME).css("display", "block");
+                    isReasonShouldBeEmpty = false;
+                } else {
+                    $("#" + thisFieldName + "-" + InvalidReason.NAME).css("display", "none");
+                }
+            }
+
         }
     }
 

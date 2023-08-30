@@ -14,7 +14,9 @@
     <div class="content">
         <div>
             <div class="big-text">Мои клиенты</div>
-
+            <div id="create-client-btn" class="violet-button margin-10px-0" data-bs-toggle="modal"
+                 data-bs-target="#createClientModal">+Новый клиент
+            </div>
             <div class="d-block w-100">
                 <table id="default_table" class="display" style="width: 100%">
                     <thead style="background-color: #523870; color: white">
@@ -22,7 +24,7 @@
                         <th>Имя пользователя</th>
                         <th>Номер телефона</th>
                         <th>Количество посещений</th>
-                        <th>Последнее посещение</th>
+                        <th>Последняя запись</th>
                     </tr>
                     </thead>
                     <tbody id="client_table-tbody">
@@ -35,14 +37,22 @@
 </div>
 
 <script src="https://cdn.datatables.net/v/dt/dt-1.13.6/fh-3.4.0/sb-1.5.0/sp-2.2.0/datatables.min.js"></script>
-<script src="/js/client.js"></script>
-<script src="/js/tab.js"></script>
-
 <script>
     $(document).ready(function () {
+        selectCurrentTab($("#client-tab")[0])
+
         setTimeout(function () {
             initDataTable();
             loadClientInformation(${idAccount});
-        }, 10)
-    })
+        }, 100); //TODO Плохо. Но не придумал по другому. вставка скрипта datatables должна быть тут.
+
+        $("#create-client-btn").on("click", function () {
+            $(function () {
+                $('#client-phone-input').phonecode({
+                    preferCo: 'by',
+                    id: 'client'
+                })
+            });
+        });
+    });
 </script>

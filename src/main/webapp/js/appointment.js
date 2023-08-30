@@ -1,4 +1,4 @@
-function fillAppointmentsTable(appointmentsJSON, isIncomeAppointment) {
+function fillAppointmentsTable(appointmentsJSON, isIncomeAppointment, idCurrentAccount) {
 
     if (typeof $("#default_table").DataTable() !== 'undefined') {
         $("#default_table").DataTable().data().clear();
@@ -10,6 +10,17 @@ function fillAppointmentsTable(appointmentsJSON, isIncomeAppointment) {
     }
 
     appointmentsJSON.forEach(function (appointment) {
+        if (isIncomeAppointment) {
+            nameText = (appointment.userDetailsClient.firstName ? appointment.userDetailsClient.firstName + " " : " ") +
+                (appointment.userDetailsClient.lastName ? appointment.userDetailsClient.lastName : "");
+            phoneText = (appointment.userDetailsClient.phoneCode ? appointment.userDetailsClient.phoneCode.phoneCode : " ") + " "
+                + (appointment.userDetailsClient.phone ? appointment.userDetailsClient.phone : " ");
+        } else {
+            nameText = "<a href='/chikaboom/account/" + appointment.masterAccount.idAccount + "'>" + (appointment.masterAccount.userDetails.firstName ? appointment.masterAccount.userDetails.firstName + " " : " ") +
+                (appointment.masterAccount.userDetails.lastName ? appointment.masterAccount.userDetails.lastName : "") + "</a>";
+            phoneText = (appointment.masterAccount.userDetails.phoneCode ? appointment.masterAccount.userDetails.phoneCode.phoneCode : " ") + " "
+            + appointment.masterAccount.userDetails.phone ? appointment.masterAccount.userDetails.phone : " ";
+        }
 
         var rowNode = $("#default_table").DataTable().row.add([
             appointment.service.name,
@@ -17,15 +28,13 @@ function fillAppointmentsTable(appointmentsJSON, isIncomeAppointment) {
             new Date(appointment.appointmentDateTime).toLocaleTimeString("ru", timeOptions),
             appointment.service.price,
             appointment.service.time,
-            isIncomeAppointment ? appointment.clientAccount.userDetails.phoneCode.phoneCode + " "
-                + appointment.clientAccount.userDetails.phone : appointment.masterAccount.userDetails.phoneCode.phoneCode + " "
-                + appointment.masterAccount.userDetails.phone,
-            isIncomeAppointment ? appointment.clientAccount.username : appointment.masterAccount.username,
+            phoneText,
+            nameText,
             isIncomeAppointment ?
                 "<img onclick='callConfirmDeleteIncomeAppointmentPopup(" + appointment.masterAccount.idAccount
                 + "," + appointment.idAppointment + ")' src='/image/icon/cross_icon.svg' style='cursor: pointer; width: 15px' >"
 
-                : "<img onclick='callConfirmDeleteOutcomeAppointmentPopup(" + appointment.clientAccount.idAccount
+                : "<img onclick='callConfirmDeleteOutcomeAppointmentPopup(" + idCurrentAccount
                 + "," + appointment.idAppointment + ")' src='/image/icon/cross_icon.svg' style='cursor: pointer; width: 15px'>",
         ])
             .draw()
@@ -46,7 +55,7 @@ function loadAppointmentsData(idAccount, isIncomeAppointments) {
             dataType: "json",
             async: false,
             success: function (json) {
-                fillAppointmentsTable(json, isIncomeAppointments)
+                fillAppointmentsTable(json, isIncomeAppointments, idAccount)
             }
         })
     } else {
@@ -79,7 +88,7 @@ function deleteIncomeAppointment(idAccountMaster, idAppointment) {
             $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Удалено";
             openPopup('message-popup');
             $("#confirm-message-btn")[0].setAttribute(
-                "onclick", "closePopup('message-popup'), loadIncomeAppointmentsData(" + idAccountMaster + ")");
+                "onclick", "closePopup('message-popup'), loadAppointmentsData(" + idAccountMaster + ", true)");
         },
         error: function () {
             repairDefaultMessagePopup();
@@ -113,7 +122,7 @@ function deleteOutcomeAppointment(idAccountClient, idAppointment) {
             $("#popup-message-text")[0].innerText = "Запись успешно удалена!"
             $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Удалено";
             openPopup('message-popup');
-            $("#confirm-message-btn")[0].setAttribute("onclick", "closePopup('message-popup'), loadOutcomeAppointmentsData(" + idAccountClient + ")");
+            $("#confirm-message-btn")[0].setAttribute("onclick", "closePopup('message-popup'), loadAppointmentsData(" + idAccountClient + ", false)");
         },
         error: function () {
             repairDefaultMessagePopup();
@@ -125,4 +134,85 @@ function deleteOutcomeAppointment(idAccountClient, idAppointment) {
     })
 }
 
+function doMakeAppointment(clientId, accountMasterJson, client) {
+    let masterId = accountMasterJson.idAccount;
 
+    let workingDayVal = $("#working-day-select").val();
+    let workingTimeVal = $("#working-time-select").val();
+
+
+    if (workingTimeVal === '') {
+        $("#appointment-warn").css("display", "block");
+    } else if ($("#working-day-select").val() === null) {
+        $("#close-modal-btn").click();
+
+        repairDefaultMessagePopup();
+        $("#popup-message-text")[0].innerText = "Не выбрана дата записи! Или, возможно, мастер ещё не настроил свой график работы!"
+        $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Запись отклонена!";
+        openPopup('message-popup');
+    } else if (typeof clientId === 'undefined' || clientId === 0) {
+        $("#close-modal-btn").click();
+
+        repairDefaultMessagePopup();
+        $("#popup-message-text")[0].innerText = "Сначала необходимо авторизоваться!"
+        $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Запись отклонена!";
+        openPopup('message-popup');
+    } else if (clientId === masterId) {
+        $("#close-modal-btn").click();
+
+        repairDefaultMessagePopup();
+        $("#popup-message-text")[0].innerText = "Нельзя записываться самому к себе на услуги!"
+        $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Запись отклонена!";
+        openPopup('message-popup');
+    } else {
+        let appointmentDateTime = new Date(workingDayVal);
+        let splittedTime = workingTimeVal.split(":");
+        appointmentDateTime.setHours(splittedTime[0]);
+        appointmentDateTime.setMinutes(splittedTime[1]);
+
+        $("#appointment-warn").css("display", "none");
+        let master = accountMasterJson;
+
+        let idService = parseInt($("#services-select")[0].value);
+        let service;
+        let servicesJson = loadMastersServices(masterId);
+        servicesJson.forEach(function (serv) {
+            if (serv.idService === idService) {
+                service = serv
+            }
+        })
+
+        let appointmentToSend = {
+            clientAccount: client,
+            masterAccount: master,
+            userDetailsClient: client.userDetails,
+            service: service,
+            appointmentDateTime: appointmentDateTime
+        }
+
+        $.ajax({
+            method: "post",
+            url: "/appointments",
+            contentType: "application/json",
+            dataType: "json",
+            data: JSON.stringify(appointmentToSend),
+            success: function () {
+                $("#close-modal-btn").click();
+
+                repairDefaultMessagePopup();
+                $("#popup-message-text")[0].innerText = "Вы успешно записались на услугу!"
+                $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Запись оформлена!";
+                openPopup('message-popup');
+
+                masterAppointmentsJson = loadMastersAppointments(accountMasterJson.idAccount);
+                calculateServiceTime();
+            },
+            error: function () {
+                repairDefaultMessagePopup();
+                $("#popup-message-text")[0].innerText = "Не удалось записаться на услугу!"
+                $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Произошла ошибка!";
+                openPopup('message-popup');
+            }
+        })
+    }
+}
