@@ -273,6 +273,7 @@ a {
 
 .middle-box {
     margin: 0 auto;
+    display: block;
 }
 
 .right-header-box {

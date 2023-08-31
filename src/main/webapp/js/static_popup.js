@@ -98,8 +98,8 @@ $("#r-input-confirm-password").on("keyup", function () {
 });
 
 let login_register_fields = [];
-let register_fields = $(".register-popup > .popup-body > .popup-image > input");
-let login_fields = $(".login-popup > .popup-body > .popup-image > input");
+let register_fields = $(".register-popup > .popup-body > .popup-input > input");
+let login_fields = $(".login-popup > .popup-body > .popup-input > input");
 
 function repaintLoginRegisterFields() {
     if (login_register_fields.length === 0) {

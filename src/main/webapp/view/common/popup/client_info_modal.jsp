@@ -3,15 +3,18 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <!-- Модальное окно -->
-<div class="modal fade" id="createClientModal" tabindex="-1" aria-labelledby="createClientModalLabel"
+<div class="modal fade" id="clientInfoModal" tabindex="-1" aria-labelledby="clientInfoModalLabel"
      aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="createClientModalLabel">Создать нового клиента</h5>
+                <h5 class="modal-title" id="clientInfoModalLabel">Информация о клиенте</h5>
                 <button id="close-modal-btn" type="button" class="btn-close" data-bs-dismiss="modal"
                         aria-label="Закрыть"></button>
             </div>
+            <label id="client-warn" class="invalid-field-label-popup small-text padding-0-5"
+                   for="client-fields"
+                   style="display: none">Все поля должны быть заполнены!</label>
             <div id="client-fields" class="modal-body">
                 <div class="popup-input middle-box w-80">
                     <div>Имя</div>
@@ -40,7 +43,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="popup-btn" data-bs-dismiss="modal">Закрыть</button>
-                <button id="create-client-btn" type="button" class="popup-btn">Создать</button>
+<%--                <button id="create-client-btn" type="button" class="popup-btn">Создать</button>--%>
             </div>
         </div>
     </div>
@@ -49,7 +52,7 @@
 <script src="/js/phonecode/countries.js"></script>
 <script src="/js/phonecode/phonecode.js"></script>
 <script>
-    $("#create-client-btn").on("click", function () {
-        createClient(${idAccount});
-    })
+    // $("#create-client-btn").on("click", function () {
+    <%--    createClient(${idAccount});--%>
+    // })
 </script>

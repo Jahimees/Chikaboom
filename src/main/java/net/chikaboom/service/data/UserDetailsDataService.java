@@ -51,11 +51,12 @@ public class UserDetailsDataService {
     public List<UserDetails> findClientsWithExtraInfo(int idMasterAccount) {
         Session session = sessionFactory.openSession();
 
-        Query query = session.createNativeQuery("SELECT count(*) as visitCount, appointment.iduser_details_client" +
-                        " as idUserDetails, max(appointment.appointment_date_time) as " +
-                        "lastVisitDate from user_details join appointment " +
+        Query query = session.createNativeQuery("SELECT count(appointment.idappointment) as visitCount, " +
+                        "user_details.iduser_details as idUserDetails, max(appointment.appointment_date_time) as " +
+                        "lastVisitDate from user_details left join appointment " +
                         "on user_details.iduser_details = appointment.iduser_details_client where " +
-                        "appointment.idaccount_master = :idAccount group by appointment.iduser_details_client")
+                        "appointment.idaccount_master = :idAccount or user_details.idaccount_owner = :idAccount " +
+                        "group by user_details.iduser_details")
                 .addScalar("visitCount", INTEGER)
                 .addScalar("idUserDetails", INTEGER)
                 .addScalar("lastVisitDate", TIMESTAMP);

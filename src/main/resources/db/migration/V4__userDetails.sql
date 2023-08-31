@@ -14,7 +14,7 @@ DROP
 COLUMN `idphonecode`,
 DROP INDEX `idabout_idx` ,
 DROP INDEX `idphonecode_idx`;
-;
+
 
 CREATE TABLE `chikaboom`.`user_details`
 (

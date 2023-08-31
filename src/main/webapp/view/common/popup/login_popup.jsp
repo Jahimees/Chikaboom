@@ -11,13 +11,13 @@
             <label class="invalid-field-label-popup" id="l-input-username-empty">Поле не может быть пустым</label>
             <label class="invalid-field-label-popup" id="l-input-username-incorrect">Можно использовать только буквы и 1
                 пробел между словами</label>
-            <div class="popup-image">
+            <div class="popup-input middle-box w-80">
                 <input id="l-input-username" class="popup-input-field" name="username" required placeholder="Rosaline"
                        valid="false">
             </div>
             <div class="common-black-text">Пароль</div>
             <label class="invalid-field-label-popup" id="l-input-password-empty">Поле не может быть пустым</label>
-            <div class="popup-image">
+            <div class="popup-input middle-box w-80">
                 <input id="l-input-password" class="popup-input-field" name="password" type="password" required
                        placeholder="*****" valid="false">
             </div>

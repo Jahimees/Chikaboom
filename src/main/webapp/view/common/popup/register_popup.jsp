@@ -12,7 +12,7 @@
         <label class="invalid-field-label-popup" id="r-input-username-incorrect">Можно использовать только буквы и 1
             пробел между словами</label>
         <label class="invalid-field-label-popup" id="r-input-username-empty">Поле не может быть пустым</label>
-        <div class="popup-image">
+        <div class="popup-input middle-box w-80">
             <input id="r-input-username" class="popup-input-field" name="username" required placeholder="Rosaline"
                    valid="false" maxlength="40">
         </div>
@@ -23,7 +23,7 @@
         <label class="invalid-field-label-popup" id="r-input-phone-short">Номер телефона должен быть длиннее 8
             символов</label>
         <input id="phoneCode" name="phoneCode" hidden>
-        <div class="popup-image">
+        <div class="popup-input middle-box w-80">
             <input id="r-input-phone" class="phone-input-popup" name="phone" required placeholder="(29) 111-11-11"
                    valid="false" maxlength="30">
         </div>
@@ -32,7 +32,7 @@
         <label class="invalid-field-label-popup" id="r-input-password-empty">Поле не может быть пустым</label>
         <label class="invalid-field-label-popup" id="r-input-password-short">Пароль должен быть длиннее 5
             символов</label>
-        <div class="popup-image">
+        <div class="popup-input middle-box w-80">
             <input id="r-input-password" class="popup-input-field" name="password" type="password" required
                    placeholder="*****"
                    maxlength="50">
@@ -42,7 +42,7 @@
         <label class="invalid-field-label-popup" id="r-input-confirm-password-empty">Поле не может быть
             пустым</label>
         <label class="invalid-field-label-popup" id="r-input-confirm-password-different">Пароли не совпадают</label>
-        <div class="popup-image">
+        <div class="popup-input middle-box w-80">
             <input id="r-input-confirm-password" class="popup-input-field" type="password" required
                    placeholder="*****"
                    maxlength="50">

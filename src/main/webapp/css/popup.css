@@ -53,9 +53,7 @@
     overflow-y: hidden;
 }
 
-.popup-image {
-    margin: 0% 10% 0% 10%;
-    display: inline-flex;
+.popup-input {
     padding: 0 0 0.9em 0;
 }
 
@@ -66,7 +64,7 @@
     border-radius: 0.2em;
 }
 
-.popup-image > input {
+.popup-input > input {
     width: 100%;
 }
 

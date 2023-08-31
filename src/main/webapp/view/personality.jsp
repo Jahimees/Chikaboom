@@ -34,6 +34,7 @@
     <script src="/js/phonecode/countries.js"></script>
     <script src="/js/client.js"></script>
     <script src="/js/tab.js"></script>
+    <script src="/js/util.js"></script>
 </head>
 <body onresize="resizeFlexBox()" style="overflow: hidden">
 <div class="flex-box-purple">
