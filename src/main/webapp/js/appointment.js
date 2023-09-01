@@ -1,7 +1,8 @@
-function fillAppointmentsTable(appointmentsJSON, isIncomeAppointment, idCurrentAccount) {
+function fillAppointmentsTable(appointmentsJSON, isIncomeAppointment, idCurrentAccount, tableId) {
+    let tableName = tableId ? tableId : "default";
 
-    if (typeof $("#default_table").DataTable() !== 'undefined') {
-        $("#default_table").DataTable().data().clear();
+    if (!$.fn.DataTable.isDataTable('#' + tableName)) {
+        $("#" + tableName + "_table").DataTable().data().clear();
     }
 
     let timeOptions = {
@@ -22,7 +23,7 @@ function fillAppointmentsTable(appointmentsJSON, isIncomeAppointment, idCurrentA
             + appointment.masterAccount.userDetails.phone ? appointment.masterAccount.userDetails.phone : " ";
         }
 
-        var rowNode = $("#default_table").DataTable().row.add([
+        var rowNode = $("#" + tableName + "_table").DataTable().row.add([
             appointment.service.name,
             new Date(appointment.appointmentDateTime).toLocaleDateString('ru'),
             new Date(appointment.appointmentDateTime).toLocaleTimeString("ru", timeOptions),

@@ -27,7 +27,7 @@
                         <th>Последняя запись</th>
                     </tr>
                     </thead>
-                    <tbody id="client_table-tbody">
+                    <tbody id="default_table-tbody">
 
                     </tbody>
                 </table>
@@ -42,7 +42,8 @@
         selectCurrentTab($("#client-tab")[0])
 
         setTimeout(function () {
-            initDataTable();
+            initDataTable("appointment-client");
+            initDataTable("client-appointments", 'client_appointments_table')
             loadClientInformation(${idAccount});
         }, 100); //TODO Плохо. Но не придумал по другому. вставка скрипта datatables должна быть тут.
 
@@ -50,7 +51,7 @@
             $(function () {
                 $('#client-phone-input').phonecode({
                     preferCo: 'by',
-                    id: 'client'
+                    id: 'client-create'
                 })
             });
         });

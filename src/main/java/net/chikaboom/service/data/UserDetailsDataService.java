@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hibernate.type.StandardBasicTypes.INTEGER;
 import static org.hibernate.type.StandardBasicTypes.TIMESTAMP;
@@ -26,6 +27,11 @@ public class UserDetailsDataService {
     private final AboutRepository aboutRepository;
     private final PhoneCodeRepository phoneCodeRepository;
     private final SessionFactory sessionFactory;
+
+
+    public Optional<UserDetails> findUserDetailsById(int idUserDetails) {
+        return userDetailsRepository.findById(idUserDetails);
+    }
 
     public UserDetails create(UserDetails userDetails) {
         About about = userDetails.getAbout();

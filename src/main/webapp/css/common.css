@@ -102,6 +102,10 @@ a {
     width: 250px;
 }
 
+.max-w-80 {
+    max-width: 80%;
+}
+
 /*TEXT*/
 
 .big-text {

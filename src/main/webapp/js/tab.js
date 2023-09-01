@@ -65,8 +65,13 @@ function loadSettingTab(tabName, idAccount) {
 
 ///////////////////////////////////DATATABLE///////////////////////////////////////////////
 
-function initDataTable(tableType) {
-    new DataTable('#default_table', {
+function initDataTable(tableType, tableId) {
+    let tableName = tableId ? tableId : "default";
+
+    // if (!$.fn.DataTable.isDataTable('#' + tableName)) {
+    //     $("#" + tableName).DataTable().data().clear();
+    // }
+    new DataTable('#' + tableName + "_table", {
         order: [[1, 'asc'], [2, 'asc']],
         "language": {
             "decimal": "",

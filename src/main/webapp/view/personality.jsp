@@ -114,6 +114,7 @@
 
     <script type="text/javascript" src="/js/dynamic_popup.js"></script>
 
+    <jsp:include page="common/popup/client_info_modal.jsp"/>
     <jsp:include page="common/popup/create_client_modal.jsp"/>
     <jsp:include page="common/popup/edit_popup.jsp"/>
     <jsp:include page="common/popup/message_popup.jsp"/>

@@ -33,6 +33,14 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
     List<Appointment> findAllByUserDetailsClient(UserDetails userDetailsClient);
 
     /**
+     * Производит поиск всех записей клиента к определенному мастеру
+     * @param userDetailsClient объект информации о клиенте
+     * @param accountMaster аккаунт мастера
+     * @return список записей клиента
+     */
+    List<Appointment> findAllByUserDetailsClientAndMasterAccount(UserDetails userDetailsClient, Account accountMaster);
+
+    /**
      * Проверяет, существует ли запись на указанное время и указанную дату у определенного мастера.
      *
      * @param appointmentDateTime дата и время записи

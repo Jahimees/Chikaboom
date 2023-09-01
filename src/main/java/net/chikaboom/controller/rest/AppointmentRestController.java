@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.Appointment;
 import net.chikaboom.model.database.UserDetails;
+import net.chikaboom.repository.AppointmentRepository;
 import net.chikaboom.service.data.AccountDataService;
 import net.chikaboom.service.data.AppointmentDataService;
+import net.chikaboom.service.data.UserDetailsDataService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +30,9 @@ public class AppointmentRestController {
     @Value("${one_hour_millis}")
     private long ONE_HOUR_MILLIS;
 
+    private final AppointmentRepository appointmentRepository;
     private final AppointmentDataService appointmentDataService;
+    private final UserDetailsDataService userDetailsDataService;
     private final AccountDataService accountDataService;
 
     /**
@@ -181,6 +185,36 @@ public class AppointmentRestController {
     @GetMapping("/accounts/{idAccount}/outcome-appointments")
     public ResponseEntity<List<Appointment>> findOutcomeAppointments(@PathVariable int idAccount) {
         return findAppointmentsByIdAccount(idAccount, true);
+    }
+
+    /**
+     * TODO НЕТ ДОКУМЕНТАЦИИ В README
+     * Поиск всех записей клиента к определенному мастеру
+     *
+     * @param idMasterAccount идентификатор аккаунта мастера
+     * @param idUserDetails идентификатора информации о клиенте
+     * @return список записей к мастеру
+     */
+    @PreAuthorize("hasRole('MASTER')")
+    @GetMapping("/accounts/{idMasterAccount}/appointments")
+    public ResponseEntity<List<Appointment>> clientAppointmentsByIdUserDetails(@PathVariable int idMasterAccount,
+                                                                               @RequestParam int idUserDetails) {
+        Optional<UserDetails> userDetailsOptional = userDetailsDataService.findUserDetailsById(idUserDetails);
+
+        if (!userDetailsOptional.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Optional<Account> masterAccountOptional = accountDataService.findById(idMasterAccount);
+
+        if (!masterAccountOptional.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(
+                appointmentRepository.findAllByUserDetailsClientAndMasterAccount(
+                        userDetailsOptional.get(),
+                        masterAccountOptional.get()));
     }
 
     /**
