@@ -1,11 +1,13 @@
 package net.chikaboom.service.data;
 
+import com.google.i18n.phonenumbers.NumberParseException;
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.model.database.About;
 import net.chikaboom.model.database.UserDetails;
 import net.chikaboom.repository.AboutRepository;
 import net.chikaboom.repository.PhoneCodeRepository;
 import net.chikaboom.repository.UserDetailsRepository;
+import net.chikaboom.util.PhoneNumberUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -28,7 +30,7 @@ public class UserDetailsDataService {
     private final PhoneCodeRepository phoneCodeRepository;
     private final SessionFactory sessionFactory;
 
-
+//TODO exists by phone
     public Optional<UserDetails> findUserDetailsById(int idUserDetails) {
         return userDetailsRepository.findById(idUserDetails);
     }
@@ -41,7 +43,15 @@ public class UserDetailsDataService {
         userDetails.setAbout(aboutRepository.saveAndFlush(about));
 
         if (userDetails.getPhoneCode() != null) {
-            userDetails.setPhoneCode(phoneCodeRepository.findFirstByPhoneCode(userDetails.getPhoneCode().getPhoneCode()));
+            userDetails.setPhoneCode(phoneCodeRepository.findFirstByCountryCut(userDetails.getPhoneCode().getCountryCut()));
+        }
+
+        try {
+            userDetails.setPhone(PhoneNumberUtils.formatNumberInternational(
+                    userDetails.getPhone(),
+                    userDetails.getPhoneCode().getCountryCut()));
+        } catch (NumberParseException e) {
+            throw new IllegalArgumentException("Cannot save user details. Phone is incorrect");
         }
 
         return userDetailsRepository.save(userDetails);

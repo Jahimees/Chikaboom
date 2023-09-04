@@ -1,26 +1,13 @@
 {
     let loadedClientsDetails = [];
 
-    function fillClientsTable(clientsJSON, tableId) {
-        let tableName = tableId ? tableId : "default"
-        loadedClientsDetails = [];
-
-        if (!$.fn.DataTable.isDataTable('#' + tableName)) {
-            $("#" + tableName + "_table").DataTable().data().clear();
-        }
-
-        clientsJSON.forEach(function (clientDetails) {
-            addRowToDataTable(clientDetails)
-        })
-    }
-
     function addRowToDataTable(clientDetails, tableId) {
         let tableName = tableId ? tableId : "default";
 
         loadedClientsDetails.push(clientDetails);
         let phoneText = "";
         if (clientDetails.userDetails !== null) {
-            phoneText = clientDetails.phoneCode ? "+" + clientDetails.phoneCode.phoneCode + " " + clientDetails.phone : " ";
+            phoneText = clientDetails.phone ? clientDetails.phone : "Номер не указан";
         }
 
         let name = (clientDetails.firstName ? clientDetails.firstName + " " : "")
@@ -42,13 +29,18 @@
         let lastNameVal = $("#client-last-name-input").val();
         let phoneVal = $("#client-phone-input").val();
         let aboutVal = $("#client-about-input").val();
-        let phoneCodeVal = $("#country-phone-client-create > .country-phone-selector > .country-phone-selected > span").text();
+        // let phoneCodeVal = $("#country-phone-client-create > .country-phone-selector > .country-phone-selected > span").text();
+
+        let selectedCountryData = iti.getSelectedCountryData();
+        let phoneCode = selectedCountryData.dialCode;
+        let countryCut = selectedCountryData.iso2;
 
         firstNameVal = secureCleanValue(firstNameVal);
         lastNameVal = secureCleanValue(lastNameVal);
         phoneVal = secureCleanValue(phoneVal);
         aboutVal = secureCleanValue(aboutVal);
-        phoneCodeVal = secureCleanValue(phoneCodeVal);
+
+        // phoneCodeVal = secureCleanValue(phoneCodeVal);
 
         let flag = validateFields(firstNameVal, lastNameVal, phoneVal, aboutVal);
 
@@ -61,10 +53,11 @@
             firstName: firstNameVal,
             lastName: lastNameVal,
             about: {
-                text: aboutVal
+                text: aboutVal,
             },
             phoneCode: {
-                phoneCode: phoneCodeVal
+                phoneCode: phoneCode,
+                countryCut: countryCut
             },
             masterOwner: {
                 idAccount: idAccount
@@ -107,11 +100,13 @@
             $("#last-name-invalid-label").css("display", "none");
         }
 
-        if (!isValid(phoneVal, 'phone')) {
-            $("#phone-invalid-label").css("display", "block");
+
+
+        if (!window.intlTelInputGlobals.getInstance(document.querySelector("#client-phone-input")).isValidNumber()) {
+            // $("#client-phone-input").css("border-color", "red")
             flag = false;
         } else {
-            $("#phone-invalid-label").css("display", "none");
+            // $("#client-phone-input").css("border-color", "none")
         }
 
         if (!isValid(aboutVal, 'about')) {
@@ -144,9 +139,59 @@
         }
     }
 
-    $(document).ready(function () {
+///////////////////////////////////////////CLIENTS DATATABLE///////////////////////////////////////
 
-        $("#clientInfoModal").on("show.bs.modal", function (event) {
+    function loadClientInformation(idMasterAccount) {
+        $.ajax({
+            type: "get",
+            url: "/accounts/" + idMasterAccount + "/clients",
+            contentType: "application/json",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                fillClientsTable(data, 'client');
+            },
+            error: function () {
+                repairDefaultMessagePopup();
+                $("#popup-message-text")[0].innerText = "Невозможно загрузить информацию о клиентах!"
+                $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
+                openPopup('message-popup');
+            }
+        })
+    }
+
+    function fillClientsTable(clientsJSON, tableId) {
+        let tableName = tableId ? tableId : "default"
+        let $dataTable = $("#" + tableName + "_table");
+        loadedClientsDetails = [];
+
+        if (!$.fn.DataTable.isDataTable('#' + tableName)) {
+            $dataTable.DataTable().data().clear();
+            $dataTable.DataTable().destroy();
+        }
+
+        initDataTable(tableName);
+
+        clientsJSON.forEach(function (clientDetails) {
+            addRowToDataTable(clientDetails, 'client')
+        })
+    }
+
+///////////////////////////////////////////MODAL CLIENT APPOINTMENTS///////////////////////////////////////
+    $(document).ready(function () {
+        let $clientInfoModal = $("#clientInfoModal");
+        let $clientAppointmentsTable = $("#client_appointments_table")
+
+        $clientInfoModal.on("hidden.bs.modal", function (event) {
+            if (!$.fn.DataTable.isDataTable('#client_appointments')) {
+                $clientAppointmentsTable.DataTable().data().clear();
+                $clientAppointmentsTable.DataTable().destroy();
+            }
+        });
+
+        //on open client info modal
+        $clientInfoModal.on("show.bs.modal", function (event) {
+
             let idUserDetails = event.relatedTarget.getAttribute("user-details-id");
 
             loadedClientsDetails.forEach(function (details) {
@@ -157,49 +202,53 @@
                     $("#client-about-input-upd").val(details.about ? details.about.text : "");
                     $("#client-phone-input-upd").val(details.phone);
 
-                    $('#client-phone-input-upd').phonecode({
-                        preferCo: details.phoneCode ? details.phoneCode.countryCut : "by",
-                        id: 'client-info'
-                    })
-
+                    window.intlTelInputGlobals.getInstance(
+                        document.querySelector("#client-phone-input-upd"))
+                        .setCountry(details.phoneCode.countryCut);
 
                     let lastVisitDate = details.lastVisitDate ? new Date(details.lastVisitDate).toLocaleDateString('ru') : "-"
                     $("#client-visit-count-upd").text("Количество посещений: " + details.visitCount);
                     $("#client-last-visit-date-upd").text("Последнее посещение: " + lastVisitDate);
 
-                    $.ajax({
-                        method: "get",
-                        url: "/accounts/" + accountJson.idAccount + "/appointments",
-                        async: false,
-                        contentType: "application/text",
-                        dataType: "json",
-                        data: {
-                            idUserDetails: idUserDetails
-                        },
-                        success: function (data) {
-                            // initDataTable("client-appointments", 'client_appointments_table')
-                            fillClientAppointmentsTable(data, 'client_appointments')
-                        },
-                        error: function () {
-                            repairDefaultMessagePopup();
-                            $("#popup-message-text")[0].innerText = "Невозможно загрузить данные о записях клиента"
-                            $("#popup-message-header")[0].innerText = "Ошибка!";
-                            openPopup('message-popup');
-                        }
-
-                    })
+                    loadClientAppointmentsInfoForModal(idUserDetails);
                     return;
                 }
             })
         })
     })
 
-    function fillClientAppointmentsTable(appointmentsJSON, tableId) {
+    function loadClientAppointmentsInfoForModal(idUserDetails) {
+        $.ajax({
+            method: "get",
+            url: "/accounts/" + accountJson.idAccount + "/appointments",
+            async: false,
+            contentType: "application/text",
+            dataType: "json",
+            data: {
+                idUserDetails: idUserDetails
+            },
+            success: function (data) {
+                fillClientAppointmentsTableForModal(data, 'client_appointments')
+            },
+            error: function () {
+                repairDefaultMessagePopup();
+                $("#popup-message-text")[0].innerText = "Невозможно загрузить данные о записях клиента"
+                $("#popup-message-header")[0].innerText = "Ошибка!";
+                openPopup('message-popup');
+            }
+        })
+    }
+
+    function fillClientAppointmentsTableForModal(appointmentsJSON, tableId) {
         let tableName = tableId ? tableId : "default";
+        let $dataTable = $("#" + tableName + "_table");
 
         if (!$.fn.DataTable.isDataTable('#' + tableName)) {
-            $("#" + tableName + "_table").DataTable().data().clear();
+            $dataTable.DataTable().data().clear();
+            $dataTable.DataTable().destroy();
         }
+
+        initDataTable(tableName);
 
         appointmentsJSON.forEach(function (appointment) {
             let serviceNameVal = appointment.service.name;
@@ -208,7 +257,7 @@
             let durationTimeVal = appointment.service.time;
             let priceVal = appointment.service.price;
 
-            $("#" + tableName + "_table").DataTable().row.add([
+            $dataTable.DataTable().row.add([
                 serviceNameVal,
                 appointmentDateVal,
                 appointmentTimeVal,
@@ -216,10 +265,7 @@
                 priceVal
             ]).draw();
         })
-
     }
 }
 
 //TODO 1) Нельзя загрузить 2 phoneCode
-//TODO 2) Если повторно вызвать вкладку мои клиенты на вкладке информации о клиенте продублируется header и footer таблицы
-//TODO 3) Если клиент не записывался ещё к мастеру в таблице в информации о клиенет у него будут отображаться данные с предыдущей выгрузки

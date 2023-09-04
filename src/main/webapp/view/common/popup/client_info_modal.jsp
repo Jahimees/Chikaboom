@@ -31,8 +31,8 @@
                 </div>
                 <div class="popup-input middle-box w-80">
                     <div>Телефон</div>
-                    <label id="phone-invalid-label-upd" class="invalid-field-label-popup">Неверный формат телефона</label>
-                    <input id="client-phone-input-upd" style="width: 100%" type="number">
+                    <input id="client-phone-input-upd" style="width: 100%">
+                    <span id="error-msg-client-phone-input-upd" class="hide"></span>
                 </div>
                 <div class="popup-input middle-box w-80">
                     <div>Краткая информация</div>
@@ -70,9 +70,10 @@
 <jsp:useBean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
 <script src="/js/phonecode/countries.js"></script>
 <script src="/js/phonecode/phonecode.js"></script>
-
 <script>
     $(document).ready(function () {
-        selectCurrentTab($("#client-tab")[0])
+        initPhoneCodeWidget("client-phone-input-upd");
+        // selectCurrentTab($("#client-tab")[0])
+
     });
 </script>

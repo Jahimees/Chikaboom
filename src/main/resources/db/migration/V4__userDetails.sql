@@ -20,7 +20,7 @@ CREATE TABLE `chikaboom`.`user_details`
 (
     `iduser_details`   INT NOT NULL AUTO_INCREMENT,
     `idphonecode`      INT NULL,
-    `phone`            VARCHAR(15) NULL,
+    `phone`            VARCHAR(30) NULL,
     `idsocial_network` INT NULL,
     `idabout`          INT NULL,
     `idaccount_owner`  INT NULL,

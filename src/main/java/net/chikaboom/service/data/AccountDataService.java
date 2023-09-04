@@ -9,7 +9,7 @@ import net.chikaboom.repository.AboutRepository;
 import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.repository.PhoneCodeRepository;
 import net.chikaboom.repository.UserDetailsRepository;
-import net.chikaboom.util.PhoneNumberConverter;
+import net.chikaboom.util.PhoneNumberUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -156,7 +156,7 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
                     patchedUserDetails.setPhoneCode(
                             phoneCodeRepository.findFirstByPhoneCode(
                                     userDetails.getPhoneCode().getPhoneCode()));
-                    patchedUserDetails.setPhone(PhoneNumberConverter.clearPhoneNumber(userDetails.getPhone()));
+                    patchedUserDetails.setPhone(PhoneNumberUtils.clearPhoneNumber(userDetails.getPhone()));
                 }
             }
 

@@ -103,7 +103,7 @@ function dropAllFields() {
 function addField(labelText, fieldName, inputType, placeHolderText, isPhoneCode, validations, fieldType, nestedObjectType) {
     let divLabel = document.createElement("div");
     divLabel.setAttribute("class", "common-black-text");
-    divLabel.innerHTML = labelText;
+    divLabel.innerText = labelText;
 
     let inputField = document.createElement(fieldType ? fieldType : "input");
     if (isPhoneCode) {
@@ -139,12 +139,11 @@ function addField(labelText, fieldName, inputType, placeHolderText, isPhoneCode,
     fields.push(inputField);
 
     if (isPhoneCode) {
-        $(function () {
-            $('#edit-phone').phonecode({
-                preferCo: 'by',
-                id: 'edit'
-            });
-        });
+        let span = document.createElement('span');
+        span.setAttribute("id", "error-msg-edit-phone");
+        span.classList.add("hidden");
+        inputField.after(span);
+        initPhoneCodeWidget("edit-phone");
     }
 
     return inputField;
@@ -228,16 +227,16 @@ function validateField(thisField) {
                 }
                 break;
             }
-            case InvalidReason.PHONE: {
-                if (!/^(\s*)?([- _():=+]??\d[- _():=+]?){9,14}(\s*)?$/.test(thisField.value)) {
-                    thisField.setAttribute("reason", InvalidReason.PHONE)
-                    $("#" + thisFieldName + "-" + InvalidReason.PHONE).css("display", "block");
-                    isReasonShouldBeEmpty = false;
-                } else {
-                    $("#" + thisFieldName + "-" + InvalidReason.PHONE).css("display", "none");
-                }
-                break;
-            }
+            // case InvalidReason.PHONE: {
+            //     if (!/^(\s*)?([- _():=+]??\d[- _():=+]?){9,14}(\s*)?$/.test(thisField.value)) {
+            //         thisField.setAttribute("reason", InvalidReason.PHONE)
+            //         $("#" + thisFieldName + "-" + InvalidReason.PHONE).css("display", "block");
+            //         isReasonShouldBeEmpty = false;
+            //     } else {
+            //         $("#" + thisFieldName + "-" + InvalidReason.PHONE).css("display", "none");
+            //     }
+            //     break;
+            // }
             case InvalidReason.LONG: {
                 temp = thisField;
                 if (thisField.value.trim().length > 30) {

@@ -1,9 +1,13 @@
 function fillAppointmentsTable(appointmentsJSON, isIncomeAppointment, idCurrentAccount, tableId) {
     let tableName = tableId ? tableId : "default";
+    let $dataTable = $("#" + tableName + "_table");
 
     if (!$.fn.DataTable.isDataTable('#' + tableName)) {
-        $("#" + tableName + "_table").DataTable().data().clear();
+        $dataTable.DataTable().data().clear();
+        $dataTable.DataTable().destroy();
     }
+
+    initDataTable(tableName);
 
     let timeOptions = {
         hour: 'numeric',
@@ -11,6 +15,8 @@ function fillAppointmentsTable(appointmentsJSON, isIncomeAppointment, idCurrentA
     }
 
     appointmentsJSON.forEach(function (appointment) {
+        let nameText, phoneText;
+
         if (isIncomeAppointment) {
             nameText = (appointment.userDetailsClient.firstName ? appointment.userDetailsClient.firstName + " " : " ") +
                 (appointment.userDetailsClient.lastName ? appointment.userDetailsClient.lastName : "");
@@ -23,7 +29,7 @@ function fillAppointmentsTable(appointmentsJSON, isIncomeAppointment, idCurrentA
             + appointment.masterAccount.userDetails.phone ? appointment.masterAccount.userDetails.phone : " ";
         }
 
-        var rowNode = $("#" + tableName + "_table").DataTable().row.add([
+        let rowNode = $dataTable.DataTable().row.add([
             appointment.service.name,
             new Date(appointment.appointmentDateTime).toLocaleDateString('ru'),
             new Date(appointment.appointmentDateTime).toLocaleTimeString("ru", timeOptions),
@@ -56,7 +62,7 @@ function loadAppointmentsData(idAccount, isIncomeAppointments) {
             dataType: "json",
             async: false,
             success: function (json) {
-                fillAppointmentsTable(json, isIncomeAppointments, idAccount)
+                fillAppointmentsTable(json, isIncomeAppointments, idAccount, "appointment")
             }
         })
     } else {

@@ -6,25 +6,6 @@ function selectCurrentTab(thisObj) {
     thisObj.setAttribute("selected", "true");
 }
 
-function loadClientInformation(idMasterAccount) {
-    $.ajax({
-        type: "get",
-        url: "/accounts/" + idMasterAccount + "/clients",
-        contentType: "application/json",
-        dataType: "json",
-        async: false,
-        success: function (data) {
-            fillClientsTable(data);
-        },
-        error: function () {
-            repairDefaultMessagePopup();
-            $("#popup-message-text")[0].innerText = "Невозможно загрузить информацию о клиентах!"
-            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
-            openPopup('message-popup');
-        }
-    })
-}
-
 function loadAppointmentConcreteTab(tabName, idAccount) {
     $.ajax({
         type: "get",
@@ -65,12 +46,9 @@ function loadSettingTab(tabName, idAccount) {
 
 ///////////////////////////////////DATATABLE///////////////////////////////////////////////
 
-function initDataTable(tableType, tableId) {
+function initDataTable(tableId) {
     let tableName = tableId ? tableId : "default";
 
-    // if (!$.fn.DataTable.isDataTable('#' + tableName)) {
-    //     $("#" + tableName).DataTable().data().clear();
-    // }
     new DataTable('#' + tableName + "_table", {
         order: [[1, 'asc'], [2, 'asc']],
         "language": {
@@ -99,7 +77,7 @@ function initDataTable(tableType, tableId) {
         }
     })
 
-    if (tableType === "appointment") {
+    if (tableId === "appointment") {
         initFilter();
     }
 }
@@ -135,7 +113,7 @@ function openEditEmailPopup() {
 
 function openPhoneEditPopup() {
     dropAllFields();
-    addField("Номер телефона", "phone", "text", "(44) 111-11-11", true, [new Validation("Неверный шаблон телефона", InvalidReason.PHONE),
+    addField("Номер телефона", "phone", "text", null, true, [new Validation("Неверный шаблон телефона", InvalidReason.PHONE),
         new Validation("Поле не может быть пустым", InvalidReason.EMPTY)], 'input', 'userDetails');
     openPopup("edit-popup");
 }
