@@ -18,14 +18,10 @@
         </div>
 
         <div class="common-black-text">Номер телефона</div>
-        <label class="invalid-field-label-popup" id="r-input-phone-incorrect">Некорректный номер телефона</label>
-        <label class="invalid-field-label-popup" id="r-input-phone-empty">Поле не может быть пустым</label>
-        <label class="invalid-field-label-popup" id="r-input-phone-short">Номер телефона должен быть длиннее 8
-            символов</label>
-        <input id="phoneCode" name="phoneCode" hidden>
         <div class="popup-input middle-box w-80">
-            <input id="r-input-phone" class="phone-input-popup" name="phone" required placeholder="(29) 111-11-11"
+            <input id="r-input-phone" class="phone-input-popup" name="phone" required
                    valid="false" maxlength="30">
+            <span id="error-msg-r-input-phone" class="hide"></span>
         </div>
 
         <div class="common-black-text">Пароль</div>
@@ -63,3 +59,9 @@
         </button>
     </div>
 </div>
+
+<script>
+    $(document).ready(() => {
+        initPhoneCodeWidget("r-input-phone");
+    })
+</script>

@@ -1,8 +1,11 @@
 package net.chikaboom.service;
 
+import com.google.i18n.phonenumbers.NumberParseException;
+import lombok.RequiredArgsConstructor;
 import net.chikaboom.model.database.Account;
+import net.chikaboom.model.database.UserDetails;
 import net.chikaboom.repository.AccountRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import net.chikaboom.service.data.UserDetailsDataService;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,16 +20,12 @@ import java.util.Optional;
  * Собственная реализация аутентификации пользователя
  */
 @Service
+@RequiredArgsConstructor
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     private final AccountRepository accountRepository;
+    private final UserDetailsDataService userDetailsDataService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    @Autowired
-    public CustomAuthenticationProvider(AccountRepository accountRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.accountRepository = accountRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-    }
 
     /**
      * Производит аутентификацию пользователя. Сверяет имя пользователя, а также хэшированные пароли
@@ -55,6 +54,27 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         return new UsernamePasswordAuthenticationToken(
                 account, password, account.getAuthorities());
     }
+
+//    String phone = authentication.getName();
+//    String[] phoneDetails = phone.split("_");
+//    String password = authentication.getCredentials().toString();
+//
+//    Optional<UserDetails> userDetailsOptional;
+//        try {
+//        userDetailsOptional = userDetailsDataService.findUserDetailsByPhone(phoneDetails[0], phoneDetails[1]);
+//        if (!userDetailsOptional.isPresent()) {
+//            throw new BadCredentialsException("Unknown user " + phone);
+//        }
+//    } catch (NumberParseException e) {
+//        throw new IllegalArgumentException("Cannot find user details. Phone is incorrect");
+//    }
+//
+//    Optional<Account> accountOptional = accountRepository.findAccountByUserDetails(userDetailsOptional.get());
+//
+//        if (!accountOptional.isPresent()) {
+//        throw new BadCredentialsException("Unknown user " + phone);
+//    }
+
 
     @Override
     public boolean supports(Class<?> authentication) {

@@ -53,3 +53,16 @@ DROP FOREIGN KEY `idaccount_client`;
 ALTER TABLE `chikaboom`.`appointment`
 DROP COLUMN `idaccount_client`,
 DROP INDEX `idaccount_client_idx` ;
+
+ALTER TABLE `chikaboom`.`account`
+    ADD INDEX `iduser_details_idx` (`iduser_details` ASC) VISIBLE;
+
+ALTER TABLE `chikaboom`.`account`
+    ADD CONSTRAINT `iduser_details`
+        FOREIGN KEY (`iduser_details`)
+            REFERENCES `chikaboom`.`user_details` (`iduser_details`)
+            ON DELETE CASCADE
+            ON UPDATE NO ACTION;
+
+ALTER TABLE `chikaboom`.`user_details`
+    ADD UNIQUE INDEX `phone_UNIQUE` (`phone` ASC) VISIBLE;

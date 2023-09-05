@@ -12,8 +12,8 @@
 
         let name = (clientDetails.firstName ? clientDetails.firstName + " " : "")
             + (clientDetails.lastName ? clientDetails.lastName : "");
-
         name = name ? name : "Безымянный";
+
         let nameDiv = "<div class='btn-light btn m-2 master-only' data-bs-toggle='modal' user-details-id='"
             + clientDetails.idUserDetails + "' data-bs-target='#clientInfoModal'>" + name + "</div>";
         $("#" + tableName + "_table").DataTable().row.add([
@@ -29,9 +29,9 @@
         let lastNameVal = $("#client-last-name-input").val();
         let phoneVal = $("#client-phone-input").val();
         let aboutVal = $("#client-about-input").val();
-        // let phoneCodeVal = $("#country-phone-client-create > .country-phone-selector > .country-phone-selected > span").text();
 
-        let selectedCountryData = iti.getSelectedCountryData();
+        let selectedCountryData = window.intlTelInputGlobals.getInstance(
+            document.querySelector("#client-phone-input")).getSelectedCountryData();
         let phoneCode = selectedCountryData.dialCode;
         let countryCut = selectedCountryData.iso2;
 
@@ -39,8 +39,6 @@
         lastNameVal = secureCleanValue(lastNameVal);
         phoneVal = secureCleanValue(phoneVal);
         aboutVal = secureCleanValue(aboutVal);
-
-        // phoneCodeVal = secureCleanValue(phoneCodeVal);
 
         let flag = validateFields(firstNameVal, lastNameVal, phoneVal, aboutVal);
 
@@ -71,8 +69,12 @@
             dataType: "json",
             data: JSON.stringify(userDetailsObject),
             success: function (clientDetails) {
-                addRowToDataTable(clientDetails);
+                addRowToDataTable(clientDetails, "client");
                 $('#createClientModal').modal('hide');
+                repairDefaultMessagePopup();
+                $("#popup-message-text")[0].innerText = "Клиент успешно создан!"
+                $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Клиент создан";
+                openPopup('message-popup');
             },
             error: function () {
                 $('#createClientModal').modal('hide');
@@ -100,13 +102,8 @@
             $("#last-name-invalid-label").css("display", "none");
         }
 
-
-
         if (!window.intlTelInputGlobals.getInstance(document.querySelector("#client-phone-input")).isValidNumber()) {
-            // $("#client-phone-input").css("border-color", "red")
             flag = false;
-        } else {
-            // $("#client-phone-input").css("border-color", "none")
         }
 
         if (!isValid(aboutVal, 'about')) {

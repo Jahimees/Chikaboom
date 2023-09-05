@@ -6,7 +6,6 @@
         <div class="big-text">Мои услуги</div>
 
         <div id="service-placeholder" class="d-block w-100">
-
         </div>
 
         <div class="purple-button middle-box w-50" onclick="prepareToCreateNewService()">Создать новую услугу</div>
@@ -50,31 +49,13 @@
                 <img width="22px" src="/image/icon/cross_icon.svg">
             </div>
         </div>
-
     </div>
 </div>
 
 <script>
 
-    function loadServiceTab() {
-        $.ajax({
-            type: "get",
-            url: "/accounts/${idAccount}/services",
-            contentType: "application/text",
-            dataType: "text",
-            success: function (data) {
-                servicesJson = JSON.parse(data);
-                fillServiceTable(servicesJson);
-                loadServiceTypeSelectOptions();
-            },
-            error: function () {
-                loadUnderConstruction();
-            }
-        });
-    }
-
     $(document).ready(function () {
-        loadServiceTab();
+        loadServiceTab(${idAccount});
     })
 
     function setTwoNumberDecimal(thisObj) {

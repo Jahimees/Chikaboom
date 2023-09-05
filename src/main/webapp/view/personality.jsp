@@ -18,8 +18,6 @@
     <link rel="stylesheet" href="/css/media/popup_media.css">
     <link rel="stylesheet" href="/css/addition/carousel.css">
     <link rel="stylesheet" href="/css/addition/menu_bar.css">
-    <link rel="stylesheet" href="/css/addition/phonecode.css"/>
-<%--    // TODO NEW PHONECODE --%>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
 
     <link href="https://fonts.cdnfonts.com/css/source-sans-pro" rel="stylesheet">
@@ -27,13 +25,12 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script rel="script" src="/js/jquery-ui-1.10.4.custom.min.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/css/suggestions.min.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
     <script src="/js/tab.js"></script>
     <script src="/js/jquery-ui-1.10.4.custom.min.js"></script>
-    <script src="/js/phonecode/phonecode.js"></script>
-    <script src="/js/phonecode/countries.js"></script>
     <script src="/js/countrycode/countryCode.js"></script>
     <script src="/js/client.js"></script>
     <script src="/js/tab.js"></script>

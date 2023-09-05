@@ -1,5 +1,6 @@
 package net.chikaboom.service.data;
 
+import com.google.i18n.phonenumbers.NumberParseException;
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.exception.NoSuchDataException;
 import net.chikaboom.exception.UserAlreadyExistsException;
@@ -102,7 +103,7 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
     }
 
     /**
-     * Создаёт новый объект аккаугта в базе.
+     * Создаёт новый объект аккаунта в базе.
      *
      * @param account создаваемый объект
      * @return созданный объект
@@ -117,7 +118,14 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
         if (userDetails == null) {
             userDetails = new net.chikaboom.model.database.UserDetails();
         } else {
-            userDetails.setPhoneCode(phoneCodeRepository.findFirstByPhoneCode(userDetails.getPhoneCode().getPhoneCode()));
+            try {
+            userDetails.setPhoneCode(phoneCodeRepository.findFirstByCountryCut(userDetails.getPhoneCode().getCountryCut()));
+                userDetails.setPhone(PhoneNumberUtils.formatNumberInternational(
+                        userDetails.getPhone(), userDetails.getPhoneCode().getCountryCut()));
+
+            } catch (NumberParseException e) {
+                throw new IllegalArgumentException("Cannot save user details. Phone is incorrect");
+            }
         }
 
         userDetails = userDetailsRepository.saveAndFlush(userDetails);
@@ -145,6 +153,7 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
             userDetailsRepository.saveAndFlush(patchedUserDetails);
         }
 
+        //TODO переделать валидацию
         if (userDetails != null) {
             if (userDetails.getPhoneCode() != null
                     && userDetails.getPhone() != null
@@ -154,9 +163,14 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
                     throw new UserAlreadyExistsException("User with the same phone already exists");
                 } else {
                     patchedUserDetails.setPhoneCode(
-                            phoneCodeRepository.findFirstByPhoneCode(
-                                    userDetails.getPhoneCode().getPhoneCode()));
-                    patchedUserDetails.setPhone(PhoneNumberUtils.clearPhoneNumber(userDetails.getPhone()));
+                            phoneCodeRepository.findFirstByCountryCut(userDetails.getPhoneCode().getCountryCut()));
+                    try {
+                        patchedUserDetails.setPhone(PhoneNumberUtils.formatNumberInternational(
+                                userDetails.getPhone(),
+                                userDetails.getPhoneCode().getCountryCut()));
+                    } catch (NumberParseException e) {
+                        throw new IllegalArgumentException("Cannot save user details. Phone is incorrect");
+                    }
                 }
             }
 

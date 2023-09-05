@@ -67,13 +67,9 @@
         </div>
     </div>
 </div>
-<jsp:useBean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
-<script src="/js/phonecode/countries.js"></script>
-<script src="/js/phonecode/phonecode.js"></script>
+
 <script>
     $(document).ready(function () {
         initPhoneCodeWidget("client-phone-input-upd");
-        // selectCurrentTab($("#client-tab")[0])
-
     });
 </script>

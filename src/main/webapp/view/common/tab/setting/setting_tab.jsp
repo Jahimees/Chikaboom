@@ -1,7 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
-<%--//TODO CLASS--%>
 <div class="full-width-inline-box">
     <div class="news-data-box col-6">
         <div id="greeting-info-box" class="big-medium-black-text padding-0-0-10-px">

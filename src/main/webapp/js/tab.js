@@ -201,9 +201,7 @@ function fillGeneralSettingTab(idAccount) {
             }
 
             if (accountJson.userDetails.phoneCode !== null && typeof accountJson.userDetails.phoneCode !== "undefined") {
-                let phoneCode = accountJson.userDetails.phoneCode.phoneCode;
-                let phone = accountJson.userDetails.phone !== null ? accountJson.userDetails.phone : " ";
-                phoneText = "+" + phoneCode + " " + phone;
+                phoneText = accountJson.userDetails.phone !== null ? accountJson.userDetails.phone : " ";
             }
 
             $("#phone-placeholder").val(phoneText);

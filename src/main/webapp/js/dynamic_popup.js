@@ -39,6 +39,15 @@ function confirmEdit() {
             if (nestedObjectType != null && nestedObjectType !== "") {
                 if (nestedObjectType === 'userDetails') {
                     accountJsonPatch.userDetails[field.name] = fieldValue;
+
+                    if (field.id === "edit-phone") {
+                        let countryData = window.intlTelInputGlobals.getInstance(
+                            document.querySelector("#edit-phone")).getSelectedCountryData();
+                        accountJsonPatch.userDetails["phoneCode"] = {
+                            phoneCode: countryData.dialCode,
+                            countryCut: countryData.iso2
+                        };
+                    }
                 } else {
                     if (accountJsonPatch.userDetails[nestedObjectType] == null) {
                         accountJsonPatch.userDetails[nestedObjectType] = {};
@@ -49,11 +58,6 @@ function confirmEdit() {
                 accountJsonPatch[field.name] = fieldValue;
             }
         });
-
-        let phoneCodeField = $(".country-phone-selected > span")[0];
-        if (typeof phoneCodeField !== "undefined") {
-            accountJsonPatch.userDetails["phoneCode"] = phoneCodeField.firstChild.textContent;
-        }
 
         $.ajax({
             type: "PATCH",

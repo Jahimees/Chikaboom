@@ -30,7 +30,6 @@
                 <div class="popup-input middle-box w-80">
                     <div>Телефон</div>
                     <input id="client-phone-input" style="width: 100%">
-                    <%--                    <span id="valid-msg-client-phone-input" class="hide"></span>--%>
                     <span id="error-msg-client-phone-input" class="hide"></span>
                 </div>
                 <div class="popup-input middle-box w-80">
@@ -49,9 +48,6 @@
         </div>
     </div>
 </div>
-<jsp:useBean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
-<script src="/js/phonecode/countries.js"></script>
-<script src="/js/phonecode/phonecode.js"></script>
 
 <script>
     $(document).ready(() => {

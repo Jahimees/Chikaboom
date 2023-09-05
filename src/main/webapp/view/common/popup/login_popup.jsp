@@ -14,6 +14,9 @@
             <div class="popup-input middle-box w-80">
                 <input id="l-input-username" class="popup-input-field" name="username" required placeholder="Rosaline"
                        valid="false">
+<%--                <input id="l-input-username" class="popup-input-field" required--%>
+<%--                       valid="false">--%>
+<%--                <input id="l-hidden-input-username" name="username" hidden="hidden">--%>
             </div>
             <div class="common-black-text">Пароль</div>
             <label class="invalid-field-label-popup" id="l-input-password-empty">Поле не может быть пустым</label>
@@ -27,9 +30,27 @@
             </div>
             <hr>
             <a href="/chikaboom/under_construction" class="small-info-popup">Забыли пароль?</a>
-            <button type="submit" class="btn btn-dark confirm-popup-btn">
+            <button id="login-submit-btn" type="submit" class="btn btn-dark confirm-popup-btn">
                 Войти
             </button>
         </div>
     </form>
 </div>
+
+<%--<script>--%>
+
+<%--    $(document).ready(() => {--%>
+<%--        initPhoneCodeWidget("l-input-username");--%>
+
+<%--        $("#login-submit-btn").on("click", () => {--%>
+<%--            let selectedCountryData = window.intlTelInputGlobals.getInstance(--%>
+<%--                document.querySelector("#l-input-username")).getSelectedCountryData();--%>
+<%--            let $inputUsername = $("#l-input-username");--%>
+<%--            let $hiddenInput = $("#l-hidden-input-username");--%>
+<%--            console.log($inputUsername.val())--%>
+<%--            $hiddenInput.val($inputUsername.val() + "_" + selectedCountryData.iso2)--%>
+<%--            console.log($inputUsername.val())--%>
+<%--            $("#login-form").submit();--%>
+<%--        })--%>
+<%--    })--%>
+<%--</script>--%>

@@ -17,7 +17,6 @@
     <link rel="stylesheet" href="/css/media/popup_media.css">
     <link rel="stylesheet" href="/css/addition/carousel.css">
     <link rel="stylesheet" href="/css/addition/menu_bar.css">
-    <link rel="stylesheet" href="/css/addition/phonecode.css"/>
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/media/main_media.css">
     <link rel="stylesheet" href="/css/popup.css">

@@ -20,13 +20,11 @@ function fillAppointmentsTable(appointmentsJSON, isIncomeAppointment, idCurrentA
         if (isIncomeAppointment) {
             nameText = (appointment.userDetailsClient.firstName ? appointment.userDetailsClient.firstName + " " : " ") +
                 (appointment.userDetailsClient.lastName ? appointment.userDetailsClient.lastName : "");
-            phoneText = (appointment.userDetailsClient.phoneCode ? appointment.userDetailsClient.phoneCode.phoneCode : " ") + " "
-                + (appointment.userDetailsClient.phone ? appointment.userDetailsClient.phone : " ");
+            phoneText = appointment.userDetailsClient.phone ? appointment.userDetailsClient.phone : " ";
         } else {
             nameText = "<a href='/chikaboom/account/" + appointment.masterAccount.idAccount + "'>" + (appointment.masterAccount.userDetails.firstName ? appointment.masterAccount.userDetails.firstName + " " : " ") +
                 (appointment.masterAccount.userDetails.lastName ? appointment.masterAccount.userDetails.lastName : "") + "</a>";
-            phoneText = (appointment.masterAccount.userDetails.phoneCode ? appointment.masterAccount.userDetails.phoneCode.phoneCode : " ") + " "
-            + appointment.masterAccount.userDetails.phone ? appointment.masterAccount.userDetails.phone : " ";
+            phoneText = appointment.masterAccount.userDetails.phone ? appointment.masterAccount.userDetails.phone : " ";
         }
 
         let rowNode = $dataTable.DataTable().row.add([
@@ -180,7 +178,7 @@ function doMakeAppointment(clientId, accountMasterJson, client) {
         $("#appointment-warn").css("display", "none");
         let master = accountMasterJson;
 
-        let idService = parseInt($("#services-select")[0].value);
+        let idService = parseInt($("#services-select").val());
         let service;
         let servicesJson = loadMastersServices(masterId);
         servicesJson.forEach(function (serv) {

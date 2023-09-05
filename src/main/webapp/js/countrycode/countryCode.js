@@ -25,6 +25,7 @@ function initPhoneCodeWidget(inputId) {
     const errorMap = ["Неверный номер", "Неверный код страны", "Слишком короткий номер", "Слишком длинный номер", "Неверный номер"];
 
     const iti = window.intlTelInput(input, {
+        hiddenInput: "full_phone",
         initialCountry: "auto",
         geoIpLookup: callback => {
             fetch("https://ipapi.co/json")
@@ -47,10 +48,10 @@ function initPhoneCodeWidget(inputId) {
             if (iti.isValidNumber()) {
                 input.style.borderColor = "";
             } else {
-                console.log("Problems")
                 input.style.borderColor = "red";
                 input.classList.add("error");
                 const errorCode = iti.getValidationError();
+
                 //undefined error
                 if (errorCode !== -99) {
                     errorMsg.innerText = errorMap[errorCode];

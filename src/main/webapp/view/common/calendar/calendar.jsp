@@ -10,9 +10,10 @@
     <meta charset='utf-8'/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link href='/css/fullcalendar/bootstrap.min.css' rel='stylesheet' />
-    <link href='/css/fullcalendar/fullcalendar.css' rel='stylesheet' />
-    <link href='/css/fullcalendar/style.css' rel='stylesheet' />
+    <link href='/css/fullcalendar/bootstrap.min.css' rel='stylesheet'/>
+    <link href='/css/fullcalendar/fullcalendar.css' rel='stylesheet'/>
+    <link href='/css/fullcalendar/style.css' rel='stylesheet'/>
+    <link href="/css/vendor/bootstrap-ie7.css" rel="stylesheet">
 
     <script src='/js/fullcalendar/vendor/jquery.min.js'></script>
     <script src='/js/fullcalendar/vendor/moment.min.js'></script>
@@ -20,9 +21,6 @@
     <script src='/js/fullcalendar/vendor/fullcalendar.js'></script>
     <script src='/js/fullcalendar/events.js'></script>
     <script src='/js/fullcalendar/calendar.js'></script>
-
-    <link href="/css/vendor/bootstrap-ie7.css" rel="stylesheet">
-
 </head>
 
 <body>
@@ -62,7 +60,8 @@
     </div>
 </div>
 
-<div class="modal fade" id="editEvent" role="dialog" aria-labelledby="eventFormLabel" aria-hidden="true" data-persist="false">
+<div class="modal fade" id="editEvent" role="dialog" aria-labelledby="eventFormLabel" aria-hidden="true"
+     data-persist="false">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">

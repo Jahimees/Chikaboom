@@ -17,28 +17,14 @@
     <link rel="stylesheet" href="/css/popup.css">
     <link rel="stylesheet" href="/css/media/popup_media.css">
     <link rel="stylesheet" href="/css/common.css">
-    <link rel="stylesheet" href="/css/addition/phonecode.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
 
     <link href="https://fonts.cdnfonts.com/css/source-sans-pro" rel="stylesheet">
 
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script rel="script" src="/js/jquery-ui-1.10.4.custom.min.js"></script>
-    <script src="/js/phonecode/countries.js"></script>
-    <script src="/js/phonecode/phonecode.js"></script>
-    <script>
-        $(function () {
-            $('#l-input-phone').phonecode({
-                preferCo: 'by',
-                id: 'login'
-            });
-        });
-        $(function () {
-            $('#r-input-phone').phonecode({
-                preferCo: 'by',
-                id: 'register'
-            });
-        });
-    </script>
+    <script src="/js/countrycode/countryCode.js"></script>
 </head>
 <body>
 <div class="content">

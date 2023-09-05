@@ -19,13 +19,20 @@ $('.popup-bg').on('click', function () {
 
 $("#confirm-register").on("click", function () {
     if (validateAllRegisterFields()) {
-        var phoneCode = $("#country-phone-register > .country-phone-selector > .country-phone-selected > span")[0].firstChild.textContent;
-        var phone = $("#r-input-phone")[0].value;
-        var password = $("#r-input-password")[0].value;
-        var username = $("#r-input-username")[0].value;
-        var roles = $("role :checked, :radio")[0].checked ?
+        let selectedCountryData = window.intlTelInputGlobals.getInstance(
+            document.querySelector("#r-input-phone")).getSelectedCountryData();
+
+        let phoneCode = {
+            phoneCode: selectedCountryData.dialCode,
+            countryCut: selectedCountryData.iso2
+        }
+        let phone = $("#r-input-phone").val();
+        let password = $("#r-input-password").val();
+        let username = $("#r-input-username").val();
+        let roles = $("role :checked, :radio")[0].checked ?
             [{name: "ROLE_CLIENT"}] : [{name: "ROLE_CLIENT"},{name: "ROLE_MASTER"}];
-        var account = {
+
+        let account = {
             userDetails: {
                 phoneCode: phoneCode,
                 phone: phone,
@@ -34,6 +41,7 @@ $("#confirm-register").on("click", function () {
             username: username,
             roles: roles
         }
+
         $.ajax({
             type: "POST",
             url: "/chikaboom/registration",
@@ -44,8 +52,8 @@ $("#confirm-register").on("click", function () {
                 closePopup('register-popup');
                 closePopup('login-popup');
                 repairDefaultMessagePopup();
-                $("#popup-message-text")[0].innerText = "Вы успешно прошли регистрацию!"
-                $("#popup-message-header")[0].innerText = "Регистрация успешна!";
+                $("#popup-message-text").text("Вы успешно прошли регистрацию!");
+                $("#popup-message-header").text("Регистрация успешна!");
                 openPopup('message-popup');
             },
             error: function () {
@@ -79,10 +87,6 @@ $("#l-input-username").on("keyup", function () {
 })
 $("#l-input-password").on("keyup", function () {
     validateAuthorizeField(this);
-});
-
-$("#r-input-phone").on("keyup", function () {
-    validateRegisterField(this);
 });
 
 $("#r-input-username").on("keyup", function () {
@@ -131,16 +135,12 @@ function validateRegisterField(field) {
 
     if (field.value == null || field.value === "") {
         field.setAttribute("reason", "empty");
-    } else if (field.value.length < 9
-        && field.id !== "r-input-confirm-password" && field.id !== "r-input-password"
-        && field.id !== "r-input-username"
-    ) {
-        field.setAttribute("reason", "short");
     } else if (field.value.length < 2 && field.id === "r-input-username") {
         field.setAttribute("reason", "short");
     } else if (field.value.length < 5 && field.id === "r-input-password") {
         field.setAttribute("reason", "short");
-    } else if (field.id === "r-input-phone" && !/^(\s*)?([- _():=+]??\d[- _():=+]?){9,14}(\s*)?$/.test(field.value)) {
+    } else if (field.id === "r-input-phone" && !window.intlTelInputGlobals.getInstance(
+        document.querySelector("#r-input-phone")).isValidNumber()) {
         field.setAttribute("reason", "incorrect");
     } else if (field.id === "r-input-username" && !/^[a-zA-ZА-Яа-я]+\s{0,1}[a-zA-ZА-Яа-я]+$/.test(field.value)) {
         field.setAttribute("reason", "incorrect");

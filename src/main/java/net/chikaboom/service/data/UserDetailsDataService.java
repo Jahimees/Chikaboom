@@ -35,6 +35,12 @@ public class UserDetailsDataService {
         return userDetailsRepository.findById(idUserDetails);
     }
 
+    public Optional<UserDetails> findUserDetailsByPhone(String phone, String countryCut) throws NumberParseException {
+        String formedPhone = PhoneNumberUtils.formatNumberInternational(phone, countryCut);
+
+        return userDetailsRepository.findUserDetailsByPhone(formedPhone);
+    }
+
     public UserDetails create(UserDetails userDetails) {
         About about = userDetails.getAbout();
         if (about == null) {
