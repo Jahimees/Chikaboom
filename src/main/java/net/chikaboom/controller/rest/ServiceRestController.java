@@ -3,6 +3,7 @@ package net.chikaboom.controller.rest;
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.exception.NoSuchDataException;
 import net.chikaboom.model.database.Account;
+import net.chikaboom.model.database.CustomPrincipal;
 import net.chikaboom.model.database.Service;
 import net.chikaboom.service.data.ServiceDataService;
 import org.springframework.http.HttpStatus;
@@ -60,13 +61,13 @@ public class ServiceRestController {
     @PostMapping("/services")
     public ResponseEntity<Service> createService(@RequestBody Service service) {
         Account masterAccount = service.getAccount();
-        Account authorizedAccount = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        CustomPrincipal principal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (authorizedAccount.getIdAccount() != masterAccount.getIdAccount()) {
+        if (principal.getIdAccount() != masterAccount.getIdAccount()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        if (service.getAccount().getIdAccount() != authorizedAccount.getIdAccount()) {
+        if (service.getAccount().getIdAccount() != principal.getIdAccount()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -89,10 +90,10 @@ public class ServiceRestController {
             return ResponseEntity.notFound().build();
         }
 
-        Account authorizedAccount = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        CustomPrincipal principal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (service.getAccount().getIdAccount() != authorizedAccount.getIdAccount()
-                || serviceOptional.get().getAccount().getIdAccount() != authorizedAccount.getIdAccount()) {
+        if (service.getAccount().getIdAccount() != principal.getIdAccount()
+                || serviceOptional.get().getAccount().getIdAccount() != principal.getIdAccount()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 

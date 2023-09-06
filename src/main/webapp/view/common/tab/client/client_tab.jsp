@@ -25,6 +25,7 @@
                         <th>Номер телефона</th>
                         <th>Количество посещений</th>
                         <th>Последняя запись</th>
+                        <th>Удалить</th>
                     </tr>
                     </thead>
                     <tbody id="client_table-tbody">

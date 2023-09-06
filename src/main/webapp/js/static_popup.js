@@ -30,7 +30,7 @@ $("#confirm-register").on("click", function () {
         let password = $("#r-input-password").val();
         let username = $("#r-input-username").val();
         let roles = $("role :checked, :radio")[0].checked ?
-            [{name: "ROLE_CLIENT"}] : [{name: "ROLE_CLIENT"},{name: "ROLE_MASTER"}];
+            [{name: "ROLE_CLIENT"}] : [{name: "ROLE_CLIENT"}, {name: "ROLE_MASTER"}];
 
         let account = {
             userDetails: {
@@ -82,7 +82,7 @@ $("#login-form").submit(function (e) {
     });
 });
 
-$("#l-input-username").on("keyup", function () {
+$("#l-input-phone").on("keyup", function () {
     validateAuthorizeField(this);
 })
 $("#l-input-password").on("keyup", function () {
@@ -103,7 +103,7 @@ $("#r-input-confirm-password").on("keyup", function () {
 
 let login_register_fields = [];
 let register_fields = $(".register-popup > .popup-body > .popup-input > input");
-let login_fields = $(".login-popup > .popup-body > .popup-input > input");
+let login_fields = $("#login-form > .popup-body > .popup-input > input");
 
 function repaintLoginRegisterFields() {
     if (login_register_fields.length === 0) {
@@ -159,10 +159,13 @@ function validateAuthorizeField(field) {
     for (let reason of reasons) {
         $("#" + field.id + "-" + reason).css("display", "none");
     }
+    let intlInstance = window.intlTelInputGlobals.getInstance(
+        document.querySelector("#l-input-phone"));
 
     if (field.value == null || field.value === "") {
         field.setAttribute("reason", "empty");
-    } else if (field.id === "l-input-username" && !/^[a-zA-ZА-Яа-я]+\s{0,1}[a-zA-ZА-Яа-я]+$/.test(field.value)) {
+    } else if (field.id === "l-input-phone" && !intlInstance.isValidNumber()) {
+        //!/^[a-zA-ZА-Яа-я]+\s{0,1}[a-zA-ZА-Яа-я]+$/.test(field.value)) {
         field.setAttribute("reason", "incorrect");
     } else {
         field.style.borderColor = ""

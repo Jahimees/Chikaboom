@@ -110,21 +110,27 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
      */
     @Override
     public Account create(Account account) {
-        if (isAccountExists(account)) {
-            throw new UserAlreadyExistsException("The same user already exists");
+        try {
+            if (isAccountExists(account)) {
+                throw new UserAlreadyExistsException("The same user already exists");
+            }
+        } catch (NumberParseException e) {
+            throw new IllegalArgumentException("The phone is invalid. Cannot create the account");
         }
+
         account.setIdAccount(0);
         net.chikaboom.model.database.UserDetails userDetails = account.getUserDetails();
         if (userDetails == null) {
             userDetails = new net.chikaboom.model.database.UserDetails();
         } else {
             try {
-            userDetails.setPhoneCode(phoneCodeRepository.findFirstByCountryCut(userDetails.getPhoneCode().getCountryCut()));
+                userDetails.setPhoneCode(phoneCodeRepository.findFirstByCountryCut(userDetails.getPhoneCode().getCountryCut()));
                 userDetails.setPhone(PhoneNumberUtils.formatNumberInternational(
                         userDetails.getPhone(), userDetails.getPhoneCode().getCountryCut()));
+                userDetails.setDisplayedPhone(userDetails.getPhone());
 
             } catch (NumberParseException e) {
-                throw new IllegalArgumentException("Cannot save user details. Phone is incorrect");
+                throw new IllegalArgumentException("Cannot save user details. Phone is incorrect. " + e.getMessage());
             }
         }
 
@@ -140,7 +146,7 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
      * @param account новый аккаунт, который нужно изменить. Обязательно должен содержать idAccount != 0
      * @return обновленный аккаунт
      */
-    public Account patch(Account account) {
+    public Account patch(Account account) throws NumberParseException {
         Account patchedAccount = accountRepository.findById(account.getIdAccount())
                 .orElseThrow(() -> new NoSuchDataException("This user doesn't exist"));
 
@@ -153,24 +159,22 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
             userDetailsRepository.saveAndFlush(patchedUserDetails);
         }
 
-        //TODO переделать валидацию
         if (userDetails != null) {
+
             if (userDetails.getPhoneCode() != null
                     && userDetails.getPhone() != null
                     && !userDetails.getPhone().isEmpty()) {
-                if (userDetailsRepository.existsUserDetailsByPhoneCodeAndPhone(account.getUserDetails().getPhoneCode(),
-                        account.getUserDetails().getPhone())) {
+
+                String formattedPhone = PhoneNumberUtils.formatNumberInternational(
+                        userDetails.getPhone(), userDetails.getPhoneCode().getCountryCut());
+
+                if (userDetailsRepository.existsUserDetailsByPhone(formattedPhone)) {
                     throw new UserAlreadyExistsException("User with the same phone already exists");
                 } else {
                     patchedUserDetails.setPhoneCode(
                             phoneCodeRepository.findFirstByCountryCut(userDetails.getPhoneCode().getCountryCut()));
-                    try {
-                        patchedUserDetails.setPhone(PhoneNumberUtils.formatNumberInternational(
-                                userDetails.getPhone(),
-                                userDetails.getPhoneCode().getCountryCut()));
-                    } catch (NumberParseException e) {
-                        throw new IllegalArgumentException("Cannot save user details. Phone is incorrect");
-                    }
+                    patchedUserDetails.setPhone(formattedPhone);
+                    patchedUserDetails.setDisplayedPhone(formattedPhone);
                 }
             }
 
@@ -244,10 +248,14 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
      * @param account искомый аккаунт
      * @return true - в случае, если такой аккаунт существует, false - в ином случае
      */
-    public boolean isAccountExists(Account account) {
+    public boolean isAccountExists(Account account) throws NumberParseException {
+        net.chikaboom.model.database.UserDetails userDetails = account.getUserDetails();
+
+        String formattedPhone = PhoneNumberUtils.formatNumberInternational(userDetails.getPhone(),
+                userDetails.getPhoneCode().getCountryCut());
+
         return accountRepository.existsById(account.getIdAccount())
                 || accountRepository.existsAccountByUsername(account.getUsername())
-                || userDetailsRepository.existsUserDetailsByPhoneCodeAndPhone(
-                account.getUserDetails().getPhoneCode(), account.getUserDetails().getPhone());
+                || userDetailsRepository.existsUserDetailsByPhone(account.getUserDetails().getPhone());
     }
 }

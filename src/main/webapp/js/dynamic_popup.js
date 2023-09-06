@@ -68,8 +68,8 @@ function confirmEdit() {
             success: function (data) {
                 closePopup('edit-popup');
                 repairDefaultMessagePopup();
-                $("#popup-message-text")[0].innerText = "Изменения прошли успешно!"
-                $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Изменения прошли успешно!";
+                $("#popup-message-text").text("Изменения прошли успешно!");
+                $(".message-popup > .popup-title > #popup-message-header").text("Изменения прошли успешно!");
                 openPopup('message-popup');
 
                 accountJson = data;
@@ -231,16 +231,18 @@ function validateField(thisField) {
                 }
                 break;
             }
-            // case InvalidReason.PHONE: {
-            //     if (!/^(\s*)?([- _():=+]??\d[- _():=+]?){9,14}(\s*)?$/.test(thisField.value)) {
-            //         thisField.setAttribute("reason", InvalidReason.PHONE)
-            //         $("#" + thisFieldName + "-" + InvalidReason.PHONE).css("display", "block");
-            //         isReasonShouldBeEmpty = false;
-            //     } else {
-            //         $("#" + thisFieldName + "-" + InvalidReason.PHONE).css("display", "none");
-            //     }
-            //     break;
-            // }
+            case InvalidReason.PHONE: {
+                // if (!/^(\s*)?([- _():=+]??\d[- _():=+]?){9,14}(\s*)?$/.test(thisField.value)) {
+                if (!window.intlTelInputGlobals.getInstance(
+                    document.querySelector("#edit-phone")).isValidNumber()) {
+                    thisField.setAttribute("reason", InvalidReason.PHONE)
+                    $("#" + thisFieldName + "-" + InvalidReason.PHONE).css("display", "block");
+                    isReasonShouldBeEmpty = false;
+                } else {
+                    $("#" + thisFieldName + "-" + InvalidReason.PHONE).css("display", "none");
+                }
+                break;
+            }
             case InvalidReason.LONG: {
                 temp = thisField;
                 if (thisField.value.trim().length > 30) {

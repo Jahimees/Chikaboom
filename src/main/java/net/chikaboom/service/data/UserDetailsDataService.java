@@ -3,6 +3,7 @@ package net.chikaboom.service.data;
 import com.google.i18n.phonenumbers.NumberParseException;
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.model.database.About;
+import net.chikaboom.model.database.PhoneCode;
 import net.chikaboom.model.database.UserDetails;
 import net.chikaboom.repository.AboutRepository;
 import net.chikaboom.repository.PhoneCodeRepository;
@@ -11,6 +12,7 @@ import net.chikaboom.util.PhoneNumberUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
+import org.springframework.security.acls.model.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -30,7 +32,7 @@ public class UserDetailsDataService {
     private final PhoneCodeRepository phoneCodeRepository;
     private final SessionFactory sessionFactory;
 
-//TODO exists by phone
+    //TODO exists by phone
     public Optional<UserDetails> findUserDetailsById(int idUserDetails) {
         return userDetailsRepository.findById(idUserDetails);
     }
@@ -52,15 +54,62 @@ public class UserDetailsDataService {
             userDetails.setPhoneCode(phoneCodeRepository.findFirstByCountryCut(userDetails.getPhoneCode().getCountryCut()));
         }
 
-        try {
-            userDetails.setPhone(PhoneNumberUtils.formatNumberInternational(
-                    userDetails.getPhone(),
-                    userDetails.getPhoneCode().getCountryCut()));
-        } catch (NumberParseException e) {
-            throw new IllegalArgumentException("Cannot save user details. Phone is incorrect");
+        if (userDetails.getDisplayedPhone() != null && !userDetails.getDisplayedPhone().equals("")) {
+            try {
+                userDetails.setDisplayedPhone(PhoneNumberUtils.formatNumberInternational(
+                        userDetails.getDisplayedPhone(),
+                        userDetails.getPhoneCode().getCountryCut()));
+            } catch (NumberParseException e) {
+                throw new IllegalArgumentException("Cannot save user details. Phone is incorrect. " + e.getMessage());
+            }
         }
 
         return userDetailsRepository.save(userDetails);
+    }
+
+    public UserDetails patch(UserDetails userDetails) {
+        Optional<UserDetails> userDetailsFromDbOptional = userDetailsRepository.findById(userDetails.getIdUserDetails());
+
+        if (!userDetailsFromDbOptional.isPresent()) {
+            throw new NotFoundException("User details not found");
+        }
+
+        UserDetails patchedUserDetails = userDetailsFromDbOptional.get();
+
+        if (!userDetails.getLastName().isEmpty()) {
+            patchedUserDetails.setLastName(userDetails.getLastName());
+        }
+
+        if (!userDetails.getFirstName().isEmpty()) {
+            patchedUserDetails.setFirstName(userDetails.getFirstName());
+        }
+
+        if (!userDetails.getDisplayedPhone().isEmpty() &&
+                userDetails.getPhoneCode() != null &&
+                !userDetails.getPhoneCode().getCountryCut().isEmpty()) {
+            try {
+                PhoneCode newPhoneCode = phoneCodeRepository.findFirstByCountryCut(userDetails.getPhoneCode().getCountryCut());
+
+                patchedUserDetails.setPhoneCode(newPhoneCode);
+                patchedUserDetails.setDisplayedPhone(PhoneNumberUtils.formatNumberInternational(
+                        userDetails.getDisplayedPhone(), newPhoneCode.getCountryCut()));
+            } catch (NumberParseException e) {
+                throw new IllegalArgumentException("Cannot save user details. Phone is incorrect. " + e.getMessage());
+            }
+        }
+
+        if (userDetails.getAbout() != null) {
+            About oldAbout = patchedUserDetails.getAbout();
+            if (!userDetails.getAbout().getText().isEmpty()) {
+                oldAbout.setText(userDetails.getAbout().getText());
+            }
+
+            if (!userDetails.getAbout().getProfession().isEmpty()) {
+                oldAbout.setProfession(userDetails.getAbout().getProfession());
+            }
+        }
+
+        return userDetailsRepository.save(patchedUserDetails);
     }
 
     /**
@@ -110,5 +159,9 @@ public class UserDetailsDataService {
         }
 
         return resultUserDetailsList;
+    }
+
+    public void deleteById(int idUserService) {
+        userDetailsRepository.deleteById(idUserService);
     }
 }

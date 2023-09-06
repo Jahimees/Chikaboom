@@ -31,8 +31,8 @@
             },
             error: function () {
                 repairDefaultMessagePopup();
-                $("#popup-message-text")[0].innerText = "Что-то пошло не так. Невозможно загрузить подтипы услуг!"
-                $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Невозможно загрузить подтипы услуг!";
+                $("#popup-message-text").text("Что-то пошло не так. Невозможно загрузить подтипы услуг!");
+                $(".message-popup > .popup-title > #popup-message-header").text("Невозможно загрузить подтипы услуг!");
                 openPopup('message-popup');
             }
         })
@@ -269,16 +269,16 @@
 
         if (serviceName == null || serviceName === "") {
             repairDefaultMessagePopup();
-            $("#popup-message-text")[0].innerText = "Поле с названием должно быть заполнено!"
-            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Не все поля заполнены!";
+            $("#popup-message-text").text("Поле с названием должно быть заполнено!");
+            $(".message-popup > .popup-title > #popup-message-header").text("Не все поля заполнены!");
             openPopup('message-popup');
             return;
         }
 
         if (servicePrice == null || servicePrice === "") {
             repairDefaultMessagePopup();
-            $("#popup-message-text")[0].innerText = "Поле с ценой должно быть заполнено!"
-            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Не все поля заполнены!";
+            $("#popup-message-text").text("Поле с ценой должно быть заполнено!");
+            $(".message-popup > .popup-title > #popup-message-header").text("Не все поля заполнены!");
             openPopup('message-popup');
             return;
         }
@@ -316,14 +316,14 @@
             dataType: "json",
             data: JSON.stringify(obj),
             success: function () {
-                $("#popup-message-text")[0].innerText = "Данные успешно сохранены!"
-                $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Данные сохранены";
+                $("#popup-message-text").text("Данные успешно сохранены!");
+                $(".message-popup > .popup-title > #popup-message-header").text("Данные сохранены");
                 openPopup('message-popup');
                 loadServiceTab(accountJson.idAccount);
             },
             error: function () {
-                $("#popup-message-text")[0].innerText = "Произошла ошибка! Данные не были сохранены!"
-                $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Данные не сохранены";
+                $("#popup-message-text").text("Произошла ошибка! Данные не были сохранены!");
+                $(".message-popup > .popup-title > #popup-message-header").text("Данные не сохранены");
                 openPopup('message-popup');
             }
         })
@@ -336,8 +336,8 @@
         $("#decline-message-btn")[0].style.display = "block";
         $("#confirm-message-btn")[0].setAttribute("onclick", "deleteService(" + idService + ")");
 
-        $("#popup-message-text")[0].innerText = "Вы действительно хотите удалить услугу \"" + serviceName + "\"?";
-        $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Удаление";
+        $("#popup-message-text").text("Вы действительно хотите удалить услугу \"" + serviceName + "\"?");
+        $(".message-popup > .popup-title > #popup-message-header").text("Удаление");
         openPopup("message-popup");
 
     }
@@ -349,14 +349,14 @@
             type: "DELETE",
             url: "/services/" + idService,
             success: function () {
-                $("#popup-message-text")[0].innerText = "Удаление прошло успешно!";
-                $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Услуга удалена!";
+                $("#popup-message-text").text("Удаление прошло успешно!");
+                $(".message-popup > .popup-title > #popup-message-header").text("Услуга удалена!");
                 openPopup("message-popup");
                 loadServiceTab(accountJson.idAccount);
             },
             error: function () {
-                $("#popup-message-text")[0].innerText = "Услуга не удалена! Произошла неизвестная ошибка"
-                $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Услуга не удалена!";
+                $("#popup-message-text").text("Услуга не удалена! Произошла неизвестная ошибка");
+                $(".message-popup > .popup-title > #popup-message-header").text("Услуга не удалена!");
                 openPopup("message-popup");
             }
         })

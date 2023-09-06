@@ -278,8 +278,8 @@ function loadWorkingDaysData(idAccount) {
         },
         error: function () {
             repairDefaultMessagePopup();
-            $("#popup-message-text")[0].innerText = "Невозможно загрузить расписание!"
-            $("#popup-message-header")[0].innerText = "Что-то пошло не так!";
+            $("#popup-message-text").text("Невозможно загрузить расписание!");
+            $("#popup-message-header").text("Что-то пошло не так!");
             openPopup('message-popup');
         }
     })
@@ -332,7 +332,7 @@ function reloadWorkingDayDuration() {
         workingDayEndString.substring(0, 2) + ":" + workingDayEndString.substring(2, 4)
         : workingDayEndString.substring(0, 1) + ":" + workingDayEndString.substring(1, 3)
 
-    $("#current-working-day-duration")[0].innerText = "Ваш текущий рабочий день: " + startTime + " - " + endTime;
+    $("#current-working-day-duration").text("Ваш текущий рабочий день: " + startTime + " - " + endTime);
 
 }
 

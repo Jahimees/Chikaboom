@@ -8,15 +8,16 @@
     <form id="login-form">
         <div class="popup-body">
             <div class="common-black-text">Имя пользователя</div>
-            <label class="invalid-field-label-popup" id="l-input-username-empty">Поле не может быть пустым</label>
-            <label class="invalid-field-label-popup" id="l-input-username-incorrect">Можно использовать только буквы и 1
-                пробел между словами</label>
+            <%--            <label class="invalid-field-label-popup" id="l-input-username-empty">Поле не может быть пустым</label>--%>
+            <%--            <label class="invalid-field-label-popup" id="l-input-username-incorrect">Можно использовать только буквы и 1--%>
+            <%--                пробел между словами</label>--%>
             <div class="popup-input middle-box w-80">
-                <input id="l-input-username" class="popup-input-field" name="username" required placeholder="Rosaline"
+                <%--                <input id="l-input-username" class="popup-input-field" name="username" required placeholder="Rosaline"--%>
+                <%--                       valid="false">--%>
+                <input id="l-input-phone" class="popup-input-field" required
                        valid="false">
-<%--                <input id="l-input-username" class="popup-input-field" required--%>
-<%--                       valid="false">--%>
-<%--                <input id="l-hidden-input-username" name="username" hidden="hidden">--%>
+                <span id="error-msg-l-input-phone" class="hide"></span>
+                <input id="l-hidden-input-phone" name="username" hidden="hidden">
             </div>
             <div class="common-black-text">Пароль</div>
             <label class="invalid-field-label-popup" id="l-input-password-empty">Поле не может быть пустым</label>
@@ -30,27 +31,27 @@
             </div>
             <hr>
             <a href="/chikaboom/under_construction" class="small-info-popup">Забыли пароль?</a>
-            <button id="login-submit-btn" type="submit" class="btn btn-dark confirm-popup-btn">
+            <button id="login-submit-btn" type="button" class="btn btn-dark confirm-popup-btn">
                 Войти
             </button>
         </div>
     </form>
 </div>
 
-<%--<script>--%>
+<script>
+    $(document).ready(() => {
+        initPhoneCodeWidget("l-input-phone");
 
-<%--    $(document).ready(() => {--%>
-<%--        initPhoneCodeWidget("l-input-username");--%>
+        $("#login-submit-btn").on("click", () => {
+            if (validateAllAuthorizeFields()) {
+                let selectedCountryData = window.intlTelInputGlobals.getInstance(
+                    document.querySelector("#l-input-phone")).getSelectedCountryData();
+                let $inputUsername = $("#l-input-phone");
+                let $hiddenInput = $("#l-hidden-input-phone");
+                $hiddenInput.val($inputUsername.val() + "_" + selectedCountryData.iso2)
 
-<%--        $("#login-submit-btn").on("click", () => {--%>
-<%--            let selectedCountryData = window.intlTelInputGlobals.getInstance(--%>
-<%--                document.querySelector("#l-input-username")).getSelectedCountryData();--%>
-<%--            let $inputUsername = $("#l-input-username");--%>
-<%--            let $hiddenInput = $("#l-hidden-input-username");--%>
-<%--            console.log($inputUsername.val())--%>
-<%--            $hiddenInput.val($inputUsername.val() + "_" + selectedCountryData.iso2)--%>
-<%--            console.log($inputUsername.val())--%>
-<%--            $("#login-form").submit();--%>
-<%--        })--%>
-<%--    })--%>
-<%--</script>--%>
+                $("#login-form").submit();
+            }
+        })
+    })
+</script>

@@ -3,6 +3,7 @@ package net.chikaboom.service;
 import com.google.i18n.phonenumbers.NumberParseException;
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.model.database.Account;
+import net.chikaboom.model.database.CustomPrincipal;
 import net.chikaboom.model.database.UserDetails;
 import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.service.data.UserDetailsDataService;
@@ -36,45 +37,38 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
      */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String username = authentication.getName();
+        String phone = authentication.getName();
+        String[] phoneDetails = phone.split("_");
         String password = authentication.getCredentials().toString();
 
-        Optional<Account> accountOptional = accountRepository.findAccountByUsername(username);
+        Optional<UserDetails> userDetailsOptional;
+        try {
+            userDetailsOptional = userDetailsDataService.findUserDetailsByPhone(phoneDetails[0], phoneDetails[1]);
+            if (!userDetailsOptional.isPresent()) {
+                throw new BadCredentialsException("Unknown user with phone " + phone);
+            }
+        } catch (NumberParseException e) {
+            throw new IllegalArgumentException("Cannot find user details. Phone is incorrect");
+        }
+
+        Optional<Account> accountOptional = accountRepository.findAccountByUserDetails(userDetailsOptional.get());
 
         if (!accountOptional.isPresent()) {
-            throw new BadCredentialsException("Unknown user " + username);
+            throw new BadCredentialsException("Unknown user with phone " + phone);
         }
 
         Account account = accountOptional.get();
+
 
         if (!bCryptPasswordEncoder.matches(password, account.getPassword())) {
             throw new BadCredentialsException("Bad password");
         }
 
+        CustomPrincipal principal = new CustomPrincipal(account.getIdAccount(), account.getUserDetails().getIdUserDetails());
+
         return new UsernamePasswordAuthenticationToken(
-                account, password, account.getAuthorities());
+                principal, password, account.getAuthorities());
     }
-
-//    String phone = authentication.getName();
-//    String[] phoneDetails = phone.split("_");
-//    String password = authentication.getCredentials().toString();
-//
-//    Optional<UserDetails> userDetailsOptional;
-//        try {
-//        userDetailsOptional = userDetailsDataService.findUserDetailsByPhone(phoneDetails[0], phoneDetails[1]);
-//        if (!userDetailsOptional.isPresent()) {
-//            throw new BadCredentialsException("Unknown user " + phone);
-//        }
-//    } catch (NumberParseException e) {
-//        throw new IllegalArgumentException("Cannot find user details. Phone is incorrect");
-//    }
-//
-//    Optional<Account> accountOptional = accountRepository.findAccountByUserDetails(userDetailsOptional.get());
-//
-//        if (!accountOptional.isPresent()) {
-//        throw new BadCredentialsException("Unknown user " + phone);
-//    }
-
 
     @Override
     public boolean supports(Class<?> authentication) {

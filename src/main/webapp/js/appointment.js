@@ -20,20 +20,20 @@ function fillAppointmentsTable(appointmentsJSON, isIncomeAppointment, idCurrentA
         if (isIncomeAppointment) {
             nameText = (appointment.userDetailsClient.firstName ? appointment.userDetailsClient.firstName + " " : " ") +
                 (appointment.userDetailsClient.lastName ? appointment.userDetailsClient.lastName : "");
-            phoneText = appointment.userDetailsClient.phone ? appointment.userDetailsClient.phone : " ";
+            phoneText = appointment.userDetailsClient.displayedPhone ? appointment.userDetailsClient.displayedPhone : " ";
         } else {
-            nameText = "<a href='/chikaboom/account/" + appointment.masterAccount.idAccount + "'>" + (appointment.masterAccount.userDetails.firstName ? appointment.masterAccount.userDetails.firstName + " " : " ") +
-                (appointment.masterAccount.userDetails.lastName ? appointment.masterAccount.userDetails.lastName : "") + "</a>";
-            phoneText = appointment.masterAccount.userDetails.phone ? appointment.masterAccount.userDetails.phone : " ";
+            nameText = "<a href='/chikaboom/account/" + appointment.masterAccount.idAccount + "'>" + secureCleanValue(appointment.masterAccount.userDetails.firstName ? appointment.masterAccount.userDetails.firstName + " " : " ") +
+                secureCleanValue(appointment.masterAccount.userDetails.lastName ? appointment.masterAccount.userDetails.lastName : "") + "</a>";
+            phoneText = appointment.masterAccount.userDetails.displayedPhone ? appointment.masterAccount.userDetails.displayedPhone : " ";
         }
 
         let rowNode = $dataTable.DataTable().row.add([
-            appointment.service.name,
+            secureCleanValue(appointment.service.name),
             new Date(appointment.appointmentDateTime).toLocaleDateString('ru'),
             new Date(appointment.appointmentDateTime).toLocaleTimeString("ru", timeOptions),
-            appointment.service.price,
-            appointment.service.time,
-            phoneText,
+            secureCleanValue(appointment.service.price),
+            secureCleanValue(appointment.service.time),
+            secureCleanValue(phoneText),
             nameText,
             isIncomeAppointment ?
                 "<img onclick='callConfirmDeleteIncomeAppointmentPopup(" + appointment.masterAccount.idAccount
@@ -65,19 +65,19 @@ function loadAppointmentsData(idAccount, isIncomeAppointments) {
         })
     } else {
         repairDefaultMessagePopup();
-        $("#popup-message-text")[0].innerText = "Невозможно загрузить записи на услуги";
-        $("#popup-message-header")[0].innerText = "Ошибка!";
+        $("#popup-message-text").text("Невозможно загрузить записи на услуги");
+        $("#popup-message-header").text("Ошибка!");
         openPopup('message-popup');
     }
 }
 
 function callConfirmDeleteIncomeAppointmentPopup(idAccountMaster, idAppointment) {
     repairDefaultMessagePopup();
-    $("#decline-message-btn")[0].style.display = "block";
-    $("#confirm-message-btn")[0].setAttribute("onclick", "deleteIncomeAppointment(" + idAccountMaster + "," + idAppointment + ")");
+    $("#decline-message-btn").css("display", "block");
+    $("#confirm-message-btn").attr("onclick", "deleteIncomeAppointment(" + idAccountMaster + "," + idAppointment + ")");
 
-    $("#popup-message-text")[0].innerText = "Вы действительно хотите удалить запись на услугу?";
-    $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Удаление";
+    $("#popup-message-text").text("Вы действительно хотите удалить запись на услугу?");
+    $(".message-popup > .popup-title > #popup-message-header").text("Удаление");
     openPopup("message-popup");
 }
 
@@ -89,16 +89,16 @@ function deleteIncomeAppointment(idAccountMaster, idAppointment) {
         dataType: "text",
         success: function () {
             repairDefaultMessagePopup();
-            $("#popup-message-text")[0].innerText = "Запись успешно удалена!"
-            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Удалено";
+            $("#popup-message-text").text("Запись успешно удалена!");
+            $(".message-popup > .popup-title > #popup-message-header").text("Удалено");
             openPopup('message-popup');
-            $("#confirm-message-btn")[0].setAttribute(
+            $("#confirm-message-btn").attr(
                 "onclick", "closePopup('message-popup'), loadAppointmentsData(" + idAccountMaster + ", true)");
         },
         error: function () {
             repairDefaultMessagePopup();
-            $("#popup-message-text")[0].innerText = "Невозможно удалить запись!"
-            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
+            $("#popup-message-text").text("Невозможно удалить запись!");
+            $(".message-popup > .popup-title > #popup-message-header").text("ОШИБКА!");
             openPopup('message-popup');
 
         }
@@ -111,8 +111,10 @@ function callConfirmDeleteOutcomeAppointmentPopup(idAccountClient, idAppointment
     $("#confirm-message-btn")[0].setAttribute(
         "onclick", "deleteOutcomeAppointment(" + idAccountClient + "," + idAppointment + ")");
 
-    $("#popup-message-text")[0].innerText = "Вы действительно хотите удалить запись на услугу?";
-    $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Удаление";
+    $("#popup-message-text").text("Вы действительно хотите удалить запись на услугу?");
+
+    $(".message-popup > .popup-title > #popup-message-header").text("Удаление");
+
     openPopup("message-popup");
 }
 
@@ -124,22 +126,24 @@ function deleteOutcomeAppointment(idAccountClient, idAppointment) {
         dataType: "text",
         success: function () {
             repairDefaultMessagePopup();
-            $("#popup-message-text")[0].innerText = "Запись успешно удалена!"
-            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Удалено";
+            $("#popup-message-text").text("Запись успешно удалена!");
+            $(".message-popup > .popup-title > #popup-message-header").text("Удалено");
+
             openPopup('message-popup');
-            $("#confirm-message-btn")[0].setAttribute("onclick", "closePopup('message-popup'), loadAppointmentsData(" + idAccountClient + ", false)");
+            $("#confirm-message-btn").attr("onclick", "closePopup('message-popup'), loadAppointmentsData(" + idAccountClient + ", false)");
         },
         error: function () {
             repairDefaultMessagePopup();
-            $("#popup-message-text")[0].innerText = "Невозможно удалить запись!"
-            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
+            $("#popup-message-text").text("Невозможно удалить запись!")
+            $(".message-popup > .popup-title > #popup-message-header").text("ОШИБКА!");
+
             openPopup('message-popup');
 
         }
     })
 }
 
-function doMakeAppointment(clientId, accountMasterJson, client) {
+function doMakeAppointment(client, accountMasterJson) {
     let masterId = accountMasterJson.idAccount;
 
     let workingDayVal = $("#working-day-select").val();
@@ -152,22 +156,28 @@ function doMakeAppointment(clientId, accountMasterJson, client) {
         $("#close-modal-btn").click();
 
         repairDefaultMessagePopup();
-        $("#popup-message-text")[0].innerText = "Не выбрана дата записи! Или, возможно, мастер ещё не настроил свой график работы!"
-        $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Запись отклонена!";
+        $("#popup-message-text").text("Не выбрана дата записи! Или, возможно, мастер ещё не настроил свой график работы!");
+
+        $(".message-popup > .popup-title > #popup-message-header").text("Запись отклонена!");
+
         openPopup('message-popup');
-    } else if (typeof clientId === 'undefined' || clientId === 0) {
+    } else if (typeof client === 'undefined' || client === null || client.idAccount === 0) {
         $("#close-modal-btn").click();
 
         repairDefaultMessagePopup();
-        $("#popup-message-text")[0].innerText = "Сначала необходимо авторизоваться!"
-        $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Запись отклонена!";
+        $("#popup-message-text").text("Сначала необходимо авторизоваться!");
+
+        $(".message-popup > .popup-title > #popup-message-header").text("Запись отклонена!");
+
         openPopup('message-popup');
-    } else if (clientId === masterId) {
+    } else if (client.idAccount === masterId) {
         $("#close-modal-btn").click();
 
         repairDefaultMessagePopup();
-        $("#popup-message-text")[0].innerText = "Нельзя записываться самому к себе на услуги!"
-        $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Запись отклонена!";
+        $("#popup-message-text").text("Нельзя записываться самому к себе на услуги!");
+
+        $(".message-popup > .popup-title > #popup-message-header").text("Запись отклонена!");
+
         openPopup('message-popup');
     } else {
         let appointmentDateTime = new Date(workingDayVal);
@@ -188,9 +198,13 @@ function doMakeAppointment(clientId, accountMasterJson, client) {
         })
 
         let appointmentToSend = {
-            clientAccount: client,
+            clientAccount: {
+                idAccount: client.idAccount
+            },
             masterAccount: master,
-            userDetailsClient: client.userDetails,
+            userDetailsClient: {
+                idUserDetails: client.idUserDetails
+            },
             service: service,
             appointmentDateTime: appointmentDateTime
         }
@@ -205,8 +219,10 @@ function doMakeAppointment(clientId, accountMasterJson, client) {
                 $("#close-modal-btn").click();
 
                 repairDefaultMessagePopup();
-                $("#popup-message-text")[0].innerText = "Вы успешно записались на услугу!"
-                $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Запись оформлена!";
+                $("#popup-message-text").text("Вы успешно записались на услугу!");
+
+                $(".message-popup > .popup-title > #popup-message-header").text("Запись оформлена!");
+
                 openPopup('message-popup');
 
                 masterAppointmentsJson = loadMastersAppointments(accountMasterJson.idAccount);
@@ -214,8 +230,10 @@ function doMakeAppointment(clientId, accountMasterJson, client) {
             },
             error: function () {
                 repairDefaultMessagePopup();
-                $("#popup-message-text")[0].innerText = "Не удалось записаться на услугу!"
-                $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Произошла ошибка!";
+                $("#popup-message-text").text("Не удалось записаться на услугу!");
+
+                $(".message-popup > .popup-title > #popup-message-header").text("Произошла ошибка!");
+
                 openPopup('message-popup');
             }
         })

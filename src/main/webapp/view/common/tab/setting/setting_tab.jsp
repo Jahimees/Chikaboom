@@ -25,11 +25,11 @@
             </div>
         </div>
         <div class="news-block" style="display: inline-flex">
-            <img src="/image/test/name-news.png" style="width: 100px;">
+            <img src="/image/test/phone-news.png" style="width: 100px;">
             <div class="small-black-text" style="margin: auto 0 auto 20px;">
-                <b>Ура! Личности - быть!</b>
+                <b>Алло-алло!</b>
                 <br>
-                Мы добавили имя и фамилию, чтобы Вас было проще узнать!
+                Теперь выбор кода страны и ввод телефона стали более удобными! А авторизация происходит по номеру телефона!
             </div>
         </div>
         <div class="news-block" style="display: inline-flex">
@@ -38,6 +38,14 @@
                 <b>Ну что там с клиентами?</b>
                 <br>
                 Появилась новая вкладка - клиенты! Посмотрите, кто ходит к вам чаще всего!
+            </div>
+        </div>
+        <div class="news-block" style="display: inline-flex">
+            <img src="/image/test/name-news.png" style="width: 100px;">
+            <div class="small-black-text" style="margin: auto 0 auto 20px;">
+                <b>Ура! Личности - быть!</b>
+                <br>
+                Мы добавили имя и фамилию, чтобы Вас было проще узнать!
             </div>
         </div>
     </div>

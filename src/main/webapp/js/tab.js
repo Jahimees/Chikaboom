@@ -18,8 +18,8 @@ function loadAppointmentConcreteTab(tabName, idAccount) {
         },
         error: function () {
             repairDefaultMessagePopup();
-            $("#popup-message-text")[0].innerText = "Невозможно загрузить информацию о записях!"
-            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
+            $("#popup-message-text").text("Невозможно загрузить информацию о записях!");
+            $(".message-popup > .popup-title > #popup-message-header").text("ОШИБКА!");
             openPopup('message-popup');
         }
     })
@@ -37,8 +37,8 @@ function loadSettingTab(tabName, idAccount) {
         },
         error: function () {
             repairDefaultMessagePopup();
-            $("#popup-message-text")[0].innerText = "Невозможно загрузить информацию о настройках!"
-            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
+            $("#popup-message-text").text("Невозможно загрузить информацию о настройках!");
+            $(".message-popup > .popup-title > #popup-message-header").text("ОШИБКА!");
             openPopup('message-popup');
         }
     });
@@ -114,7 +114,9 @@ function openEditEmailPopup() {
 function openPhoneEditPopup() {
     dropAllFields();
     addField("Номер телефона", "phone", "text", null, true, [new Validation("Неверный шаблон телефона", InvalidReason.PHONE),
-        new Validation("Поле не может быть пустым", InvalidReason.EMPTY)], 'input', 'userDetails');
+        new Validation("Поле не может быть пустым", InvalidReason.EMPTY),
+        new Validation("Неверный формат телефона", InvalidReason.PHONE)],
+        'input', 'userDetails');
     openPopup("edit-popup");
 }
 
@@ -201,7 +203,7 @@ function fillGeneralSettingTab(idAccount) {
             }
 
             if (accountJson.userDetails.phoneCode !== null && typeof accountJson.userDetails.phoneCode !== "undefined") {
-                phoneText = accountJson.userDetails.phone !== null ? accountJson.userDetails.phone : " ";
+                phoneText = accountJson.userDetails.displayedPhone !== null ? accountJson.userDetails.displayedPhone : " ";
             }
 
             $("#phone-placeholder").val(phoneText);
@@ -251,8 +253,8 @@ function uploadAvatarImage(idAccount) {
         data: formData,
         statusCode: {
             201: function () {
-                $("#popup-message-text")[0].innerText = "Ваше новое фото профиля успешно было загружено!"
-                $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Фотография успешно загружена!";
+                $("#popup-message-text").text("Ваше новое фото профиля успешно было загружено!");
+                $(".message-popup > .popup-title > #popup-message-header").text("Фотография успешно загружена!");
                 let $img = $(".personality-avatar-image");
                 let $small_image = $(".small-avatar-image");
                 $img.attr("src", $img.attr("src").split("?")[0] + "?" + Math.random());
@@ -260,8 +262,8 @@ function uploadAvatarImage(idAccount) {
                 openPopup('message-popup');
             },
             400: function () {
-                $("#popup-message-text")[0].innerText = "Произошла ошибка! Фотографию не удалось загрузить!"
-                $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
+                $("#popup-message-text").text("Произошла ошибка! Фотографию не удалось загрузить!");
+                $(".message-popup > .popup-title > #popup-message-header").text("ОШИБКА!");
                 openPopup('message-popup');
             }
         }

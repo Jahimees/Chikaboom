@@ -210,6 +210,20 @@ a {
     background-color: #674D85;
 }
 
+.light-button {
+    color: #000;
+    background-color: #f8f9fa;
+    width: 100%;
+    border: 1px solid #7e7e7e;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+.light-button:hover {
+    background-color: #e8e9ea;
+}
+
 .violet-button {
     display: inline-flex;
     padding: 10px 20px;

@@ -11,8 +11,8 @@ function loadConcreteTab(idAccount, thisObj, tabName) {
             $("#content-placeholder").html(data);
         },
         error: function () {
-            $("#popup-message-text")[0].innerText = "Невозможно загрузить вкладку " + tabName + "!"
-            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
+            $("#popup-message-text").text("Невозможно загрузить вкладку " + tabName + "!");
+            $(".message-popup > .popup-title > #popup-message-header").text("ОШИБКА!");
             openPopup('message-popup');
         }
     });
@@ -68,8 +68,8 @@ function setPhoneVisibility(isPhoneVisible, idAccount) {
         }),
         error: function () {
             repairDefaultMessagePopup();
-            $("#popup-message-text")[0].innerText = "Что-то пошло не так! Невозможно установить видимость телефона"
-            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Проблема на сервере!";
+            $("#popup-message-text").text("Что-то пошло не так! Невозможно установить видимость телефона");
+            $(".message-popup > .popup-title > #popup-message-header").text("Проблема на сервере!");
             openPopup('message-popup');
         }
     })

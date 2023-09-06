@@ -27,6 +27,7 @@ public final class DbNamesConstant {
     public static final String PHONE_CODE = "phone_code";
     public static final String PHONE_CODE_NAME = "phone_code_name";
     public static final String PHONE = "phone";
+    public static final String DISPLAYED_PHONE = "displayed_phone";
     public static final String PASSWORD = "password";
     public static final String USERNAME = "username";
     public static final String REGISTRATION_DATE = "registration_date";

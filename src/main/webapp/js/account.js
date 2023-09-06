@@ -9,9 +9,9 @@
             nameText = (accountJson.userDetails.firstName ? accountJson.userDetails.firstName + " " : "")
                 + (accountJson.userDetails.lastName ? accountJson.userDetails.lastName + " " : "")
         }
-        $("#username-placeholder").text(nameText ? nameText : "@" + accountJson.nickname);
+        $("#username-placeholder").text(nameText ? nameText : "@" + accountJson.username);
         if (accountJson.phoneVisible) {
-            let phoneText = "Телефон: " + accountJson.userDetails.phone
+            let phoneText = "Телефон: " + accountJson.userDetails.displayedPhone
 
             $("#phone-placeholder").text(phoneText)
         }
@@ -78,8 +78,8 @@
             },
             error: function () {
                 repairDefaultMessagePopup();
-                $("#popup-message-text")[0].innerText = "Что-то пошло не так. Невозможно загрузить услуги!"
-                $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Невозможно загрузить услуги!";
+                $("#popup-message-text").text("Что-то пошло не так. Невозможно загрузить услуги!");
+                $(".message-popup > .popup-title > #popup-message-header").text("Невозможно загрузить услуги!");
                 openPopup('message-popup');
             }
         });
@@ -101,8 +101,8 @@
             },
             error: function () {
                 repairDefaultMessagePopup();
-                $("#popup-message-text")[0].innerText = "Что-то пошло не так. Невозможно загрузить записи!"
-                $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Невозможно загрузить записи!";
+                $("#popup-message-text").text("Что-то пошло не так. Невозможно загрузить записи!");
+                $(".message-popup > .popup-title > #popup-message-header").text("Невозможно загрузить записи!");
                 openPopup('message-popup');
             }
         })

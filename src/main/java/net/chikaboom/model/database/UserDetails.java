@@ -50,15 +50,33 @@ public class UserDetails implements BaseEntity {
     @Column(name = PHONE)
     private String phone;
 
+    /**
+     * Отображаемый номер телефона
+     */
+    @Column(name = DISPLAYED_PHONE)
+    private String displayedPhone;
+
+    /**
+     * Имя человека
+     */
     @Column(name = FIRST_NAME)
     private String firstName;
 
+    /**
+     * Фамилия человека
+     */
     @Column(name = LAST_NAME)
     private String lastName;
 
+    /**
+     * Дата последнего визита к мастеру (не хранится в базе)
+     */
     @Transient
     private Timestamp lastVisitDate;
 
+    /**
+     * Количество визитов к определенному мастеру (не хранится в базе)
+     */
     @Transient
     private int visitCount;
 

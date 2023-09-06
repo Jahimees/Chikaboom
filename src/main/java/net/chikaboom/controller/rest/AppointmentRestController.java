@@ -3,6 +3,7 @@ package net.chikaboom.controller.rest;
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.Appointment;
+import net.chikaboom.model.database.CustomPrincipal;
 import net.chikaboom.model.database.UserDetails;
 import net.chikaboom.repository.AppointmentRepository;
 import net.chikaboom.service.data.AccountDataService;
@@ -54,10 +55,10 @@ public class AppointmentRestController {
         Account appointmentAccountMaster = appointment.getMasterAccount();
         UserDetails clientDetails = appointment.getUserDetailsClient();
 
-        Account principal = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        CustomPrincipal principal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (principal.getIdAccount() != appointmentAccountMaster.getIdAccount()
-                && principal.getUserDetails().getIdUserDetails() != clientDetails.getIdUserDetails()) {
+                && principal.getIdUserDetails() != clientDetails.getIdUserDetails()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -85,9 +86,9 @@ public class AppointmentRestController {
     @PostMapping("/appointments")
     public ResponseEntity<Appointment> createAppointment(@RequestBody Appointment appointment) {
         UserDetails userDetails = appointment.getUserDetailsClient();
-        Account principalAccount = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        CustomPrincipal principalAccount = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (userDetails.getIdUserDetails() != principalAccount.getUserDetails().getIdUserDetails()) {
+        if (userDetails.getIdUserDetails() != principalAccount.getIdUserDetails()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -120,10 +121,10 @@ public class AppointmentRestController {
         Appointment appointmentFromDb = appointmentOptional.get();
         Account masterAccount = appointmentFromDb.getMasterAccount();
         UserDetails clientDetails = appointmentFromDb.getUserDetailsClient();
-        Account principalAccount = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        CustomPrincipal principal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (principalAccount.getIdAccount() != masterAccount.getIdAccount()
-                && principalAccount.getUserDetails().getIdUserDetails() != clientDetails.getIdUserDetails()
+        if (principal.getIdAccount() != masterAccount.getIdAccount()
+                && principal.getIdUserDetails() != clientDetails.getIdUserDetails()
                 || (masterAccount.getIdAccount() != appointment.getMasterAccount().getIdAccount())
                 || clientDetails.getIdUserDetails() == appointment.getUserDetailsClient().getIdUserDetails()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -150,12 +151,12 @@ public class AppointmentRestController {
         }
 
         Appointment appointment = optionalAppointment.get();
-        Account principalAccount = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        CustomPrincipal principal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Account masterAccount = appointment.getMasterAccount();
         UserDetails userDetailsClient = appointment.getUserDetailsClient();
 
-        if (principalAccount.getIdAccount() != masterAccount.getIdAccount()
-                && principalAccount.getUserDetails().getIdUserDetails() != userDetailsClient.getIdUserDetails()) {
+        if (principal.getIdAccount() != masterAccount.getIdAccount()
+                && principal.getIdUserDetails() != userDetailsClient.getIdUserDetails()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -192,7 +193,7 @@ public class AppointmentRestController {
      * Поиск всех записей клиента к определенному мастеру
      *
      * @param idMasterAccount идентификатор аккаунта мастера
-     * @param idUserDetails идентификатора информации о клиенте
+     * @param idUserDetails   идентификатора информации о клиенте
      * @return список записей к мастеру
      */
     @PreAuthorize("hasRole('MASTER')")

@@ -1,9 +1,9 @@
 package net.chikaboom.controller.rest;
 
+import com.google.i18n.phonenumbers.NumberParseException;
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.controller.RegistrationController;
 import net.chikaboom.model.database.Account;
-import net.chikaboom.model.database.UserDetails;
 import net.chikaboom.service.data.AccountDataService;
 import net.chikaboom.service.data.UserDetailsDataService;
 import org.springframework.http.HttpStatus;
@@ -103,7 +103,14 @@ public class AccountRestController {
         }
 
         account.setIdAccount(idAccount);
-        return ResponseEntity.ok(accountDataService.patch(account));
+        Account patchedAccount;
+        try {
+            patchedAccount = accountDataService.patch(account);
+        } catch (NumberParseException e) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.ok(patchedAccount);
     }
 
     //    TODO NEW LOGOUT!!!!

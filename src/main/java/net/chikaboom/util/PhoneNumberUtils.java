@@ -13,10 +13,6 @@ public final class PhoneNumberUtils {
     private PhoneNumberUtils() {
     }
 
-    public static String clearPhoneNumber(String dirtyPhoneNumber) {
-        return dirtyPhoneNumber.replaceAll("\\D", "").replaceAll("\\s", "");
-    }
-
     public static String formatNumberInternational(String phoneNumber, String countryCut) throws NumberParseException {
         if (phoneNumber == null || countryCut == null) {
             throw new NumberParseException(NumberParseException.ErrorType.NOT_A_NUMBER, "phone number and|or country code are|is empty");

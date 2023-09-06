@@ -20,10 +20,6 @@ public class PhoneCode implements BaseEntity {
 
     }
 
-    public PhoneCode(String phoneCodeNumber) {
-        this.phoneCode = Integer.valueOf(phoneCodeNumber);
-    }
-
     /**
      * id сущности в таблице phone_code
      */

@@ -13,7 +13,7 @@
                         aria-label="Закрыть"></button>
             </div>
             <div id="client-fields" class="modal-body">
-                <div class="d-inline-flex col-6">
+                <div class="d-flex middle-box w-80">
                     <div class="popup-input middle-box w-80">
                         <div>Имя</div>
                         <label id="first-name-invalid-label-upd" class="invalid-field-label-popup">Имя может содержать
@@ -28,11 +28,11 @@
                             буквы</label>
                         <input id="client-last-name-input-upd">
                     </div>
-                </div>
-                <div class="popup-input middle-box w-80">
-                    <div>Телефон</div>
-                    <input id="client-phone-input-upd" style="width: 100%">
-                    <span id="error-msg-client-phone-input-upd" class="hide"></span>
+                    <div class="popup-input middle-box w-80">
+                        <div>Телефон</div>
+                        <input id="client-phone-input-upd" style="width: 100%">
+                        <span id="error-msg-client-phone-input-upd" class="hide"></span>
+                    </div>
                 </div>
                 <div class="popup-input middle-box w-80">
                     <div>Краткая информация</div>
@@ -62,7 +62,7 @@
                 <hr>
             </div>
             <div class="modal-footer">
-                <button type="button" class="popup-btn" data-bs-dismiss="modal">Закрыть</button>
+                <button id="close-client-info-btn" type="button" class="popup-btn" data-bs-dismiss="modal">Закрыть</button>
             </div>
         </div>
     </div>

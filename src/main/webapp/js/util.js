@@ -1,5 +1,7 @@
 function secureCleanValue(value) {
-    value = value.replaceAll('<', '').replaceAll('>', '').replaceAll('script', '').replaceAll('/', '');
+    if (value !== null && value !== "" && typeof value === 'string') {
+        value = value.replaceAll('<', '').replaceAll('>', '').replaceAll('script', '').replaceAll('/', '');
+    }
 
     return value;
 }
