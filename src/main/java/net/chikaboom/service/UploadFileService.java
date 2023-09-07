@@ -21,10 +21,11 @@ public class UploadFileService {
 
     private final Logger logger = Logger.getLogger(this.getClass());
 
+//    TODO FIXME NEW доработать. Нужно сохранять куда-то название файлов
+
     /**
      * Сервис выполняет инициализацию папки пользователя, если такой нет и сохраняет в неё загруженный файл
      */
-//    TODO FIXME NEW доработать. Нужно сохранять куда-то название файлов
     public void uploadFile(int idAccount, String fileName, MultipartFile multipartFile) {
         logger.info("Saving file data of user with id " + idAccount);
 

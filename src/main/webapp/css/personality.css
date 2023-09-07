@@ -60,6 +60,14 @@
     background-color: #E3ABC6 !important;
 }
 
+.news-block {
+    margin-top: 20px;
+    background-color: white;
+    border-radius: 30px;
+    padding: 25px;
+    display: inline-flex;
+}
+
 #first-row, #second-row {
     display: inline-flex;
 }
@@ -102,7 +110,6 @@
 }
 
 #about-text-placeholder {
-    height: 200%;
     resize: none;
 }
 

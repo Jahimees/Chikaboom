@@ -11,10 +11,9 @@ import org.springframework.stereotype.Repository;
 public interface PhoneCodeRepository extends JpaRepository<PhoneCode, Integer> {
 
     /**
-     * Находит код сущность кода телефона по его коду
-     *
-     * @param phoneCode телефонный код
+     * Находит сущность кода телефона по его сокращенному названию (название является уникальным в отличие от кода страны)
+     * @param countryCut сокращенное название страны
      * @return сущность телефонного кода
      */
-    PhoneCode findFirstByPhoneCode(int phoneCode);
+    PhoneCode findFirstByCountryCut(String countryCut);
 }

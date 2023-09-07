@@ -16,48 +16,8 @@
 <script src="/js/service.js"></script>
 <script>
 
-    var servicesJson;
-    var serviceSubtypes; //= JSON.parse(JSON.stringify(${serviceSubtypes}));
-    var serviceTypes;
-
-    function loadServiceTab(tabName) {
-        $.ajax({
-            type: "get",
-            url: "/chikaboom/personality/${idAccount}/services/" + tabName,
-            contentType: "application/text",
-            dataType: "text",
-            success: function (data) {
-                setCurrentTabName(tabName);
-                loadServiceSubtypes();
-                $("#service-type-content-placeholder").html(data);
-            },
-            error: function () {
-                loadUnderConstruction();
-            }
-        });
-    }
-
-    function loadServiceSubtypes() {
-        $.ajax({
-            contentType: "application/json",
-            dataType: "json",
-            method: "get",
-            url: "/service-subtypes",
-            async: false,
-            success: function (data) {
-                serviceSubtypes = data;
-            },
-            error: function () {
-                repairDefaultMessagePopup();
-                $("#popup-message-text")[0].innerText = "Что-то пошло не так. Невозможно загрузить подтипы услуг!"
-                $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Невозможно загрузить подтипы услуг!";
-                openPopup('message-popup');
-            }
-        })
-    }
-
     $(document).ready(function () {
-        loadServiceTab("general");
+        loadConcreteServiceTab("general", "${idAccount}");
         loadServiceSubtypes();
     })
 </script>

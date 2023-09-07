@@ -3,12 +3,9 @@ package net.chikaboom.service;
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.Role;
-import net.chikaboom.repository.PhoneCodeRepository;
 import net.chikaboom.service.data.AccountDataService;
-import net.chikaboom.util.PhoneNumberConverter;
 import net.chikaboom.util.constant.ApplicationRole;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,11 +23,7 @@ import java.util.Set;
 @Transactional
 public class RegistrationActionService {
 
-    @Value("${url.main}")
-    private String MAIN_URL;
-
     private final AccountDataService accountDataService;
-    private final PhoneCodeRepository phoneCodeRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     private final Logger logger = Logger.getLogger(this.getClass());
@@ -42,9 +35,6 @@ public class RegistrationActionService {
      * пользователя
      */
     public Account register(Account account) {
-        account.setPhoneCode(phoneCodeRepository.findFirstByPhoneCode(account.getPhoneCode().getPhoneCode()));
-
-        account.setPhone(PhoneNumberConverter.clearPhoneNumber(account.getPhone()));
 
         Set<Role> roleSet = new HashSet<>();
         account.getRoles().forEach(role -> {

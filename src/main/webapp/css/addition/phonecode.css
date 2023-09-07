@@ -59,8 +59,8 @@
 
 .country-phone {
     border: 1px solid #aaa;
-    width: 100%;
-    display: inline-flex
+    margin: 0 auto;
+    display: flex;
 }
 
 .country-phone-selected {

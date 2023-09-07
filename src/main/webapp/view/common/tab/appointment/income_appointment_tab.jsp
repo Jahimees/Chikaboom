@@ -34,10 +34,9 @@
 
 <script>
     $(document).ready(function () {
-        initDataTable();
         loadAppointmentsData(${idAccount}, true);
 
-        $("#appointment_table_wrapper, #past-appointment-toggle").on("click", function () {
+        $("#default_table_wrapper, #past-appointment-toggle").on("click", function () {
             $("#appointment_table").DataTable().draw();
         })
     })

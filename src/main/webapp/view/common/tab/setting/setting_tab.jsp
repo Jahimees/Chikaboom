@@ -1,7 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
-<%--//TODO CLASS--%>
 <div class="full-width-inline-box">
     <div class="news-data-box col-6">
         <div id="greeting-info-box" class="big-medium-black-text padding-0-0-10-px">
@@ -23,6 +22,30 @@
             <div id="profile-filling-text">
                 <div class="small-black-text"><b>Прогресс заполнения</b></div>
                 <div class="small-black-text">Заполненный профиль вызывает доверие клиента!</div>
+            </div>
+        </div>
+        <div class="news-block" style="display: inline-flex">
+            <img src="/image/test/phone-news.png" style="width: 100px;">
+            <div class="small-black-text" style="margin: auto 0 auto 20px;">
+                <b>Алло-алло!</b>
+                <br>
+                Теперь выбор кода страны и ввод телефона стали более удобными! А авторизация происходит по номеру телефона!
+            </div>
+        </div>
+        <div class="news-block" style="display: inline-flex">
+            <img src="/image/test/clients-news.png" style="width: 100px;">
+            <div class="small-black-text" style="margin: auto 0 auto 20px;">
+                <b>Ну что там с клиентами?</b>
+                <br>
+                Появилась новая вкладка - клиенты! Посмотрите, кто ходит к вам чаще всего!
+            </div>
+        </div>
+        <div class="news-block" style="display: inline-flex">
+            <img src="/image/test/name-news.png" style="width: 100px;">
+            <div class="small-black-text" style="margin: auto 0 auto 20px;">
+                <b>Ура! Личности - быть!</b>
+                <br>
+                Мы добавили имя и фамилию, чтобы Вас было проще узнать!
             </div>
         </div>
     </div>
@@ -52,11 +75,6 @@
         </div>
     </div>
 </div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/css/suggestions.min.css" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
-<script src="/js/tab.js"></script>
 
 <script>
     $(document).ready(function () {

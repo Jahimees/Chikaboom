@@ -28,7 +28,8 @@ function loadMasterAppointments() {
         dataType: "json",
         success: function (masterAppointments) {
             masterAppointments.forEach(function (masterAppointment) {
-                let title = masterAppointment.service.name + " - " + masterAppointment.clientAccount.username;
+                let visitorName = masterAppointment.userDetailsClient.firstName ? masterAppointment.userDetailsClient.firstName : "Неизвестный";
+                let title = masterAppointment.service.name + " - " + visitorName;
                 let appointmentDateTimeStart = new Date(masterAppointment.appointmentDateTime);
 
                 let serviceTime = masterAppointment.service.time;
@@ -277,8 +278,8 @@ function loadWorkingDaysData(idAccount) {
         },
         error: function () {
             repairDefaultMessagePopup();
-            $("#popup-message-text")[0].innerText = "Невозможно загрузить расписание!"
-            $("#popup-message-header")[0].innerText = "Что-то пошло не так!";
+            $("#popup-message-text").text("Невозможно загрузить расписание!");
+            $("#popup-message-header").text("Что-то пошло не так!");
             openPopup('message-popup');
         }
     })
@@ -331,7 +332,7 @@ function reloadWorkingDayDuration() {
         workingDayEndString.substring(0, 2) + ":" + workingDayEndString.substring(2, 4)
         : workingDayEndString.substring(0, 1) + ":" + workingDayEndString.substring(1, 3)
 
-    $("#current-working-day-duration")[0].innerText = "Ваш текущий рабочий день: " + startTime + " - " + endTime;
+    $("#current-working-day-duration").text("Ваш текущий рабочий день: " + startTime + " - " + endTime);
 
 }
 

@@ -14,6 +14,12 @@ import java.util.List;
 @Repository
 public interface ServiceRepository extends JpaRepository<Service, Integer>, JpaSpecificationExecutor<Service> {
 
+    /**
+     * Находит все услуги пользователя
+     *
+     * @param account пользователь, чьи услуги должны быть найдены
+     * @return список услуг пользователя
+     */
     List<Service> findAllByAccount(Account account);
 
 }

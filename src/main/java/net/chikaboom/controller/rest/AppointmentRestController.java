@@ -3,7 +3,12 @@ package net.chikaboom.controller.rest;
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.Appointment;
+import net.chikaboom.model.database.CustomPrincipal;
+import net.chikaboom.model.database.UserDetails;
+import net.chikaboom.repository.AppointmentRepository;
+import net.chikaboom.service.data.AccountDataService;
 import net.chikaboom.service.data.AppointmentDataService;
+import net.chikaboom.service.data.UserDetailsDataService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +31,10 @@ public class AppointmentRestController {
     @Value("${one_hour_millis}")
     private long ONE_HOUR_MILLIS;
 
+    private final AppointmentRepository appointmentRepository;
     private final AppointmentDataService appointmentDataService;
+    private final UserDetailsDataService userDetailsDataService;
+    private final AccountDataService accountDataService;
 
     /**
      * Поиск записи по её идентификатору
@@ -45,12 +53,12 @@ public class AppointmentRestController {
 
         Appointment appointment = appointmentOptional.get();
         Account appointmentAccountMaster = appointment.getMasterAccount();
-        Account appointmentAccountClient = appointment.getClientAccount();
+        UserDetails clientDetails = appointment.getUserDetailsClient();
 
-        Account principal = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        CustomPrincipal principal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (principal.getIdAccount() != appointmentAccountMaster.getIdAccount()
-                && principal.getIdAccount() != appointmentAccountClient.getIdAccount()) {
+                && principal.getIdUserDetails() != clientDetails.getIdUserDetails()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -77,10 +85,10 @@ public class AppointmentRestController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/appointments")
     public ResponseEntity<Appointment> createAppointment(@RequestBody Appointment appointment) {
-        Account clientAccount = appointment.getClientAccount();
-        Account principalAccount = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails userDetails = appointment.getUserDetailsClient();
+        CustomPrincipal principalAccount = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (clientAccount.getIdAccount() != principalAccount.getIdAccount()) {
+        if (userDetails.getIdUserDetails() != principalAccount.getIdUserDetails()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -112,13 +120,13 @@ public class AppointmentRestController {
 
         Appointment appointmentFromDb = appointmentOptional.get();
         Account masterAccount = appointmentFromDb.getMasterAccount();
-        Account clientAccount = appointmentFromDb.getClientAccount();
-        Account principalAccount = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails clientDetails = appointmentFromDb.getUserDetailsClient();
+        CustomPrincipal principal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (principalAccount.getIdAccount() != masterAccount.getIdAccount()
-                && principalAccount.getIdAccount() != clientAccount.getIdAccount()
+        if (principal.getIdAccount() != masterAccount.getIdAccount()
+                && principal.getIdUserDetails() != clientDetails.getIdUserDetails()
                 || (masterAccount.getIdAccount() != appointment.getMasterAccount().getIdAccount())
-                || clientAccount.getIdAccount() == appointment.getClientAccount().getIdAccount()) {
+                || clientDetails.getIdUserDetails() == appointment.getUserDetailsClient().getIdUserDetails()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         appointment.setIdAppointment(idAppointment);
@@ -143,12 +151,12 @@ public class AppointmentRestController {
         }
 
         Appointment appointment = optionalAppointment.get();
-        Account principalAccount = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        CustomPrincipal principal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Account masterAccount = appointment.getMasterAccount();
-        Account clientAccount = appointment.getClientAccount();
+        UserDetails userDetailsClient = appointment.getUserDetailsClient();
 
-        if (principalAccount.getIdAccount() != masterAccount.getIdAccount()
-                && principalAccount.getIdAccount() != clientAccount.getIdAccount()) {
+        if (principal.getIdAccount() != masterAccount.getIdAccount()
+                && principal.getIdUserDetails() != userDetailsClient.getIdUserDetails()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -181,6 +189,36 @@ public class AppointmentRestController {
     }
 
     /**
+     * TODO НЕТ ДОКУМЕНТАЦИИ В README
+     * Поиск всех записей клиента к определенному мастеру
+     *
+     * @param idMasterAccount идентификатор аккаунта мастера
+     * @param idUserDetails   идентификатора информации о клиенте
+     * @return список записей к мастеру
+     */
+    @PreAuthorize("hasRole('MASTER')")
+    @GetMapping("/accounts/{idMasterAccount}/appointments")
+    public ResponseEntity<List<Appointment>> clientAppointmentsByIdUserDetails(@PathVariable int idMasterAccount,
+                                                                               @RequestParam int idUserDetails) {
+        Optional<UserDetails> userDetailsOptional = userDetailsDataService.findUserDetailsById(idUserDetails);
+
+        if (!userDetailsOptional.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Optional<Account> masterAccountOptional = accountDataService.findById(idMasterAccount);
+
+        if (!masterAccountOptional.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(
+                appointmentRepository.findAllByUserDetailsClientAndMasterAccount(
+                        userDetailsOptional.get(),
+                        masterAccountOptional.get()));
+    }
+
+    /**
      * Удаляет исходящую запись на услугу. Необходимо быть авторизованным. Невозможно удалить чужую запись
      *
      * @param idAccount     идентификатор аккаунта, чью запись нужно удалить
@@ -197,8 +235,13 @@ public class AppointmentRestController {
         }
 
         Appointment appointment = appointmentOptional.get();
+        Optional<Account> accountFromDb = accountDataService.findById(idAccount);
 
-        if (appointment.getClientAccount().getIdAccount() != idAccount) {
+        if (!accountFromDb.isPresent() || accountFromDb.get().getUserDetails() == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (appointment.getUserDetailsClient().getIdUserDetails() != accountFromDb.get().getUserDetails().getIdUserDetails()) {
             return new ResponseEntity<>("You can't delete not your appointment", HttpStatus.FORBIDDEN);
         }
 

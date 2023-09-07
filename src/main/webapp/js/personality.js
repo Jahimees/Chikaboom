@@ -1,232 +1,178 @@
-function loadTimetableTab(idAccount, thisObj) {
-    selectCurrent(thisObj);
-    $.ajax({
-        type: "get",
-        url: "/chikaboom/personality/" + idAccount + "/timetable",
-        contentType: "application/text",
-        dataType: "text",
-        data: {},
-        success: function (data) {
-            $("#content-placeholder").html(data);
-        },
-        error: function () {
-            $("#popup-message-text")[0].innerText = "Невозможно загрузить вкладку график!"
-            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
-            openPopup('message-popup');
-        }
-    });
-}
+{
+    function loadConcreteTab(idAccount, thisObj, tabName) {
+        selectCurrent(thisObj)
 
-function loadServicesTab(idAccount, thisObj) {
-    selectCurrent(thisObj)
+        $.ajax({
+            type: "get",
+            url: "/chikaboom/personality/" + idAccount + "/" + tabName,
+            contentType: "application/text",
+            dataType: "text",
+            data: {},
+            success: function (data) {
+                $("#content-placeholder").html(data);
+            },
+            error: function () {
+                $("#popup-message-text").text("Невозможно загрузить вкладку " + tabName + "!");
+                $(".message-popup > .popup-title > #popup-message-header").text("ОШИБКА!");
+                openPopup('message-popup');
+            }
+        });
+    }
 
-    $.ajax({
-        type: "get",
-        url: "/chikaboom/personality/" + idAccount + "/services",
-        contentType: "application/text",
-        dataType: "text",
-        success: function (data) {
-            $("#content-placeholder").html(data);
-        },
-        error: function () {
-            $("#popup-message-text")[0].innerText = "Невозможно загрузить услуги!"
-            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
-            openPopup('message-popup');
-        }
-    });
-}
+    function loadStatistic(idAccount, thisObj) {
+        selectCurrent(thisObj);
+        underConstruction();
+    }
 
-function loadSettingsTab(idAccount, thisObj) {
-    selectCurrent(thisObj);
+    function loadMessages(idAccount, thisObj) {
+        selectCurrent(thisObj)
+        underConstruction();
+    }
 
-    $.ajax({
-        type: "get",
-        url: "/chikaboom/personality/" + idAccount + "/settings",
-        contentType: "application/text",
-        dataType: "text",
-        success: function (data) {
-            $("#content-placeholder").html(data);
-        },
-        error: function () {
-            $("#popup-message-text")[0].innerText = "Невозможно загрузить настройки!"
-            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
-            openPopup('message-popup');
-        }
-    });
-}
+    function loadReviews(idAccount, thisObj) {
+        selectCurrent(thisObj)
+        underConstruction();
+    }
 
-function loadAppointmentTab(idAccount, thisObj) {
-    selectCurrent(thisObj);
+    function underConstruction() {
+        $.ajax({
+            type: "get",
+            url: "/chikaboom/under_construction",
+            contentType: "application/text",
+            dataType: "text",
+            data: {},
+            success: function (data) {
+                $("#content-placeholder").html(data);
+            },
+            error: function () {
+                console.error("ERROR")
+            }
+        });
+    }
 
-    $.ajax({
-        type: "get",
-        url: "/chikaboom/personality/" + idAccount + "/appointment",
-        contentType: "application/text",
-        dataType: "text",
-        data: {},
-        success: function (data) {
-            $("#content-placeholder").html(data);
-        },
-        error: function () {
-            $("#popup-message-text")[0].innerText = "Невозможно загрузить вкладку записи!"
-            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "ОШИБКА!";
-            openPopup('message-popup');
-        }
-    });
-}
+    function selectCurrent(thisObj) {
+        Array.from($(".menu-box > div")).forEach(function (elem) {
+            elem.setAttribute("selected", "false");
+        });
 
+        thisObj.setAttribute("selected", "true");
+    }
 
-function loadStatistic(idAccount, thisObj) {
-    selectCurrent(thisObj);
-    underConstruction();
-}
-
-function loadClients(idAccount, thisObj) {
-    selectCurrent(thisObj)
-    underConstruction();
-}
-
-function loadMessages(idAccount, thisObj) {
-    selectCurrent(thisObj)
-    underConstruction();
-}
-
-function loadReviews(idAccount, thisObj) {
-    selectCurrent(thisObj)
-    underConstruction();
-}
-
-function underConstruction() {
-    $.ajax({
-        type: "get",
-        url: "/chikaboom/under_construction",
-        contentType: "application/text",
-        dataType: "text",
-        data: {},
-        success: function (data) {
-            $("#content-placeholder").html(data);
-        },
-        error: function () {
-            console.error("ERROR")
-        }
-    });
-}
-
-function selectCurrent(thisObj) {
-    Array.from($(".menu-box > div")).forEach(function (elem) {
-        elem.setAttribute("selected", "false");
-    });
-
-    thisObj.setAttribute("selected", "true");
-}
-
-function setPhoneVisibility(isPhoneVisible, idAccount) {
-    $.ajax({
-        type: "PATCH",
-        url: "/accounts/" + idAccount,
-        contentType: "application/json",
-        dataType: "json",
-        data: JSON.stringify({
-            phoneVisible: isPhoneVisible
-        }),
-        error: function () {
-            repairDefaultMessagePopup();
-            $("#popup-message-text")[0].innerText = "Что-то пошло не так! Невозможно установить видимость телефона"
-            $(".message-popup > .popup-title > #popup-message-header")[0].innerText = "Проблема на сервере!";
-            openPopup('message-popup');
-        }
-    })
-}
+    function setPhoneVisibility(isPhoneVisible, idAccount) {
+        $.ajax({
+            type: "PATCH",
+            url: "/accounts/" + idAccount,
+            contentType: "application/json",
+            dataType: "json",
+            data: JSON.stringify({
+                phoneVisible: isPhoneVisible
+            }),
+            error: function () {
+                repairDefaultMessagePopup();
+                $("#popup-message-text").text("Что-то пошло не так! Невозможно установить видимость телефона");
+                $(".message-popup > .popup-title > #popup-message-header").text("Проблема на сервере!");
+                openPopup('message-popup');
+            }
+        })
+    }
 
 ///////////////////////////////FILLING PROGRESS BAR///////////////////////////
 
-function progressView() {
-    let diagramBox = document.querySelectorAll('.diagram.progress');
-    diagramBox.forEach((box) => {
-        let deg = (360 * box.dataset.percent / 100) + 180;
-        if (box.dataset.percent >= 50) {
-            box.classList.add('over_50');
-        } else {
-            box.classList.remove('over_50');
+    function progressView() {
+        let diagramBox = document.querySelectorAll('.diagram.progress');
+        diagramBox.forEach((box) => {
+            let deg = (360 * box.dataset.percent / 100) + 180;
+            if (box.dataset.percent >= 50) {
+                box.classList.add('over_50');
+            } else {
+                box.classList.remove('over_50');
+            }
+            box.querySelector('.piece.right').style.transform = 'rotate(' + deg + 'deg)';
+        });
+    }
+
+    function countPercentage() {
+        let usernameVal = $("#username-placeholder").val();
+        let emailVal = $("#email-placeholder").val();
+        let phoneVal = $("#phone-placeholder").val();
+        let photoSrc = $(".personality-avatar-image").attr("src");
+        let nameVal = $("#name-placeholder").val();
+
+        let addressVal = false;
+
+        if (typeof $("#address-placeholder") !== "undefined") {
+            addressVal = $("#address-placeholder").val();
         }
-        box.querySelector('.piece.right').style.transform = 'rotate(' + deg + 'deg)';
-    });
-}
 
-function countPercentage() {
-    let usernameVal = $("#username-placeholder").val();
-    let emailVal = $("#email-placeholder").val();
-    let phoneVal = $("#phone-placeholder").val();
-    let photoSrc = $(".personality-avatar-image").attr("src");
+        let aboutProfessionVal = false;
+        let aboutTextVal = false;
 
-    let addressVal = false;
+        if (typeof $("#about-profession-placeholder") !== "undefined") {
+            aboutProfessionVal = $("#about-profession-placeholder").val();
+            aboutTextVal = $("#about-text-placeholder").val();
+        }
 
-    if (typeof $("#address-placeholder") !== "undefined") {
-        addressVal = $("#address-placeholder").val();
-    }
+        let piecesCount = 0;
+        let emptyPiecesCount = 0;
 
-    let aboutProfessionVal = false;
-    let aboutTextVal = false;
-
-    if (typeof $("#about-profession-placeholder") !== "undefined") {
-        aboutProfessionVal = $("#about-profession-placeholder").val();
-        aboutTextVal = $("#about-text-placeholder").val();
-    }
-
-    let piecesCount = 0;
-    let emptyPiecesCount = 0;
-
-    piecesCount++;
-    if (usernameVal === null || usernameVal === "") {
-        emptyPiecesCount++;
-    }
-
-    piecesCount++;
-    if (emailVal === null || emailVal === "") {
-        emptyPiecesCount++;
-    }
-
-    piecesCount++;
-    if (phoneVal === null || phoneVal === "") {
-        emptyPiecesCount++;
-    }
-
-    piecesCount++;
-    if (photoSrc === "/image/user/no_photo.jpg") {
-        emptyPiecesCount++;
-    }
-
-    if (addressVal !== false) {
         piecesCount++;
-        if (addressVal === "") {
+        if (usernameVal === null || usernameVal === "") {
             emptyPiecesCount++;
         }
-    }
 
-    if (aboutProfessionVal !== false && aboutTextVal !== false) {
         piecesCount++;
-        if (aboutProfessionVal === "") {
+        if (emailVal === null || emailVal === "") {
             emptyPiecesCount++;
         }
 
-        if (aboutTextVal === "") {
+        piecesCount++;
+        if (phoneVal === null || phoneVal === "") {
             emptyPiecesCount++;
         }
+
+        piecesCount++;
+        if (nameVal === null || nameVal === "") {
+            emptyPiecesCount++;
+        }
+
+
+        piecesCount++;
+        if (photoSrc === "/image/user/no_photo.jpg") {
+            emptyPiecesCount++;
+        }
+
+        if (addressVal !== false) {
+            piecesCount++;
+            if (addressVal === "") {
+                emptyPiecesCount++;
+            }
+        }
+
+        if (aboutProfessionVal !== false && aboutTextVal !== false) {
+            piecesCount++;
+            if (aboutProfessionVal === "") {
+                emptyPiecesCount++;
+            }
+
+            if (aboutTextVal === "") {
+                emptyPiecesCount++;
+            }
+        }
+
+        let percentage = Math.round(((piecesCount - emptyPiecesCount) * 100) / piecesCount);
+        $("#progress-percent-placeholder").text(percentage + "%");
+        $(".diagram").attr("data-percent", percentage);
+        progressView();
     }
-
-    let percentage = Math.round(((piecesCount - emptyPiecesCount) * 100) / piecesCount);
-    $("#progress-percent-placeholder").text(percentage + "%");
-    $(".diagram").attr("data-percent", percentage);
-    progressView();
-}
 
 ///////////////////////////////WINDOW VIEW (RESIZE, STYLE)////////////////////////////////////////
-$(document).ready(function () {
-    resizeFlexBox();
-})
+    $(document).ready(function () {
+        resizeFlexBox();
+    })
 
 
-function resizeFlexBox() {
-    let height = $(window).height();
-    $(".flex-box-purple").attr("style", "height: " + height + "px");
+    function resizeFlexBox() {
+        let height = $(window).height();
+        $(".flex-box-purple").attr("style", "height: " + height + "px");
+    }
 }

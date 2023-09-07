@@ -31,13 +31,6 @@ public class Appointment implements BaseEntity {
     private Account masterAccount;
 
     /**
-     * Аккаунт клиента, который регистрируется на услугу
-     */
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = ID_ACCOUNT_CLIENT)
-    private Account clientAccount;
-
-    /**
      * Пользовательская услуга, на которую записывается клиент
      */
     @ManyToOne(fetch = FetchType.EAGER)
@@ -49,5 +42,12 @@ public class Appointment implements BaseEntity {
      */
     @Column(name = APPOINTMENT_DATE_TIME)
     private Timestamp appointmentDateTime;
+
+    /**
+     * Пользовательская информация о клиенте
+     */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = ID_USER_DETAILS_CLIENT)
+    private UserDetails userDetailsClient;
 
 }

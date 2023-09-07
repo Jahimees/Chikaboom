@@ -72,20 +72,6 @@ public class Account implements BaseEntity, UserDetails {
     private String address;
 
     /**
-     * Общедоступная информация о пользователе
-     */
-    @OneToOne
-    @JoinColumn(name = ID_ABOUT)
-    private About about;
-
-    /**
-     * Ссылки на социальные сети пользователя
-     */
-    @OneToOne
-    @JoinColumn(name = ID_SOCIAL_NETWORK)
-    private SocialNetwork socialNetwork;
-
-    /**
      * Рабочий график мастера
      */
     @OneToOne
@@ -93,20 +79,17 @@ public class Account implements BaseEntity, UserDetails {
     private WorkingDays workingDays;
 
     /**
-     * Код телефона пользователя
+     * Отвечает за отображение номера телефона на странице аккаунта
      */
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = ID_PHONE_CODE)
-    private PhoneCode phoneCode;
-
-    /**
-     * Номер телефона владельца аккаунта
-     */
-    @Column(name = PHONE)
-    private String phone;
-
     @Column(name = IS_PHONE_VISIBLE)
     private boolean isPhoneVisible;
+
+    /**
+     * Содержит подробную информацию об аккаунте
+     */
+    @OneToOne
+    @JoinColumn(name = ID_USER_DETAILS)
+    private net.chikaboom.model.database.UserDetails userDetails;
 
     @JsonIgnore
     @Override

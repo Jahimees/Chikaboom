@@ -27,8 +27,9 @@ public class RegistrationController {
     /**
      * Передает управление и данные в сервис {@link RegistrationActionService}
      * В случае ошибки возвращает объект-ответ-ошибки с помощью {@link AdviceController}
-     *
+     * <p>
      * @param account объект регистрируемого аккаунта
+     *
      * @return объект-ответ, содержащий название страницы, на которую должен будет осуществлен переход и http статус.
      */
     @PostMapping

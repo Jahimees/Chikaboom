@@ -1,5 +1,6 @@
 package net.chikaboom.service.data;
 
+import com.google.i18n.phonenumbers.NumberParseException;
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.exception.NoSuchDataException;
 import net.chikaboom.exception.UserAlreadyExistsException;
@@ -8,7 +9,8 @@ import net.chikaboom.model.database.Account;
 import net.chikaboom.repository.AboutRepository;
 import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.repository.PhoneCodeRepository;
-import net.chikaboom.util.PhoneNumberConverter;
+import net.chikaboom.repository.UserDetailsRepository;
+import net.chikaboom.util.PhoneNumberUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -32,6 +34,8 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
     private String EMAIL_REGEXP;
 
     private final AccountRepository accountRepository;
+    private final UserDetailsRepository userDetailsRepository;
+    private final UserDetailsDataService userDetailsDataService;
     private final AboutRepository aboutRepository;
     private final PhoneCodeRepository phoneCodeRepository;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -100,20 +104,44 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
     }
 
     /**
-     * Создаёт новый объект аккаугта в базе.
+     * Создаёт новый объект аккаунта в базе.
      *
      * @param account создаваемый объект
      * @return созданный объект
      */
     @Override
     public Account create(Account account) {
-        if (isAccountExists(account)) {
-            throw new UserAlreadyExistsException("The same user already exists");
+        try {
+            if (isAccountExists(account)) {
+                throw new UserAlreadyExistsException("The same user already exists");
+            }
+        } catch (NumberParseException e) {
+            throw new IllegalArgumentException("The phone is invalid. Cannot create the account");
         }
+
         account.setIdAccount(0);
+        net.chikaboom.model.database.UserDetails userDetails = account.getUserDetails();
+        if (userDetails == null) {
+            userDetails = new net.chikaboom.model.database.UserDetails();
+        } else {
+            try {
+                userDetails.setPhoneCode(phoneCodeRepository.findFirstByCountryCut(userDetails.getPhoneCode().getCountryCut()));
+                userDetails.setPhone(PhoneNumberUtils.formatNumberInternational(
+                        userDetails.getPhone(), userDetails.getPhoneCode().getCountryCut()));
+                userDetails.setDisplayedPhone(userDetails.getPhone());
+
+            } catch (NumberParseException e) {
+                throw new IllegalArgumentException("Cannot save user details. Phone is incorrect. " + e.getMessage());
+            }
+        }
+
+        userDetails = userDetailsRepository.saveAndFlush(userDetails);
+        account.setUserDetails(userDetails);
 
         return accountRepository.save(account);
     }
+
+//    TODO refactor Слишком большой метод
 
     /**
      * Применяет частичное изменение объекта, игнорируя null поля и неизменные поля
@@ -121,17 +149,58 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
      * @param account новый аккаунт, который нужно изменить. Обязательно должен содержать idAccount != 0
      * @return обновленный аккаунт
      */
-    public Account patch(Account account) {
+    public Account patch(Account account) throws NumberParseException {
         Account patchedAccount = accountRepository.findById(account.getIdAccount())
                 .orElseThrow(() -> new NoSuchDataException("This user doesn't exist"));
 
+        net.chikaboom.model.database.UserDetails patchedUserDetails = patchedAccount.getUserDetails();
+        net.chikaboom.model.database.UserDetails userDetails = account.getUserDetails();
 
-        if (account.getPhoneCode() != null && account.getPhone() != null && !account.getPhone().isEmpty()) {
-            if (accountRepository.existsAccountByPhoneCodeAndPhone(account.getPhoneCode(), account.getPhone())) {
-                throw new UserAlreadyExistsException("User with the same phone already exists");
-            } else {
-                patchedAccount.setPhoneCode(phoneCodeRepository.findFirstByPhoneCode(account.getPhoneCode().getPhoneCode()));
-                patchedAccount.setPhone(PhoneNumberConverter.clearPhoneNumber(account.getPhone()));
+        if (patchedUserDetails == null) {
+            patchedUserDetails = new net.chikaboom.model.database.UserDetails();
+            patchedAccount.setUserDetails(patchedUserDetails);
+            userDetailsRepository.saveAndFlush(patchedUserDetails);
+        }
+
+        if (userDetails != null) {
+
+            if (userDetails.getPhoneCode() != null
+                    && userDetails.getPhone() != null
+                    && !userDetails.getPhone().isEmpty()) {
+
+                if (userDetailsDataService.existsUserDetailsByPhone(userDetails.getPhone(),
+                        userDetails.getPhoneCode().getCountryCut())) {
+                    throw new UserAlreadyExistsException("User with the same phone already exists");
+                } else {
+                    String formattedPhone = PhoneNumberUtils.formatNumberInternational(
+                            userDetails.getPhone(), userDetails.getPhoneCode().getCountryCut());
+
+                    patchedUserDetails.setPhoneCode(
+                            phoneCodeRepository.findFirstByCountryCut(userDetails.getPhoneCode().getCountryCut()));
+                    patchedUserDetails.setPhone(formattedPhone);
+                    patchedUserDetails.setDisplayedPhone(formattedPhone);
+                }
+            }
+
+            if (userDetails.getAbout() != null) {
+                About patchedAbout = userDetails.getAbout();
+                if (patchedAccount.getUserDetails().getAbout() == null
+                        || patchedAccount.getUserDetails().getAbout().getIdAbout() == 0) {
+                    patchedAccount.getUserDetails().setAbout(new About());
+                    aboutRepository.saveAndFlush(patchedAccount.getUserDetails().getAbout());
+                }
+
+                patchedUserDetails.getAbout().setText(patchedAbout.getText());
+                patchedUserDetails.getAbout().setProfession(patchedAbout.getProfession());
+                patchedUserDetails.getAbout().setTags(patchedAbout.getTags());
+            }
+
+            if (userDetails.getFirstName() != null) {
+                patchedUserDetails.setFirstName(userDetails.getFirstName());
+            }
+
+            if (userDetails.getLastName() != null) {
+                patchedUserDetails.setLastName(userDetails.getLastName());
             }
         }
 
@@ -165,18 +234,6 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
             }
         }
 
-        if (account.getAbout() != null) {
-            About patchedAbout = account.getAbout();
-            if (patchedAccount.getAbout() == null) {
-                patchedAccount.setAbout(new About());
-                aboutRepository.saveAndFlush(patchedAccount.getAbout());
-            }
-
-            patchedAccount.getAbout().setText(patchedAbout.getText());
-            patchedAccount.getAbout().setProfession(patchedAbout.getProfession());
-            patchedAccount.getAbout().setTags(patchedAbout.getTags());
-        }
-
         if (account.getAddress() != null && !account.getAddress().isEmpty()) {
             patchedAccount.setAddress(account.getAddress());
         }
@@ -195,9 +252,13 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
      * @param account искомый аккаунт
      * @return true - в случае, если такой аккаунт существует, false - в ином случае
      */
-    public boolean isAccountExists(Account account) {
+    public boolean isAccountExists(Account account) throws NumberParseException {
+        net.chikaboom.model.database.UserDetails userDetails = account.getUserDetails();
+
         return accountRepository.existsById(account.getIdAccount())
                 || accountRepository.existsAccountByUsername(account.getUsername())
-                || accountRepository.existsAccountByPhoneCodeAndPhone(account.getPhoneCode(), account.getPhone());
+                || userDetailsDataService.existsUserDetailsByPhone(
+                userDetails.getPhone(),
+                userDetails.getPhoneCode().getCountryCut());
     }
 }

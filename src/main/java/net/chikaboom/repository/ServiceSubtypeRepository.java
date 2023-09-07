@@ -14,5 +14,11 @@ import java.util.List;
 @Repository
 public interface ServiceSubtypeRepository extends JpaRepository<ServiceSubtype, Integer>, JpaSpecificationExecutor<ServiceSubtype> {
 
+    /**
+     * Находит все подтипы услуг по типу услуг
+     *
+     * @param serviceType тип услуги, по которому нужно найти все подтипы услуг
+     * @return список подтипов услуг
+     */
     List<ServiceSubtype> findAllByServiceType(ServiceType serviceType);
 }

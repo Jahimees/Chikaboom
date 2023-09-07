@@ -1,8 +1,9 @@
 package net.chikaboom.repository;
 
 import net.chikaboom.model.database.Account;
-import net.chikaboom.model.database.PhoneCode;
+import net.chikaboom.model.database.UserDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -14,19 +15,34 @@ import java.util.Optional;
 public interface AccountRepository extends JpaRepository<Account, Integer> {
 
     /**
-     * Метод для поиска аккаунта по указанному телефону и коду страны
+     * Производит поиск аккаунта по псевдониму пользователя
      *
-     * @param phone номер телефона
-     * @return найденного пользователя
+     * @param username псевдоним пользователя
+     * @return найденный аккаунт
      */
-    Account findFirstByPhoneAndPhoneCode(String phone, PhoneCode phoneCode);
-
     Optional<Account> findAccountByUsername(String username);
 
+    /**
+     * Производит поиск аккаунта по его пользовательским данным
+     *
+     * @param userDetails пользовательские данные
+     * @return найденный аккаунт
+     */
+    Optional<Account> findAccountByUserDetails(UserDetails userDetails);
+
+    /**
+     * Проверяет, существует ли аккаунт с указанным email
+     *
+     * @param email электронная почта, искомого пользователя
+     * @return true - если аккаунт найден, false - в противном случае
+     */
     boolean existsByEmail(String email);
 
+    /**
+     * Проверяет сущестование аккаунта по псевдониму пользователя
+     *
+     * @param username псевдоним искомого пользователя
+     * @return true - если такой пользователь существует, false - в противном случае
+     */
     boolean existsAccountByUsername(String username);
-
-    boolean existsAccountByPhoneCodeAndPhone(PhoneCode phoneCode, String phone);
-
 }
