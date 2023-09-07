@@ -59,7 +59,7 @@ dependencies {
 }
 
 group = 't-and-j-team'
-version = '0.2.15-ALPHA-S'
+version = '0.3.0-BETA'
 description = 'Extra_Mileiux'
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
