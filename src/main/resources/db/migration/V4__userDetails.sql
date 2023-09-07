@@ -1,17 +1,11 @@
 ALTER TABLE `chikaboom`.`account`
-DROP
-FOREIGN KEY `idphonecode`,
-DROP
-FOREIGN KEY `idabout`;
+DROP FOREIGN KEY `idphonecode`,
+DROP FOREIGN KEY `idabout`;
 ALTER TABLE `chikaboom`.`account`
-DROP
-COLUMN `idsocial_network`,
-DROP
-COLUMN `idabout`,
-DROP
-COLUMN `phone`,
-DROP
-COLUMN `idphonecode`,
+DROP COLUMN `idsocial_network`,
+DROP COLUMN `idabout`,
+DROP COLUMN `phone`,
+DROP COLUMN `idphonecode`,
 DROP INDEX `idabout_idx` ,
 DROP INDEX `idphonecode_idx`;
 
@@ -80,8 +74,7 @@ ALTER TABLE `chikaboom`.`appointment`
 
 DROP TRIGGER IF EXISTS `chikaboom`.`user_details_AFTER_DELETE`;
 
-DELIMITER
-$$
+DELIMITER $$
 USE `chikaboom`$$
 CREATE
 DEFINER = CURRENT_USER TRIGGER `chikaboom`.`user_details_AFTER_DELETE` AFTER DELETE

@@ -14,11 +14,35 @@ import java.util.Optional;
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Integer>, JpaSpecificationExecutor<Account> {
 
+    /**
+     * Производит поиск аккаунта по псевдониму пользователя
+     *
+     * @param username псевдоним пользователя
+     * @return найденный аккаунт
+     */
     Optional<Account> findAccountByUsername(String username);
 
+    /**
+     * Производит поиск аккаунта по его пользовательским данным
+     *
+     * @param userDetails пользовательские данные
+     * @return найденный аккаунт
+     */
     Optional<Account> findAccountByUserDetails(UserDetails userDetails);
 
+    /**
+     * Проверяет, существует ли аккаунт с указанным email
+     *
+     * @param email электронная почта, искомого пользователя
+     * @return true - если аккаунт найден, false - в противном случае
+     */
     boolean existsByEmail(String email);
 
+    /**
+     * Проверяет сущестование аккаунта по псевдониму пользователя
+     *
+     * @param username псевдоним искомого пользователя
+     * @return true - если такой пользователь существует, false - в противном случае
+     */
     boolean existsAccountByUsername(String username);
 }

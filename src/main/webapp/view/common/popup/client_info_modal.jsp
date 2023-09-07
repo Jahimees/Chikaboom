@@ -16,17 +16,17 @@
                 <div class="d-flex middle-box w-80">
                     <div class="popup-input middle-box w-80">
                         <div>Имя</div>
+                        <input id="client-first-name-input-upd" required>
                         <label id="first-name-invalid-label-upd" class="invalid-field-label-popup">Имя может содержать
                             только
                             буквы и не должно быть пустым</label>
-                        <input id="client-first-name-input-upd" required>
                     </div>
                     <div class="popup-input middle-box w-80">
                         <div>Фамилия</div>
+                        <input id="client-last-name-input-upd">
                         <label id="last-name-invalid-label-upd" class="invalid-field-label-popup">Фамилия может содержать
                             только
                             буквы</label>
-                        <input id="client-last-name-input-upd">
                     </div>
                     <div class="popup-input middle-box w-80">
                         <div>Телефон</div>
@@ -36,9 +36,9 @@
                 </div>
                 <div class="popup-input middle-box w-80">
                     <div>Краткая информация</div>
+                    <textarea id="client-about-input-upd" style="width: 100%"></textarea>
                     <label id="about-invalid-label-upd" class="invalid-field-label-popup">Информация не должна превышать 300
                         символов!</label>
-                    <textarea id="client-about-input-upd" style="width: 100%"></textarea>
                 </div>
                 <div class="popup-input middle-box w-80">
                     <div id="client-visit-count-upd" style="width: 100%">Количество посещений:</div>

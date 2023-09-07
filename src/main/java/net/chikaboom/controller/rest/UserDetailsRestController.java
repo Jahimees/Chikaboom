@@ -1,8 +1,10 @@
 package net.chikaboom.controller.rest;
 
 import lombok.RequiredArgsConstructor;
+import net.chikaboom.controller.RegistrationController;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.CustomPrincipal;
+import net.chikaboom.model.database.ServiceSubtype;
 import net.chikaboom.model.database.UserDetails;
 import net.chikaboom.service.data.AccountDataService;
 import net.chikaboom.service.data.UserDetailsDataService;
@@ -15,13 +17,23 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * REST контроллер для взаимодействия с сущностями типа {@link UserDetails}
+ */
 @RestController
 @RequiredArgsConstructor
 public class UserDetailsRestController {
 
+//    TODO нет документации в readme
     private final UserDetailsDataService userDetailsDataService;
     private final AccountDataService accountDataService;
 
+    /**
+     * Создает данные пользователя. Разрешено к использованию только мастерам.
+     *
+     * @param userDetails создаваемые данные пользователя
+     * @return созданные данные пользователя
+     */
     @PreAuthorize("hasRole('MASTER')")
     @PostMapping("/user-details")
     public ResponseEntity<UserDetails> createUserDetails(@RequestBody UserDetails userDetails) {
@@ -38,7 +50,14 @@ public class UserDetailsRestController {
         return ResponseEntity.ok(userDetailsDataService.create(userDetails));
     }
 
-    //    TODO документация
+    /**
+     * Изменяет данные пользовательских данных. Можно использовать только авторизованному пользователю, мастеру.
+     * Возможно воздействовать только на те сущности, которые принадлежат аккаунту мастера.
+     *
+     * @param idUserDetails идентификатор пользовательской информации
+     * @param userDetails новый обновленный объект к сохранению
+     * @return обновленный объект
+     */
     @PreAuthorize("isAuthenticated()")
     @PatchMapping("/user-details/{idUserDetails}")
     public ResponseEntity<UserDetails> patchUserDetails(@PathVariable int idUserDetails, @RequestBody UserDetails userDetails) {
@@ -60,6 +79,12 @@ public class UserDetailsRestController {
         return ResponseEntity.ok(userDetailsDataService.patch(userDetails));
     }
 
+    /**
+     * Производит поиск пользовательской информации о клиентов конкретного мастера
+     *
+     * @param idAccount идентификатор аккаунта мастера, чьих клиентов нужно найти
+     * @return список найденных клиентов
+     */
     @PreAuthorize("isAuthenticated() && #idAccount == authentication.principal.idAccount")
     @GetMapping("/accounts/{idAccount}/clients")
     public ResponseEntity<List<UserDetails>> findClients(@PathVariable int idAccount) {
@@ -72,7 +97,13 @@ public class UserDetailsRestController {
         return ResponseEntity.ok(userDetailsDataService.findClientsWithExtraInfo(idAccount));
     }
 
-    //    TODO документация
+    /**
+     * Удаляет выбранную пользовательскую информацию. Удалять пользовательскую информацию может только владелец
+     *
+     * @param idAccount идентификатор мастера-владельца пользовательской информации
+     * @param idUserDetails идентификтор пользовательской информации
+     * @return json-ответ сервера
+     */
     @PreAuthorize("isAuthenticated() && #idAccount == authentication.principal.idAccount")
     @DeleteMapping("/accounts/{idAccount}/clients/{idUserDetails}")
     public ResponseEntity<String> deleteUserDetails(@PathVariable int idAccount, @PathVariable int idUserDetails) {

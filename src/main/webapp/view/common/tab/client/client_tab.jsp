@@ -43,7 +43,7 @@
         selectCurrentTab($("#client-tab")[0])
 
         setTimeout(function () {
-            loadClientInformation(${idAccount});
+            loadClientsAndShowTable(${idAccount});
         }, 100); //TODO Плохо. Но не придумал по другому. вставка скрипта datatables должна быть тут.
     });
 </script>

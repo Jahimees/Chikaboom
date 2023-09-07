@@ -7,6 +7,9 @@ import java.sql.Timestamp;
 
 import static net.chikaboom.util.constant.DbNamesConstant.*;
 
+/**
+ * Определяет модель таблицы user_details в базе данных
+ */
 @Data
 @Table(name = USER_DETAILS)
 @Entity
@@ -14,11 +17,20 @@ public class UserDetails implements BaseEntity {
 
     private static final long serialVersionUID = 150570965476655532l;
 
+    /**
+     * Идентификатор пользовательских данных
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = ID_USER_DETAILS)
     private int idUserDetails;
 
+    /**
+     * Владелец пользовательских данных.
+     * Может быть пустым, если данные являются расширением {@link Account} (например просто данные о мастере).
+     * При создании мастером клиентов (сущность userDetails без привязки к аккаунту), заполняется это поле тем мастером,
+     * кто его создал
+     */
     @OneToOne
     @JoinColumn(name = ID_ACCOUNT_OWNER)
     private Account masterOwner;

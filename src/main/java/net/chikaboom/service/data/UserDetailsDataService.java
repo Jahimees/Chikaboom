@@ -23,6 +23,9 @@ import java.util.Optional;
 import static org.hibernate.type.StandardBasicTypes.INTEGER;
 import static org.hibernate.type.StandardBasicTypes.TIMESTAMP;
 
+/**
+ * Сервис предоставляет возможность обработки данных пользовательской информации.
+ */
 @Service
 @RequiredArgsConstructor
 public class UserDetailsDataService {
@@ -33,16 +36,37 @@ public class UserDetailsDataService {
     private final SessionFactory sessionFactory;
 
     //TODO exists by phone
+
+    /**
+     * Производит поиск пользовательской информации по идентификатору
+     *
+     * @param idUserDetails идентификатор пользовательской информации
+     * @return найденную пользовательскую информацию
+     */
     public Optional<UserDetails> findUserDetailsById(int idUserDetails) {
         return userDetailsRepository.findById(idUserDetails);
     }
 
+    /**
+     * Производит поиск пользовательской информации по номеру телефона
+     *
+     * @param phone номер телефона
+     * @param countryCut буквенный код страны для приведения номера телефона к формату, в котором данные хранятся в базе
+     * @return найденную пользовательскую информацию
+     * @throws NumberParseException возникает, когда невозможно отформатировать номер телефона
+     */
     public Optional<UserDetails> findUserDetailsByPhone(String phone, String countryCut) throws NumberParseException {
         String formedPhone = PhoneNumberUtils.formatNumberInternational(phone, countryCut);
 
         return userDetailsRepository.findUserDetailsByPhone(formedPhone);
     }
 
+    /**
+     * Создает пользователськую информацию в базе данных
+     *
+     * @param userDetails пользовательская информация, которая должна быть сохранена в базе
+     * @return созданную пользовательскую информацию
+     */
     public UserDetails create(UserDetails userDetails) {
         About about = userDetails.getAbout();
         if (about == null) {
@@ -67,6 +91,12 @@ public class UserDetailsDataService {
         return userDetailsRepository.save(userDetails);
     }
 
+    /**
+     * Изменение данных пользовательской информации
+     *
+     * @param userDetails обновляемая пользователская информация
+     * @return обновленная пользовательская информация
+     */
     public UserDetails patch(UserDetails userDetails) {
         Optional<UserDetails> userDetailsFromDbOptional = userDetailsRepository.findById(userDetails.getIdUserDetails());
 
@@ -76,15 +106,15 @@ public class UserDetailsDataService {
 
         UserDetails patchedUserDetails = userDetailsFromDbOptional.get();
 
-        if (!userDetails.getLastName().isEmpty()) {
+        if (userDetails.getLastName() != null && !userDetails.getLastName().isEmpty()) {
             patchedUserDetails.setLastName(userDetails.getLastName());
         }
 
-        if (!userDetails.getFirstName().isEmpty()) {
+        if (userDetails.getFirstName() != null && !userDetails.getFirstName().isEmpty()) {
             patchedUserDetails.setFirstName(userDetails.getFirstName());
         }
 
-        if (!userDetails.getDisplayedPhone().isEmpty() &&
+        if (userDetails.getDisplayedPhone() != null && !userDetails.getDisplayedPhone().isEmpty() &&
                 userDetails.getPhoneCode() != null &&
                 !userDetails.getPhoneCode().getCountryCut().isEmpty()) {
             try {
@@ -100,11 +130,11 @@ public class UserDetailsDataService {
 
         if (userDetails.getAbout() != null) {
             About oldAbout = patchedUserDetails.getAbout();
-            if (!userDetails.getAbout().getText().isEmpty()) {
+            if (userDetails.getAbout().getText() != null && !userDetails.getAbout().getText().isEmpty()) {
                 oldAbout.setText(userDetails.getAbout().getText());
             }
 
-            if (!userDetails.getAbout().getProfession().isEmpty()) {
+            if (userDetails.getAbout().getProfession() != null && !userDetails.getAbout().getProfession().isEmpty()) {
                 oldAbout.setProfession(userDetails.getAbout().getProfession());
             }
         }
@@ -112,6 +142,7 @@ public class UserDetailsDataService {
         return userDetailsRepository.save(patchedUserDetails);
     }
 
+//    TODO что-то сделать с запросом?
     /**
      * Производит поиск клиентов мастера, а также высчитывает общее количество посещений к этому мастеру и дату
      * последнего визита
@@ -161,6 +192,10 @@ public class UserDetailsDataService {
         return resultUserDetailsList;
     }
 
+    /**
+     * Производит удаление пользовательской информации по идентификатору
+     * @param idUserService идентификатор пользовательской информации
+     */
     public void deleteById(int idUserService) {
         userDetailsRepository.deleteById(idUserService);
     }

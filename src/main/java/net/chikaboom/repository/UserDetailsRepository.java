@@ -13,10 +13,20 @@ import java.util.Optional;
 @Repository
 public interface UserDetailsRepository extends JpaRepository<UserDetails, Integer> {
 
-    boolean existsUserDetailsByPhoneCodeAndPhone(PhoneCode phoneCode, String phone);
-
+    /**
+     * Производит поиск пользовательской информации по номеру телефона
+     *
+     * @param phone номер телефона
+     * @return найденную пользовательскую информацию
+     */
     Optional<UserDetails> findUserDetailsByPhone(String phone);
 
+    /**
+     * Проверяет существование пользовательской информации по номеру телефона
+     *
+     * @param phone номер телефона
+     * @return true - если пользовательская информация существует, false - в противном случае
+     */
     boolean existsUserDetailsByPhone(String phone);
 
 }

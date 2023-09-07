@@ -16,10 +16,6 @@ import static net.chikaboom.util.constant.DbNamesConstant.*;
 @Table(name = PHONE_CODE)
 public class PhoneCode implements BaseEntity {
 
-    public PhoneCode() {
-
-    }
-
     /**
      * id сущности в таблице phone_code
      */

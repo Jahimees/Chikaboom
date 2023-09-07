@@ -8,12 +8,7 @@
     <form id="login-form">
         <div class="popup-body">
             <div class="common-black-text">Имя пользователя</div>
-            <%--            <label class="invalid-field-label-popup" id="l-input-username-empty">Поле не может быть пустым</label>--%>
-            <%--            <label class="invalid-field-label-popup" id="l-input-username-incorrect">Можно использовать только буквы и 1--%>
-            <%--                пробел между словами</label>--%>
             <div class="popup-input middle-box w-80">
-                <%--                <input id="l-input-username" class="popup-input-field" name="username" required placeholder="Rosaline"--%>
-                <%--                       valid="false">--%>
                 <input id="l-input-phone" class="popup-input-field" required
                        valid="false">
                 <span id="error-msg-l-input-phone" class="hide"></span>
@@ -41,17 +36,5 @@
 <script>
     $(document).ready(() => {
         initPhoneCodeWidget("l-input-phone");
-
-        $("#login-submit-btn").on("click", () => {
-            if (validateAllAuthorizeFields()) {
-                let selectedCountryData = window.intlTelInputGlobals.getInstance(
-                    document.querySelector("#l-input-phone")).getSelectedCountryData();
-                let $inputUsername = $("#l-input-phone");
-                let $hiddenInput = $("#l-hidden-input-phone");
-                $hiddenInput.val($inputUsername.val() + "_" + selectedCountryData.iso2)
-
-                $("#login-form").submit();
-            }
-        })
     })
 </script>

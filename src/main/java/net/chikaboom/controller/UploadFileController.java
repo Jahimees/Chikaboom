@@ -1,5 +1,6 @@
 package net.chikaboom.controller;
 
+import lombok.RequiredArgsConstructor;
 import net.chikaboom.service.UploadFileService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +21,11 @@ import java.util.NoSuchElementException;
  */
 @Controller
 @RequestMapping("/chikaboom/upload/file/{idAccount}")
+@RequiredArgsConstructor
 public class UploadFileController {
 
     private final UploadFileService uploadFileService;
     private final Logger logger = Logger.getLogger(this.getClass());
-
-    @Autowired
-    public UploadFileController(UploadFileService uploadFileService) {
-        this.uploadFileService = uploadFileService;
-    }
 
     /**
      * Получает данные файла с клиента и передает их на обработку на сервис

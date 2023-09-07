@@ -78,9 +78,15 @@ public class Account implements BaseEntity, UserDetails {
     @JoinColumn(name = ID_WORKING_DAYS)
     private WorkingDays workingDays;
 
+    /**
+     * Отвечает за отображение номера телефона на странице аккаунта
+     */
     @Column(name = IS_PHONE_VISIBLE)
     private boolean isPhoneVisible;
 
+    /**
+     * Содержит подробную информацию об аккаунте
+     */
     @OneToOne
     @JoinColumn(name = ID_USER_DETAILS)
     private net.chikaboom.model.database.UserDetails userDetails;

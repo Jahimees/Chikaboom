@@ -16,11 +16,13 @@
     <link rel="stylesheet" href="/css/addition/menu_bar.css">
     <link rel="stylesheet" href="/css/media/main_media.css">
     <link rel="stylesheet" href="/css/popup.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
 
     <link href="https://fonts.cdnfonts.com/css/source-sans-pro" rel="stylesheet">
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script rel="script" src="/js/jquery-ui-1.10.4.custom.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
+    <script type="text/javascript" src="/js/countrycode/countryCode.js"></script>
 </head>
 <jsp:include page="common/popup/appointment_modal.jsp"/>
 <body>
@@ -175,15 +177,15 @@
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
 </body>
+
 </html>
 
 <jsp:include page="/view/common/popup/login_popup.jsp"/>
 <jsp:include page="/view/common/popup/message_popup.jsp"/>
-
 <script type="text/javascript" src="/js/static_popup.js"></script>
 <script type="text/javascript" src="/js/dynamic_popup.js"></script>
-<script type="text/javascript" src="/js/service.js"></script>
 <script type="text/javascript" src="/js/account.js"></script>
+<script type="text/javascript" src="/js/service.js"></script>
 <script type="text/javascript" src="/js/appointment.js"></script>
 
 <script>

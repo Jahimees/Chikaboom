@@ -113,7 +113,7 @@ public class AccountRestController {
         return ResponseEntity.ok(patchedAccount);
     }
 
-    //    TODO NEW LOGOUT!!!!
+    //    TODO LOGOUT!!!!
 
     /**
      * Производит удаление аккаунта. Доступно только администраторам.

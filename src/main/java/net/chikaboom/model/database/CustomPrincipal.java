@@ -4,6 +4,10 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * Не хранится в базе. Используется для идентификации пользователя. Данные о пользователе сохраняются при авторизации
+ * см. {@link net.chikaboom.service.CustomAuthenticationProvider}
+ */
 @Data
 public class CustomPrincipal implements Serializable {
 

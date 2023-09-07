@@ -62,10 +62,9 @@
                 openPopup('message-popup');
 
                 $("#confirm-message-btn").attr(
-                    "onclick", "closePopup('message-popup'),  loadClientInformation(" + idAccountMaster + ")");
+                    "onclick", "closePopup('message-popup'),  loadClientsAndShowTable(" + idAccountMaster + ")");
             },
-            error: (val) => {
-                console.log(val);
+            error: () => {
                 repairDefaultMessagePopup();
                 $("#popup-message-text").text("Невозможно удалить клиента!");
                 $(".message-popup > .popup-title > #popup-message-header").text("ОШИБКА!");
@@ -85,50 +84,46 @@
         let phoneCode = selectedCountryData.dialCode;
         let countryCut = selectedCountryData.iso2;
 
-        let flag = validateFields(firstNameVal, lastNameVal, phoneVal, aboutVal);
-
-        if (!flag) {
-            return;
-        }
-
-        let userDetailsObject = {
-            displayedPhone: phoneVal,
-            firstName: firstNameVal,
-            lastName: lastNameVal,
-            about: {
-                text: aboutVal,
-            },
-            phoneCode: {
-                phoneCode: phoneCode,
-                countryCut: countryCut
-            },
-            masterOwner: {
-                idAccount: idAccount
+        if (validateFields(firstNameVal, lastNameVal, phoneVal, aboutVal)) {
+            let userDetailsObject = {
+                displayedPhone: phoneVal,
+                firstName: firstNameVal,
+                lastName: lastNameVal,
+                about: {
+                    text: aboutVal,
+                },
+                phoneCode: {
+                    phoneCode: phoneCode,
+                    countryCut: countryCut
+                },
+                masterOwner: {
+                    idAccount: idAccount
+                }
             }
-        }
 
-        $.ajax({
-            method: "post",
-            url: "/user-details",
-            contentType: "application/json",
-            dataType: "json",
-            data: JSON.stringify(userDetailsObject),
-            success: function (clientDetails) {
-                addRowToDataTable(clientDetails, "client");
-                $('#createClientModal').modal('hide');
-                repairDefaultMessagePopup();
-                $("#popup-message-text").text("Клиент успешно создан!");
-                $(".message-popup > .popup-title > #popup-message-header").text("Клиент создан");
-                openPopup('message-popup');
-            },
-            error: function () {
-                $('#createClientModal').modal('hide');
-                repairDefaultMessagePopup();
-                $("#popup-message-text").text("Невозможно создать клиента!");
-                $(".message-popup > .popup-title > #popup-message-header").text("ОШИБКА!");
-                openPopup('message-popup');
-            }
-        })
+            $.ajax({
+                method: "post",
+                url: "/user-details",
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify(userDetailsObject),
+                success: function (clientDetails) {
+                    addRowToDataTable(clientDetails, "client");
+                    $('#createClientModal').modal('hide');
+                    repairDefaultMessagePopup();
+                    $("#popup-message-text").text("Клиент успешно создан!");
+                    $(".message-popup > .popup-title > #popup-message-header").text("Клиент создан");
+                    openPopup('message-popup');
+                },
+                error: function () {
+                    $('#createClientModal').modal('hide');
+                    repairDefaultMessagePopup();
+                    $("#popup-message-text").text("Невозможно создать клиента!");
+                    $(".message-popup > .popup-title > #popup-message-header").text("ОШИБКА!");
+                    openPopup('message-popup');
+                }
+            })
+        }
     }
 
     function validateFields(firstNameVal, lastNameVal, phoneVal, aboutVal) {
@@ -169,7 +164,7 @@
                 return /^[a-zA-Zа-яА-Я]+$/.test(value);
             }
             case 'lastName': {
-                return /^|[a-zA-Zа-яА-Я]+$/.test(value);
+                return (/^[a-zA-Zа-яА-Я]+$/.test(value) || value.length === 0);
             }
             case 'about': {
                 return value.length <= 300
@@ -179,7 +174,7 @@
 
 ///////////////////////////////////////////CLIENTS DATATABLE///////////////////////////////////////
 
-    function loadClientInformation(idMasterAccount) {
+    function loadClientsAndShowTable(idMasterAccount) {
         $.ajax({
             type: "get",
             url: "/accounts/" + idMasterAccount + "/clients",
@@ -235,14 +230,19 @@
             let $saveClientInfoBtn = $("#save-client-info-btn");
             $saveClientInfoBtn.remove();
 
+            let $clientFirstNameInput = $("#client-first-name-input-upd");
+            let $clientLastNameInput = $("#client-last-name-input-upd");
+            let $clintAboutInput = $("#client-about-input-upd");
+            let $clientPhoneInput = $("#client-phone-input-upd");
+
             loadedClientsDetails.forEach(function (details) {
                 if (details.idUserDetails == idUserDetails) {
 
-                    $("#client-first-name-input-upd").val(details.firstName);
-                    $("#client-last-name-input-upd").val(details.lastName);
+                    $clientFirstNameInput.val(details.firstName);
+                    $clientLastNameInput.val(details.lastName);
 
-                    $("#client-about-input-upd").val(details.about ? details.about.text : "");
-                    $("#client-phone-input-upd").val(details.displayedPhone);
+                    $clintAboutInput.val(details.about ? details.about.text : "");
+                    $clientPhoneInput.val(details.displayedPhone);
 
                     if (details.phoneCode !== null && typeof details.phoneCode !== "undefined") {
                         window.intlTelInputGlobals.getInstance(
@@ -262,28 +262,102 @@
 
                         $closeClientInfoBtn.before("<button id='save-client-info-btn' class='popup-btn' type='button' " +
                             "onClick='saveUserDetails()' " +
-                            "className='popup-btn' data-bs-dismiss='modal'>Сохранить</button>")
+                            "className='popup-btn'>Сохранить</button>")
+                        validateClientInfoFields();
                     }
                 }
+            })
+
+            $("#client-first-name-input-upd, " +
+                "#client-last-name-input-upd, " +
+                "#client-about-input-upd, " +
+                "#client-phone-input-upd").on("keyup", () => {
+                validateClientInfoFields();
             })
         })
     })
 
-    // TODO ДОДЕЛАТЬ БЫСТРО
     function saveUserDetails() {
-        console.log(shownUserDetails);
-        let selectedCountryData =  window.intlTelInputGlobals.getInstance(
-            document.querySelector("#client-phone-input-upd")).getSelectedCountryData();
-        let phoneCode = selectedCountryData.dialCode;
-        let countryCut = selectedCountryData.iso2;
-        let firstName = $("#client-first-name-input-upd").val();
-        let last = $("#client-last-name-input-upd").val();
+        if (validateClientInfoFields()) {
+            let selectedCountryData = window.intlTelInputGlobals.getInstance(
+                document.querySelector("#client-phone-input-upd")).getSelectedCountryData();
 
-        let updatedUserDetails = {
-            phoneCode: {
-                phoneCode: phoneCode
+            let phoneCode = selectedCountryData.dialCode;
+            let countryCut = selectedCountryData.iso2;
+            let phone = $("#client-phone-input-upd").val();
+            let firstName = $("#client-first-name-input-upd").val();
+            let lastName = $("#client-last-name-input-upd").val();
+            let aboutText = $("#client-about-input-upd").val();
+
+            let updatedUserDetails = {
+                firstName: firstName,
+                lastName: lastName,
+                displayedPhone: phone,
+                phoneCode: {
+                    phoneCode: phoneCode,
+                    countryCut: countryCut
+                },
+                about: {
+                    text: aboutText
+                },
+                masterOwner: shownUserDetails.masterOwner
             }
+
+            $.ajax({
+                method: "patch",
+                url: "/user-details/" + shownUserDetails.idUserDetails,
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify(updatedUserDetails),
+                success: () => {
+                    $("#close-modal-btn").click();
+                    repairDefaultMessagePopup();
+                    $("#popup-message-text").text("Данные клиента успешно сохранены!");
+                    $("#popup-message-header").text("Данные сохранены");
+                    openPopup('message-popup');
+                    loadClientsAndShowTable(shownUserDetails.masterOwner.idAccount);
+                },
+                error: () => {
+                    $("#close-modal-btn").click();
+                    repairDefaultMessagePopup();
+                    $("#popup-message-text").text("Невозможно сохранить данные о записях клиента");
+                    $("#popup-message-header").text("Ошибка!");
+                    openPopup('message-popup');
+                }
+            })
         }
+    }
+
+    function validateClientInfoFields() {
+
+        let flag = true;
+        if (!isValid($("#client-first-name-input-upd").val(), "firstName")) {
+            flag = false;
+            $("#first-name-invalid-label-upd").css("display", "block");
+        } else {
+            $("#first-name-invalid-label-upd").css("display", "none");
+        }
+
+        if (!isValid($("#client-last-name-input-upd").val(), "lastName")) {
+            flag = false;
+            $("#last-name-invalid-label-upd").css("display", "block");
+        } else {
+            $("#last-name-invalid-label-upd").css("display", "none");
+        }
+
+        if (!isValid($("#client-about-input-upd").val(), "about")) {
+            flag = false;
+            $("#about-invalid-label-upd").css("display", "block");
+        } else {
+            $("#about-invalid-label-upd").css("display", "none");
+        }
+
+        if (!window.intlTelInputGlobals.getInstance(
+            document.querySelector("#client-phone-input-upd")).isValidNumber()) {
+            flag = false;
+        }
+
+        return flag;
     }
 
     function loadClientAppointmentsInfoForModal(idUserDetails) {
@@ -336,5 +410,3 @@
         })
     }
 }
-
-//TODO 1) Нельзя загрузить 2 phoneCode

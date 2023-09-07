@@ -1,22 +1,3 @@
-//TODO нет валидации в настройках.
-// Задеты
-// create_client_modal.jsp
-// client_tab.jsp
-// dynamic_popup.js
-// client.js
-// personality.jsp
-// tab.js
-// client_info_modal.jsp
-// income|outcomeappointments jsp
-// appointment.js
-// common.css
-// SQL user_details 15 - 30
-// JAVA
-// UserDetailsDataService
-// PhoneNumberUtils
-// AccountDataService
-// PhoneCodeRepository
-
 function initPhoneCodeWidget(inputId) {
 
     const input = document.querySelector("#" + inputId);
