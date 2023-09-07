@@ -12,7 +12,7 @@ import java.util.Optional;
  * Интерфейс для CRUD обработки таблицы Account
  */
 @Repository
-public interface AccountRepository extends JpaRepository<Account, Integer>, JpaSpecificationExecutor<Account> {
+public interface AccountRepository extends JpaRepository<Account, Integer> {
 
     /**
      * Производит поиск аккаунта по псевдониму пользователя

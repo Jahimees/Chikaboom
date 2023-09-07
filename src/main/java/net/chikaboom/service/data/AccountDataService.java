@@ -35,6 +35,7 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
 
     private final AccountRepository accountRepository;
     private final UserDetailsRepository userDetailsRepository;
+    private final UserDetailsDataService userDetailsDataService;
     private final AboutRepository aboutRepository;
     private final PhoneCodeRepository phoneCodeRepository;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -141,6 +142,7 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
     }
 
 //    TODO refactor Слишком большой метод
+
     /**
      * Применяет частичное изменение объекта, игнорируя null поля и неизменные поля
      *
@@ -166,12 +168,13 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
                     && userDetails.getPhone() != null
                     && !userDetails.getPhone().isEmpty()) {
 
-                String formattedPhone = PhoneNumberUtils.formatNumberInternational(
-                        userDetails.getPhone(), userDetails.getPhoneCode().getCountryCut());
-
-                if (userDetailsRepository.existsUserDetailsByPhone(formattedPhone)) {
+                if (userDetailsDataService.existsUserDetailsByPhone(userDetails.getPhone(),
+                        userDetails.getPhoneCode().getCountryCut())) {
                     throw new UserAlreadyExistsException("User with the same phone already exists");
                 } else {
+                    String formattedPhone = PhoneNumberUtils.formatNumberInternational(
+                            userDetails.getPhone(), userDetails.getPhoneCode().getCountryCut());
+
                     patchedUserDetails.setPhoneCode(
                             phoneCodeRepository.findFirstByCountryCut(userDetails.getPhoneCode().getCountryCut()));
                     patchedUserDetails.setPhone(formattedPhone);
@@ -252,11 +255,10 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
     public boolean isAccountExists(Account account) throws NumberParseException {
         net.chikaboom.model.database.UserDetails userDetails = account.getUserDetails();
 
-        String formattedPhone = PhoneNumberUtils.formatNumberInternational(userDetails.getPhone(),
-                userDetails.getPhoneCode().getCountryCut());
-
         return accountRepository.existsById(account.getIdAccount())
                 || accountRepository.existsAccountByUsername(account.getUsername())
-                || userDetailsRepository.existsUserDetailsByPhone(account.getUserDetails().getPhone());
+                || userDetailsDataService.existsUserDetailsByPhone(
+                userDetails.getPhone(),
+                userDetails.getPhoneCode().getCountryCut());
     }
 }

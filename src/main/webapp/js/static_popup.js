@@ -177,18 +177,6 @@
         defineIsFieldValid(field);
     }
 
-    $("#login-submit-btn").on("click", () => {
-        if (validateAllAuthorizeFields()) {
-            let selectedCountryData = window.intlTelInputGlobals.getInstance(
-                document.querySelector("#l-input-phone")).getSelectedCountryData();
-            let $inputUsername = $("#l-input-phone");
-            let $hiddenInput = $("#l-hidden-input-phone");
-            $hiddenInput.val($inputUsername.val() + "_" + selectedCountryData.iso2)
-
-            $("#login-form").submit();
-        }
-    })
-
     function validateAllAuthorizeFields() {
         let flag = true;
         for (let field of login_fields) {
@@ -242,3 +230,15 @@
         $("#r-phone-duplicate").css("display", "none");
     }
 }
+
+$("#login-submit-btn").on("click", () => {
+    if (validateAllAuthorizeFields()) {
+        let selectedCountryData = window.intlTelInputGlobals.getInstance(
+            document.querySelector("#l-input-phone")).getSelectedCountryData();
+        let $inputUsername = $("#l-input-phone");
+        let $hiddenInput = $("#l-hidden-input-phone");
+        $hiddenInput.val($inputUsername.val() + "_" + selectedCountryData.iso2)
+
+        $("#login-form").submit();
+    }
+})

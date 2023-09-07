@@ -35,7 +35,23 @@ public class UserDetailsDataService {
     private final PhoneCodeRepository phoneCodeRepository;
     private final SessionFactory sessionFactory;
 
-    //TODO exists by phone
+    /**
+     * Проверяет существование в базе пользовательской информации по номеру телефона
+     *
+     * @param phone номер телефона
+     * @param countryCut буквенный код страны
+     * @return true - если существует, false - в противном случае
+     */
+    public boolean existsUserDetailsByPhone(String phone, String countryCut) {
+        String formattedPhone = "";
+        try {
+            formattedPhone = PhoneNumberUtils.formatNumberInternational(phone, countryCut);
+        } catch (NumberParseException e) {
+            return false;
+        }
+
+        return userDetailsRepository.existsUserDetailsByPhone(formattedPhone);
+    }
 
     /**
      * Производит поиск пользовательской информации по идентификатору
@@ -50,7 +66,7 @@ public class UserDetailsDataService {
     /**
      * Производит поиск пользовательской информации по номеру телефона
      *
-     * @param phone номер телефона
+     * @param phone      номер телефона
      * @param countryCut буквенный код страны для приведения номера телефона к формату, в котором данные хранятся в базе
      * @return найденную пользовательскую информацию
      * @throws NumberParseException возникает, когда невозможно отформатировать номер телефона
@@ -143,6 +159,7 @@ public class UserDetailsDataService {
     }
 
 //    TODO что-то сделать с запросом?
+
     /**
      * Производит поиск клиентов мастера, а также высчитывает общее количество посещений к этому мастеру и дату
      * последнего визита
@@ -194,6 +211,7 @@ public class UserDetailsDataService {
 
     /**
      * Производит удаление пользовательской информации по идентификатору
+     *
      * @param idUserService идентификатор пользовательской информации
      */
     public void deleteById(int idUserService) {

@@ -43,6 +43,9 @@ public class Appointment implements BaseEntity {
     @Column(name = APPOINTMENT_DATE_TIME)
     private Timestamp appointmentDateTime;
 
+    /**
+     * Пользовательская информация о клиенте
+     */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = ID_USER_DETAILS_CLIENT)
     private UserDetails userDetailsClient;
