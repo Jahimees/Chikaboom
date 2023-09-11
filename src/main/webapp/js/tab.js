@@ -14,14 +14,10 @@
             contentType: "application/text",
             dataType: "text",
             success: function (data) {
-                setCurrentTabName(tabName);
                 $("#appointment-tab-placeholder").html(data);
             },
             error: function () {
-                repairDefaultMessagePopup();
-                $("#popup-message-text").text("Невозможно загрузить информацию о записях!");
-                $(".message-popup > .popup-title > #popup-message-header").text("ОШИБКА!");
-                openPopup('message-popup');
+                callMessagePopup("Ошибка!", "Невозможно загрузить информацию о записях!");
             }
         })
     }
@@ -33,14 +29,10 @@
             contentType: "application/text",
             dataType: "text",
             success: function (data) {
-                setCurrentTabName(tabName);
                 $("#setting-content-placeholder").html(data);
             },
             error: function () {
-                repairDefaultMessagePopup();
-                $("#popup-message-text").text("Невозможно загрузить информацию о настройках!");
-                $(".message-popup > .popup-title > #popup-message-header").text("ОШИБКА!");
-                openPopup('message-popup');
+                callMessagePopup("Ошибка!", "Невозможно загрузить информацию о настройках!")
             }
         });
     }
@@ -109,7 +101,7 @@
     function openEditEmailPopup() {
         dropAllFields();
         addField("Электронная почта", "email", "text", "example@gmail.com", false, [new Validation("Неверный формат электронной почты", InvalidReason.EMAIL)]);
-        openPopup("edit-popup");
+        $("#editModal").modal('show');
     }
 
     function openPhoneEditPopup() {
@@ -118,7 +110,7 @@
                 new Validation("Поле не может быть пустым", InvalidReason.EMPTY),
                 new Validation("Неверный формат телефона", InvalidReason.PHONE)],
             'input', 'userDetails');
-        openPopup("edit-popup");
+        $("#editModal").modal('show');
     }
 
     function openPasswordEditPopup() {
@@ -126,7 +118,7 @@
         addField("Старый пароль", "oldPassword", "password", "*****", false, [new Validation("Поле не может быть пустым", InvalidReason.EMPTY)]);
         addField("Новый пароль", "password", "password", "*****", false, [new Validation("Поле не может быть пустым", InvalidReason.EMPTY)]);
         addField("Подтвердите новый пароль", "confirmNewPassword", "password", "*****", false, [new Validation("Поле не может быть пустым", InvalidReason.EMPTY)]);
-        openPopup("edit-popup");
+        $("#editModal").modal('show');
     }
 
     function openEditUsernamePopup() {
@@ -135,7 +127,7 @@
             [new Validation("Поле не может быть пустым", InvalidReason.EMPTY),
                 new Validation("Имя слишком короткое", InvalidReason.SHORT),
                 new Validation("Можно использовать только латинские буквы и цифры", InvalidReason.USERNAME)]);
-        openPopup("edit-popup");
+        $("#editModal").modal('show');
     }
 
     function openEditAboutPopup() {
@@ -145,7 +137,7 @@
         let aboutTextInputField = addField("О себе", "text", "text", "Напишите пару слов о себе", false, [], "textarea", "about");
         professionInputField.value = accountJson.userDetails.about != null ? accountJson.userDetails.about.profession : "";
         aboutTextInputField.value = accountJson.userDetails.about != null ? accountJson.userDetails.about.text : "";
-        openPopup("edit-popup");
+        $("#editModal").modal('show');
     }
 
     function openEditFirstAndLastNamesPopup() {
@@ -163,7 +155,7 @@
             firstNameInputField.value = "";
             lastNameInputField.value = "";
         }
-        openPopup("edit-popup");
+        $("#editModal").modal('show');
     }
 
     function openEditAddressPopup() {
@@ -180,7 +172,7 @@
             onSelect: function (suggestion) {
             }
         });
-        openPopup("edit-popup");
+        $("#editModal").modal('show');
     }
 
     function chooseAvatarImage() {
@@ -229,10 +221,7 @@
                 }
             },
             error: function (data) {
-                repairDefaultMessagePopup();
-                $("#popup-message-text").text("При загрузке страницы что-то пошло не так!");
-                $("#popup-message-header").text("Что-то пошло не так!");
-                openPopup('message-popup');
+                callMessagePopup("Что-то пошло не так!", "При загрузке страницы что-то пошло не так!");
             }
         })
     }
@@ -254,18 +243,14 @@
             data: formData,
             statusCode: {
                 201: function () {
-                    $("#popup-message-text").text("Ваше новое фото профиля успешно было загружено!");
-                    $(".message-popup > .popup-title > #popup-message-header").text("Фотография успешно загружена!");
+                    callMessagePopup("Фотография успешно загружена!", "Ваше новое фото профиля успешно было загружено!");
                     let $img = $(".personality-avatar-image");
                     let $small_image = $(".small-avatar-image");
                     $img.attr("src", $img.attr("src").split("?")[0] + "?" + Math.random());
                     $small_image.attr("src", $small_image.attr("src").split("?")[0] + "?" + Math.random());
-                    openPopup('message-popup');
                 },
                 400: function () {
-                    $("#popup-message-text").text("Произошла ошибка! Фотографию не удалось загрузить!");
-                    $(".message-popup > .popup-title > #popup-message-header").text("ОШИБКА!");
-                    openPopup('message-popup');
+                    callMessagePopup("Ошибка!", "Произошла ошибка! Фотографию не удалось загрузить!");
                 }
             }
         })

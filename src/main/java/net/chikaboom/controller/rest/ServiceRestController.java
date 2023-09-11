@@ -117,9 +117,9 @@ public class ServiceRestController {
             return ResponseEntity.notFound().build();
         }
 
-        Account authorizedAccount = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        CustomPrincipal customPrincipal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (serviceOptional.get().getAccount().getIdAccount() != authorizedAccount.getIdAccount()) {
+        if (serviceOptional.get().getAccount().getIdAccount() != customPrincipal.getIdAccount()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 

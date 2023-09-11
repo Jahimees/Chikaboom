@@ -12,9 +12,7 @@
                 $("#content-placeholder").html(data);
             },
             error: function () {
-                $("#popup-message-text").text("Невозможно загрузить вкладку " + tabName + "!");
-                $(".message-popup > .popup-title > #popup-message-header").text("ОШИБКА!");
-                openPopup('message-popup');
+                callMessagePopup("Ошибка", "Невозможно загрузить вкладку " + tabName + "!")
             }
         });
     }
@@ -68,10 +66,7 @@
                 phoneVisible: isPhoneVisible
             }),
             error: function () {
-                repairDefaultMessagePopup();
-                $("#popup-message-text").text("Что-то пошло не так! Невозможно установить видимость телефона");
-                $(".message-popup > .popup-title > #popup-message-header").text("Проблема на сервере!");
-                openPopup('message-popup');
+                callMessagePopup("Проблема на сервере!", "Что-то пошло не так! Невозможно установить видимость телефона")
             }
         })
     }

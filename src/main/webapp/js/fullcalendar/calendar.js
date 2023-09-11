@@ -191,7 +191,8 @@ var cal2GoTo = function (date) {
 
 var newEvent = function (start, nd) {
     $('input#title').val("");
-    openPopup('new-event');
+    let $createEventModal = $("#createEventModal");
+    $createEventModal.modal('show');
     $('#submit').unbind();
     $('#submit').on('click', function () {
         var title = $('input#title').val();
@@ -203,25 +204,27 @@ var newEvent = function (start, nd) {
                 end: nd
             };
             $cal.fullCalendar('renderEvent', eventData, true);
-            closePopup('new-event');
+            $createEventModal.modal('hide');
         } else {
-            alert("Название не может быть пустым")
+            $createEventModal.modal('hide');
+            callMessagePopup("Невозможно создать событие", "Название не может быть пустым");
         }
     });
 }
 
 var editEvent = function (calEvent) {
     $('input#editTitle').val(calEvent.title);
-    openPopup('edit-event')
+    let $updateEventModal = $("#updateEventModal");
+    $updateEventModal.modal('show');
     $('#update').unbind();
     $('#update').on('click', function () {
         var title = $('input#editTitle').val();
-        closePopup('edit-event')
+        $updateEventModal.modal('hide');
         if (title) {
             calEvent.title = title
             $cal.fullCalendar('updateEvent', calEvent);
         } else {
-            alert("Title can't be blank. Please try again.")
+            callMessagePopup("Невозможно обновить событие", "Название не может быть пустым")
         }
     });
     $('#delete').on('click', function () {
@@ -232,7 +235,7 @@ var editEvent = function (calEvent) {
         } else {
             $cal.fullCalendar('removeEvents', [calEvent._id]);
         }
-        closePopup('edit-event')
+        $updateEventModal.modal('hide');
     });
 }
 
@@ -276,10 +279,7 @@ function loadWorkingDaysData(idAccount) {
             loadAccountCalendar();
         },
         error: function () {
-            repairDefaultMessagePopup();
-            $("#popup-message-text").text("Невозможно загрузить расписание!");
-            $("#popup-message-header").text("Что-то пошло не так!");
-            openPopup('message-popup');
+            callMessagePopup("Что-то пошло не так!", "Невозможно загрузить расписание!");
         }
     })
 }
@@ -304,11 +304,11 @@ function loadAccountCalendar() {
             $("#timetable-placeholder").html(data);
 
             setTimeout(function () {
-                var button = document.createElement("button");
+                let button = document.createElement("button");
                 button.innerHTML = "Сделать рабочим";
                 button.setAttribute("class", "fc-button fc-state-default");
                 button.setAttribute("type", "button");
-                button.setAttribute("onclick", "addOrRemoveWorkingDate($('#calendar2 .fc-day')[0].getAttribute('data-date'))");
+                button.setAttribute("onclick", "addOrRemoveWorkingDate($('#calendar2 .fc-day').attr('data-date'))");
                 $("#calendar2 .fc-right").append(button);
             }, (1000))
         },
@@ -316,8 +316,6 @@ function loadAccountCalendar() {
             underConstruction();
         }
     })
-
-
 }
 
 function reloadWorkingDayDuration() {
@@ -336,8 +334,8 @@ function reloadWorkingDayDuration() {
 }
 
 $("#save-work-time-btn").on("click", function () {
-    var startVal = $("#working-day-start")[0].value;
-    var endVal = $("#working-day-end")[0].value;
+    var startVal = $("#working-day-start").val();
+    var endVal = $("#working-day-end").val();
 
     var regexp = /^(?:\d|[01]\d|2[0-3]):[0-5]\d$/;
 

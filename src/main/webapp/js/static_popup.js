@@ -1,29 +1,4 @@
-//TODO Избавиться от дублирования кода по всему файлу
 {
-    function openPopup(popupName) {
-        $('.popup-bg').fadeIn(200);
-        $('.' + popupName).fadeIn(200);
-    }
-
-    function closePopup(popupName) {
-        $('.popup-bg').fadeOut(200);
-        $('.' + popupName).fadeOut(200);
-
-        if (popupName === 'login-popup' || popupName === 'register-popup') {
-            repaintLoginRegisterFields();
-        }
-    }
-
-    // TODO refactor XMS-125
-    $('.popup-bg').on('click', function () {
-        closePopup('login-popup');
-        closePopup('register-popup');
-        closePopup('message-popup');
-        closePopup('edit-popup');
-        closePopup('new-event');
-        closePopup('edit-event');
-    });
-
     $("#confirm-register").on("click", function () {
         if (validateAllRegisterFields()) {
             let selectedCountryData = window.intlTelInputGlobals.getInstance(
@@ -56,12 +31,8 @@
                 dataType: "json",
                 data: JSON.stringify(account),
                 success: function () {
-                    closePopup('register-popup');
-                    closePopup('login-popup');
-                    repairDefaultMessagePopup();
-                    $("#popup-message-text").text("Вы успешно прошли регистрацию!");
-                    $("#popup-message-header").text("Регистрация успешна!");
-                    openPopup('message-popup');
+                    $("#registerModal").modal('hide');
+                    callMessagePopup("Регистрация успешна!", "Вы успешно прошли регистрацию!")
                 },
                 error: function () {
                     showWarnPhoneDuplicate();
@@ -80,6 +51,7 @@
             },
             data: $('#login-form').serialize(),
             success: function () {
+                hideWarnWrongLoginData();
                 var hrefParts = location.href.split("#")
                 location.href = hrefParts[0];
             },
@@ -108,31 +80,8 @@
         validateRegisterField(this);
     });
 
-    let login_register_fields = [];
     let register_fields = $(".r-popup-input-field");
     let login_fields = $(".l-popup-input-field");
-
-    function repaintLoginRegisterFields() {
-        if (login_register_fields.length === 0) {
-            for (let field of login_fields) {
-                login_register_fields.push(field);
-            }
-            for (let field of register_fields) {
-                login_register_fields.push(field);
-            }
-        }
-
-        for (let field of login_register_fields) {
-            field.style.borderColor = "";
-            field.setAttribute("valid", false);
-            field.value = "";
-            $("#" + field.id + "-" + field.getAttribute("reason")).css("display", "none");
-        }
-
-        hideWarnWrongLoginData();
-        hideWarnPhoneDuplicate();
-    }
-
     let reasons = ["empty", "incorrect", "different", "short"];
 
     function validateRegisterField(field) {
@@ -151,7 +100,7 @@
             field.setAttribute("reason", "incorrect");
         } else if (field.id === "r-input-username" && !/^[a-zA-ZА-Яа-я]+\s{0,1}[a-zA-ZА-Яа-я]+$/.test(field.value)) {
             field.setAttribute("reason", "incorrect");
-        } else if (field.id === "r-input-confirm-password" && $("#" + field.id)[0].value !== $("#r-input-password")[0].value) {
+        } else if (field.id === "r-input-confirm-password" && $("#" + field.id).val() !== $("#r-input-password").val()) {
             field.setAttribute("reason", "different");
         } else {
             field.style.borderColor = ""
@@ -219,8 +168,8 @@
 
     function showWarnWrongLoginData() {
         $("#l-phone-or-password-incorrect").css("display", "block");
-        $("#l-input-password")[0].value = ""
-        $("#l-input-password")[0].setAttribute("valid", "false");
+        $("#l-input-password").val("");
+        $("#l-input-password").attr("valid", "false");
     }
 
     function hideWarnWrongLoginData() {
@@ -229,10 +178,6 @@
 
     function showWarnPhoneDuplicate() {
         $("#r-phone-duplicate").css("display", "block");
-    }
-
-    function hideWarnPhoneDuplicate() {
-        $("#r-phone-duplicate").css("display", "none");
     }
 }
 

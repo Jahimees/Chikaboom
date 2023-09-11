@@ -77,10 +77,7 @@
                 servicesJson = data;
             },
             error: function () {
-                repairDefaultMessagePopup();
-                $("#popup-message-text").text("Что-то пошло не так. Невозможно загрузить услуги!");
-                $(".message-popup > .popup-title > #popup-message-header").text("Невозможно загрузить услуги!");
-                openPopup('message-popup');
+                callMessagePopup("Невозможно загрузить услуги!", "Что-то пошло не так. Невозможно загрузить услуги!")
             }
         });
 
@@ -100,10 +97,7 @@
                 masterAppointmentsJson = data;
             },
             error: function () {
-                repairDefaultMessagePopup();
-                $("#popup-message-text").text("Что-то пошло не так. Невозможно загрузить записи!");
-                $(".message-popup > .popup-title > #popup-message-header").text("Невозможно загрузить записи!");
-                openPopup('message-popup');
+                callMessagePopup("Невозможно загрузить записи!", "Что-то пошло не так. Невозможно загрузить записи!")
             }
         })
 
@@ -123,8 +117,8 @@
                 chosenService = service
             }
         })
-        $("#service-cost-placeholder")[0].innerHTML = "Стоимость услуги: " + chosenService.price + " р.";
-        $("#service-time-placeholder")[0].innerHTML = "Время услуги: " + chosenService.time;
+        $("#service-cost-placeholder").text("Стоимость услуги: " + chosenService.price + " р.");
+        $("#service-time-placeholder").text("Время услуги: " + chosenService.time);
     })
 
     $("#working-day-select").on("click", function () {

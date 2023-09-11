@@ -9,7 +9,6 @@
             contentType: "application/text",
             dataType: "text",
             success: function (data) {
-                setCurrentTabName(tabName);
                 loadServiceSubtypes();
                 $("#service-type-content-placeholder").html(data);
             },
@@ -30,10 +29,7 @@
                 serviceSubtypes = data;
             },
             error: function () {
-                repairDefaultMessagePopup();
-                $("#popup-message-text").text("Что-то пошло не так. Невозможно загрузить подтипы услуг!");
-                $(".message-popup > .popup-title > #popup-message-header").text("Невозможно загрузить подтипы услуг!");
-                openPopup('message-popup');
+                callMessagePopup("Невозможно загрузить подтипы услуг!", "Что-то пошло не так. Невозможно загрузить подтипы услуг!")
             }
         })
     }
@@ -63,7 +59,7 @@
         let serviceTypeSet = new Set();
         let serviceSubtypeSet = new Set();
 
-        $("#service-placeholder")[0].innerHTML = "";
+        $("#service-placeholder").html("");
 
         servicesJson.forEach(function (service) {
             if (!isObjectInSet(service.serviceSubtype.serviceType, serviceTypeSet, "serviceType")) {
@@ -75,97 +71,63 @@
         })
 
         serviceTypeSet.forEach(function (serviceType) {
-            let serviceBlock = $("#service-placeholder")[0];
+            let serviceBlock = $("#service-placeholder");
 
-            let serviceTypeBlock = document.createElement("div");
-            serviceTypeBlock.setAttribute("class", "service-type-block");
-            serviceTypeBlock.setAttribute("id", "service-type-" + serviceType.idServiceType);
+            let idServiceType = "service-type-" + serviceType.idServiceType
 
-            let serviceTypeBlockHeader = document.createElement("div");
-            serviceTypeBlockHeader.setAttribute("class", "service-type-header medium-text");
-            serviceTypeBlockHeader.innerHTML = serviceType.name.toUpperCase();
+            let serviceTypeBlock = $("<div class='service-type-block' id='" + idServiceType + "'></div>");
+            let serviceTypeBlockHeader = $("<div class='service-type-header medium-text'></div>").text(serviceType.name.toUpperCase());
+            let serviceUnderLine = $("<div class='horizontal-blue-line'></div>")
+            serviceTypeBlock.append(serviceTypeBlockHeader).append(serviceUnderLine);
 
-            let serviceUnderline = document.createElement("div");
-            serviceUnderline.setAttribute("class", "horizontal-blue-line");
-
-            serviceBlock.appendChild(serviceTypeBlock);
-            serviceTypeBlock.appendChild(serviceTypeBlockHeader);
-            serviceTypeBlock.appendChild(serviceUnderline);
+            serviceBlock.append(serviceTypeBlock);
         })
 
         serviceSubtypeSet.forEach(function (serviceSubtype) {
             let serviceType = serviceSubtype.serviceType;
 
-            let serviceTypeTag = $("#service-type-" + serviceType.idServiceType)[0];
-            let serviceSubtypeBlockHeader = document.createElement("div");
-            serviceSubtypeBlockHeader.setAttribute("id", "service-subtype-" + serviceSubtype.idServiceSubtype);
-            serviceSubtypeBlockHeader.setAttribute("class", "service-type-header medium-text");
-            serviceSubtypeBlockHeader.innerHTML = serviceSubtype.name;
+            let serviceTypeTag = $("#service-type-" + serviceType.idServiceType);
+            let serviceSubtypeBlockHeader = $("<div class='service-type-header medium-text' id='service-subtype-" +
+                serviceSubtype.idServiceSubtype + "'></div>").text(serviceType.name);
 
-            serviceTypeTag.appendChild(serviceSubtypeBlockHeader);
+            serviceTypeTag.append(serviceSubtypeBlockHeader);
         })
 
         servicesJson.forEach(function (service) {
             let idServiceSubtype = service.serviceSubtype.idServiceSubtype;
-            let serviceSubtypeTag = $("#service-subtype-" + idServiceSubtype)[0];
+            let serviceSubtypeTag = $("#service-subtype-" + idServiceSubtype)
 
-            let rowTag = document.createElement("div");
-            rowTag.setAttribute("class", "service-row row medium-text");
+            let rowTag = $("<div class='service-row row medium-text'></div>")
+            let nameTag = $("<div class='col-5'></div>").text(service.name);
+            let timeTag = $("<div class='col-3'></div>").text(service.time);
+            let priceTag = $("<div class='col-2'></div>").text(service.price + " BYN");
 
-            let nameTag = document.createElement("div");
-            nameTag.setAttribute("class", "col-5");
-            nameTag.innerHTML = service.name;
-
-            let timeTag = document.createElement("div");
-            timeTag.setAttribute("class", "col-3");
-            timeTag.innerHTML = service.time;
-
-            let priceTag = document.createElement("div");
-            priceTag.setAttribute("class", "col-2");
-            priceTag.innerHTML = service.price + " BYN";
-
-            rowTag.appendChild(nameTag);
-            rowTag.appendChild(timeTag);
-            rowTag.appendChild(priceTag);
+            rowTag.append(nameTag, timeTag, priceTag);
 
             if (!isAccountPage) {
 
-                let editTag = document.createElement("div");
-                let editIcon = document.createElement("img");
-                editIcon.setAttribute("src", "/image/icon/edit_icon.svg");
+                let editTag = $("<div class='edit-button col-1' idService='" +
+                    service.idService + "' onclick='editService(this.getAttribute(\"idService\"))'></div>")
+                let editIcon = $("<img src='/image/icon/edit_icon.svg'>")
+                editTag.append(editIcon);
 
-                editTag.setAttribute("class", "edit-button col-1");
-                editTag.setAttribute("idService", service.idService)
-                editTag.setAttribute("onclick", "editService(this.getAttribute('idService'))");
-                editTag.appendChild(editIcon);
+                let deleteTag = $("<div class='edit-button col-1' onclick='callConfirmDeletePopup(" +
+                    "this.getAttribute(\"idService\"))' idService='" + service.idService + "'></div>")
+                let crossIcon = $("<img src='/image/icon/cross_icon.svg' width='22px'>")
+                deleteTag.append(crossIcon);
 
-                let deleteTag = document.createElement("div");
-                let crossIcon = document.createElement("img");
-                crossIcon.setAttribute("src", "/image/icon/cross_icon.svg");
-                crossIcon.setAttribute("width", "22px");
-
-                deleteTag.setAttribute("idService", service.idService);
-                deleteTag.setAttribute("class", "edit-button col-1");
-                deleteTag.setAttribute("onclick", "callConfirmDeletePopup(this.getAttribute('idService'))");
-                deleteTag.appendChild(crossIcon);
-
-                rowTag.appendChild(editTag);
-                rowTag.appendChild(deleteTag);
+                rowTag.append(editTag, deleteTag);
             } else {
-                let orderTag = document.createElement("div");
-                orderTag.setAttribute("class", "purple-button col-2");
-                orderTag.setAttribute("style", "font-size: 20px; padding: 0 0;");
-                orderTag.setAttribute("data-bs-toggle", "modal");
-                orderTag.setAttribute("data-bs-target", "#appointmentModal");
-                orderTag.onclick = function () {
-                    $("#services-select")[0].value = service.idService;
-                }
-                orderTag.innerHTML = "Записаться";
+                let orderTag = $("<div class='purple-button col-2' style='font-size: 20px; padding: 0' " +
+                    "data-bs-toggle='modal' data-bs-target='#appointmentModal'></div>").text("Записаться")
 
-                rowTag.appendChild(orderTag);
+                orderTag.onclick = function () {
+                    $("#services-select").val(service.idService);
+                }
+                rowTag.append(orderTag);
             }
 
-            serviceSubtypeTag.appendChild(rowTag);
+            serviceSubtypeTag.append(rowTag);
         })
     }
 
@@ -173,7 +135,7 @@
         clearServiceTypeOptions();
 
         let serviceTypes = new Set();
-        let serviceTypeSelect = $("#service-type-select")[0];
+        let serviceTypeSelect = $("#service-type-select");
 
         serviceSubtypes.forEach(function (serviceSubtype) {
             if (!isObjectInSet(serviceSubtype.serviceType, serviceTypes, "serviceType")) {
@@ -182,11 +144,9 @@
         })
 
         serviceTypes.forEach(function (serviceType) {
-            let option = document.createElement("option");
-            option.value = serviceType.idServiceType;
-            option.innerHTML = serviceType.name;
+            let option = $("<option></option>").val(serviceType.idServiceType).text(serviceType.name);
 
-            serviceTypeSelect.appendChild(option);
+            serviceTypeSelect.append(option);
         })
 
         reloadServiceSubtypeSelectOptions();
@@ -195,38 +155,34 @@
     function reloadServiceSubtypeSelectOptions() {
         clearServiceSubtypeOptions()
 
-        let idServiceType = $("#service-type-select")[0].value;
         let serviceSubtypeSet = new Set();
-        let serviceSubtypeSelect = $("#service-subtype-select")[0];
+        let $serviceSubtypeSelect = $("#service-subtype-select");
 
         serviceSubtypes.forEach(function (serviceSubtype) {
-            if (serviceSubtype.serviceType.idServiceType === Number(idServiceType)) {
+            if (serviceSubtype.serviceType.idServiceType === Number($("#service-type-select").val())) {
                 serviceSubtypeSet.add(serviceSubtype);
             }
         })
 
         serviceSubtypeSet.forEach(function (serviceSubtype) {
-            let option = document.createElement("option");
-            option.value = serviceSubtype.idServiceSubtype;
-            option.innerHTML = serviceSubtype.name;
+            let option = $("<option></option>").val(serviceSubtype.idServiceSubtype).text(serviceSubtype.name);
 
-            serviceSubtypeSelect.appendChild(option);
+            $serviceSubtypeSelect.append(option);
         })
     }
 
     function clearServiceTypeOptions() {
-        $("#service-type-select")[0].innerHTML = "";
+        $("#service-type-select").html("");
     }
 
     function clearServiceSubtypeOptions() {
-        $("#service-subtype-select")[0].innerHTML = "";
+        $("#service-subtype-select").html("");
     }
 
     function isObjectInSet(object, objectSet, objectType) {
         let flag = false;
 
         if (objectType === "serviceType") {
-
             objectSet.forEach(function (serviceType) {
                 if (object.idServiceType == serviceType.idServiceType) {
                     flag = true;
@@ -248,38 +204,31 @@
         showEditRow();
 
         let service;
-
         service = searchService(idService);
 
-        $("#service-id-input")[0].value = service.idService;
-        $("#service-type-select")[0].value = service.serviceSubtype.serviceType.idServiceType;
+        $("#service-id-input").val(service.idService);
+        $("#service-type-select").val(service.serviceSubtype.serviceType.idServiceType);
         reloadServiceSubtypeSelectOptions();
-        $("#service-subtype-select")[0].value = service.serviceSubtype.idServiceSubtype;
-        $("#service-name-input")[0].value = service.name;
-        $("#service-time-select")[0].value = service.time;
-        $("#service-price-input")[0].value = service.price;
+        $("#service-subtype-select").val(service.serviceSubtype.idServiceSubtype);
+        $("#service-name-input").val(service.name);
+        $("#service-time-select").val(service.time);
+        $("#service-price-input").val(service.price);
     }
 
     function saveService() {
-        let idServiceSubtype = Number($("#service-subtype-select")[0].value);
+        let idServiceSubtype = Number($("#service-subtype-select").val());
         let serviceName = $("#service-name-input").val();
         let servicePrice = $("#service-price-input").val();
         let serviceTime = $("#service-time-select").val();
         let idService = $("#service-id-input").val();
 
         if (serviceName == null || serviceName === "") {
-            repairDefaultMessagePopup();
-            $("#popup-message-text").text("Поле с названием должно быть заполнено!");
-            $(".message-popup > .popup-title > #popup-message-header").text("Не все поля заполнены!");
-            openPopup('message-popup');
+            callMessagePopup("Не все поля заполнены!", "Поле с названием должно быть заполнено!");
             return;
         }
 
         if (servicePrice == null || servicePrice === "") {
-            repairDefaultMessagePopup();
-            $("#popup-message-text").text("Поле с ценой должно быть заполнено!");
-            $(".message-popup > .popup-title > #popup-message-header").text("Не все поля заполнены!");
-            openPopup('message-popup');
+            callMessagePopup("Не все поля заполнены!", "Поле с ценой должно быть заполнено!");
             return;
         }
 
@@ -316,63 +265,48 @@
             dataType: "json",
             data: JSON.stringify(obj),
             success: function () {
-                $("#popup-message-text").text("Данные успешно сохранены!");
-                $(".message-popup > .popup-title > #popup-message-header").text("Данные сохранены");
-                openPopup('message-popup');
+                callMessagePopup("Данные сохранены", "Данные успешно сохранены!");
                 loadServiceTab(accountJson.idAccount);
             },
             error: function () {
-                $("#popup-message-text").text("Произошла ошибка! Данные не были сохранены!");
-                $(".message-popup > .popup-title > #popup-message-header").text("Данные не сохранены");
-                openPopup('message-popup');
+                callMessagePopup("Данные не сохранены", "Произошла ошибка! Данные не были сохранены!")
             }
         })
     }
 
     function callConfirmDeletePopup(idService) {
         let serviceName = searchService(idService).name;
+        callMessagePopup("Удаление", "Вы действительно хотите удалить услугу \"" + serviceName + "\"?")
 
-        repairDefaultMessagePopup();
-        $("#decline-message-btn")[0].style.display = "block";
-        $("#confirm-message-btn")[0].setAttribute("onclick", "deleteService(" + idService + ")");
-
-        $("#popup-message-text").text("Вы действительно хотите удалить услугу \"" + serviceName + "\"?");
-        $(".message-popup > .popup-title > #popup-message-header").text("Удаление");
-        openPopup("message-popup");
-
+        $("#decline-message-btn").css("display", "block");
+        $("#confirm-message-btn").attr("onclick", "deleteService(" + idService + ")");
     }
 
     function deleteService(idService) {
-        repairDefaultMessagePopup();
-
         $.ajax({
             type: "DELETE",
             url: "/services/" + idService,
             success: function () {
-                $("#popup-message-text").text("Удаление прошло успешно!");
-                $(".message-popup > .popup-title > #popup-message-header").text("Услуга удалена!");
-                openPopup("message-popup");
+                callMessagePopup("Услуга удалена!", "Удаление прошло успешно!")
                 loadServiceTab(accountJson.idAccount);
             },
             error: function () {
-                $("#popup-message-text").text("Услуга не удалена! Произошла неизвестная ошибка");
-                $(".message-popup > .popup-title > #popup-message-header").text("Услуга не удалена!");
-                openPopup("message-popup");
+                callMessagePopup("Услуга не удалена!", "Услуга не удалена! Произошла неизвестная ошибка")
             }
         })
     }
 
     function showEditRow() {
-        $("#service-edit")[0].style.display = "flex"
+        $("#service-edit").css("display", "flex");
     }
 
     function clearEditRow() {
-        $("#service-id-input")[0].value = "";
-        $("#service-type-select")[0].value = 1;
+        $("#service-id-input").val("");
+        $("#service-type-select").val(1);
         reloadServiceSubtypeSelectOptions();
-        $("#service-name-input")[0].value = "";
-        $("#service-time-select")[0].value = "30 минут";
-        $("#service-price-input")[0].value = "";
+        $("#service-name-input").val("");
+        $("#service-time-select").val("30 минут");
+        $("#service-price-input").val("");
     }
 
     function prepareToCreateNewService() {
@@ -381,7 +315,7 @@
     }
 
     function hideEditRow() {
-        $("#service-edit")[0].style.display = "none"
+        $("#service-edit").css("display", "none");
     }
 
     function searchService(idService) {
@@ -397,19 +331,17 @@
 
 // Модальное окно записи
     function fillServicesModal(servicesJson) {
-        let servicesSelect = $("#services-select")[0];
+        let servicesSelect = $("#services-select");
 
         servicesJson.forEach(function (service) {
-            let option = document.createElement("option");
-            option.value = service.idService;
-            option.innerHTML = service.name;
+            let option = $("<option></option>").val(service.idService).text(service.name);
 
-            servicesSelect.appendChild(option);
+            servicesSelect.append(option);
         })
     }
 
     function fillWorkingDays(accountJson) {
-        let workingDaySelect = $("#working-day-select")[0];
+        let workingDaySelect = $("#working-day-select");
 
         let workingDays = JSON.parse(accountJson.workingDays.workingDays);
 
@@ -423,14 +355,12 @@
                     && today.getMonth() === workingDayObj.getMonth()
                     && today.getDate() <= workingDayObj.getDate())) {
 
-                let option = document.createElement("option");
-                option.value = workingDay;
-                option.innerHTML = workingDayObj.getDate() + "." + (1 + workingDayObj.getMonth()) + "." + workingDayObj.getFullYear();
+                let option = $("<option></option>").val(workingDay).text(workingDayObj.getDate() +
+                    "." + (1 + workingDayObj.getMonth()) +
+                    "." + workingDayObj.getFullYear())
 
-                workingDaySelect.appendChild(option);
+                workingDaySelect.append(option);
             }
         });
     }
-
-
 }
