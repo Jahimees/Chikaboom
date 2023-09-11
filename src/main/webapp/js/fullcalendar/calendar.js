@@ -191,7 +191,7 @@ var cal2GoTo = function (date) {
 
 var newEvent = function (start, nd) {
     $('input#title').val("");
-    $('#newEvent').modal('show');
+    openPopup('new-event');
     $('#submit').unbind();
     $('#submit').on('click', function () {
         var title = $('input#title').val();
@@ -203,7 +203,7 @@ var newEvent = function (start, nd) {
                 end: nd
             };
             $cal.fullCalendar('renderEvent', eventData, true);
-            $('#newEvent').modal('hide');
+            closePopup('new-event');
         } else {
             alert("Название не может быть пустым")
         }
@@ -212,12 +212,11 @@ var newEvent = function (start, nd) {
 
 var editEvent = function (calEvent) {
     $('input#editTitle').val(calEvent.title);
-    $('#editEvent').modal('show');
+    openPopup('edit-event')
     $('#update').unbind();
     $('#update').on('click', function () {
         var title = $('input#editTitle').val();
-        $('#editEvent').modal('hide');
-        var eventData;
+        closePopup('edit-event')
         if (title) {
             calEvent.title = title
             $cal.fullCalendar('updateEvent', calEvent);
@@ -233,7 +232,7 @@ var editEvent = function (calEvent) {
         } else {
             $cal.fullCalendar('removeEvents', [calEvent._id]);
         }
-        $('#editEvent').modal('hide');
+        closePopup('edit-event')
     });
 }
 

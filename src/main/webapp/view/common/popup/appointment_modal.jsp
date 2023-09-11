@@ -35,8 +35,6 @@
 <jsp:useBean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
 <script>
     function makeAppointment() {
-        <%--let clientId = ${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.idAccount != 0--%>
-        //                     ? sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.idAccount : 0} +0;
         let client = ${objectMapper.writeValueAsString(sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal)};
        doMakeAppointment(client, accountJson);
     }

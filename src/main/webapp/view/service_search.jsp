@@ -15,16 +15,13 @@
     <link rel="stylesheet" href="/css/personality.css">
     <link rel="stylesheet" href="/css/popup.css">
     <link rel="stylesheet" href="/css/media/popup_media.css">
-    <link rel="stylesheet" href="/css/addition/carousel.css">
     <link rel="stylesheet" href="/css/addition/menu_bar.css">
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/media/main_media.css">
     <link rel="stylesheet" href="/css/popup.css">
-
-    <link href="https://fonts.cdnfonts.com/css/source-sans-pro" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/source-sans-pro">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-
 </head>
 <body>
 <jsp:include page="common/common_header.jsp"/>
@@ -42,9 +39,6 @@
 <hr>
 <div class="row">
     <div class="padding-0-5 col-4" style="border-right: solid 1px;">
-        <%--        <div class="common-text">--%>
-        <%--            Сортировка--%>
-        <%--        </div>--%>
         <div class="common-text">
             Тип услуги
         </div>

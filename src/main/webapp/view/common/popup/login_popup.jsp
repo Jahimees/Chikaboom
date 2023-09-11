@@ -9,7 +9,7 @@
         <div class="popup-body">
             <div class="common-black-text">Имя пользователя</div>
             <div class="popup-input middle-box w-80">
-                <input id="l-input-phone" class="popup-input-field" required
+                <input id="l-input-phone" class="l-popup-input-field" required
                        valid="false">
                 <span id="error-msg-l-input-phone" class="hide"></span>
                 <input id="l-hidden-input-phone" name="username" hidden="hidden">
@@ -17,7 +17,7 @@
             <div class="common-black-text">Пароль</div>
             <label class="invalid-field-label-popup" id="l-input-password-empty">Поле не может быть пустым</label>
             <div class="popup-input middle-box w-80">
-                <input id="l-input-password" class="popup-input-field" name="password" type="password" required
+                <input id="l-input-password" class="l-popup-input-field" name="password" type="password" required
                        placeholder="*****" valid="false">
             </div>
             <div>

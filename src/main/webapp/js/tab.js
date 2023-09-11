@@ -49,7 +49,6 @@
 
     function initDataTable(tableId) {
         let tableName = tableId ? tableId : "default";
-
         new DataTable('#' + tableName + "_table", {
             order: [[1, 'asc'], [2, 'asc']],
             "language": {
@@ -102,7 +101,8 @@
                     }
                 }
                 return true;
-            });
+            }
+        );
     }
 
 //////////////////////////////////SETTING TAB//////////////////////////////////////////////

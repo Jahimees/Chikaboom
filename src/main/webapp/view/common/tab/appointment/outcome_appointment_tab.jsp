@@ -33,8 +33,8 @@
         </div>
     </div>
 </div>
-<script>
 
+<script>
     $(document).ready(function () {
         loadAppointmentsData(${idAccount}, false);
 

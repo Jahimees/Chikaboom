@@ -8,14 +8,20 @@
     function closePopup(popupName) {
         $('.popup-bg').fadeOut(200);
         $('.' + popupName).fadeOut(200);
-        repaintLoginRegisterFields();
+
+        if (popupName === 'login-popup' || popupName === 'register-popup') {
+            repaintLoginRegisterFields();
+        }
     }
 
+    // TODO refactor XMS-125
     $('.popup-bg').on('click', function () {
         closePopup('login-popup');
         closePopup('register-popup');
         closePopup('message-popup');
         closePopup('edit-popup');
+        closePopup('new-event');
+        closePopup('edit-event');
     });
 
     $("#confirm-register").on("click", function () {
@@ -103,8 +109,8 @@
     });
 
     let login_register_fields = [];
-    let register_fields = $(".register-popup > .popup-body > .popup-input > input");
-    let login_fields = $("#login-form > .popup-body > .popup-input > input");
+    let register_fields = $(".r-popup-input-field");
+    let login_fields = $(".l-popup-input-field");
 
     function repaintLoginRegisterFields() {
         if (login_register_fields.length === 0) {
@@ -166,7 +172,6 @@
         if (field.value == null || field.value === "") {
             field.setAttribute("reason", "empty");
         } else if (field.id === "l-input-phone" && !intlInstance.isValidNumber()) {
-            //!/^[a-zA-ZА-Яа-я]+\s{0,1}[a-zA-ZА-Яа-я]+$/.test(field.value)) {
             field.setAttribute("reason", "incorrect");
         } else {
             field.style.borderColor = ""
@@ -202,7 +207,7 @@
     }
 
     function defineIsFieldValid(field) {
-        if (field.getAttribute("reason") !== '') {
+        if (field.getAttribute("reason") !== '' && field.getAttribute("id")) {
             field.style.borderColor = "#ff4444";
             field.setAttribute("valid", false);
             $("#" + field.id + "-" + field.getAttribute("reason")).css("display", "block");
@@ -237,8 +242,7 @@ $("#login-submit-btn").on("click", () => {
             document.querySelector("#l-input-phone")).getSelectedCountryData();
         let $inputUsername = $("#l-input-phone");
         let $hiddenInput = $("#l-hidden-input-phone");
-        $hiddenInput.val($inputUsername.val() + "_" + selectedCountryData.iso2)
-
+        $hiddenInput.val($inputUsername.val() + "_" + selectedCountryData.iso2);
         $("#login-form").submit();
     }
 })

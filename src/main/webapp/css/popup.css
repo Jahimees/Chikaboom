@@ -113,7 +113,7 @@ body {
     background-color: #AEA1C4;
 }
 
-.popup-input-field {
+.l-popup-input-field, .r-popup-input-field, .popup-input-field {
     font-family: Manrope, serif;
     color: #523870;
     width: 100%;
