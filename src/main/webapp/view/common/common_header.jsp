@@ -34,8 +34,8 @@
     </div>
     <div class="right-header-box">
         <sec:authorize access="!isAuthenticated()">
-            <div class="header-menu-link open-login-popup" onclick="openPopup('login-popup')">
-                <b><a href="#login">Войти</a></b>
+            <div data-bs-toggle="modal" class="header-menu-link open-login-popup" data-bs-target="#loginModal">
+                Войти
             </div>
         </sec:authorize>
         <sec:authorize access="isAuthenticated()">

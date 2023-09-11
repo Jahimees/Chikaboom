@@ -9,19 +9,13 @@ import net.chikaboom.repository.AboutRepository;
 import net.chikaboom.repository.PhoneCodeRepository;
 import net.chikaboom.repository.UserDetailsRepository;
 import net.chikaboom.util.PhoneNumberUtils;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
 import org.springframework.security.acls.model.NotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static org.hibernate.type.StandardBasicTypes.INTEGER;
-import static org.hibernate.type.StandardBasicTypes.TIMESTAMP;
 
 /**
  * Сервис предоставляет возможность обработки данных пользовательской информации.
@@ -38,7 +32,7 @@ public class UserDetailsDataService {
     /**
      * Проверяет существование в базе пользовательской информации по номеру телефона
      *
-     * @param phone номер телефона
+     * @param phone      номер телефона
      * @param countryCut буквенный код страны
      * @return true - если существует, false - в противном случае
      */
@@ -158,8 +152,6 @@ public class UserDetailsDataService {
         return userDetailsRepository.save(patchedUserDetails);
     }
 
-//    TODO что-то сделать с запросом?
-
     /**
      * Производит поиск клиентов мастера, а также высчитывает общее количество посещений к этому мастеру и дату
      * последнего визита
@@ -168,40 +160,23 @@ public class UserDetailsDataService {
      * @return список клиентов мастера
      */
     public List<UserDetails> findClientsWithExtraInfo(int idMasterAccount) {
-        Session session = sessionFactory.openSession();
-
-        Query query = session.createNativeQuery("SELECT count(appointment.idappointment) as visitCount, " +
-                        "user_details.iduser_details as idUserDetails, max(appointment.appointment_date_time) as " +
-                        "lastVisitDate from user_details left join appointment " +
-                        "on user_details.iduser_details = appointment.iduser_details_client where " +
-                        "appointment.idaccount_master = :idAccount or user_details.idaccount_owner = :idAccount " +
-                        "group by user_details.iduser_details")
-                .addScalar("visitCount", INTEGER)
-                .addScalar("idUserDetails", INTEGER)
-                .addScalar("lastVisitDate", TIMESTAMP);
-        query.setParameter("idAccount", idMasterAccount);
-        List<Object> resultObjects = query.getResultList();
+        List<UserDetailsRepository.ExtendedUserDetails> resultObjects = userDetailsRepository.getListExtendedUserDetails(idMasterAccount);
 
         List<Integer> idUserDetailsClientList = new ArrayList<>();
-        for (Object resultObject : resultObjects) {
-            Object[] resultObjectArr = (Object[]) resultObject;
-            idUserDetailsClientList.add((int) resultObjectArr[1]);
+        for (UserDetailsRepository.ExtendedUserDetails resultObject : resultObjects) {
+            idUserDetailsClientList.add(resultObject.getIdUserDetails());
         }
 
-        query = session.createQuery("from UserDetails where idUserDetails in :idUserDetailsList", UserDetails.class);
-        query.setParameter("idUserDetailsList", idUserDetailsClientList);
-        List<UserDetails> userDetailsList = query.list();
-        session.close();
+        List<UserDetails> userDetailsList = userDetailsRepository.findByIdUserDetailsIn(idUserDetailsClientList);
 
         List<UserDetails> resultUserDetailsList = new ArrayList<>();
 
         for (UserDetails userDetails : userDetailsList) {
-            for (Object resultObject : resultObjects) {
-                Object[] objectDetails = (Object[]) resultObject;
-                if ((int) objectDetails[1] == userDetails.getIdUserDetails()) {
+            for (UserDetailsRepository.ExtendedUserDetails resultObject : resultObjects) {
+                if (resultObject.getIdUserDetails() == userDetails.getIdUserDetails()) {
                     resultUserDetailsList.add(userDetails);
-                    userDetails.setVisitCount((Integer) objectDetails[0]);
-                    userDetails.setLastVisitDate((Timestamp) objectDetails[2]);
+                    userDetails.setVisitCount(resultObject.getVisitCount());
+                    userDetails.setLastVisitDate(resultObject.getLastVisitDate());
                 }
             }
         }

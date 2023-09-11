@@ -1,20 +1,28 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<div class="popup message-popup">
-    <div class="popup-title">
-        <h3 id="popup-message-header">Sample text</h3>
-    </div>
-    <div class="popup-body">
-        <div id="popup-message-text" class="message-text-popup">
-            Sample Text Sample Text Sample Text Sample Text Sample Text Sample Text
-        </div>
-        <div style="display: inline-flex">
-            <button id="confirm-message-btn" class="popup-btn" onclick="closePopup('message-popup')">
-                Хорошо
-            </button>
-            <button id="decline-message-btn" class="popup-btn" onclick="closePopup('message-popup')"
-                    style="display: none">
-                Нет
-            </button>
+
+<div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="messageModalLabel">Sample text</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Закрыть">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="messageModalText" class="message-text-popup">
+                    Sample Text Sample Text Sample Text Sample Text Sample Text Sample Text
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="confirm-message-btn" class="btn btn-primary" data-bs-dismiss="modal">
+                    Хорошо
+                </button>
+                <button id="decline-message-btn" class="btn btn-secondary" data-bs-dismiss="modal"
+                        style="display: none">
+                    Нет
+                </button>
+            </div>
         </div>
     </div>
 </div>

@@ -71,12 +71,7 @@
 .small-info-popup {
     color: #4c4c4c;
     font-family: Manrope, serif;
-}
-
-.confirm-popup-btn {
-    margin: 5% 0 0 25%;
-    display: block !important;
-    width: 50%;
+    text-align: center;
 }
 
 .invalid-field-label-popup {

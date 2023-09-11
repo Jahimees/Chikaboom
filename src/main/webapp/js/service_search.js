@@ -53,7 +53,7 @@
                     divMediumText.appendChild(input);
                     divMediumText.appendChild(label);
 
-                    $("#service-subtype-block")[0].appendChild(divMediumText);
+                    $("#service-subtype-block").append(divMediumText);
                     let serviceTypeNamePlaceHolder = $("#service-type-name-placeholder")[0];
                     serviceTypeNamePlaceHolder.innerText = subtype.serviceType.name;
                     serviceTypeNamePlaceHolder.setAttribute("style", "text-decoration: none; color: #523870")
@@ -63,8 +63,8 @@
     }
 
     function fillResultSearchTable(serviceListJson) {
-        let searchResultPlaceHolder = $("#search-result-placeholder")[0];
-        searchResultPlaceHolder.innerHTML = "";
+        let searchResultPlaceHolder = $("#search-result-placeholder");
+        searchResultPlaceHolder.html("");
 
         if (serviceListJson.length !== 0) {
             serviceListJson.forEach(function (service) {
@@ -73,50 +73,24 @@
                 let idMasterAccount = service.account.idAccount
                 let masterName = service.account.username;
 
-                let accountHref = document.createElement("a");
-                accountHref.setAttribute("href", "/chikaboom/account/" + idMasterAccount);
-                accountHref.setAttribute("class", "col-xl-3 non-decorated-link");
+                let accountLink = $("<a class='col-xl-3 non-decorated-link' href='/chikaboom/account/" + idMasterAccount + "'></a>")
+                let imgAvatar = $("<img class='result-image' src='/image/user/" + idMasterAccount + "/avatar.jpeg'>")
+                let divName = $("<div class='result-item-name'></div>")
+                let pName = $("<p class='small-white-text'></p>").text(masterName);
+                let divInfo = $("<div class='result-item'></div>");
+                let pServiceName = $("<p class='small-white-text'></p>").text(serviceName);
+                let pPrice = $("<p class='small-text' style='background-color: antiquewhite; " +
+                    "border-radius: 2px; text-align: center; font-weight: bold'></p>").text(price + " руб.");
 
-                let img = document.createElement("img");
-                img.setAttribute("class", "result-image");
-                img.setAttribute("src", "/image/user/" + idMasterAccount + "/avatar.jpeg");
-
-                let divName = document.createElement("div");
-                divName.setAttribute("class", "result-item-name");
-
-                let pName = document.createElement("p");
-                pName.setAttribute("class", "small-white-text");
-                pName.innerText = masterName;
-
-                let divInfo = document.createElement("div");
-                divInfo.setAttribute("class", "result-item");
-
-                let pServiceName = document.createElement("p");
-                pServiceName.setAttribute("class", "small-white-text");
-                pServiceName.innerText = serviceName;
-
-                let pPrice = document.createElement("p");
-                pPrice.setAttribute("class", "small-text");
-                pPrice.setAttribute("style", "background-color: antiquewhite; border-radius: 2px; text-align: center; font-weight: bold");
-                pPrice.innerText = price + " руб.";
-
-                divName.appendChild(pName);
-
-                divInfo.appendChild(pServiceName);
-                divInfo.appendChild(pPrice);
-
-                accountHref.appendChild(img);
-                accountHref.appendChild(divName);
-                accountHref.appendChild(divInfo);
-
-                searchResultPlaceHolder.appendChild(accountHref);
+                divName.append(pName);
+                divInfo.append(pServiceName, pPrice);
+                accountLink.append(imgAvatar, divName, divInfo);
+                searchResultPlaceHolder.append(accountLink);
             })
         } else {
-            let divLbl = document.createElement("div");
-            divLbl.setAttribute("class", "common-text");
-            divLbl.innerText = "Поиск не дал результатов...";
+            let divLbl = $("<div class='common-text'></div>").text("Поиск не дал результатов...");
 
-            searchResultPlaceHolder.appendChild(divLbl);
+            searchResultPlaceHolder.append(divLbl);
         }
     }
 }

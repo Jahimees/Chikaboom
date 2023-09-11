@@ -106,67 +106,26 @@
     </div>
 
     <div id="content-placeholder" class="w-100 content-placeholder">
-
     </div>
 
-    <script type="text/javascript" src="/js/dynamic_popup.js"></script>
 
     <jsp:include page="common/popup/client_info_modal.jsp"/>
     <jsp:include page="common/popup/edit_popup.jsp"/>
     <jsp:include page="common/popup/message_popup.jsp"/>
-
-    <div class="popup new-event">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <form>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="title" class="form-control-label">Название</label>
-                    <input type="text" class="form-control" id="title">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closePopup('new-event')">Отменить</button>
-                <button type="button" class="btn btn-success" id="submit">Создать событие</button>
-            </div>
-        </form>
-    </div>
-
-    <div class="popup edit-event">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            <h4 class="modal-title" id="editEventTitle">Обновить запись</h4>
-        </div>
-        <form>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="editTitle" class="form-control-label">Название</label>
-                    <input type="text" class="form-control" id="editTitle">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger left" id="delete">Удалить событие</button>
-                <button type="button" class="btn btn-secondary" onclick="closePopup('edit-event')">Отменить</button>
-                <button type="button" class="btn btn-success" id="update">Обновить событие</button>
-            </div>
-        </form>
-    </div>
+    <jsp:include page="common/popup/create_event_modal.jsp"/>
+    <jsp:include page="common/popup/update_event_modal.jsp"/>
 
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous">
-</script>
 </body>
 </html>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+crossorigin="anonymous">
+</script>
 
 <script type="text/javascript" src="/js/personality.js"></script>
 <script type="text/javascript" src="/js/account.js"></script>
+<script type="text/javascript" src="/js/dynamic_popup.js"></script>
 
 <script>
     let accountJson;

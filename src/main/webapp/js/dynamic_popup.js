@@ -1,24 +1,17 @@
 {
     let fields = []
-    let currentTabName = "general";
-
-    function setCurrentTabName(newTabName) {
-        currentTabName = newTabName;
-    }
-
-    function openPopup(popupName) {
-        $('.popup-bg').fadeIn(200);
-        $('.' + popupName).fadeIn(200);
-    }
 
     function repairDefaultMessagePopup() {
-        $("#decline-message-btn")[0].style.display = "none";
-        $("#confirm-message-btn")[0].setAttribute("onclick", "closePopup('message-popup')");
+        $("#decline-message-btn").css("display", "none");
+        $("#confirm-message-btn").attr("data-bs-dismiss", "modal");
+        $("#confirm-message-btn").attr("onclick", "");
     }
 
-    function closePopup(popupName) {
-        $('.popup-bg').fadeOut(200);
-        $('.' + popupName).fadeOut(200);
+    function callMessagePopup(title, text) {
+        repairDefaultMessagePopup();
+        $("#messageModalText").text(text);
+        $("#messageModalLabel").text(title);
+        $("#messageModal").modal('show');
     }
 
     /**
@@ -67,15 +60,12 @@
                 dataType: "json",
                 data: JSON.stringify(accountJsonPatch),
                 success: function (data) {
-                    closePopup('edit-popup');
-                    repairDefaultMessagePopup();
-                    $("#popup-message-text").text("Изменения прошли успешно!");
-                    $(".message-popup > .popup-title > #popup-message-header").text("Изменения прошли успешно!");
-                    openPopup('message-popup');
+                    $("#editModal").modal('hide');
+                    callMessagePopup("Изменения прошли успешно!", "Изменения прошли успешно!")
 
                     accountJson = data;
 
-                    loadSettingTab(currentTabName, accountJson.idAccount);
+                    loadSettingTab('general', accountJson.idAccount);
                     countPercentage();
                 },
                 error: function () {
@@ -124,8 +114,8 @@
         inputField.name = fieldName;
         inputField.placeholder = placeHolderText ? placeHolderText : '';
 
-        let fieldPlaceholder = $("#field-box-placeholder")[0]
-        fieldPlaceholder.appendChild(divLabel);
+        let fieldPlaceholder = $("#field-box-placeholder")
+        fieldPlaceholder.append(divLabel);
         if (typeof (validations) !== "undefined") {
             validations.forEach(function (validation) {
                 let invalidLabel = document.createElement("label");
@@ -134,12 +124,12 @@
                 invalidLabel.setAttribute("display", "none");
                 invalidLabel.setAttribute("id", inputField.name + "-" + validation.invalidReason);
                 invalidLabel.setAttribute("reason", validation.invalidReason);
-                fieldPlaceholder.appendChild(invalidLabel);
+                fieldPlaceholder.append(invalidLabel);
             });
             inputField.setAttribute("valid", false);
             inputField.setAttribute("onKeyup", "validateField(this)");
         }
-        fieldPlaceholder.appendChild(inputField);
+        fieldPlaceholder.append(inputField);
 
         fields.push(inputField);
 

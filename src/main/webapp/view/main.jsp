@@ -37,9 +37,11 @@
         </div>
         <div class="menu-right">
             <sec:authorize access="!isAuthenticated()">
-                <div class="open-login-popup" onclick="openPopup('login-popup')"><a href="#login">Вход</a></div>
-                <div class="open-register-popup" onclick="openPopup('register-popup')"><a
-                        href="#register">Регистрация</a>
+                <div data-bs-toggle="modal" style="cursor: pointer" data-bs-target="#loginModal">
+                    Вход
+                </div>
+                <div data-bs-toggle="modal" style="cursor: pointer" data-bs-target="#registerModal">
+                    Регистрация
                 </div>
             </sec:authorize>
             <sec:authorize access="isAuthenticated()">
@@ -64,7 +66,8 @@
                          delims=",">
                 <div class="col-xl-4 service-type-outer-image">
                     <a style="display: inline-flex" href="/chikaboom/service/search/${counter}">
-                        <img class="service-type-image" src="/image/serviceType/service_icon_${counter}.png" alt="no_image">
+                        <img class="service-type-image" src="/image/serviceType/service_icon_${counter}.png"
+                             alt="no_image">
                         <div class="service-type-item">
                             <p><c:out value="${i}"/></p>
                         </div>
@@ -160,20 +163,24 @@
 </body>
 </html>
 
-<script type="text/javascript" src="/js/static_popup.js"></script>
+
 <script type="text/javascript" src="/js/dynamic_popup.js"></script>
+
+<script type="text/javascript" src="/js/static_popup.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
 
 <script>
     $(document).ready(function () {
         var hash = window.location.hash;
 
-
         if (hash == '#login') {
-            openPopup('login-popup')
+             $("#loginModal").modal('show');
         }
 
         if (hash == '#register') {
-            openPopup('register-popup')
+            $("#registerModal").modal('show');
         }
     });
 </script>

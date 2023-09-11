@@ -38,37 +38,29 @@
     }
 
     function callConfirmDeleteClientUserDetails(idUserDetails, idAccountMaster) {
-        repairDefaultMessagePopup();
+        callMessagePopup("Удаление", "Вы действительно хотите удалить клиента? Также будут удалены все его записи")
         $("#decline-message-btn").css("display", "block");
         $("#confirm-message-btn").attr("onclick", "deleteClientUserDetails(" + idUserDetails + "," + idAccountMaster + ")");
-
-        $("#popup-message-text").text("Вы действительно хотите удалить клиента? Также будут удалены все его записи");
-        $(".message-popup > .popup-title > #popup-message-header").text("Удаление");
-        openPopup("message-popup");
     }
 
     function deleteClientUserDetails(idUserDetails, idAccountMaster) {
-        closePopup('message-popup');
-
         $.ajax({
             method: "delete",
             url: "/accounts/" + idAccountMaster + "/clients/" + idUserDetails,
             contentType: "application/json",
             dataType: "text",
             success: () => {
-                repairDefaultMessagePopup();
-                $("#popup-message-text").text("Клиент и его записи успешно удалены!");
-                $(".message-popup > .popup-title > #popup-message-header").text("Клиент удалён!");
-                openPopup('message-popup');
-
-                $("#confirm-message-btn").attr(
-                    "onclick", "closePopup('message-popup'),  loadClientsAndShowTable(" + idAccountMaster + ")");
+                loadClientsAndShowTable(idAccountMaster);
+                $("#messageModal").on("hidden.bs.modal", function () {
+                    callMessagePopup("Клиент удалён!", "Клиент и его записи успешно удалены!");
+                    $("#messageModal").unbind();
+                });
             },
             error: () => {
-                repairDefaultMessagePopup();
-                $("#popup-message-text").text("Невозможно удалить клиента!");
-                $(".message-popup > .popup-title > #popup-message-header").text("ОШИБКА!");
-                openPopup('message-popup');
+                $("#messageModal").on("hidden.bs.modal", function () {
+                    callMessagePopup("Ошибка!", "Невозможно удалить клиента!");
+                    $("#messageModal").unbind();
+                });
             }
         })
     }
@@ -101,6 +93,8 @@
                 }
             }
 
+            $('#createClientModal').modal('hide');
+
             $.ajax({
                 method: "post",
                 url: "/user-details",
@@ -109,18 +103,10 @@
                 data: JSON.stringify(userDetailsObject),
                 success: function (clientDetails) {
                     addRowToDataTable(clientDetails, "client");
-                    $('#createClientModal').modal('hide');
-                    repairDefaultMessagePopup();
-                    $("#popup-message-text").text("Клиент успешно создан!");
-                    $(".message-popup > .popup-title > #popup-message-header").text("Клиент создан");
-                    openPopup('message-popup');
+                    callMessagePopup("Клиент создан", "Клиент успешно создан!")
                 },
                 error: function () {
-                    $('#createClientModal').modal('hide');
-                    repairDefaultMessagePopup();
-                    $("#popup-message-text").text("Невозможно создать клиента!");
-                    $(".message-popup > .popup-title > #popup-message-header").text("ОШИБКА!");
-                    openPopup('message-popup');
+                    callMessagePopup("Ошибка!", "Невозможно создать клиента!")
                 }
             })
         }
@@ -185,10 +171,7 @@
                 fillClientsTable(data, 'client');
             },
             error: function () {
-                repairDefaultMessagePopup();
-                $("#popup-message-text").text("Невозможно загрузить информацию о клиентах!");
-                $(".message-popup > .popup-title > #popup-message-header").text("ОШИБКА!");
-                openPopup('message-popup');
+                callMessagePopup("Ошибка!", "Невозможно загрузить информацию о клиентах!");
             }
         })
     }
@@ -312,18 +295,12 @@
                 data: JSON.stringify(updatedUserDetails),
                 success: () => {
                     $("#close-client-info-btn").click();
-                    repairDefaultMessagePopup();
-                    $("#popup-message-text").text("Данные клиента успешно сохранены!");
-                    $("#popup-message-header").text("Данные сохранены");
-                    openPopup('message-popup');
+                    callMessagePopup("Данные сохранены", "Данные клиента успешно сохранены!");
                     loadClientsAndShowTable(shownUserDetails.masterOwner.idAccount);
                 },
                 error: () => {
                     $("#close-client-info-btn").click();
-                    repairDefaultMessagePopup();
-                    $("#popup-message-text").text("Невозможно сохранить данные о записях клиента");
-                    $("#popup-message-header").text("Ошибка!");
-                    openPopup('message-popup');
+                    callMessagePopup("Ошибка!", "Невозможно сохранить данные о записях клиента")
                 }
             })
         }
@@ -375,10 +352,7 @@
                 fillClientAppointmentsTableForModal(data, 'client_appointments')
             },
             error: function () {
-                repairDefaultMessagePopup();
-                $("#popup-message-text").text("Невозможно загрузить данные о записях клиента");
-                $("#popup-message-header").text("Ошибка!");
-                openPopup('message-popup');
+                callMessagePopup("Ошибка!", "Невозможно загрузить данные о записях клиента");
             }
         })
     }
