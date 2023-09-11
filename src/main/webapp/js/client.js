@@ -213,18 +213,12 @@
 ///////////////////////////////////////////MODAL CLIENT APPOINTMENTS///////////////////////////////////////
     let shownUserDetails;
 
-    $(document).ready(function () {
+    $(document).ready( () =>  {
         let $clientInfoModal = $("#clientInfoModal");
         let $clientAppointmentsTable = $("#client_appointments_table")
 
-        $clientInfoModal.on("hidden.bs.modal", function (event) {
-            if (!$.fn.DataTable.isDataTable('#client_appointments')) {
-                $clientAppointmentsTable.DataTable().data().clear();
-                $clientAppointmentsTable.DataTable().destroy();
-            }
-        });
-
         //on open client info modal
+        $clientInfoModal.unbind();
         $clientInfoModal.on("show.bs.modal", function (event) {
             let idUserDetails = event.relatedTarget.getAttribute("user-details-id");
             let $saveClientInfoBtn = $("#save-client-info-btn");
@@ -275,6 +269,13 @@
                 validateClientInfoFields();
             })
         })
+
+        $clientInfoModal.on("hide.bs.modal", function () {
+            if (!$.fn.DataTable.isDataTable('#client_appointments')) {
+                $clientAppointmentsTable.DataTable().data().clear();
+                $clientAppointmentsTable.DataTable().destroy();
+            }
+        });
     })
 
     function saveUserDetails() {
@@ -310,7 +311,7 @@
                 dataType: "json",
                 data: JSON.stringify(updatedUserDetails),
                 success: () => {
-                    $("#close-modal-btn").click();
+                    $("#close-client-info-btn").click();
                     repairDefaultMessagePopup();
                     $("#popup-message-text").text("Данные клиента успешно сохранены!");
                     $("#popup-message-header").text("Данные сохранены");
@@ -318,7 +319,7 @@
                     loadClientsAndShowTable(shownUserDetails.masterOwner.idAccount);
                 },
                 error: () => {
-                    $("#close-modal-btn").click();
+                    $("#close-client-info-btn").click();
                     repairDefaultMessagePopup();
                     $("#popup-message-text").text("Невозможно сохранить данные о записях клиента");
                     $("#popup-message-header").text("Ошибка!");

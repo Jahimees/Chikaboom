@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>XM. Аккаунт</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="/css/common.css">
     <link rel="stylesheet" href="/css/account.css">
@@ -17,12 +17,12 @@
     <link rel="stylesheet" href="/css/media/main_media.css">
     <link rel="stylesheet" href="/css/popup.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
+    <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/source-sans-pro">
 
-    <link href="https://fonts.cdnfonts.com/css/source-sans-pro" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script rel="script" src="/js/jquery-ui-1.10.4.custom.min.js"></script>
+    <script src="/js/jquery-ui-1.10.4.custom.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
-    <script type="text/javascript" src="/js/countrycode/countryCode.js"></script>
+    <script src="/js/countrycode/countryCode.js"></script>
 </head>
 <jsp:include page="common/popup/appointment_modal.jsp"/>
 <body>

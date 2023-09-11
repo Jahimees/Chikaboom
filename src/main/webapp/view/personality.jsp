@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>XM. Аккаунт</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="/css/common.css">
     <link rel="stylesheet" href="/css/media/common_media.css">
@@ -16,23 +16,17 @@
     <link rel="stylesheet" href="/css/personality.css">
     <link rel="stylesheet" href="/css/popup.css">
     <link rel="stylesheet" href="/css/media/popup_media.css">
-    <link rel="stylesheet" href="/css/addition/carousel.css">
     <link rel="stylesheet" href="/css/addition/menu_bar.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
-
-    <link href="https://fonts.cdnfonts.com/css/source-sans-pro" rel="stylesheet">
-    <link href="https://cdn.datatables.net/v/dt/dt-1.13.6/fh-3.4.0/sb-1.5.0/sp-2.2.0/datatables.min.css" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script rel="script" src="/js/jquery-ui-1.10.4.custom.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/source-sans-pro">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/css/suggestions.min.css"/>
 
     <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/css/suggestions.min.css" rel="stylesheet"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
     <script src="/js/tab.js"></script>
     <script src="/js/jquery-ui-1.10.4.custom.min.js"></script>
     <script src="/js/countrycode/countryCode.js"></script>
-    <script src="/js/client.js"></script>
     <script src="/js/tab.js"></script>
     <script src="/js/util.js"></script>
 </head>
@@ -64,13 +58,15 @@
                 <div><img class="small-icon" src="/image/icon/profile_icon_2.svg" alt="no_image"></div>
                 <div class="menu-text"><a href="/chikaboom/account/${idAccount}">Профиль</a></div>
             </div>
-            <div id="appointments-btn" onclick="loadConcreteTab(${idAccount}, this, 'appointment')" class="menu-child button"
+            <div id="appointments-btn" onclick="loadConcreteTab(${idAccount}, this, 'appointment')"
+                 class="menu-child button"
                  selected="false">
                 <div><img class="small-icon" src="/image/icon/notebook_icon.svg" alt="no_image"></div>
                 <div class="menu-text"><a href="#">Записи</a></div>
             </div>
             <sec:authorize access="hasRole('ROLE_MASTER')">
-                <div id="services-btn" onclick="loadConcreteTab(${idAccount}, this, 'services')" class="menu-child button"
+                <div id="services-btn" onclick="loadConcreteTab(${idAccount}, this, 'services')"
+                     class="menu-child button"
                      selected="false">
                     <div><img class="small-icon" src="/image/icon/service_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Услуги</a></div>
@@ -80,7 +76,8 @@
                     <div><img class="small-icon" src="/image/icon/statistic_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Статистика</a></div>
                 </div>
-                <div id="timetable-btn" onclick="loadConcreteTab(${idAccount}, this, 'timetable')" class="menu-child button"
+                <div id="timetable-btn" onclick="loadConcreteTab(${idAccount}, this, 'timetable')"
+                     class="menu-child button"
                      selected="false">
                     <div><img class="small-icon" src="/image/icon/calendar_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">График</a></div>
@@ -115,9 +112,50 @@
     <script type="text/javascript" src="/js/dynamic_popup.js"></script>
 
     <jsp:include page="common/popup/client_info_modal.jsp"/>
-    <jsp:include page="common/popup/create_client_modal.jsp"/>
     <jsp:include page="common/popup/edit_popup.jsp"/>
     <jsp:include page="common/popup/message_popup.jsp"/>
+
+    <div class="popup new-event">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <form>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="title" class="form-control-label">Название</label>
+                    <input type="text" class="form-control" id="title">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closePopup('new-event')">Отменить</button>
+                <button type="button" class="btn btn-success" id="submit">Создать событие</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="popup edit-event">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title" id="editEventTitle">Обновить запись</h4>
+        </div>
+        <form>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="editTitle" class="form-control-label">Название</label>
+                    <input type="text" class="form-control" id="editTitle">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger left" id="delete">Удалить событие</button>
+                <button type="button" class="btn btn-secondary" onclick="closePopup('edit-event')">Отменить</button>
+                <button type="button" class="btn btn-success" id="update">Обновить событие</button>
+            </div>
+        </form>
+    </div>
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
@@ -131,7 +169,7 @@
 <script type="text/javascript" src="/js/account.js"></script>
 
 <script>
-    var accountJson;
+    let accountJson;
 
     $(document).ready(function () {
         accountJson = loadAccount(${idAccount});

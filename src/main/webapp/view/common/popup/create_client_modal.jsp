@@ -3,7 +3,7 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <!-- Модальное окно -->
-<div class="modal fade" id="createClientModal" tabindex="-1" aria-labelledby="createClientModalLabel"
+<div class="modal fade create-client-modal" id="createClientModal" tabindex="-1" aria-labelledby="createClientModalLabel"
      aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
