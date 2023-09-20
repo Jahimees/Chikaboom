@@ -1,36 +1,60 @@
 package net.chikaboom.controller.rest;
 
 import lombok.RequiredArgsConstructor;
-import net.chikaboom.model.database.WorkingDays;
-import net.chikaboom.service.tab.TimetableTabService;
+import net.chikaboom.model.database.Account;
+import net.chikaboom.model.database.WorkingDay;
+import net.chikaboom.service.data.AccountDataService;
+import net.chikaboom.service.data.WorkingDayDataService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Optional;
+
 /**
- * REST контроллер для взаимодействия с сущностями типа {@link WorkingDays}
+ * REST контроллер для взаимодействия с сущностями типа {@link WorkingDay}
  */
 @RequiredArgsConstructor
 @RestController
 public class WorkingDaysRestController {
 
-    private final TimetableTabService timetableTabService;
+    private final AccountDataService accountDataService;
+    private final WorkingDayDataService workingDayDataService;
 
-    @GetMapping("/accounts/{idAccount}/workingDays")
-    public ResponseEntity<WorkingDays> findWorkingDaysByIdAccount(@PathVariable int idAccount) {
-        return ResponseEntity.ok(timetableTabService.findWorkingDaysByIdAccount(idAccount));
+    @GetMapping("/accounts/{idAccount}/working-days")
+    public ResponseEntity<List<WorkingDay>> findWorkingDaysByIdAccount(@PathVariable int idAccount) {
+        return ResponseEntity.ok(workingDayDataService.findWorkingDaysByIdAccount(idAccount));
     }
 
-    /**
-     * Обрабатывает запрос обновления данных о рабочих днях на странице и передает управление в {@link TimetableTabService}
-     *
-     * @param idAccount   идентификатор мастера
-     * @param workingDays объект рабочих дней
-     * @return обновленный json объект
-     */
-    @PutMapping("/accounts/{idAccount}/workingDays")
-    public ResponseEntity<WorkingDays> updateWorkingDaysForAccount(@PathVariable int idAccount,
-                                                                   @RequestBody WorkingDays workingDays) {
+    @PostMapping("/accounts/{idAccount}/working-days")
+    @PreAuthorize("hasRole('MASTER') and #idAccount == authentication.principal.idAccount")
+    public ResponseEntity<WorkingDay> createWorkingDayForAccount(@PathVariable int idAccount,
+                                                                 @RequestBody WorkingDay workingDay) {
+        Optional<Account> accountOptional = accountDataService.findById(idAccount);
 
-        return ResponseEntity.ok(timetableTabService.updateWorkingDays(idAccount, workingDays));
+        if (!accountOptional.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        workingDay.setAccount(accountOptional.get());
+
+        return ResponseEntity.ok(workingDayDataService.create(workingDay));
+    }
+
+    @DeleteMapping("/accounts/{idAccount}/working-days/{idWorkingDay}")
+    public ResponseEntity<String> deleteWorkingDay(@PathVariable int idAccount, @PathVariable int idWorkingDay) {
+        Optional<Account> accountOptional = accountDataService.findById(idAccount);
+
+        if (!accountOptional.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (!workingDayDataService.isWorkingDayExists(idWorkingDay)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        workingDayDataService.deleteById(idWorkingDay);
+        return ResponseEntity.ok().build();
     }
 }

@@ -17,6 +17,4 @@
         <div id='calendar1' class='calendar col-md-8'></div>
         <div id='calendar2' class='calendar col-md-4'></div>
     </div>
-
-
 </div>

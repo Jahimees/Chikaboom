@@ -37,7 +37,7 @@ function loadMasterAppointments() {
                 let duration;
 
                 if (serviceDurationTime.length === 1) {
-                    duration = 1;
+                    duration = 30;
                 } else {
                     serviceDurationTime[1] = serviceDurationTime[1].replace('а', '');
 
@@ -94,44 +94,63 @@ var initializeRightCalendar = function () {
 function addOrRemoveWorkingDate(date) {
     var flag = true;
 
-    workingDays.workingDays.forEach(function (workDate) {
-        var currentDate = new Date(Date.parse(JSON.parse(JSON.stringify(date))))
-        var workingDate = new Date(Date.parse(JSON.parse(JSON.stringify(workDate))))
-        if (currentDate.getDate() === workingDate.getDate()
-            && currentDate.getMonth() === workingDate.getMonth()
-            && currentDate.getFullYear() === workingDate.getFullYear()) {
+    workingDays.forEach(function (workingDay) {
+        var chosenDate = new Date((date))
+        var workingDate = new Date((workingDay.date))
+        if (chosenDate.getDate() === workingDate.getDate()
+            && chosenDate.getMonth() === workingDate.getMonth()
+            && chosenDate.getFullYear() === workingDate.getFullYear()) {
 
-            var index = workingDays.workingDays.indexOf(workDate);
-            workingDays.workingDays.splice(index, 1);
+            removeWorkingDay(workingDay)
+
+            var index = workingDays.indexOf(workingDay);
+            workingDays.splice(index, 1)
             flag = false;
         }
     })
 
     if (flag) {
         var currentDateObj = new Date(date);
-        workingDays.workingDays.push(currentDateObj);
+        workingDays.push(saveWorkingDays(currentDateObj));
     }
-
-    saveWorkingDays();
 
     initializeLeftCalendar();
 }
 
-function saveWorkingDays() {
-    workingDays.workingDays = JSON.stringify(workingDays.workingDays);
-
+function removeWorkingDay(workingDay) {
     $.ajax({
-        type: "PUT",
-        url: "/accounts/" + accountJson.idAccount + "/workingDays",
+        method: "delete",
+        url: "/accounts/" + accountJson.idAccount + "/working-days/" + workingDay.idWorkingDay,
+        error: () => {
+            callMessagePopup("Ошибка удаления рабочих дней",
+                "Невозможно удалить данные о рабочем дне из базы данных!")
+        }
+    })
+}
+
+function saveWorkingDays(workingDay) {
+    let workingDayForSend = {
+        idAccount: accountJson.idAccount,
+        date: workingDay
+    }
+    let createdWorkingDay
+    $.ajax({
+        type: "POST",
+        url: "/accounts/" + accountJson.idAccount + "/working-days",
         contentType: "application/json",
         dataType: "json",
-        data: JSON.stringify(workingDays),
-        error: function () {
-            alert("Данные не сохранены в базу данных. Неизвестная ошибка");
+        data: JSON.stringify(workingDayForSend),
+        async: false,
+        success: (data) => {
+            createdWorkingDay = data;
+        },
+        error: () => {
+            callMessagePopup("Ошибка создания рабочего дня",
+                "Данные о рабочем дне не сохранены в базу данных. Неизвестная ошибка!")
         }
     });
 
-    workingDays.workingDays = JSON.parse(workingDays.workingDays);
+    return createdWorkingDay;
 }
 
 /* -------------------manage cal1 (left pane)------------------- */
@@ -152,7 +171,11 @@ var initializeLeftCalendar = function () {
             cal2GoTo(calEvent.start);
         },
         dayRender: function (date, cell) {
-            if (checkDate(date)) {
+            let dateObj = checkDateAndReturnIfPresent(date);
+            if (dateObj) {
+                cell.attr("id-working-day", dateObj.idWorkingDay)
+                cell.attr("work-start", dateObj.workingDayStart);
+                cell.attr("work-end", dateObj.workingDayEnd);
                 cell.css("background-color", "white");
             } else {
                 cell.css("background-color", "#F4F4F4");
@@ -163,16 +186,16 @@ var initializeLeftCalendar = function () {
 
 }
 
-function checkDate(date) {
+function checkDateAndReturnIfPresent(date) {
     var flag = false;
-    workingDays.workingDays.forEach(function (workDate) {
-        var currentDate = new Date(Date.parse(JSON.parse(JSON.stringify(date))))
-        var workingDate = new Date(Date.parse(JSON.parse(JSON.stringify(workDate))))
+    workingDays.forEach(function (workingDay) {
+        var chosenDate = new Date(Date.parse(JSON.parse(JSON.stringify(date))))
+        var workingDate = new Date(Date.parse(JSON.parse(JSON.stringify(workingDay.date))))
+        if (chosenDate.getDate() === workingDate.getDate()
+            && chosenDate.getMonth() === workingDate.getMonth()
+            && chosenDate.getFullYear() === workingDate.getFullYear()) {
 
-        if (currentDate.getDate() === workingDate.getDate()
-            && currentDate.getMonth() === workingDate.getMonth()
-            && currentDate.getFullYear() === workingDate.getFullYear()) {
-            flag = true;
+            flag = workingDay
         }
     })
     return flag;
@@ -189,7 +212,7 @@ var cal2GoTo = function (date) {
 }
 
 
-var newEvent = function (start, nd) {
+var newEvent = (start, nd) => {
     $('input#title').val("");
     let $createEventModal = $("#createEventModal");
     $createEventModal.modal('show');
@@ -270,12 +293,12 @@ var disableEnter = function () {
 function loadWorkingDaysData(idAccount) {
     $.ajax({
         method: "get",
-        url: "/accounts/" + idAccount + "/workingDays",
+        url: "/accounts/" + idAccount + "/working-days",
         contentType: "application/json",
         dataType: "json",
         async: false,
         success: function (data) {
-            workingDays = data;
+            workingDays = data ? data : [];
             loadAccountCalendar();
         },
         error: function () {
@@ -286,12 +309,12 @@ function loadWorkingDaysData(idAccount) {
 
 function loadAccountCalendar() {
     if (workingDays !== null && workingDays.workingDays !== null) {
-        workingDays.workingDays = JSON.parse(workingDays.workingDays);
+        // workingDays.workingDays = JSON.parse(workingDays.workingDays);
     } else {
         workingDays.workingDays = [];
     }
 
-    reloadWorkingDayDuration();
+    // reloadWorkingDayDuration();
 
     $.ajax({
         type: "get",
@@ -299,13 +322,12 @@ function loadAccountCalendar() {
         contentType: "application/text",
         dataType: "text",
         async: false,
-        data: {},
         success: function (data) {
             $("#timetable-placeholder").html(data);
 
             setTimeout(function () {
                 let button = document.createElement("button");
-                button.innerHTML = "Сделать рабочим";
+                button.innerText = "Сделать рабочим";
                 button.setAttribute("class", "fc-button fc-state-default");
                 button.setAttribute("type", "button");
                 button.setAttribute("onclick", "addOrRemoveWorkingDate($('#calendar2 .fc-day').attr('data-date'))");
@@ -329,7 +351,7 @@ function reloadWorkingDayDuration() {
         workingDayEndString.substring(0, 2) + ":" + workingDayEndString.substring(2, 4)
         : workingDayEndString.substring(0, 1) + ":" + workingDayEndString.substring(1, 3)
 
-    $("#current-working-day-duration").text("Ваш текущий рабочий день: " + startTime + " - " + endTime);
+    $("#current-working-day-duration").text("Ваш текущий рабочий день по умолчанию: " + startTime + " - " + endTime);
 
 }
 

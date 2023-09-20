@@ -121,42 +121,40 @@
         $("#service-time-placeholder").text("Время услуги: " + chosenService.time);
     })
 
-    $("#working-day-select").on("click", function () {
-        calculateServiceTime();
+    $("#working-day-select").on("click", (e) => {
+        calculateServiceTime(
+            e.target.selectedOptions[0].getAttribute("start-time"),
+            e.target.selectedOptions[0].getAttribute("end-time"));
     })
 
-    function calculateServiceTime() {
-        let workingDayStart = new Date();
-        let workingDayEnd = new Date();
+    let prevWorkingDayStart
+    let prevWorkingDayEnd
 
-        if (accountJson.workingDays.workingDayStart.toString().length === 3) {
-            workingDayStart.setHours(accountJson.workingDays.workingDayStart.toString()[0]);
-            workingDayStart.setMinutes(accountJson.workingDays.workingDayStart.toString().substring(1, 3));
-        } else {
-            workingDayStart.setHours(accountJson.workingDays.workingDayStart.toString().substring(0, 2));
-            workingDayStart.setMinutes(accountJson.workingDays.workingDayStart.toString().substring(2, 4));
+    function calculateServiceTime(workingDayStartTime, workingDayEndTime) {
+        if (typeof workingDayStartTime !== "undefined") {
+            prevWorkingDayStart = new Date(workingDayStartTime);
         }
 
-        if (accountJson.workingDays.workingDayEnd.toString().length === 3) {
-            workingDayEnd.setHours(accountJson.workingDays.workingDayEnd.toString()[0]);
-            workingDayEnd.setMinutes(accountJson.workingDays.workingDayEnd.toString().substring(1, 3));
-        } else {
-            workingDayEnd.setHours(accountJson.workingDays.workingDayEnd.toString().substring(0, 2));
-            workingDayEnd.setMinutes(accountJson.workingDays.workingDayEnd.toString().substring(2, 4));
+        if (typeof workingDayEndTime !== "undefined") {
+            prevWorkingDayEnd = new Date(workingDayEndTime);
         }
 
-        let workingCellsCount = (workingDayEnd.getHours() - workingDayStart.getHours()) * 2;
+        if (typeof prevWorkingDayEnd === "undefined" || typeof prevWorkingDayStart === "undefined") {
+            return
+        }
 
-        if (workingDayEnd.getMinutes() > workingDayStart.getMinutes()) {
+        let workingCellsCount = (prevWorkingDayEnd.getHours() - prevWorkingDayStart.getHours()) * 2;
+
+        if (prevWorkingDayEnd.getMinutes() > prevWorkingDayStart.getMinutes()) {
             workingCellsCount++;
-        } else if (workingDayEnd.getMinutes() < workingDayStart.getMinutes()) {
+        } else if (prevWorkingDayEnd.getMinutes() < prevWorkingDayStart.getMinutes()) {
             workingCellsCount--;
         }
 
         let workingCells = [];
         let iterator = new Date();
-        iterator.setHours(workingDayStart.getHours());
-        iterator.setMinutes(workingDayStart.getMinutes());
+        iterator.setHours(prevWorkingDayStart.getHours());
+        iterator.setMinutes(prevWorkingDayStart.getMinutes());
 
         let chosenDate = new Date($("#working-day-select").val());
         let todayIsChosenDay = false;
@@ -237,6 +235,9 @@
 
         let serviceDurationTime = currentService.time.replace(' минут', '').split(' час');
         let serviceDurationNumber;
+
+        $("#service-cost-placeholder").text("Стоимость услуги: " + currentService.price + " р.");
+        $("#service-time-placeholder").text("Время услуги: " + currentService.time);
 
         if (serviceDurationTime.length === 1) {
             serviceDurationNumber = 1;

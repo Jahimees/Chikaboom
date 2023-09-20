@@ -4,7 +4,8 @@ public final class DbNamesConstant {
 
     //        TABLES & FIELDS
     public static final String ABOUT = "about";
-    public static final String WORKING_DAYS = "working_days";
+    public static final String WORKING_DAY = "working_day";
+//    public static final String WORKING_DAYS = "working_days";
     public static final String ACCOUNT = "account";
     public static final String ACCOUNT_STATUS = "account_status";
     public static final String ADDRESS = "address";
@@ -62,18 +63,19 @@ public final class DbNamesConstant {
     public static final String PRICE = "price";
     public static final String TIME = "time";
 
-    public static final String ID_WORKING_DAYS = "idworking_days";
+    public static final String ID_WORKING_DAY = "idworking_day";
     public static final String WORKING_DAY_START = "workingDayStart";
     public static final String WORKING_DAY_END = "workingDayEnd";
 
     public static final String ID_APPOINTMENT = "idappointment";
     public static final String ID_ACCOUNT_MASTER = "idaccount_master";
-    public static final String ID_ACCOUNT_CLIENT = "idaccount_client";
     public static final String APPOINTMENT_DATE_TIME = "appointment_date_time";
     public static final String ID_USER_DETAILS_CLIENT = "iduser_details_client";
 
     public static final String ACCOUNT_ROLES = "account_roles";
     public static final String ID_ACCOUNT_ROLES = "idaccount_roles";
+
+    public static final String DATE = "date";
 
     private DbNamesConstant() {
     }

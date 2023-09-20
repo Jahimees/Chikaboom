@@ -72,13 +72,6 @@ public class Account implements BaseEntity, UserDetails {
     private String address;
 
     /**
-     * Рабочий график мастера
-     */
-    @OneToOne
-    @JoinColumn(name = ID_WORKING_DAYS)
-    private WorkingDays workingDays;
-
-    /**
      * Отвечает за отображение номера телефона на странице аккаунта
      */
     @Column(name = IS_PHONE_VISIBLE)
