@@ -10,7 +10,7 @@
                 + (accountJson.userDetails.lastName ? accountJson.userDetails.lastName + " " : "")
         }
         $("#username-placeholder").text(nameText ? nameText : "@" + accountJson.username);
-        if (accountJson.phoneVisible) {
+        if (accountJson.accountSettings.phoneVisible) {
             let phoneText = "Телефон: " + accountJson.userDetails.displayedPhone
 
             $("#phone-placeholder").text(phoneText)

@@ -326,6 +326,10 @@ function loadAccountCalendar() {
             $("#timetable-placeholder").html(data);
 
             setTimeout(function () {
+                // TODO пятница!
+                // let button = $("<button class='fc-button fc-state-default', type='button', " +
+                //     "onclick='addOrRemoveWorkingDate($(" + "'#calendar2 .fc-day').attr(\'data-date\'))'>" +
+                //     "Сделать рабочим/нерабочим</button>")
                 let button = document.createElement("button");
                 button.innerText = "Сделать рабочим";
                 button.setAttribute("class", "fc-button fc-state-default");
@@ -340,19 +344,24 @@ function loadAccountCalendar() {
     })
 }
 
-function reloadWorkingDayDuration() {
-    var workingDayStartString = JSON.stringify(workingDays.workingDayStart);
-    var workingDayEndString = JSON.stringify(workingDays.workingDayEnd);
+function reloadWorkingDayDuration(accountWorkingTime) {
+    const currentWorkingDayDurationText = "Текущее рабочее время по умолчанию: "
+        + accountWorkingTime.defaultWorkingDayStart
+        + " - " + accountWorkingTime.defaultWorkingDayEnd;
 
-    var startTime = workingDayStartString.length === 4 ?
-        workingDayStartString.substring(0, 2) + ":" + workingDayStartString.substring(2, 4)
-        : workingDayStartString.substring(0, 1) + ":" + workingDayStartString.substring(1, 3);
-    var endTime = +workingDayEndString.length === 4 ?
-        workingDayEndString.substring(0, 2) + ":" + workingDayEndString.substring(2, 4)
-        : workingDayEndString.substring(0, 1) + ":" + workingDayEndString.substring(1, 3)
+    $("#current-working-day-duration").text(currentWorkingDayDurationText);
 
-    $("#current-working-day-duration").text("Ваш текущий рабочий день по умолчанию: " + startTime + " - " + endTime);
+    // var workingDayStartString = JSON.stringify(workingDays.workingDayStart);
+    // var workingDayEndString = JSON.stringify(workingDays.workingDayEnd);
 
+    // var startTime = workingDayStartString.length === 4 ?
+    //     workingDayStartString.substring(0, 2) + ":" + workingDayStartString.substring(2, 4)
+    //     : workingDayStartString.substring(0, 1) + ":" + workingDayStartString.substring(1, 3);
+    // var endTime = +workingDayEndString.length === 4 ?
+    //     workingDayEndString.substring(0, 2) + ":" + workingDayEndString.substring(2, 4)
+    //     : workingDayEndString.substring(0, 1) + ":" + workingDayEndString.substring(1, 3)
+
+    // $("#current-working-day-duration").text("Ваш текущий рабочий день по умолчанию: " + startTime + " - " + endTime);
 }
 
 $("#save-work-time-btn").on("click", function () {
@@ -396,9 +405,34 @@ $("#save-work-time-btn").on("click", function () {
     }
 
     if (startFlag && endFlag) {
-        workingDays.workingDayStart = startNumber;
-        workingDays.workingDayEnd = endNumber;
-        saveWorkingDays();
-        reloadWorkingDayDuration(workingDays);
+        let startData = new Date("2000-09-09 " + startVal.trim() + ":00").toLocaleTimeString('ru');
+        let endData = new Date("2000-09-09 " + endVal.trim() + ":00").toLocaleTimeString('ru');
+        const accountSettingsData = {
+            defaultWorkingDayStart: startData,
+            defaultWorkingDayEnd: endData,
+        }
+        saveDefaultWorkingTime(accountSettingsData, accountJson.idAccount)
     }
 })
+
+const saveDefaultWorkingTime = (accountSettings, idAccount) => {
+    if (typeof accountSettings === "undefined" || idAccount === 0) {
+        callMessagePopup("Ошибка данных", "Введенные данные некорректны")
+        return;
+    }
+
+    $.ajax({
+        method: "patch",
+        url: "/accounts/" + idAccount + "/settings",
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify(accountSettings),
+        success: (data) => {
+            callMessagePopup("Изменения прошли успешно", "Новое время работы по умолчанию успешно изменено");
+            reloadWorkingDayDuration(data);
+        },
+        error: () => {
+            callMessagePopup("Что-то пошло не так", "Неудалось изменить время работы по умолчанию");
+        }
+    })
+}

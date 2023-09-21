@@ -9,7 +9,6 @@ import net.chikaboom.repository.AboutRepository;
 import net.chikaboom.repository.PhoneCodeRepository;
 import net.chikaboom.repository.UserDetailsRepository;
 import net.chikaboom.util.PhoneNumberUtils;
-import org.hibernate.SessionFactory;
 import org.springframework.security.acls.model.NotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +26,6 @@ public class UserDetailsDataService {
     private final UserDetailsRepository userDetailsRepository;
     private final AboutRepository aboutRepository;
     private final PhoneCodeRepository phoneCodeRepository;
-    private final SessionFactory sessionFactory;
 
     /**
      * Проверяет существование в базе пользовательской информации по номеру телефона

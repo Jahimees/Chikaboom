@@ -84,6 +84,10 @@ public class Account implements BaseEntity, UserDetails {
     @JoinColumn(name = ID_USER_DETAILS)
     private net.chikaboom.model.database.UserDetails userDetails;
 
+    @OneToOne
+    @JoinColumn(name = ID_ACCOUNT_SETTINGS)
+    private AccountSettings accountSettings;
+
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -75,6 +75,11 @@ public final class DbNamesConstant {
     public static final String ACCOUNT_ROLES = "account_roles";
     public static final String ID_ACCOUNT_ROLES = "idaccount_roles";
 
+    public static final String ACCOUNT_SETTINGS = "account_settings";
+    public static final String ID_ACCOUNT_SETTINGS = "idaccount_settings";
+    public static final String DEFAULT_WORKING_DAY_START = "default_working_day_start";
+    public static final String DEFAULT_WORKING_DAY_END = "default_working_day_end";
+
     public static final String DATE = "date";
 
     private DbNamesConstant() {
