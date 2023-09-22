@@ -5,7 +5,6 @@ import net.chikaboom.exception.NoSuchDataException;
 import net.chikaboom.model.database.ServiceSubtype;
 import net.chikaboom.model.database.ServiceType;
 import net.chikaboom.repository.ServiceSubtypeRepository;
-import net.chikaboom.repository.ServiceTypeRepository;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +20,7 @@ import java.util.Optional;
 public class ServiceSubtypeDataService {
 
     private final ServiceSubtypeRepository serviceSubtypeRepository;
-    private final ServiceTypeRepository serviceTypeRepository;
+    private final ServiceTypeDataService serviceTypeDataService;
 
     private final Logger logger = Logger.getLogger(this.getClass());
 
@@ -51,7 +50,7 @@ public class ServiceSubtypeDataService {
      */
     public List<ServiceSubtype> findAllServiceSubtypesByIdServiceType(int idServiceType) {
         logger.info("Searching all service subtypes of service type with id " + idServiceType);
-        ServiceType serviceType = serviceTypeRepository.findById(idServiceType).
+        ServiceType serviceType = serviceTypeDataService.findById(idServiceType).
                 orElseThrow(() -> new NoSuchDataException("Cannot find service with id " + idServiceType));
 
         return serviceSubtypeRepository.findAllByServiceType(serviceType);

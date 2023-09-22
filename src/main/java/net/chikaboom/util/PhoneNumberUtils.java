@@ -18,7 +18,7 @@ public final class PhoneNumberUtils {
      * 80291232323 -> +375 29 123-23-23
      *
      * @param phoneNumber номер телефона
-     * @param countryCut сокращенное буквенное обозначение кода страны (напр. 'by', 'ru')
+     * @param countryCut  сокращенное буквенное обозначение кода страны (напр. 'by', 'ru')
      * @return отформатированный номер телефона
      * @throws NumberParseException возникает, если невозможно отформатировать номер телефона
      */

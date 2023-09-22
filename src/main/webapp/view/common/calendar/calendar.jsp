@@ -7,16 +7,8 @@
 <link href='/css/fullcalendar/style.css' rel='stylesheet'/>
 
 <div>
-    <nav class="navbar navbar-default">
-        <div class="container-fluid">
-            <p class="navbar-brand" id="todaysDate"></p>
-        </div>
-    </nav>
-
-    <div class="container-fluid row">
+    <div style="padding-top: 10px;" class="container-fluid row">
         <div id='calendar1' class='calendar col-md-8'></div>
         <div id='calendar2' class='calendar col-md-4'></div>
     </div>
-
-
 </div>

@@ -340,14 +340,33 @@
         })
     }
 
+    function loadWorkingDaysData(idAccount) {
+        let workingDaysFromServer
+        $.ajax({
+            method: "get",
+            url: "/accounts/" + idAccount + "/working-days",
+            contentType: "application/json",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                workingDaysFromServer = data;
+            },
+            error: function () {
+                callMessagePopup("Что-то пошло не так!", "Невозможно загрузить расписание!");
+            }
+        })
+
+        return workingDaysFromServer ? workingDaysFromServer : []
+    }
+
+    let workingDays;
     function fillWorkingDays(accountJson) {
         let workingDaySelect = $("#working-day-select");
 
-        let workingDays = JSON.parse(accountJson.workingDays.workingDays);
-
+        workingDays = typeof workingDays === "undefined" ? loadWorkingDaysData(accountJson.idAccount) : workingDays
         workingDays.forEach(function (workingDay) {
             let today = new Date();
-            let workingDayObj = new Date(workingDay);
+            let workingDayObj = new Date(workingDay.date);
             if ((today.getFullYear() < workingDayObj.getFullYear())
                 || (today.getFullYear() === workingDayObj.getFullYear()
                     && today.getMonth() < workingDayObj.getMonth())
@@ -355,7 +374,11 @@
                     && today.getMonth() === workingDayObj.getMonth()
                     && today.getDate() <= workingDayObj.getDate())) {
 
-                let option = $("<option></option>").val(workingDay).text(workingDayObj.getDate() +
+                let option = $("<option></option>")
+                    .attr("start-time", workingDay.workingDayStart)
+                    .attr("end-time", workingDay.workingDayEnd)
+                // val(workingDay)
+                    .text(workingDayObj.getDate() +
                     "." + (1 + workingDayObj.getMonth()) +
                     "." + workingDayObj.getFullYear())
 

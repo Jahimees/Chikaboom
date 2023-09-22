@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import net.chikaboom.controller.RegistrationController;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.service.data.AccountDataService;
-import net.chikaboom.service.data.UserDetailsDataService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,7 +22,6 @@ import java.util.Optional;
 public class AccountRestController {
 
     private final AccountDataService accountDataService;
-    private final UserDetailsDataService userDetailsDataService;
 
     /**
      * Производит поиск аккаунта по его id

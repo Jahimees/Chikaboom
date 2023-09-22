@@ -23,8 +23,10 @@
                     (appointment.userDetailsClient.lastName ? appointment.userDetailsClient.lastName : "");
                 phoneText = appointment.userDetailsClient.displayedPhone ? appointment.userDetailsClient.displayedPhone : " ";
             } else {
-                nameText = "<a href='/chikaboom/account/" + appointment.masterAccount.idAccount + "'>" + secureCleanValue(appointment.masterAccount.userDetails.firstName ? appointment.masterAccount.userDetails.firstName + " " : " ") +
-                    secureCleanValue(appointment.masterAccount.userDetails.lastName ? appointment.masterAccount.userDetails.lastName : "") + "</a>";
+                let firstName = secureCleanValue(appointment.masterAccount.userDetails.firstName ? appointment.masterAccount.userDetails.firstName + " " : " ")
+                let lastName = secureCleanValue(appointment.masterAccount.userDetails.lastName ? appointment.masterAccount.userDetails.lastName : "")
+                let visibleName = (firstName + " " + lastName).trim() ? (firstName + " " + lastName).trim() : appointment.masterAccount.username;
+                nameText = "<a href='/chikaboom/account/" + appointment.masterAccount.idAccount + "'>" + visibleName + "</a>";
                 phoneText = appointment.masterAccount.userDetails.displayedPhone ? appointment.masterAccount.userDetails.displayedPhone : " ";
             }
 
@@ -135,8 +137,11 @@
             $("#close-modal-btn").click();
             callMessagePopup("Запись отклонена!", "Нельзя записываться самому к себе на услуги!")
         } else {
-            let appointmentDateTime = new Date(workingDayVal);
+            let splittedWorkingDayVal = workingDayVal.split('.');
+            let reversedWorkingDayVal = splittedWorkingDayVal[1] + "." + splittedWorkingDayVal[0] + "." + splittedWorkingDayVal[2]
+            let appointmentDateTime = new Date(reversedWorkingDayVal);
             let splittedTime = workingTimeVal.split(":");
+
             appointmentDateTime.setHours(splittedTime[0]);
             appointmentDateTime.setMinutes(splittedTime[1]);
 

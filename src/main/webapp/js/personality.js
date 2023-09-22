@@ -59,7 +59,7 @@
     function setPhoneVisibility(isPhoneVisible, idAccount) {
         $.ajax({
             type: "PATCH",
-            url: "/accounts/" + idAccount,
+            url: "/accounts/" + idAccount + "/settings",
             contentType: "application/json",
             dataType: "json",
             data: JSON.stringify({
