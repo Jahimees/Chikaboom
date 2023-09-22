@@ -83,7 +83,7 @@ Docs & License: https://fullcalendar.io/
                 c = t.computeEventDraggable(o, l, a), h = d && e.isStart && t.computeEventStartResizable(o, l, a),
                 p = d && e.isEnd && t.computeEventEndResizable(o, l, a), u = this.getSegClasses(e, c, h || p, r),
                 f = t.cssToStr(this.getSkinCss(a)), m = "";
-            return u.unshift("fc-day-grid-event", "fc-h-event"), e.isStart && (n = this.getTimeText(s)) && (m = '<span class="fc-time">' + t.htmlEscape(n) + "</span>"), i = '<span class="fc-title">' + (t.htmlEscape(l.title || "") || "&nbsp;") + "</span>", '<a class="' + u.join(" ") + '"' + (l.url ? ' href="' + t.htmlEscape(l.url) + '"' : "") + (f ? ' style="' + f + '"' : "") + '><div class="fc-content">' + ("rtl" === o.options.dir ? i + " " + m : m + " " + i) + "</div>" + (h ? '<div class="fc-resizer fc-start-resizer"></div>' : "") + (p ? '<div class="fc-resizer fc-end-resizer"></div>' : "") + "</a>"
+            return u.unshift("fc-day-grid-event", "fc-h-event"), e.isStart && (n = this.getTimeText(s)) && (m = '<span class="fc-time">' +  t.htmlEscape(n) + "</span>"), i = '<span class="fc-title">' + (t.htmlEscape(l.title || "") || "&nbsp;") + "</span>", '<a class="' + u.join(" ") + '"' + (l.url ? ' href="' + t.htmlEscape(l.url) + '"' : "") + (f ? ' style="' + f + '"' : "") + '><div class="fc-content">' + ("rtl" === o.options.dir ? i + " " + m : m + " " + i) + "</div>" + (h ? '<div class="fc-resizer fc-start-resizer"></div>' : "") + (p ? '<div class="fc-resizer fc-end-resizer"></div>' : "") + "</a>"
         }, r.prototype.computeEventTimeFormat = function () {
             return {hour: "numeric", minute: "2-digit", omitZeroMinute: !0, meridiem: "narrow"}
         }, r.prototype.computeDisplayEventEnd = function () {

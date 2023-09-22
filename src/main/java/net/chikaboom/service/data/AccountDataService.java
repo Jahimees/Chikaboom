@@ -6,10 +6,8 @@ import net.chikaboom.exception.NoSuchDataException;
 import net.chikaboom.exception.UserAlreadyExistsException;
 import net.chikaboom.model.database.About;
 import net.chikaboom.model.database.Account;
-import net.chikaboom.repository.AboutRepository;
 import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.repository.PhoneCodeRepository;
-import net.chikaboom.repository.UserDetailsRepository;
 import net.chikaboom.util.PhoneNumberUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Сервис предназначен для получения информации об аккаунте.
+ * Сервис предназначен для обработки информации об аккаунте.
  */
 @RequiredArgsConstructor
 @Service
@@ -34,9 +32,8 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
     private String EMAIL_REGEXP;
 
     private final AccountRepository accountRepository;
-    private final UserDetailsRepository userDetailsRepository;
     private final UserDetailsDataService userDetailsDataService;
-    private final AboutRepository aboutRepository;
+    private final AboutDataService aboutDataService;
     private final PhoneCodeRepository phoneCodeRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final Logger logger = Logger.getLogger(this.getClass());
@@ -122,7 +119,7 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
         account.setIdAccount(0);
         net.chikaboom.model.database.UserDetails userDetails = account.getUserDetails();
         if (userDetails == null) {
-            userDetails = new net.chikaboom.model.database.UserDetails();
+            userDetails = userDetailsDataService.create(new net.chikaboom.model.database.UserDetails());
         } else {
             try {
                 userDetails.setPhoneCode(phoneCodeRepository.findFirstByCountryCut(userDetails.getPhoneCode().getCountryCut()));
@@ -130,12 +127,12 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
                         userDetails.getPhone(), userDetails.getPhoneCode().getCountryCut()));
                 userDetails.setDisplayedPhone(userDetails.getPhone());
 
+                userDetailsDataService.update(userDetails);
             } catch (NumberParseException e) {
                 throw new IllegalArgumentException("Cannot save user details. Phone is incorrect. " + e.getMessage());
             }
         }
 
-        userDetails = userDetailsRepository.saveAndFlush(userDetails);
         account.setUserDetails(userDetails);
 
         return accountRepository.save(account);
@@ -159,7 +156,7 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
         if (patchedUserDetails == null) {
             patchedUserDetails = new net.chikaboom.model.database.UserDetails();
             patchedAccount.setUserDetails(patchedUserDetails);
-            userDetailsRepository.saveAndFlush(patchedUserDetails);
+            patchedUserDetails = userDetailsDataService.create(patchedUserDetails);
         }
 
         if (userDetails != null) {
@@ -186,8 +183,8 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
                 About patchedAbout = userDetails.getAbout();
                 if (patchedAccount.getUserDetails().getAbout() == null
                         || patchedAccount.getUserDetails().getAbout().getIdAbout() == 0) {
-                    patchedAccount.getUserDetails().setAbout(new About());
-                    aboutRepository.saveAndFlush(patchedAccount.getUserDetails().getAbout());
+
+                    patchedAccount.getUserDetails().setAbout(aboutDataService.create(new About()));
                 }
 
                 patchedUserDetails.getAbout().setText(patchedAbout.getText());

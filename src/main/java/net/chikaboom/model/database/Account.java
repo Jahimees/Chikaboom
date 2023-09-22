@@ -72,18 +72,15 @@ public class Account implements BaseEntity, UserDetails {
     private String address;
 
     /**
-     * Отвечает за отображение номера телефона на странице аккаунта
-     */
-    @Column(name = IS_PHONE_VISIBLE)
-    private boolean isPhoneVisible;
-
-    /**
      * Содержит подробную информацию об аккаунте
      */
     @OneToOne
     @JoinColumn(name = ID_USER_DETAILS)
     private net.chikaboom.model.database.UserDetails userDetails;
 
+    /**
+     * Содержит настройки аккаунта
+     */
     @OneToOne
     @JoinColumn(name = ID_ACCOUNT_SETTINGS)
     private AccountSettings accountSettings;

@@ -16,3 +16,11 @@ ALTER TABLE `chikaboom`.`account`
             ON DELETE NO ACTION
             ON UPDATE NO ACTION;
 
+ALTER TABLE `chikaboom`.`account`
+DROP COLUMN `is_phone_visible`;
+
+ALTER TABLE `chikaboom`.`working_day`
+    CHANGE COLUMN `working_day_start` `working_day_start` TIME NULL DEFAULT '09:00:00' ,
+    CHANGE COLUMN `working_day_end` `working_day_end` TIME NULL DEFAULT '18:00:00' ;
+
+

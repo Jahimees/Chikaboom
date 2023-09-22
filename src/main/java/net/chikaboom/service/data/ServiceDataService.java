@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import net.chikaboom.exception.NoSuchDataException;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.Service;
-import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.repository.ServiceRepository;
-import net.chikaboom.repository.ServiceSubtypeRepository;
-import net.chikaboom.repository.ServiceTypeRepository;
 import net.chikaboom.repository.specification.ServiceSpecifications;
 import org.apache.log4j.Logger;
 import org.springframework.security.acls.model.AlreadyExistsException;
@@ -23,8 +20,7 @@ import java.util.Optional;
 public class ServiceDataService implements DataService<Service> {
 
     private final ServiceRepository serviceRepository;
-    private final AccountRepository accountRepository;
-
+    private final AccountDataService accountDataService;
     private final Logger logger = Logger.getLogger(this.getClass());
 
     /**
@@ -94,7 +90,7 @@ public class ServiceDataService implements DataService<Service> {
      */
     public List<Service> findAllServicesByIdAccount(int idAccount) {
         logger.info("Searching all services of user with id " + idAccount);
-        Account account = accountRepository.findById(idAccount).
+        Account account = accountDataService.findById(idAccount).
                 orElseThrow(() -> new NoSuchDataException("Cannot find account with id " + idAccount));
 
         return serviceRepository.findAllByAccount(account);

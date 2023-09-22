@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import net.chikaboom.model.database.About;
 import net.chikaboom.model.database.PhoneCode;
 import net.chikaboom.model.database.UserDetails;
-import net.chikaboom.repository.AboutRepository;
 import net.chikaboom.repository.PhoneCodeRepository;
 import net.chikaboom.repository.UserDetailsRepository;
 import net.chikaboom.util.PhoneNumberUtils;
@@ -21,11 +20,87 @@ import java.util.Optional;
  */
 @Service
 @RequiredArgsConstructor
-public class UserDetailsDataService {
+public class UserDetailsDataService implements DataService<UserDetails> {
 
     private final UserDetailsRepository userDetailsRepository;
-    private final AboutRepository aboutRepository;
+    private final AboutDataService aboutDataService;
     private final PhoneCodeRepository phoneCodeRepository;
+
+    /**
+     * Производит поиск деталей пользователя по их id
+     *
+     * @param idUserDetails идентификатор пользовательской информации
+     * @return пользовательскую информацию
+     */
+    @Override
+    public Optional<UserDetails> findById(int idUserDetails) {
+        return userDetailsRepository.findById(idUserDetails);
+    }
+
+    /**
+     * Производит поиск все сущности пользовательских информаций
+     *
+     * @return список объектов пользовательской информации
+     */
+    @Override
+    public List<UserDetails> findAll() {
+        return userDetailsRepository.findAll();
+    }
+
+    /**
+     * Производит удаление пользовательской информации по идентификатору
+     *
+     * @param idUserService идентификатор пользовательской информации
+     */
+    @Override
+    public void deleteById(int idUserService) {
+        userDetailsRepository.deleteById(idUserService);
+    }
+
+    /**
+     * Производит обновление объекта в базе данных. Внимание! Полностью перезаписывает объект
+     *
+     * @param userDetails объект пользовательской информации
+     * @return обновленный объект пользовательской информации
+     */
+    @Override
+    public UserDetails update(UserDetails userDetails) {
+        if (!userDetailsRepository.existsById(userDetails.getIdUserDetails())) {
+            throw new NotFoundException("Target userDetails not found in database");
+        }
+
+        return userDetailsRepository.saveAndFlush(userDetails);
+    }
+
+    /**
+     * Создает пользователськую информацию в базе данных
+     *
+     * @param userDetails пользовательская информация, которая должна быть сохранена в базе
+     * @return созданную пользовательскую информацию
+     */
+    @Override
+    public UserDetails create(UserDetails userDetails) {
+        About about = userDetails.getAbout();
+        if (about == null) {
+            userDetails.setAbout(aboutDataService.create(new About()));
+        }
+
+        if (userDetails.getPhoneCode() != null) {
+            userDetails.setPhoneCode(phoneCodeRepository.findFirstByCountryCut(userDetails.getPhoneCode().getCountryCut()));
+        }
+
+        if (userDetails.getDisplayedPhone() != null && !userDetails.getDisplayedPhone().equals("")) {
+            try {
+                userDetails.setDisplayedPhone(PhoneNumberUtils.formatNumberInternational(
+                        userDetails.getDisplayedPhone(),
+                        userDetails.getPhoneCode().getCountryCut()));
+            } catch (NumberParseException e) {
+                throw new IllegalArgumentException("Cannot save user details. Phone is incorrect. " + e.getMessage());
+            }
+        }
+
+        return userDetailsRepository.save(userDetails);
+    }
 
     /**
      * Проверяет существование в базе пользовательской информации по номеру телефона
@@ -67,36 +142,6 @@ public class UserDetailsDataService {
         String formedPhone = PhoneNumberUtils.formatNumberInternational(phone, countryCut);
 
         return userDetailsRepository.findUserDetailsByPhone(formedPhone);
-    }
-
-    /**
-     * Создает пользователськую информацию в базе данных
-     *
-     * @param userDetails пользовательская информация, которая должна быть сохранена в базе
-     * @return созданную пользовательскую информацию
-     */
-    public UserDetails create(UserDetails userDetails) {
-        About about = userDetails.getAbout();
-        if (about == null) {
-            about = new About();
-        }
-        userDetails.setAbout(aboutRepository.saveAndFlush(about));
-
-        if (userDetails.getPhoneCode() != null) {
-            userDetails.setPhoneCode(phoneCodeRepository.findFirstByCountryCut(userDetails.getPhoneCode().getCountryCut()));
-        }
-
-        if (userDetails.getDisplayedPhone() != null && !userDetails.getDisplayedPhone().equals("")) {
-            try {
-                userDetails.setDisplayedPhone(PhoneNumberUtils.formatNumberInternational(
-                        userDetails.getDisplayedPhone(),
-                        userDetails.getPhoneCode().getCountryCut()));
-            } catch (NumberParseException e) {
-                throw new IllegalArgumentException("Cannot save user details. Phone is incorrect. " + e.getMessage());
-            }
-        }
-
-        return userDetailsRepository.save(userDetails);
     }
 
     /**
@@ -180,14 +225,5 @@ public class UserDetailsDataService {
         }
 
         return resultUserDetailsList;
-    }
-
-    /**
-     * Производит удаление пользовательской информации по идентификатору
-     *
-     * @param idUserService идентификатор пользовательской информации
-     */
-    public void deleteById(int idUserService) {
-        userDetailsRepository.deleteById(idUserService);
     }
 }

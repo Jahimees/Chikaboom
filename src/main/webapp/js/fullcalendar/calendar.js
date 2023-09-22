@@ -1,5 +1,4 @@
 $(function () {
-    showTodaysDate();
     loadMasterAppointments();
 });
 
@@ -10,6 +9,8 @@ var initializeCalendar = function (appointmentsForCalendar) {
         // create events
         events: appointmentsForCalendar,
         firstDay: 1,
+        timeFormat: 'H:mm',
+        slotLabelFormat: 'H:mm',
         defaultTimedEventDuration: '00:30:00',
         forceEventDuration: true,
         eventBackgroundColor: '#523870',
@@ -62,6 +63,7 @@ function loadMasterAppointments() {
             initializeRightCalendar();
             initializeLeftCalendar();
             disableEnter();
+            $(".fc-head > tr > .fc-widget-header").css("overflow", "hidden scroll");
         }
     })
 }
@@ -110,8 +112,25 @@ function addOrRemoveWorkingDate(date) {
     })
 
     if (flag) {
-        var currentDateObj = new Date(date);
-        workingDays.push(saveWorkingDays(currentDateObj));
+        let currentDateObj = new Date(date);
+
+        if (validateWorkingTimeInputs("working-time", true)) {
+            let startVal = $("#working-time-start").val().trim() === ''
+                ? null :
+                new Date("2000-09-09 " + $("#working-time-start").val().trim() + ":00").toLocaleTimeString('ru');
+            let endVal = $("#working-time-end").val().trim() === ''
+                ? null :
+                new Date("2000-09-09 " + $("#working-time-end").val().trim() + ":00").toLocaleTimeString('ru')
+
+            let workingDayForSend = {
+                idAccount: accountJson.idAccount,
+                date: currentDateObj,
+                workingDayStart: startVal,
+                workingDayEnd: endVal
+            }
+
+            workingDays.push(saveWorkingDays(workingDayForSend));
+        }
     }
 
     initializeLeftCalendar();
@@ -128,11 +147,8 @@ function removeWorkingDay(workingDay) {
     })
 }
 
-function saveWorkingDays(workingDay) {
-    let workingDayForSend = {
-        idAccount: accountJson.idAccount,
-        date: workingDay
-    }
+function saveWorkingDays(workingDayForSend) {
+
     let createdWorkingDay
     $.ajax({
         type: "POST",
@@ -156,7 +172,6 @@ function saveWorkingDays(workingDay) {
 /* -------------------manage cal1 (left pane)------------------- */
 var initializeLeftCalendar = function () {
     $cal1.fullCalendar('option', {
-
         firstDay: 1,
         header: {
             left: 'prev,next today',
@@ -176,7 +191,8 @@ var initializeLeftCalendar = function () {
                 cell.attr("id-working-day", dateObj.idWorkingDay)
                 cell.attr("work-start", dateObj.workingDayStart);
                 cell.attr("work-end", dateObj.workingDayEnd);
-                cell.css("background-color", "white");
+                cell.text(dateObj.workingDayStart.substring(0,5) + "-" + dateObj.workingDayEnd.substring(0,5))
+                cell.css("background-color", "white").css("padding", "5px");
             } else {
                 cell.css("background-color", "#F4F4F4");
             }
@@ -187,15 +203,14 @@ var initializeLeftCalendar = function () {
 }
 
 function checkDateAndReturnIfPresent(date) {
-    var flag = false;
+    let flag = false
     workingDays.forEach(function (workingDay) {
-        var chosenDate = new Date(Date.parse(JSON.parse(JSON.stringify(date))))
-        var workingDate = new Date(Date.parse(JSON.parse(JSON.stringify(workingDay.date))))
+        let chosenDate = new Date(Date.parse(date))
+        let workingDate = new Date(Date.parse(workingDay.date))
         if (chosenDate.getDate() === workingDate.getDate()
             && chosenDate.getMonth() === workingDate.getMonth()
             && chosenDate.getFullYear() === workingDate.getFullYear()) {
-
-            flag = workingDay
+            flag = workingDay;
         }
     })
     return flag;
@@ -263,13 +278,6 @@ var editEvent = function (calEvent) {
 }
 
 /* --------------------------load date in navbar-------------------------- */
-var showTodaysDate = function () {
-    var n = new Date();
-    var y = n.getFullYear();
-    var m = n.getMonth() + 1;
-    var d = n.getDate();
-    $("#todaysDate").html("Сегодня " + d + "/" + m + "/" + y);
-};
 
 /* full calendar gives newly created given different ids in month/week view
     and day view. create/edit event in day (right) view, so correct for
@@ -326,17 +334,26 @@ function loadAccountCalendar() {
             $("#timetable-placeholder").html(data);
 
             setTimeout(function () {
-                // TODO пятница!
-                // let button = $("<button class='fc-button fc-state-default', type='button', " +
-                //     "onclick='addOrRemoveWorkingDate($(" + "'#calendar2 .fc-day').attr(\'data-date\'))'>" +
-                //     "Сделать рабочим/нерабочим</button>")
-                let button = document.createElement("button");
-                button.innerText = "Сделать рабочим";
-                button.setAttribute("class", "fc-button fc-state-default");
-                button.setAttribute("type", "button");
-                button.setAttribute("onclick", "addOrRemoveWorkingDate($('#calendar2 .fc-day').attr('data-date'))");
-                $("#calendar2 .fc-right").append(button);
-            }, (1000))
+                let button = $("<button id='update-working-date-btn' class='fc-button fc-state-default', type='button'" +
+                   "onclick='addOrRemoveWorkingDate($(\"#calendar2 .fc-day\").attr(\"data-date\"))'>" +
+                    "Сделать рабочим/нерабочим</button>");
+
+                let warnWrongRange = $("<label id='working-time-warn' class='invalid-field-label-popup small-text'" +
+                       "style='display: none'>Начало рабочего дня не может быть позже конца рабочего дня!</label>");
+                let warnStart = $("<label id='working-time-start-warn' class='invalid-field-label-popup small-text'" +
+                    "for='working-time-start'>Время начала неверное неверное!</label>");
+                let warnEnd = $("<label id='working-time-end-warn' class='invalid-field-label-popup small-text'" +
+                    "for='working-time-end'>Время конца дня неверное!</label>");
+
+                let warnDiv = $("<div></div>").append(warnStart).append(warnEnd).append(warnWrongRange)
+                let div = $("<div data-tooltip='Задает для выбранной даты рабочее время' style='display: flex'></div>")
+                let workTimeStartInput = $("<input id='working-time-start' style='width: 50px' placeholder='9:00'>");
+                let workTimeEndInput = $("<input id='working-time-end' style='margin-left: 10px; width: 50px' placeholder='18:00'>");
+
+                div.append(workTimeStartInput).append(workTimeEndInput).append(warnDiv)
+
+                $("#calendar2 .fc-right").append(div).append(button);
+            }, (500))
         },
         error: function () {
             underConstruction();
@@ -350,29 +367,33 @@ function reloadWorkingDayDuration(accountWorkingTime) {
         + " - " + accountWorkingTime.defaultWorkingDayEnd;
 
     $("#current-working-day-duration").text(currentWorkingDayDurationText);
-
-    // var workingDayStartString = JSON.stringify(workingDays.workingDayStart);
-    // var workingDayEndString = JSON.stringify(workingDays.workingDayEnd);
-
-    // var startTime = workingDayStartString.length === 4 ?
-    //     workingDayStartString.substring(0, 2) + ":" + workingDayStartString.substring(2, 4)
-    //     : workingDayStartString.substring(0, 1) + ":" + workingDayStartString.substring(1, 3);
-    // var endTime = +workingDayEndString.length === 4 ?
-    //     workingDayEndString.substring(0, 2) + ":" + workingDayEndString.substring(2, 4)
-    //     : workingDayEndString.substring(0, 1) + ":" + workingDayEndString.substring(1, 3)
-
-    // $("#current-working-day-duration").text("Ваш текущий рабочий день по умолчанию: " + startTime + " - " + endTime);
 }
 
-$("#save-work-time-btn").on("click", function () {
-    var startVal = $("#working-day-start").val();
-    var endVal = $("#working-day-end").val();
+$("#save-default-work-time-btn").on("click", function () {
+    if (validateWorkingTimeInputs("default-working-day")) {
+        let startVal = $("#default-working-day-start").val();
+        let endVal = $("#default-working-day-end").val();
+
+        let startData = new Date("2000-09-09 " + startVal.trim() + ":00").toLocaleTimeString('ru');
+        let endData = new Date("2000-09-09 " + endVal.trim() + ":00").toLocaleTimeString('ru');
+
+        const accountSettingsData = {
+            defaultWorkingDayStart: startData,
+            defaultWorkingDayEnd: endData,
+        }
+        saveDefaultWorkingTime(accountSettingsData, accountJson.idAccount)
+    }
+})
+
+function validateWorkingTimeInputs(templateFieldName, ignoreEmpty) {
+    var startVal = $("#" + templateFieldName + "-start").val();
+    var endVal = $("#" + templateFieldName + "-end").val();
 
     var regexp = /^(?:\d|[01]\d|2[0-3]):[0-5]\d$/;
 
-    var startLbl = $("#working-day-start-warn");
-    var endLbl = $("#working-day-end-warn");
-    var totalLbl = $("#working-day-warn");
+    var startLbl = $("#" + templateFieldName + "-start-warn");
+    var endLbl = $("#" + templateFieldName + "-end-warn");
+    var totalLbl = $("#" + templateFieldName + "-warn");
 
     var startFlag = false;
     var endFlag = false;
@@ -393,8 +414,22 @@ $("#save-work-time-btn").on("click", function () {
         endFlag = false;
     }
 
-    var startNumber = parseInt(startVal.replace(':', ''));
-    var endNumber = parseInt(endVal.replace(':', ''));
+    if (ignoreEmpty) {
+        if (startVal.trim() === '') {
+            startLbl.css("display", "none");
+            startFlag = true;
+            startVal = "6:00";
+        }
+
+        if (endVal.trim() === '') {
+            endLbl.css("display", "none");
+            endFlag = true;
+            endVal = "17:00"
+        }
+    }
+
+    let startNumber = parseInt(startVal.replace(':', ''));
+    let endNumber = parseInt(endVal.replace(':', ''));
 
     if (startNumber >= endNumber) {
         totalLbl.css("display", "block");
@@ -404,18 +439,10 @@ $("#save-work-time-btn").on("click", function () {
         totalLbl.css("display", "none");
     }
 
-    if (startFlag && endFlag) {
-        let startData = new Date("2000-09-09 " + startVal.trim() + ":00").toLocaleTimeString('ru');
-        let endData = new Date("2000-09-09 " + endVal.trim() + ":00").toLocaleTimeString('ru');
-        const accountSettingsData = {
-            defaultWorkingDayStart: startData,
-            defaultWorkingDayEnd: endData,
-        }
-        saveDefaultWorkingTime(accountSettingsData, accountJson.idAccount)
-    }
-})
+    return startFlag && endFlag
+}
 
-const saveDefaultWorkingTime = (accountSettings, idAccount) => {
+function saveDefaultWorkingTime(accountSettings, idAccount) {
     if (typeof accountSettings === "undefined" || idAccount === 0) {
         callMessagePopup("Ошибка данных", "Введенные данные некорректны")
         return;

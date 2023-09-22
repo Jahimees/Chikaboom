@@ -3,6 +3,7 @@ package net.chikaboom.model.database;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 
 import static net.chikaboom.util.constant.DbNamesConstant.*;
@@ -14,15 +15,6 @@ import static net.chikaboom.util.constant.DbNamesConstant.*;
 @Entity
 @Table(name = WORKING_DAY)
 public class WorkingDay implements BaseEntity {
-
-    public WorkingDay() {
-
-    }
-
-    public WorkingDay(Timestamp workingDayStart, Timestamp workingDayEnd) {
-        this.workingDayStart = workingDayStart;
-        this.workingDayEnd = workingDayEnd;
-    }
 
     /**
      * id сущности в таблице workingDay
@@ -49,11 +41,11 @@ public class WorkingDay implements BaseEntity {
      * Начало рабочего дня мастера
      */
     @Column(name = WORKING_DAY_START)
-    private Timestamp workingDayStart;
+    private Time workingDayStart;
 
     /**
      * Конец рабочего дня мастера
      */
     @Column(name = WORKING_DAY_END)
-    private Timestamp workingDayEnd;
+    private Time workingDayEnd;
 }

@@ -5,7 +5,6 @@ public final class DbNamesConstant {
     //        TABLES & FIELDS
     public static final String ABOUT = "about";
     public static final String WORKING_DAY = "working_day";
-//    public static final String WORKING_DAYS = "working_days";
     public static final String ACCOUNT = "account";
     public static final String ACCOUNT_STATUS = "account_status";
     public static final String ADDRESS = "address";

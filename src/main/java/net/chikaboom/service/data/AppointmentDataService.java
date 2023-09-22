@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import net.chikaboom.exception.NoSuchDataException;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.Appointment;
-import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.repository.AppointmentRepository;
 import org.apache.log4j.Logger;
 import org.springframework.security.acls.model.AlreadyExistsException;
@@ -20,9 +19,8 @@ import java.util.Optional;
 public class AppointmentDataService implements DataService<Appointment> {
 
     private final AppointmentRepository appointmentRepository;
-    private final AccountRepository accountRepository;
+    private final AccountDataService accountDataService;
     private final Logger logger = Logger.getLogger(this.getClass());
-
 
     /**
      * Производит поиск записи по идентификатору.
@@ -91,7 +89,7 @@ public class AppointmentDataService implements DataService<Appointment> {
     public List<Appointment> findAllByIdAccount(int idAccount, boolean isClient) throws NoSuchDataException {
         logger.info("Searching appointments for account with id " + idAccount);
 
-        Account account = accountRepository.findById(idAccount)
+        Account account = accountDataService.findById(idAccount)
                 .orElseThrow(() -> new NoSuchDataException("Cannot find account with id " + idAccount));
 
         List<Appointment> appointmentList;

@@ -22,11 +22,25 @@ public class WorkingDaysRestController {
     private final AccountDataService accountDataService;
     private final WorkingDayDataService workingDayDataService;
 
+    /**
+     * Предоставляет список рабочих дней выбранного аккаунта
+     *
+     * @param idAccount идентификатор аккаунта, по которому производится поиск рабочих дней
+     * @return список рабочих дней мастера
+     */
+    @PreAuthorize("permitAll()")
     @GetMapping("/accounts/{idAccount}/working-days")
     public ResponseEntity<List<WorkingDay>> findWorkingDaysByIdAccount(@PathVariable int idAccount) {
         return ResponseEntity.ok(workingDayDataService.findWorkingDaysByIdAccount(idAccount));
     }
 
+    /**
+     * Создает рабочий день мастера
+     *
+     * @param idAccount  идентификатор аккаунта, на котором создается рабочий день
+     * @param workingDay рабочий день, который необходимо сохранить в базе данных
+     * @return созданный рабочий день
+     */
     @PostMapping("/accounts/{idAccount}/working-days")
     @PreAuthorize("hasRole('MASTER') and #idAccount == authentication.principal.idAccount")
     public ResponseEntity<WorkingDay> createWorkingDayForAccount(@PathVariable int idAccount,
@@ -42,6 +56,14 @@ public class WorkingDaysRestController {
         return ResponseEntity.ok(workingDayDataService.create(workingDay));
     }
 
+    /**
+     * Удаляет рабочий день мастера из базы данных
+     *
+     * @param idAccount    идентификатор аккаунта, чей рабочий день удаляется
+     * @param idWorkingDay идентификатор удаляемого рабочего дня
+     * @return http ответ
+     */
+    @PreAuthorize("hasRole('MASTER') && #idAccount == authentication.principal.idAccount")
     @DeleteMapping("/accounts/{idAccount}/working-days/{idWorkingDay}")
     public ResponseEntity<String> deleteWorkingDay(@PathVariable int idAccount, @PathVariable int idWorkingDay) {
         Optional<Account> accountOptional = accountDataService.findById(idAccount);
