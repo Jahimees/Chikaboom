@@ -24,28 +24,47 @@
                 <div class="small-black-text">Заполненный профиль вызывает доверие клиента!</div>
             </div>
         </div>
-        <div class="news-block" style="display: inline-flex">
-            <img src="/image/test/phone-news.png" style="width: 100px;">
-            <div class="small-black-text" style="margin: auto 0 auto 20px;">
-                <b>Алло-алло!</b>
-                <br>
-                Теперь выбор кода страны и ввод телефона стали более удобными! А авторизация происходит по номеру телефона!
+        <div id="actual-news" style="height: 600px; overflow: auto" >
+            <div class="news-block" style="display: inline-flex">
+                <img src="/image/test/timetable-news.svg" style="width: 100px;">
+                <div class="small-black-text" style="margin: auto 0 auto 20px;">
+                    <b>Настрой свой день!</b>
+                    <br>
+                    <div>Теперь Вы можете настраивать рабочий график каждого дня!</div>
+                </div>
             </div>
-        </div>
-        <div class="news-block" style="display: inline-flex">
-            <img src="/image/test/clients-news.png" style="width: 100px;">
-            <div class="small-black-text" style="margin: auto 0 auto 20px;">
-                <b>Ну что там с клиентами?</b>
-                <br>
-                Появилась новая вкладка - клиенты! Посмотрите, кто ходит к вам чаще всего!
+            <div class="news-block" style="display: inline-flex">
+                <img src="/image/test/tooltip-news.jpg" style="width: 100px;">
+                <div class="small-black-text" style="margin: auto 0 auto 20px;">
+                    <b>Опа! Наводочка!</b>
+                    <br>
+                    <div data-tooltip="Подсказка (всплываеть)">Добавлены всплывающие подсказки, чтобы было легче ориентироваться! (тык)</div>
+                </div>
             </div>
-        </div>
-        <div class="news-block" style="display: inline-flex">
-            <img src="/image/test/name-news.png" style="width: 100px;">
-            <div class="small-black-text" style="margin: auto 0 auto 20px;">
-                <b>Ура! Личности - быть!</b>
-                <br>
-                Мы добавили имя и фамилию, чтобы Вас было проще узнать!
+            <div class="news-block" style="display: inline-flex">
+                <img src="/image/test/phone-news.png" style="width: 100px;">
+                <div class="small-black-text" style="margin: auto 0 auto 20px;">
+                    <b>Алло-алло!</b>
+                    <br>
+                    Теперь выбор кода страны и ввод телефона стали более удобными! А авторизация происходит по номеру
+                    телефона!
+                </div>
+            </div>
+            <div class="news-block" style="display: inline-flex">
+                <img src="/image/test/clients-news.png" style="width: 100px;">
+                <div class="small-black-text" style="margin: auto 0 auto 20px;">
+                    <b>Ну что там с клиентами?</b>
+                    <br>
+                    Появилась новая вкладка - клиенты! Посмотрите, кто ходит к вам чаще всего!
+                </div>
+            </div>
+            <div class="news-block" style="display: inline-flex">
+                <img src="/image/test/name-news.png" style="width: 100px;">
+                <div class="small-black-text" style="margin: auto 0 auto 20px;">
+                    <b>Ура! Личности - быть!</b>
+                    <br>
+                    Мы добавили имя и фамилию, чтобы Вас было проще узнать!
+                </div>
             </div>
         </div>
     </div>

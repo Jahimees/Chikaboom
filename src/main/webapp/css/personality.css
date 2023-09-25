@@ -1,7 +1,7 @@
 .content-placeholder {
     background-color: #F6F7FB;
     border-radius: 40px;
-    overflow: auto;
+    overflow: hidden;
 }
 
 .setting-content-placeholder {
