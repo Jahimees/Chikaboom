@@ -33,7 +33,9 @@
 
 <script>
     $(document).ready(function () {
-        loadWorkingDaysData(${idAccount});
+        loadWorkingDaysDataAndLoadCalendar(${idAccount});
+        loadAccountCalendar();
+
         reloadWorkingDayDuration(accountJson.accountSettings);
     });
 </script>

@@ -3,6 +3,7 @@ package net.chikaboom.service.data;
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.AccountSettings;
+import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.repository.AccountSettingsRepository;
 import org.springframework.security.acls.model.AlreadyExistsException;
 import org.springframework.security.acls.model.NotFoundException;
@@ -19,7 +20,7 @@ import java.util.Optional;
 public class AccountSettingsDataService implements DataService<AccountSettings> {
 
     private final AccountSettingsRepository accountSettingsRepository;
-    private final AccountDataService accountDataService;
+    private final AccountRepository accountRepository;
 
     /**
      * Производит поиск настроек аккаунта по id
@@ -39,7 +40,7 @@ public class AccountSettingsDataService implements DataService<AccountSettings> 
      * @return настройки аккаунта
      */
     public Optional<AccountSettings> findByIdAccount(int idAccount) {
-        Optional<Account> accountOptional = accountDataService.findById(idAccount);
+        Optional<Account> accountOptional = accountRepository.findById(idAccount);
 
         if (!accountOptional.isPresent()) {
             throw new NotFoundException("Account with id " + idAccount + " not found");
@@ -97,7 +98,7 @@ public class AccountSettingsDataService implements DataService<AccountSettings> 
      * @return обновленные настройки аккаунта
      */
     public AccountSettings patch(int idAccount, AccountSettings newAccountSettings) {
-        Optional<Account> accountOptional = accountDataService.findById(idAccount);
+        Optional<Account> accountOptional = accountRepository.findById(idAccount);
         if (!accountOptional.isPresent() || accountOptional.get().getAccountSettings() == null) {
             throw new NotFoundException("Account or settings are empty");
         }
@@ -135,6 +136,6 @@ public class AccountSettingsDataService implements DataService<AccountSettings> 
             throw new AlreadyExistsException("Account settings already exists");
         }
 
-        return accountSettingsRepository.save(accountSettings);
+        return accountSettingsRepository.saveAndFlush(accountSettings);
     }
 }

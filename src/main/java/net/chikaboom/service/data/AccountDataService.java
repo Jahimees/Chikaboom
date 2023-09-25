@@ -6,6 +6,7 @@ import net.chikaboom.exception.NoSuchDataException;
 import net.chikaboom.exception.UserAlreadyExistsException;
 import net.chikaboom.model.database.About;
 import net.chikaboom.model.database.Account;
+import net.chikaboom.model.database.AccountSettings;
 import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.repository.PhoneCodeRepository;
 import net.chikaboom.util.PhoneNumberUtils;
@@ -33,6 +34,7 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
 
     private final AccountRepository accountRepository;
     private final UserDetailsDataService userDetailsDataService;
+    private final AccountSettingsDataService accountSettingsDataService;
     private final AboutDataService aboutDataService;
     private final PhoneCodeRepository phoneCodeRepository;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -127,12 +129,14 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
                         userDetails.getPhone(), userDetails.getPhoneCode().getCountryCut()));
                 userDetails.setDisplayedPhone(userDetails.getPhone());
 
-                userDetailsDataService.update(userDetails);
+                userDetailsDataService.create(userDetails);
             } catch (NumberParseException e) {
                 throw new IllegalArgumentException("Cannot save user details. Phone is incorrect. " + e.getMessage());
             }
         }
 
+        AccountSettings accountSettings = accountSettingsDataService.create(new AccountSettings());
+        account.setAccountSettings(accountSettings);
         account.setUserDetails(userDetails);
 
         return accountRepository.save(account);

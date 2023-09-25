@@ -88,7 +88,9 @@ public class AppointmentRestController {
         UserDetails userDetails = appointment.getUserDetailsClient();
         CustomPrincipal principalAccount = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (userDetails.getIdUserDetails() != principalAccount.getIdUserDetails()) {
+//        TODO && appointment.masterAccount.idAccount != principalAccount.idAccount
+        if (userDetails.getIdUserDetails() != principalAccount.getIdUserDetails()
+        && appointment.getMasterAccount().getIdAccount() != principalAccount.getIdAccount()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 

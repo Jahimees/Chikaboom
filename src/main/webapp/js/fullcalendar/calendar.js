@@ -298,7 +298,7 @@ var disableEnter = function () {
     });
 }
 
-function loadWorkingDaysData(idAccount) {
+function loadWorkingDaysDataAndLoadCalendar(idAccount) {
     $.ajax({
         method: "get",
         url: "/accounts/" + idAccount + "/working-days",
@@ -316,14 +316,6 @@ function loadWorkingDaysData(idAccount) {
 }
 
 function loadAccountCalendar() {
-    if (workingDays !== null && workingDays.workingDays !== null) {
-        // workingDays.workingDays = JSON.parse(workingDays.workingDays);
-    } else {
-        workingDays.workingDays = [];
-    }
-
-    // reloadWorkingDayDuration();
-
     $.ajax({
         type: "get",
         url: "/chikaboom/personality/calendar",

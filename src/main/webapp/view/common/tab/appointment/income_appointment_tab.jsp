@@ -5,6 +5,9 @@
     <div>
         <div class="big-text">Записи на мои услуги</div>
         <div class="d-block w-100">
+            <div id="call-create-client-modal" class="violet-button margin-10px-0" data-bs-toggle="modal"
+                 data-bs-target="#createIncomeAppointmentModal">+ Создать запись
+            </div>
             <div class="form-check form-switch padding-0-0-20-px">
                 <input class="form-check-input" type="checkbox" id="past-appointment-toggle" checked>
                 <label class="form-check-label small-black-text" for="past-appointment-toggle">

@@ -49,7 +49,8 @@
         selectCurrentTab($("#client-tab")[0])
 
         setTimeout(function () {
-            loadClientsAndShowTable(${idAccount});
+            let clientsJSON = loadClients(${idAccount});
+            fillClientsTable(clientsJSON, 'client');
         }, 100); //TODO Плохо. Но не придумал по другому. вставка скрипта datatables должна быть тут.
     });
 </script>
