@@ -12,8 +12,10 @@
             <form>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="title" class="form-control-label">Название</label>
-                        <input type="text" class="form-control" id="title">
+                        <label for="services-select" class="form-control-label">Название услуги</label>
+                        <select class="form-control" id="services-select"></select>
+                        <label for="client-select" class="form-control-label">Клиент</label>
+                        <select class="form-control" id="client-select"></select>
                     </div>
                 </div>
                 <div class="modal-footer">

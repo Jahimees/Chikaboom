@@ -1,5 +1,4 @@
 {
-    // TODO Это просто ужас...
     let $servicesSelect = $("#services-select");
     let $clientSelect = $("#client-select");
     let $workingDaySelect = $("#working-day-select");
@@ -147,7 +146,6 @@
     function initAppointmentModal(masterServices, masterWorkingDays, masterAppointments, clientsData) {
         if (typeof masterServicesCache === "undefined") {
             if (typeof masterServices === "undefined") {
-                console.log("loading... 1")
                 masterServicesCache = loadMastersServices(accountJson.idAccount);
             } else {
                 masterServicesCache = masterServices;
@@ -156,7 +154,6 @@
 
         if (typeof masterWorkingDaysCache === "undefined") {
             if (typeof masterWorkingDays === "undefined") {
-                console.log("loading... 2")
                 masterWorkingDaysCache = loadWorkingDaysData(accountJson.idAccount);
             } else {
                 masterWorkingDaysCache = masterWorkingDays;
@@ -165,7 +162,6 @@
 
         if (typeof masterAppointmentsCache === "undefined") {
             if (masterAppointments === null || typeof masterAppointments === "undefined") {
-                console.log("loading... 3")
                 masterAppointmentsCache = loadMastersAppointments(accountJson.idAccount)
             } else {
                 if (typeof masterAppointments === "undefined") {
@@ -176,7 +172,6 @@
 
         if (typeof clientsDataCache === "undefined") {
             if (clientsData === null || typeof clientsData === "undefined") {
-                console.log("loading... 3")
                 clientsDataCache = loadClients(accountJson.idAccount)
             } else {
                 if (typeof clientsData === "undefined") {
@@ -522,44 +517,4 @@
 
         doMakeAppointment(clientUserDetails, accountJson);
     }
-
-    //     $("#make-appointment-btn").on("click", function () {
-//         masterAppointmentsJson = loadMastersAppointments(accountJson.idAccount);
-//     })
-//
-//     $servicesSelect.change(function (ev) {
-//         let chosenIdService = ev.currentTarget.value;
-//         let chosenService;
-//
-//         servicesJson.forEach(function (service) {
-//             if (service.idService === parseInt(chosenIdService)) {
-//                 chosenService = service
-//             }
-//         })
-//
-//         $serviceCostPlaceholder.text("Стоимость услуги: " + chosenService.price + " р.");
-//         $serviceTimePlaceholder.text("Время услуги: " + chosenService.time);
-//
-//         $workingDaySelect.click();
-//     })
-//
-
-//
-
-//
-//
-//
-// //////////////////////////////////////CREATE INCOME APPOINTMENT MODAL/////////////////////////
-// //+Модальное окно записи
-//
-//     $("#createIncomeAppointmentModal").on("show.bs.modal", function () {
-//         let clientsJSON = loadClients(accountJson.idAccount);
-//         fillClientsToModal(clientsJSON);
-//
-//         servicesJson = loadMastersServices(accountJson.idAccount);
-//         masterAppointmentsJson = loadMastersAppointments(accountJson.idAccount);
-//
-//         fillServicesToModal(servicesJson);
-//         fillWorkingDaysToModal(accountJson);
-//     })
 }

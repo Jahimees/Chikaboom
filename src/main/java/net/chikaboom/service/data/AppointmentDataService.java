@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import net.chikaboom.exception.NoSuchDataException;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.Appointment;
+import net.chikaboom.model.database.Service;
 import net.chikaboom.repository.AppointmentRepository;
 import org.apache.log4j.Logger;
 import org.springframework.security.acls.model.AlreadyExistsException;
+import org.springframework.security.acls.model.NotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +22,7 @@ public class AppointmentDataService implements DataService<Appointment> {
 
     private final AppointmentRepository appointmentRepository;
     private final AccountDataService accountDataService;
+    private final ServiceDataService serviceDataService;
     private final Logger logger = Logger.getLogger(this.getClass());
 
     /**
@@ -75,9 +78,20 @@ public class AppointmentDataService implements DataService<Appointment> {
         if (isAppointmentExists(appointment)) {
             throw new AlreadyExistsException("The same appointment already exists");
         }
+        if (appointment.getService() == null) {
+            throw new NotFoundException("Received service is null");
+        }
+
         appointment.setIdAppointment(0);
 
-        return appointmentRepository.save(appointment);
+        Optional<Service> serviceOptional = serviceDataService.findById(appointment.getService().getIdService());
+
+        if (!serviceOptional.isPresent()) {
+            throw new NotFoundException("Service not found");
+        }
+
+        appointment.setService(serviceOptional.get());
+        return appointmentRepository.saveAndFlush(appointment);
     }
 
     /**

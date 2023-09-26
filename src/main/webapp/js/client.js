@@ -149,10 +149,10 @@
     function isValid(value, type) {
         switch (type) {
             case 'firstName': {
-                return /^[a-zA-Zа-яА-Я]+$/.test(value);
+                return /^[a-zA-Zа-яА-ЯёЁ]+$/.test(value);
             }
             case 'lastName': {
-                return (/^[a-zA-Zа-яА-Я]+$/.test(value) || value.length === 0);
+                return (/^[a-zA-Zа-яА-ЯёЁ]+$/.test(value) || value.length === 0);
             }
             case 'about': {
                 return value.length <= 300
@@ -337,7 +337,8 @@
         }
 
         if (!window.intlTelInputGlobals.getInstance(
-            document.querySelector("#client-phone-input-upd")).isValidNumber()) {
+            document.querySelector("#client-phone-input-upd")).isValidNumber()
+            && $("#client-phone-input-upd").val() !== '') {
             flag = false;
         }
 
