@@ -6,6 +6,7 @@ import net.chikaboom.exception.NoSuchDataException;
 import net.chikaboom.exception.UserAlreadyExistsException;
 import net.chikaboom.model.database.About;
 import net.chikaboom.model.database.Account;
+import net.chikaboom.model.database.AccountSettings;
 import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.repository.PhoneCodeRepository;
 import net.chikaboom.util.PhoneNumberUtils;
@@ -18,6 +19,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.sql.Time;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +35,7 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
 
     private final AccountRepository accountRepository;
     private final UserDetailsDataService userDetailsDataService;
+    private final AccountSettingsDataService accountSettingsDataService;
     private final AboutDataService aboutDataService;
     private final PhoneCodeRepository phoneCodeRepository;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -127,18 +130,21 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
                         userDetails.getPhone(), userDetails.getPhoneCode().getCountryCut()));
                 userDetails.setDisplayedPhone(userDetails.getPhone());
 
-                userDetailsDataService.update(userDetails);
+                userDetailsDataService.create(userDetails);
             } catch (NumberParseException e) {
                 throw new IllegalArgumentException("Cannot save user details. Phone is incorrect. " + e.getMessage());
             }
         }
 
+        AccountSettings accountSettings = accountSettingsDataService.create(new AccountSettings(
+                new Time(9, 0, 0),
+                new Time(18, 0, 0)
+        ));
+        account.setAccountSettings(accountSettings);
         account.setUserDetails(userDetails);
 
         return accountRepository.save(account);
     }
-
-//    TODO refactor Слишком большой метод
 
     /**
      * Применяет частичное изменение объекта, игнорируя null поля и неизменные поля

@@ -114,7 +114,7 @@
     <jsp:include page="common/popup/message_popup.jsp"/>
     <jsp:include page="common/popup/create_event_modal.jsp"/>
     <jsp:include page="common/popup/update_event_modal.jsp"/>
-
+    <jsp:include page="common/popup/create_income_appointment_modal.jsp"/>
 </div>
 </body>
 </html>

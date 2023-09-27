@@ -75,10 +75,51 @@
         }
     }
 
+    function confirmAccountSettingsEdit() {
+        if (validateAllFields()) {
+            let url = "/accounts/" + accountJson.idAccount + "/settings";
+
+            let accountSettingsJson = {
+                idAccountSettings: accountJson.accountSettings.idAccountSettings,
+            }
+            Array.from($(".popup-input-field")).forEach(field => {
+                if (field.name === 'defaultWorkingDayStart' || field.name === 'defaultWorkingDayEnd') {
+                    if (field.value.trim() !== '') {
+                        accountSettingsJson[field.name] = new Date("2000-09-09 " + field.value.trim() + ":00")
+                            .toLocaleTimeString('ru');
+                    }
+                }
+            });
+
+            $.ajax({
+                type: "PATCH",
+                url: url,
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify(accountSettingsJson),
+                async: false,
+                success: function (data) {
+                    $("#editModal").modal('hide');
+                    callMessagePopup("Изменения прошли успешно!", "Изменения прошли успешно!")
+
+                    accountJson.accountSettings = data;
+
+                    loadSettingTab('personalization', accountJson.idAccount);
+                },
+                error: function () {
+                    $("#e-input-data-incorrect-label").css("display", "block");
+                }
+            });
+        }
+    }
+
     /**
      * Уничтожает все поля в всплывающем окне
      */
     function dropAllFields() {
+        $("#confirmEditBtn").unbind();
+        $("#confirmEditBtn").on("click", confirmEdit);
+
         $("#field-box-placeholder").html("");
         countryCache = null;
         countryRequesting = false;
@@ -205,7 +246,6 @@
                     break;
                 }
                 case InvalidReason.PHONE: {
-                    // if (!/^(\s*)?([- _():=+]??\d[- _():=+]?){9,14}(\s*)?$/.test(thisField.value)) {
                     if (!window.intlTelInputGlobals.getInstance(
                         document.querySelector("#edit-phone")).isValidNumber()) {
                         thisField.setAttribute("reason", InvalidReason.PHONE)
@@ -245,8 +285,17 @@
                     } else {
                         $("#" + thisFieldName + "-" + InvalidReason.NAME).css("display", "none");
                     }
+                    break;
                 }
-
+                case InvalidReason.TIME: {
+                    if (!/^(?:\d|[01]\d|2[0-3]):[0-5]\d$/.test(thisField.value) && thisField.value.trim() !== '') {
+                        thisField.setAttribute("reason", InvalidReason.TIME);
+                        $("#" + thisFieldName + "-" + InvalidReason.TIME).css("display", "block");
+                        isReasonShouldBeEmpty = false;
+                    } else {
+                        $("#" + thisFieldName + "-" + InvalidReason.TIME).css("display", "none");
+                    }
+                }
             }
         }
 
@@ -277,5 +326,6 @@ const InvalidReason = {
     SHORT: "short",
     LONG: "long",
     USERNAME: "username",
-    NAME: "name"
+    NAME: "name",
+    TIME: "time"
 }

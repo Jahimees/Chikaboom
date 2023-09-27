@@ -81,7 +81,9 @@ public class UserDetailsDataService implements DataService<UserDetails> {
     @Override
     public UserDetails create(UserDetails userDetails) {
         About about = userDetails.getAbout();
-        if (about == null) {
+        if (about != null) {
+            aboutDataService.create(userDetails.getAbout());
+        } else {
             userDetails.setAbout(aboutDataService.create(new About()));
         }
 
@@ -99,7 +101,7 @@ public class UserDetailsDataService implements DataService<UserDetails> {
             }
         }
 
-        return userDetailsRepository.save(userDetails);
+        return userDetailsRepository.saveAndFlush(userDetails);
     }
 
     /**

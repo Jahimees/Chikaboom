@@ -329,61 +329,23 @@
         return result;
     }
 
-// Модальное окно записи
-    function fillServicesModal(servicesJson) {
-        let servicesSelect = $("#services-select");
+    function loadMastersServices(idAccount) {
+        var servicesJson;
 
-        servicesJson.forEach(function (service) {
-            let option = $("<option></option>").val(service.idService).text(service.name);
-
-            servicesSelect.append(option);
-        })
-    }
-
-    function loadWorkingDaysData(idAccount) {
-        let workingDaysFromServer
         $.ajax({
-            method: "get",
-            url: "/accounts/" + idAccount + "/working-days",
             contentType: "application/json",
             dataType: "json",
+            method: "get",
             async: false,
+            url: "/accounts/" + idAccount + "/services",
             success: function (data) {
-                workingDaysFromServer = data;
+                servicesJson = data;
             },
             error: function () {
-                callMessagePopup("Что-то пошло не так!", "Невозможно загрузить расписание!");
-            }
-        })
-
-        return workingDaysFromServer ? workingDaysFromServer : []
-    }
-
-    let workingDays;
-    function fillWorkingDays(accountJson) {
-        let workingDaySelect = $("#working-day-select");
-
-        workingDays = typeof workingDays === "undefined" ? loadWorkingDaysData(accountJson.idAccount) : workingDays
-        workingDays.forEach(function (workingDay) {
-            let today = new Date();
-            let workingDayObj = new Date(workingDay.date);
-            if ((today.getFullYear() < workingDayObj.getFullYear())
-                || (today.getFullYear() === workingDayObj.getFullYear()
-                    && today.getMonth() < workingDayObj.getMonth())
-                || (today.getFullYear() === workingDayObj.getFullYear()
-                    && today.getMonth() === workingDayObj.getMonth()
-                    && today.getDate() <= workingDayObj.getDate())) {
-
-                let option = $("<option></option>")
-                    .attr("start-time", workingDay.workingDayStart)
-                    .attr("end-time", workingDay.workingDayEnd)
-                // val(workingDay)
-                    .text(workingDayObj.getDate() +
-                    "." + (1 + workingDayObj.getMonth()) +
-                    "." + workingDayObj.getFullYear())
-
-                workingDaySelect.append(option);
+                callMessagePopup("Невозможно загрузить услуги!", "Что-то пошло не так. Невозможно загрузить услуги!")
             }
         });
+
+        return servicesJson;
     }
 }

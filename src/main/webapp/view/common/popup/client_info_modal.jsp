@@ -24,9 +24,9 @@
                     <div class="popup-input middle-box w-80">
                         <div>Фамилия</div>
                         <input id="client-last-name-input-upd">
-                        <label id="last-name-invalid-label-upd" class="invalid-field-label-popup">Фамилия может содержать
-                            только
-                            буквы</label>
+                        <label id="last-name-invalid-label-upd" class="invalid-field-label-popup">
+                            Фамилия может содержать только буквы
+                        </label>
                     </div>
                     <div class="popup-input middle-box w-80">
                         <div>Телефон</div>

@@ -50,7 +50,9 @@
             contentType: "application/json",
             dataType: "text",
             success: () => {
-                loadClientsAndShowTable(idAccountMaster);
+                let clientsJSON = loadClients(idAccountMaster)
+                fillClientsTable(clientsJSON, 'client');
+
                 $("#messageModal").on("hidden.bs.modal", function () {
                     callMessagePopup("Клиент удалён!", "Клиент и его записи успешно удалены!");
                     $("#messageModal").unbind();
@@ -147,10 +149,10 @@
     function isValid(value, type) {
         switch (type) {
             case 'firstName': {
-                return /^[a-zA-Zа-яА-Я]+$/.test(value);
+                return /^[a-zA-Zа-яА-ЯёЁ]+$/.test(value);
             }
             case 'lastName': {
-                return (/^[a-zA-Zа-яА-Я]+$/.test(value) || value.length === 0);
+                return (/^[a-zA-Zа-яА-ЯёЁ]+$/.test(value) || value.length === 0);
             }
             case 'about': {
                 return value.length <= 300
@@ -160,7 +162,8 @@
 
 ///////////////////////////////////////////CLIENTS DATATABLE///////////////////////////////////////
 
-    function loadClientsAndShowTable(idMasterAccount) {
+    function loadClients(idMasterAccount) {
+        let response;
         $.ajax({
             type: "get",
             url: "/accounts/" + idMasterAccount + "/clients",
@@ -168,12 +171,14 @@
             dataType: "json",
             async: false,
             success: function (data) {
-                fillClientsTable(data, 'client');
+                response = data;
             },
             error: function () {
-                callMessagePopup("Ошибка!", "Невозможно загрузить информацию о клиентах!");
+                callMessagePopup("Ошибка", "Невозможно загрузить информацию о клиентах!")
             }
         })
+
+        return response;
     }
 
     function fillClientsTable(clientsJSON, tableId) {
@@ -196,7 +201,7 @@
 ///////////////////////////////////////////MODAL CLIENT APPOINTMENTS///////////////////////////////////////
     let shownUserDetails;
 
-    $(document).ready( () =>  {
+    $(document).ready(() => {
         let $clientInfoModal = $("#clientInfoModal");
         let $clientAppointmentsTable = $("#client_appointments_table")
 
@@ -296,7 +301,8 @@
                 success: () => {
                     $("#close-client-info-btn").click();
                     callMessagePopup("Данные сохранены", "Данные клиента успешно сохранены!");
-                    loadClientsAndShowTable(shownUserDetails.masterOwner.idAccount);
+                    let clientsJSON = loadClients(shownUserDetails.masterOwner.idAccount);
+                    fillClientsTable(clientsJSON, 'client');
                 },
                 error: () => {
                     $("#close-client-info-btn").click();
@@ -331,7 +337,8 @@
         }
 
         if (!window.intlTelInputGlobals.getInstance(
-            document.querySelector("#client-phone-input-upd")).isValidNumber()) {
+            document.querySelector("#client-phone-input-upd")).isValidNumber()
+            && $("#client-phone-input-upd").val() !== '') {
             flag = false;
         }
 

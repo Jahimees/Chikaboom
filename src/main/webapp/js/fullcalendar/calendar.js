@@ -14,8 +14,7 @@ var initializeCalendar = function (appointmentsForCalendar) {
         defaultTimedEventDuration: '00:30:00',
         forceEventDuration: true,
         eventBackgroundColor: '#523870',
-        editable: false,
-        height: screen.height - 160,
+        height: screen.height - 170,
         timezone: 'Russia/Moscow',
     });
 }
@@ -32,23 +31,8 @@ function loadMasterAppointments() {
                 let visitorName = masterAppointment.userDetailsClient.firstName ? masterAppointment.userDetailsClient.firstName : "Неизвестный";
                 let title = masterAppointment.service.name + " - " + visitorName;
                 let appointmentDateTimeStart = new Date(masterAppointment.appointmentDateTime);
+                let appointmentDateTimeEnd = calculateEndServiceTime(masterAppointment)
 
-                let serviceTime = masterAppointment.service.time;
-                let serviceDurationTime = serviceTime.replace(' минут', '').split(' час');
-                let duration;
-
-                if (serviceDurationTime.length === 1) {
-                    duration = 30;
-                } else {
-                    serviceDurationTime[1] = serviceDurationTime[1].replace('а', '');
-
-                    duration = serviceDurationTime[0] * 60;
-                    duration += serviceDurationTime[1] === '' ? 0 : 30;
-                }
-
-                let appointmentDateTimeEnd = new Date(masterAppointment.appointmentDateTime);
-                let minutes = appointmentDateTimeEnd.getMinutes() + duration;
-                appointmentDateTimeEnd.setMinutes(minutes);
                 let appointmentObj = {
                     id: masterAppointment.idAppointment,
                     title: title,
@@ -66,6 +50,28 @@ function loadMasterAppointments() {
             $(".fc-head > tr > .fc-widget-header").css("overflow", "hidden scroll");
         }
     })
+}
+
+function calculateEndServiceTime(masterAppointment) {
+
+    let serviceTime = masterAppointment.service.time;
+    let serviceDurationTime = serviceTime.replace(' минут', '').split(' час');
+    let duration;
+
+    if (serviceDurationTime.length === 1) {
+        duration = 30;
+    } else {
+        serviceDurationTime[1] = serviceDurationTime[1].replace('а', '');
+
+        duration = serviceDurationTime[0] * 60;
+        duration += serviceDurationTime[1] === '' ? 0 : 30;
+    }
+
+    let appointmentDateTimeEnd = new Date(masterAppointment.appointmentDateTime);
+    let minutes = appointmentDateTimeEnd.getMinutes() + duration;
+    appointmentDateTimeEnd.setMinutes(minutes);
+
+    return appointmentDateTimeEnd
 }
 
 
@@ -191,7 +197,7 @@ var initializeLeftCalendar = function () {
                 cell.attr("id-working-day", dateObj.idWorkingDay)
                 cell.attr("work-start", dateObj.workingDayStart);
                 cell.attr("work-end", dateObj.workingDayEnd);
-                cell.text(dateObj.workingDayStart.substring(0,5) + "-" + dateObj.workingDayEnd.substring(0,5))
+                cell.text(dateObj.workingDayStart.substring(0, 5) + "-" + dateObj.workingDayEnd.substring(0, 5))
                 cell.css("background-color", "white").css("padding", "5px");
             } else {
                 cell.css("background-color", "#F4F4F4");
@@ -226,27 +232,90 @@ var cal2GoTo = function (date) {
     $cal2.fullCalendar('gotoDate', date);
 }
 
+function checkWorkingDateTime(appointmentDateTime) {
+    let flag = false;
+    workingDays.forEach((workingDay) => {
+        let workingDate = new Date(workingDay.date);
+        if (workingDate.getFullYear() === appointmentDateTime.getFullYear()
+            && workingDate.getMonth() === appointmentDateTime.getMonth()
+            && workingDate.getDate() === appointmentDateTime.getDate()) {
 
-var newEvent = (start, nd) => {
-    $('input#title').val("");
+            let endTime = workingDay.workingDayEnd;
+            let startTime = workingDay.workingDayStart;
+
+            let endTimeHours = endTime.split(":")[0];
+            let startTimeHours = startTime.split(":")[0];
+            let endTimeMinutes = endTime.split(":")[1];
+
+            if (appointmentDateTime.getHours() > startTimeHours && appointmentDateTime.getHours() < endTimeHours) {
+                flag = true;
+            } else if (appointmentDateTime.getHours() === endTimeHours) {
+                if (appointmentDateTime.getMinutes() < endTimeMinutes) {
+                    flag = true;
+                }
+            }
+        }
+    });
+
+    return flag;
+}
+
+var newEvent = (start, end) => {
+    initAppointmentModal();
+    let $servicesSelect = $("#services-select");
+    let $clientSelect = $("#client-select");
     let $createEventModal = $("#createEventModal");
     $createEventModal.modal('show');
     $('#submit').unbind();
     $('#submit').on('click', function () {
-        var title = $('input#title').val();
+        let appointmentDateTime = new Date(...(start._i));
 
-        if (title) {
-            var eventData = {
-                title: title,
-                start: JSON.parse(JSON.stringify(start)),
-                end: nd
-            };
-            $cal.fullCalendar('renderEvent', eventData, true);
-            $createEventModal.modal('hide');
-        } else {
-            $createEventModal.modal('hide');
-            callMessagePopup("Невозможно создать событие", "Название не может быть пустым");
+        if (!checkWorkingDateTime(appointmentDateTime)) {
+            $('#createEventModal').modal('hide');
+            callMessagePopup("Произошла ошибка!", "Проверьте дату и время записи!");
+            return
         }
+
+        let appointmentToSend = {
+            masterAccount: accountJson,
+            userDetailsClient: {
+                idUserDetails: $clientSelect.val()
+            },
+            service: {
+                idService: $servicesSelect.val()
+            },
+            appointmentDateTime: appointmentDateTime
+        }
+
+        let serviceText = $servicesSelect[0].options[$servicesSelect[0].selectedIndex].text;
+        let clientText = $clientSelect[0].options[$clientSelect[0].selectedIndex].text;
+
+        $.ajax({
+            method: "post",
+            url: "/appointments",
+            contentType: "application/json",
+            dataType: "json",
+            data: JSON.stringify(appointmentToSend),
+            success: function (data) {
+                let endTime = calculateEndServiceTime(data);
+                let eventData = {
+                    id: data.idAppointment,
+                    title: serviceText + " - " + clientText,
+                    start: appointmentDateTime,
+                    end: endTime
+                };
+                $cal.fullCalendar('renderEvent', eventData, true);
+                $createEventModal.modal('hide');
+
+                $('#createEventModal').modal('hide');
+                callMessagePopup("Запись оформлена!", "Запись на услугу успешна создана!")
+            },
+            error: function () {
+                $('#createEventModal').modal('hide');
+                callMessagePopup("Произошла ошибка!", "Не удалось создать запись на услугу! " +
+                    "Возможно, Вы пытаетесь создать запись на предыдущее число!")
+            }
+        })
     });
 }
 
@@ -254,26 +323,35 @@ var editEvent = function (calEvent) {
     $('input#editTitle').val(calEvent.title);
     let $updateEventModal = $("#updateEventModal");
     $updateEventModal.modal('show');
-    $('#update').unbind();
-    $('#update').on('click', function () {
-        var title = $('input#editTitle').val();
-        $updateEventModal.modal('hide');
-        if (title) {
-            calEvent.title = title
-            $cal.fullCalendar('updateEvent', calEvent);
-        } else {
-            callMessagePopup("Невозможно обновить событие", "Название не может быть пустым")
-        }
-    });
+    // $('#update').unbind();
+    // $('#update').on('click', function () {
+    //     var title = $('input#editTitle').val();
+    //     $updateEventModal.modal('hide');
+    //     if (title) {
+    //         calEvent.title = title
+    //         $cal.fullCalendar('updateEvent', calEvent);
+    //     } else {
+    //         callMessagePopup("Невозможно обновить событие", "Название не может быть пустым")
+    //     }
+    // });
+
     $('#delete').on('click', function () {
         $('#delete').unbind();
-        if (calEvent._id.includes("_fc")) {
-            $cal1.fullCalendar('removeEvents', [getCal1Id(calEvent._id)]);
-            $cal2.fullCalendar('removeEvents', [calEvent._id]);
-        } else {
-            $cal.fullCalendar('removeEvents', [calEvent._id]);
-        }
-        $updateEventModal.modal('hide');
+        // if (calEvent._id.includes("_fc")) {
+        $.ajax({
+            method: "delete",
+            url: "/appointments/" + calEvent._id,
+            async: false,
+            success: function () {
+                $updateEventModal.modal('hide');
+                callMessagePopup("Запись удалена", "Запись успешно удалена")
+            },
+            error: function () {
+                callMessagePopup("Неизвестная ошибка", "Невозможно удалить событие")
+            }
+        })
+        $cal1.fullCalendar('removeEvents', [calEvent._id]);
+        $cal2.fullCalendar('removeEvents', [calEvent._id]);
     });
 }
 
@@ -298,7 +376,7 @@ var disableEnter = function () {
     });
 }
 
-function loadWorkingDaysData(idAccount) {
+function loadWorkingDaysDataAndLoadCalendar(idAccount) {
     $.ajax({
         method: "get",
         url: "/accounts/" + idAccount + "/working-days",
@@ -316,14 +394,6 @@ function loadWorkingDaysData(idAccount) {
 }
 
 function loadAccountCalendar() {
-    if (workingDays !== null && workingDays.workingDays !== null) {
-        // workingDays.workingDays = JSON.parse(workingDays.workingDays);
-    } else {
-        workingDays.workingDays = [];
-    }
-
-    // reloadWorkingDayDuration();
-
     $.ajax({
         type: "get",
         url: "/chikaboom/personality/calendar",
@@ -335,11 +405,11 @@ function loadAccountCalendar() {
 
             setTimeout(function () {
                 let button = $("<button id='update-working-date-btn' class='fc-button fc-state-default', type='button'" +
-                   "onclick='addOrRemoveWorkingDate($(\"#calendar2 .fc-day\").attr(\"data-date\"))'>" +
+                    "onclick='addOrRemoveWorkingDate($(\"#calendar2 .fc-day\").attr(\"data-date\"))'>" +
                     "Сделать рабочим/нерабочим</button>");
 
                 let warnWrongRange = $("<label id='working-time-warn' class='invalid-field-label-popup small-text'" +
-                       "style='display: none'>Начало рабочего дня не может быть позже конца рабочего дня!</label>");
+                    "style='display: none'>Начало рабочего дня не может быть позже конца рабочего дня!</label>");
                 let warnStart = $("<label id='working-time-start-warn' class='invalid-field-label-popup small-text'" +
                     "for='working-time-start'>Время начала неверное неверное!</label>");
                 let warnEnd = $("<label id='working-time-end-warn' class='invalid-field-label-popup small-text'" +
@@ -353,6 +423,7 @@ function loadAccountCalendar() {
                 div.append(workTimeStartInput).append(workTimeEndInput).append(warnDiv)
 
                 $("#calendar2 .fc-right").append(div).append(button);
+                $('#calendar1').fullCalendar('option', 'height', $(window).height() - 50);
             }, (500))
         },
         error: function () {
@@ -368,22 +439,6 @@ function reloadWorkingDayDuration(accountWorkingTime) {
 
     $("#current-working-day-duration").text(currentWorkingDayDurationText);
 }
-
-$("#save-default-work-time-btn").on("click", function () {
-    if (validateWorkingTimeInputs("default-working-day")) {
-        let startVal = $("#default-working-day-start").val();
-        let endVal = $("#default-working-day-end").val();
-
-        let startData = new Date("2000-09-09 " + startVal.trim() + ":00").toLocaleTimeString('ru');
-        let endData = new Date("2000-09-09 " + endVal.trim() + ":00").toLocaleTimeString('ru');
-
-        const accountSettingsData = {
-            defaultWorkingDayStart: startData,
-            defaultWorkingDayEnd: endData,
-        }
-        saveDefaultWorkingTime(accountSettingsData, accountJson.idAccount)
-    }
-})
 
 function validateWorkingTimeInputs(templateFieldName, ignoreEmpty) {
     var startVal = $("#" + templateFieldName + "-start").val();
@@ -440,26 +495,4 @@ function validateWorkingTimeInputs(templateFieldName, ignoreEmpty) {
     }
 
     return startFlag && endFlag
-}
-
-function saveDefaultWorkingTime(accountSettings, idAccount) {
-    if (typeof accountSettings === "undefined" || idAccount === 0) {
-        callMessagePopup("Ошибка данных", "Введенные данные некорректны")
-        return;
-    }
-
-    $.ajax({
-        method: "patch",
-        url: "/accounts/" + idAccount + "/settings",
-        contentType: "application/json",
-        dataType: "json",
-        data: JSON.stringify(accountSettings),
-        success: (data) => {
-            callMessagePopup("Изменения прошли успешно", "Новое время работы по умолчанию успешно изменено");
-            reloadWorkingDayDuration(data);
-        },
-        error: () => {
-            callMessagePopup("Что-то пошло не так", "Неудалось изменить время работы по умолчанию");
-        }
-    })
 }
