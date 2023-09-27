@@ -27,7 +27,7 @@ public class AccountSettingsRestController {
      */
     @PreAuthorize("isAuthenticated() && #idAccount == authentication.principal.idAccount")
     @GetMapping("/accounts/{idAccount}/settings")
-    public ResponseEntity<AccountSettings> getAccountSettingsByIdAccount(@PathVariable int idAccount) {
+    public ResponseEntity<AccountSettings> findAccountSettingsByIdAccount(@PathVariable int idAccount) {
         Optional<AccountSettings> accountSettingsOptional = accountSettingsDataService.findByIdAccount(idAccount);
 
         if (!accountSettingsOptional.isPresent()) {

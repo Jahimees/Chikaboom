@@ -67,8 +67,6 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
      */
     @Override
     public Optional<Account> findById(int idAccount) {
-        logger.info("Loading account info with id " + idAccount);
-
         return accountRepository.findById(idAccount);
     }
 

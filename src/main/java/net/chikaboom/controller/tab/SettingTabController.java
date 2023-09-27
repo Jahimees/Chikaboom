@@ -1,5 +1,6 @@
 package net.chikaboom.controller.tab;
 
+import net.chikaboom.annotation.LoggableViewController;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -29,6 +30,7 @@ public class SettingTabController {
      */
     @PreAuthorize("#idAccount == authentication.principal.idAccount")
     @GetMapping
+    @LoggableViewController
     public String openSettingTab(@PathVariable int idAccount) {
         return SETTINGS_TAB;
     }
@@ -41,6 +43,7 @@ public class SettingTabController {
      */
     @PreAuthorize("#idAccount == authentication.principal.idAccount")
     @GetMapping("/general")
+    @LoggableViewController
     public String loadGeneralSettingTab(@PathVariable int idAccount) {
         return GENERAL_SETTINGS_TAB;
     }
@@ -53,6 +56,7 @@ public class SettingTabController {
      */
     @PreAuthorize("#idAccount == authentication.principal.idAccount")
     @GetMapping("/personalization")
+    @LoggableViewController
     public String loadPersonalizationSettingTab(@PathVariable int idAccount) {
         return PERSONALIZATION_SETTINGS_TAB;
     }

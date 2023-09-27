@@ -1,6 +1,7 @@
 package net.chikaboom.controller.tab;
 
 import lombok.RequiredArgsConstructor;
+import net.chikaboom.annotation.LoggableViewController;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -29,6 +30,7 @@ public class ServiceTabController {
      */
     @PreAuthorize("#idAccount == authentication.principal.idAccount and hasRole('MASTER')")
     @GetMapping
+    @LoggableViewController
     public String openServiceTab(@PathVariable int idAccount) {
         return SERVICE_TAB;
     }
@@ -41,6 +43,7 @@ public class ServiceTabController {
      */
     @PreAuthorize("#idAccount == authentication.principal.idAccount")
     @GetMapping("/general")
+    @LoggableViewController
     public String loadGeneralServiceTab(@PathVariable int idAccount) {
         return GENERAL_SERVICE_TAB;
     }

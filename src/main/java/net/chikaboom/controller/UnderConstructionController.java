@@ -1,5 +1,6 @@
 package net.chikaboom.controller;
 
+import net.chikaboom.annotation.LoggableViewController;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,7 @@ public class UnderConstructionController {
      */
     @PreAuthorize("permitAll()")
     @GetMapping
+    @LoggableViewController
     public String openUnderConstructionPage() {
         return UNDER_CONSTRUCTION_PAGE;
     }
