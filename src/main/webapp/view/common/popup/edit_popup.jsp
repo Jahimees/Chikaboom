@@ -11,13 +11,13 @@
             </div>
             <div class="modal-body">
                 <label class="invalid-field-label-popup" id="e-input-data-incorrect-label" style="display: none">
-                    Проверьте введенные данные. Возможно, уже существует пользователь с такими данными
+                    Произошла ошибка сохранения. Проверьте введенные данные.
                 </label>
                 <div id="field-box-placeholder">
                 </div>
             </div>
             <div class="modal-footer">
-                <div class="btn btn-primary" onclick="confirmEdit()">
+                <div id="confirmEditBtn" class="btn btn-primary">
                     Подтвердить
                 </div>
                 <div class="btn btn-secondary" data-bs-dismiss="modal">

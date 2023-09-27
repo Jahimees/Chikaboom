@@ -130,6 +130,17 @@
         $("#editModal").modal('show');
     }
 
+    function openEditDefaultWorkingTimePopup() {
+        dropAllFields();
+        addField("Начало рабочего дня", "defaultWorkingDayStart", "text", "9:00", false,
+            [new Validation("Время должно соответстовать формату hh:mm", InvalidReason.TIME)]);
+        addField("Конец рабочего дня", "defaultWorkingDayEnd", "text", "18:00", false,
+            [new Validation("Время должно соответстовать формату hh:mm", InvalidReason.TIME)]);
+        $("#confirmEditBtn").unbind()
+        $("#confirmEditBtn").on("click", confirmAccountSettingsEdit);
+        $("#editModal").modal('show');
+    }
+
     function openEditAboutPopup() {
         dropAllFields();
         let professionInputField = addField("Вид деятельности", "profession", "text", "Мастер по маникюру", false,
@@ -180,50 +191,41 @@
     }
 
     function fillGeneralSettingTab(idAccount) {
-        $.ajax({
-            method: "get",
-            url: "/accounts/" + idAccount,
-            contentType: "application/json",
-            dataType: "json",
-            async: false,
-            success: function (accountJson) {
+        if (typeof accountJson == "undefined") {
+            accountJson = loadAccount(idAccount);
+        }
 
-                $("#email-placeholder").val(accountJson.email);
+        $("#email-placeholder").val(accountJson.email);
 
-                let phoneText = "";
-                if (accountJson.userDetails === null) {
-                    accountJson.userDetails = {};
-                }
+        let phoneText = "";
+        if (accountJson.userDetails === null) {
+            accountJson.userDetails = {};
+        }
 
-                if (accountJson.userDetails.phoneCode !== null && typeof accountJson.userDetails.phoneCode !== "undefined") {
-                    phoneText = accountJson.userDetails.displayedPhone !== null ? accountJson.userDetails.displayedPhone : " ";
-                }
+        if (accountJson.userDetails.phoneCode !== null && typeof accountJson.userDetails.phoneCode !== "undefined") {
+            phoneText = accountJson.userDetails.displayedPhone !== null ? accountJson.userDetails.displayedPhone : " ";
+        }
 
-                $("#phone-placeholder").val(phoneText);
-                $("#phone-invisible-toggle").prop("checked", accountJson.phoneVisible)
-                $("#username-placeholder").val(accountJson.username);
-                let nameText = (accountJson.userDetails.firstName ? accountJson.userDetails.firstName + " " : "") +
-                    (accountJson.userDetails.lastName ? accountJson.userDetails.lastName : "");
-                $("#name-placeholder").val(nameText);
-                $("#greeting-info-box").text("Добро пожаловать, " + (nameText ? nameText : accountJson.username) + "!");
+        $("#phone-placeholder").val(phoneText);
+        $("#phone-invisible-toggle").prop("checked", accountJson.phoneVisible)
+        $("#username-placeholder").val(accountJson.username);
+        let nameText = (accountJson.userDetails.firstName ? accountJson.userDetails.firstName + " " : "") +
+            (accountJson.userDetails.lastName ? accountJson.userDetails.lastName : "");
+        $("#name-placeholder").val(nameText);
+        $("#greeting-info-box").text("Добро пожаловать, " + (nameText ? nameText : accountJson.username) + "!");
 
-                if (accountJson.roles[0].name === "ROLE_MASTER") {
-                    let aboutProfession = accountJson.userDetails.about != null
-                    && typeof accountJson.userDetails.about != 'undefined'
-                        ? accountJson.userDetails.about.profession : "";
+        if (accountJson.roles[0].name === "ROLE_MASTER") {
+            let aboutProfession = accountJson.userDetails.about != null
+            && typeof accountJson.userDetails.about != 'undefined'
+                ? accountJson.userDetails.about.profession : "";
 
-                    let aboutText = accountJson.userDetails.about != null
-                    && typeof accountJson.userDetails.about != 'undefined' ? accountJson.userDetails.about.text : "";
+            let aboutText = accountJson.userDetails.about != null
+            && typeof accountJson.userDetails.about != 'undefined' ? accountJson.userDetails.about.text : "";
 
-                    $("#address-placeholder").val(accountJson.address);
-                    $("#about-profession-placeholder").val(aboutProfession != null ? aboutProfession : "");
-                    $("#about-text-placeholder").text(aboutText != null && aboutText !== "" ? aboutText : "");
-                }
-            },
-            error: function (data) {
-                callMessagePopup("Что-то пошло не так!", "При загрузке страницы что-то пошло не так!");
-            }
-        })
+            $("#address-placeholder").val(accountJson.address);
+            $("#about-profession-placeholder").val(aboutProfession != null ? aboutProfession : "");
+            $("#about-text-placeholder").text(aboutText != null && aboutText !== "" ? aboutText : "");
+        }
     }
 
     function uploadAvatarImage(idAccount) {

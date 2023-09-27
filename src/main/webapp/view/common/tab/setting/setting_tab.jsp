@@ -107,7 +107,7 @@
 
     $("#personalization-setting-tab").on("click", function () {
         selectCurrentTab(this);
-        loadUnderConstruction();
+        loadSettingTab("personalization", ${idAccount});
     });
 
     $("#security-setting-tab").on("click", function () {

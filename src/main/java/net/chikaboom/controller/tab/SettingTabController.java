@@ -18,6 +18,8 @@ public class SettingTabController {
     private String SETTINGS_TAB;
     @Value("${tab.settings.general}")
     private String GENERAL_SETTINGS_TAB;
+    @Value("${tab.settings.personalization}")
+    private String PERSONALIZATION_SETTINGS_TAB;
 
     /**
      * Открывает саму вкладку настроек пользователя.
@@ -41,6 +43,18 @@ public class SettingTabController {
     @GetMapping("/general")
     public String loadGeneralSettingTab(@PathVariable int idAccount) {
         return GENERAL_SETTINGS_TAB;
+    }
+
+    /**
+     * Возвращает представление настроек персонализации (подвкладка настроек).
+     *
+     * @param idAccount идентификатор пользователя
+     * @return путь к подвкладке настроек персонализации
+     */
+    @PreAuthorize("#idAccount == authentication.principal.idAccount")
+    @GetMapping("/personalization")
+    public String loadPersonalizationSettingTab(@PathVariable int idAccount) {
+        return PERSONALIZATION_SETTINGS_TAB;
     }
 
 }

@@ -15,9 +15,11 @@ import static net.chikaboom.util.constant.DbNamesConstant.*;
 @Table(name = ACCOUNT_SETTINGS)
 public class AccountSettings {
 
-    public AccountSettings() {
-        this.defaultWorkingDayStart = new Time(9, 0, 0);
-        this.defaultWorkingDayEnd = new Time(18, 0, 0);
+    public AccountSettings() {}
+
+    public AccountSettings(Time defaultWorkingDayStart, Time defaultWorkingDayEnd) {
+        this.defaultWorkingDayStart = defaultWorkingDayStart;
+        this.defaultWorkingDayEnd = defaultWorkingDayEnd;
     }
 
     /**

@@ -440,22 +440,6 @@ function reloadWorkingDayDuration(accountWorkingTime) {
     $("#current-working-day-duration").text(currentWorkingDayDurationText);
 }
 
-$("#save-default-work-time-btn").on("click", function () {
-    if (validateWorkingTimeInputs("default-working-day")) {
-        let startVal = $("#default-working-day-start").val();
-        let endVal = $("#default-working-day-end").val();
-
-        let startData = new Date("2000-09-09 " + startVal.trim() + ":00").toLocaleTimeString('ru');
-        let endData = new Date("2000-09-09 " + endVal.trim() + ":00").toLocaleTimeString('ru');
-
-        const accountSettingsData = {
-            defaultWorkingDayStart: startData,
-            defaultWorkingDayEnd: endData,
-        }
-        saveDefaultWorkingTime(accountSettingsData, accountJson.idAccount)
-    }
-})
-
 function validateWorkingTimeInputs(templateFieldName, ignoreEmpty) {
     var startVal = $("#" + templateFieldName + "-start").val();
     var endVal = $("#" + templateFieldName + "-end").val();
@@ -511,26 +495,4 @@ function validateWorkingTimeInputs(templateFieldName, ignoreEmpty) {
     }
 
     return startFlag && endFlag
-}
-
-function saveDefaultWorkingTime(accountSettings, idAccount) {
-    if (typeof accountSettings === "undefined" || idAccount === 0) {
-        callMessagePopup("Ошибка данных", "Введенные данные некорректны")
-        return;
-    }
-
-    $.ajax({
-        method: "patch",
-        url: "/accounts/" + idAccount + "/settings",
-        contentType: "application/json",
-        dataType: "json",
-        data: JSON.stringify(accountSettings),
-        success: (data) => {
-            callMessagePopup("Изменения прошли успешно", "Новое время работы по умолчанию успешно изменено");
-            reloadWorkingDayDuration(data);
-        },
-        error: () => {
-            callMessagePopup("Что-то пошло не так", "Неудалось изменить время работы по умолчанию");
-        }
-    })
 }

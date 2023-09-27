@@ -188,10 +188,10 @@
 <script type="text/javascript" src="/js/account.js"></script>
 <script type="text/javascript" src="/js/service.js"></script>
 <script type="text/javascript" src="/js/appointment.js"></script>
+<script type="text/javascript" src="/js/client.js"></script>
 
 <script>
 
-    var accountJson;
     var masterAppointmentsJson;
 
     $(document).ready(function () {

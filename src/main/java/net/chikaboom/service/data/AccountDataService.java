@@ -19,6 +19,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.sql.Time;
 import java.util.List;
 import java.util.Optional;
 
@@ -135,14 +136,15 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
             }
         }
 
-        AccountSettings accountSettings = accountSettingsDataService.create(new AccountSettings());
+        AccountSettings accountSettings = accountSettingsDataService.create(new AccountSettings(
+                new Time(9, 0, 0),
+                new Time(18, 0, 0)
+        ));
         account.setAccountSettings(accountSettings);
         account.setUserDetails(userDetails);
 
         return accountRepository.save(account);
     }
-
-//    TODO refactor Слишком большой метод
 
     /**
      * Применяет частичное изменение объекта, игнорируя null поля и неизменные поля

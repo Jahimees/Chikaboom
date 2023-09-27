@@ -93,7 +93,7 @@ public class AccountSettingsDataService implements DataService<AccountSettings> 
      * Производит частичное изменение объекта в зависимости от переданных параметров в объекте.
      * Таким образом, если в объекте есть поля null, то они не будут сохранены и перезаписаны в базе данных
      *
-     * @param idAccount идентификатор аккаунта изменяемых настроек аккаунта
+     * @param idAccount          идентификатор аккаунта изменяемых настроек аккаунта
      * @param newAccountSettings новые настройки аккаунта
      * @return обновленные настройки аккаунта
      */
@@ -115,6 +115,11 @@ public class AccountSettingsDataService implements DataService<AccountSettings> 
 
         if (newAccountSettings.getDefaultWorkingDayEnd() != null) {
             changedAccountSettings.setDefaultWorkingDayEnd(newAccountSettings.getDefaultWorkingDayEnd());
+        }
+
+        if (changedAccountSettings.getDefaultWorkingDayStart().getTime()
+                >= changedAccountSettings.getDefaultWorkingDayEnd().getTime()) {
+            throw new IllegalArgumentException("Illegal time values. Working end time less than working start time");
         }
 
         if (newAccountSettings.isPhoneVisible() != changedAccountSettings.isPhoneVisible()) {
