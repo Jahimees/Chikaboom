@@ -43,7 +43,7 @@ public class ServiceSubtypeRestController {
      */
     @PreAuthorize("permitAll()")
     @GetMapping("/service-subtypes")
-    public ResponseEntity<List<ServiceSubtype>> findAllServices() {
+    public ResponseEntity<List<ServiceSubtype>> findAllServiceSubtypes() {
         return ResponseEntity.ok(serviceSubtypeDataService.findAll());
     }
 

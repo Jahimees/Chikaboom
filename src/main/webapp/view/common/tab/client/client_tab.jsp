@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <div class="menu-box-horizontal">
@@ -51,6 +51,6 @@
         setTimeout(function () {
             let clientsJSON = loadClients(${idAccount});
             fillClientsTable(clientsJSON, 'client');
-        }, 100); //TODO Плохо. Но не придумал по другому. вставка скрипта datatables должна быть тут.
+        }, 100);
     });
 </script>

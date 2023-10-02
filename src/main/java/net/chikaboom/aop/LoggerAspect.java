@@ -35,6 +35,29 @@ public class LoggerAspect {
     public void dataServiceMethods() {
     }
 
+    @Pointcut("execution(* net.chikaboom.controller.rest.*RestController.*(..))")
+    public void restMethods() {
+    }
+
+    @Around("restMethods()")
+    public Object logRestOperation(ProceedingJoinPoint joinPoint) {
+        SignatureUtils su = getSignatureUtils(joinPoint);
+        String targetClassName = su.className.split("RestController")[0];
+        su.logger.info(su.methodName + " (rest operation): " + su.operationName.toString().toUpperCase() + " "
+                + targetClassName + " ");
+        Object proceed;
+        try {
+            proceed = joinPoint.proceed();
+        } catch (Throwable e) {
+            su.logger.error(su.methodName + " (rest operation): cannot " + su.operationName.toString().toUpperCase() +
+                    " " + targetClassName, e);
+            throw new RuntimeException(e);
+        }
+
+        su.logger.info(su.methodName + " (rest operation): operation '" + su.operationName + " " + targetClassName + "' was successfully done");
+        return proceed;
+    }
+
     /**
      * Производит логирование методов класса DataService. Выводит информацию о начале работы метода, возникновении ошибки,
      * а также об успешном завершении метода

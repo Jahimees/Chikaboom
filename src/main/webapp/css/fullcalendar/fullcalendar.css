@@ -279,7 +279,7 @@ previous button's border...
 	box-shadow: 0 2px 6px rgba(0,0,0,.15);
 }
 
-.fc-popover .fc-header { /* TODO: be more consistent with fc-head/fc-body */
+.fc-popover .fc-header {
 	padding: 2px 4px;
 }
 
@@ -500,7 +500,6 @@ temporary rendered events).
 	-webkit-overflow-scrolling: touch;
 }
 
-/* TODO: move to agenda/basic */
 .fc-scroller > .fc-day-grid,
 .fc-scroller > .fc-time-grid {
 	position: relative; /* re-scope all positions */

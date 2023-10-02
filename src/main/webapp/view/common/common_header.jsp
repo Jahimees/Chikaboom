@@ -2,7 +2,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
-<%--TODO Стили--%>
 <div class="header">
     <div class="header-middle-box">
         <a style="text-align: center; min-width: 90px" href="/chikaboom/main">

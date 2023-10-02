@@ -14,6 +14,5 @@
 
     $(document).ready(function () {
         loadConcreteServiceTab("general", "${idAccount}");
-        loadServiceSubtypes();
     })
 </script>
