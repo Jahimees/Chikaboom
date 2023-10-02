@@ -19,6 +19,7 @@
     }
 
     function loadServiceSubtypes() {
+        console.log("load service subtypes")
         $.ajax({
             contentType: "application/json",
             dataType: "json",
@@ -35,6 +36,7 @@
     }
 
     function loadServiceTab(idAccount) {
+        console.log("LOG loadService tab");
         $.ajax({
             type: "get",
             url: "/accounts/" + idAccount + "/services",

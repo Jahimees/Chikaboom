@@ -1,5 +1,6 @@
 package net.chikaboom.controller.tab;
 
+import net.chikaboom.annotation.LoggableViewController;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,11 +34,10 @@ public class AppointmentTabController {
      * @param idAccount идентификатор аккаунта, чьи записи необходимо открыть
      * @return путь к вкладке записей
      */
+    @LoggableViewController
     @PreAuthorize("#idAccount == authentication.principal.idAccount")
     @GetMapping(value = "/appointment")
     public String openAppointmentTab(@PathVariable int idAccount) {
-        logger.info("Opening appointment tab.");
-
         return APPOINTMENT_TAB;
     }
 
@@ -49,6 +49,7 @@ public class AppointmentTabController {
      */
     @PreAuthorize("#idAccount == authentication.principal.idAccount")
     @GetMapping("/appointment/outcome")
+    @LoggableViewController
     public String openOutcomeAppointmentTab(@PathVariable int idAccount) {
         logger.info("Opening outcome appointment tab");
 
@@ -63,6 +64,7 @@ public class AppointmentTabController {
      */
     @PreAuthorize("#idAccount == authentication.principal.idAccount")
     @GetMapping("/appointment/income")
+    @LoggableViewController
     public String openIncomeAppointmentTab(@PathVariable int idAccount) {
         logger.info("Opening income appointment tab");
 

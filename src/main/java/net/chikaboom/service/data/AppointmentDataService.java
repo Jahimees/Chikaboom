@@ -101,8 +101,6 @@ public class AppointmentDataService implements DataService<Appointment> {
      * @throws NoSuchDataException возникает, если аккаунт не был найден
      */
     public List<Appointment> findAllByIdAccount(int idAccount, boolean isClient) throws NoSuchDataException {
-        logger.info("Searching appointments for account with id " + idAccount);
-
         Account account = accountDataService.findById(idAccount)
                 .orElseThrow(() -> new NoSuchDataException("Cannot find account with id " + idAccount));
 

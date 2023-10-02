@@ -31,8 +31,6 @@ public class ServiceDataService implements DataService<Service> {
      */
     @Override
     public Optional<Service> findById(int idService) {
-        logger.info("Loading service info with id " + idService);
-
         return serviceRepository.findById(idService);
     }
 
@@ -89,7 +87,6 @@ public class ServiceDataService implements DataService<Service> {
      * @return коллекцию пользовательских услуг (услуг мастера)
      */
     public List<Service> findAllServicesByIdAccount(int idAccount) {
-        logger.info("Searching all services of user with id " + idAccount);
         Account account = accountDataService.findById(idAccount).
                 orElseThrow(() -> new NoSuchDataException("Cannot find account with id " + idAccount));
 

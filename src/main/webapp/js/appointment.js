@@ -141,9 +141,19 @@
 
     $("#createIncomeAppointmentModal").on("show.bs.modal", function () {
         initAppointmentModal();
+        if (typeof clientsDataCache === "undefined") {
+            if (clientsData === null || typeof clientsData === "undefined") {
+                clientsDataCache = loadClients(accountJson.idAccount)
+            } else {
+                if (typeof clientsData === "undefined") {
+                    clientsDataCache = clientsData;
+                }
+            }
+        }
+        fillClientsToModal(clientsDataCache);
     })
 
-    function initAppointmentModal(masterServices, masterWorkingDays, masterAppointments, clientsData) {
+    function initAppointmentModal(masterServices, masterWorkingDays, masterAppointments) {
         if (typeof masterServicesCache === "undefined") {
             if (typeof masterServices === "undefined") {
                 masterServicesCache = loadMastersServices(accountJson.idAccount);
@@ -159,6 +169,7 @@
                 masterWorkingDaysCache = masterWorkingDays;
             }
         }
+        fillServicesToModal(masterServicesCache);
 
         if (typeof masterAppointmentsCache === "undefined") {
             if (masterAppointments === null || typeof masterAppointments === "undefined") {
@@ -169,22 +180,9 @@
                 }
             }
         }
-
-        if (typeof clientsDataCache === "undefined") {
-            if (clientsData === null || typeof clientsData === "undefined") {
-                clientsDataCache = loadClients(accountJson.idAccount)
-            } else {
-                if (typeof clientsData === "undefined") {
-                    clientsDataCache = clientsData;
-                }
-            }
-        }
+        fillWorkingDaysToModal(masterWorkingDaysCache);
 
         $workingTimeSelect.html('');
-
-        fillServicesToModal(masterServicesCache);
-        fillWorkingDaysToModal(masterWorkingDaysCache);
-        fillClientsToModal(clientsDataCache);
     }
 
     /////////////////////////////////////FILLING MODAL////////////////////////
@@ -335,7 +333,6 @@
                         trueTimer--;
                     }
                 }
-                return;
             }
         })
 
@@ -492,11 +489,12 @@
                 dataType: "json",
                 data: JSON.stringify(appointmentToSend),
                 success: function () {
+                    $('#appointmentModal').modal('hide');
                     $('#createIncomeAppointmentModal').modal('hide');
                     callMessagePopup("Запись оформлена!", "Вы успешно записались на услугу!")
                     masterAppointmentsCache = loadMastersAppointments(accountMasterJson.idAccount);
 
-                    if ($.fn.DataTable.isDataTable('#appointment_table')) {
+                    if (typeof $.fn.DataTable != "undefined") {
                         fillAppointmentsTable(masterAppointmentsCache, true, accountMasterJson.idAccount, "appointment");
                     }
 

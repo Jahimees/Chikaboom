@@ -1,5 +1,6 @@
 package net.chikaboom.controller.tab;
 
+import net.chikaboom.annotation.LoggableViewController;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +24,7 @@ public class ClientTabController {
      * @return путь к отрисовываемой странице
      */
     @GetMapping
+    @LoggableViewController
     public String openClientTab(@PathVariable int idAccount) {
         return clientTabPage;
     }

@@ -1,6 +1,6 @@
 package net.chikaboom.controller;
 
-import org.apache.log4j.Logger;
+import net.chikaboom.annotation.LoggableViewController;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/chikaboom/personality/{idAccount}")
 public class PersonalityController {
 
-    private final Logger logger = Logger.getLogger(this.getClass());
-
     @Value("${page.personality}")
     private String PERSONALITY_PAGE;
 
@@ -30,9 +28,8 @@ public class PersonalityController {
      */
     @PreAuthorize("hasAnyRole('MASTER', 'CLIENT') and #idAccount == authentication.principal.idAccount")
     @GetMapping
+    @LoggableViewController
     public String openPersonalityPage(@PathVariable int idAccount) {
-        logger.info("Opening personality page...");
-
         return PERSONALITY_PAGE;
     }
 }

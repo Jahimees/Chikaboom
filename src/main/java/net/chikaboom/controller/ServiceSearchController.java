@@ -1,7 +1,7 @@
 package net.chikaboom.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.log4j.Logger;
+import net.chikaboom.annotation.LoggableViewController;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -23,8 +23,6 @@ public class ServiceSearchController {
     @Value("${page.service_page}")
     private String SERVICE_PAGE;
 
-    private final Logger logger = Logger.getLogger(this.getClass());
-
     /**
      * Загружает страницу со всеми услугами
      *
@@ -32,6 +30,7 @@ public class ServiceSearchController {
      */
     @PreAuthorize("permitAll()")
     @GetMapping
+    @LoggableViewController
     public ModelAndView getServicePage() {
         return new ModelAndView(SERVICE_PAGE);
     }
@@ -44,9 +43,8 @@ public class ServiceSearchController {
      */
     @PreAuthorize("permitAll()")
     @GetMapping(value = "/search/{idServiceType}")
+    @LoggableViewController
     public String getServiceSearchPage(@PathVariable int idServiceType) {
-        logger.info("Loading search page with idServiceType " + idServiceType);
-
         return SERVICE_SEARCH_PAGE;
     }
 }

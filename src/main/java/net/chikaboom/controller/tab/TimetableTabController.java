@@ -1,5 +1,6 @@
 package net.chikaboom.controller.tab;
 
+import net.chikaboom.annotation.LoggableViewController;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -27,6 +28,7 @@ public class TimetableTabController {
      */
     @PreAuthorize("#idAccount == authentication.principal.idAccount and hasRole('MASTER')")
     @GetMapping("/chikaboom/personality/{idAccount}/timetable")
+    @LoggableViewController
     public String openTimetableTab(@PathVariable int idAccount) {
         return TIMETABLE_TAB;
     }
@@ -37,6 +39,7 @@ public class TimetableTabController {
      * @return путь к странице с календарем
      */
     @GetMapping("/chikaboom/personality/calendar")
+    @LoggableViewController
     public String getCalendar() {
         return CALENDAR_PAGE;
     }

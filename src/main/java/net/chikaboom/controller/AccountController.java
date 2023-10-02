@@ -1,6 +1,6 @@
 package net.chikaboom.controller;
 
-import org.apache.log4j.Logger;
+import net.chikaboom.annotation.LoggableViewController;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -18,8 +18,6 @@ public class AccountController {
     @Value("${page.account}")
     private String ACCOUNT_PAGE;
 
-    private final Logger logger = Logger.getLogger(this.getClass());
-
     /**
      * Перенаправляет на страницу аккаунта
      *
@@ -27,9 +25,8 @@ public class AccountController {
      */
     @PreAuthorize("permitAll()")
     @GetMapping
+    @LoggableViewController
     public String openAccountPage(@PathVariable int idAccount) {
-        logger.info("Loading account page for account with id " + idAccount);
-
         return ACCOUNT_PAGE;
     }
 }
