@@ -9,27 +9,29 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="/css/common.css">
-    <link rel="stylesheet" href="/css/media/common_media.css">
-    <link rel="stylesheet" href="/css/account.css">
-    <link rel="stylesheet" href="/css/personality.css">
-    <link rel="stylesheet" href="/css/popup.css">
-    <link rel="stylesheet" href="/css/media/popup_media.css">
-    <link rel="stylesheet" href="/css/addition/menu_bar.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/media/main_media.css">
-    <link rel="stylesheet" href="/css/popup.css">
+    <link rel="stylesheet" href="../../../css/common.css">
+    <link rel="stylesheet" href="../../../css/media/common_media.css">
+    <link rel="stylesheet" href="../../../css/account.css">
+    <link rel="stylesheet" href="../../../css/personality.css">
+    <link rel="stylesheet" href="../../../css/popup.css">
+    <link rel="stylesheet" href="../../../css/media/popup_media.css">
+    <link rel="stylesheet" href="../../../css/addition/menu_bar.css">
+    <link rel="stylesheet" href="../../../css/main.css">
+    <link rel="stylesheet" href="../../../css/media/main_media.css">
+    <link rel="stylesheet" href="../../../css/popup.css">
     <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/source-sans-pro">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
-    <script src="/js/jquery-ui-1.10.4.custom.min.js"></script>
-    <script src="/js/countrycode/countryCode.js"></script>
-    <script src="/js/service_search.js"></script>
-    <script src="/js/dynamic_popup.js"></script>
+    <script src="../../../js/jquery-ui-1.10.4.custom.min.js"></script>
+
+    <script src="../../../js/countrycode/countryCode.js"></script>
+    <script src="../../../js/static_popup.js"></script>
+    <script src="../../../js/service_search.js"></script>
+<%--    <script src="../../../js/dynamic_popup.js"></script>--%>
     <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
-    <script src="/js/static_popup.js"></script>
+
 </head>
 <body>
 <jsp:include page="common/common_header.jsp"/>
@@ -63,15 +65,14 @@
     </div>
 
 </div>
-<jsp:include page="/view/common/popup/message_popup.jsp"/>
-<jsp:include page="/view/common/popup/login_popup.jsp"/>
+<jsp:include page="common/popup/message_popup.jsp"/>
+<jsp:include page="common/popup/login_popup.jsp"/>
 </body>
 </html>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
-
 <script>
     $("#do-search-btn").on("click", function () {
         doSearch(${idServiceType});

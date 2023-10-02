@@ -261,9 +261,9 @@ function checkWorkingDateTime(appointmentDateTime) {
 }
 
 var newEvent = (start, end) => {
-    initAppointmentModal();
-    let $servicesSelect = $("#services-select");
-    let $clientSelect = $("#client-select");
+    initAppointmentModalWithClient(true);
+    let $serviceSelectEvent =$("#service-select-ev");
+    let $clientSelectEvent = $("#client-select-ev");
     let $createEventModal = $("#createEventModal");
     $createEventModal.modal('show');
     $('#submit').unbind();
@@ -279,16 +279,16 @@ var newEvent = (start, end) => {
         let appointmentToSend = {
             masterAccount: accountJson,
             userDetailsClient: {
-                idUserDetails: $clientSelect.val()
+                idUserDetails: $clientSelectEvent.val()
             },
             service: {
-                idService: $servicesSelect.val()
+                idService: $serviceSelectEvent.val()
             },
             appointmentDateTime: appointmentDateTime
         }
 
-        let serviceText = $servicesSelect[0].options[$servicesSelect[0].selectedIndex].text;
-        let clientText = $clientSelect[0].options[$clientSelect[0].selectedIndex].text;
+        let serviceText = $serviceSelectEvent[0].options[$serviceSelectEvent[0].selectedIndex].text;
+        let clientText = $clientSelectEvent[0].options[$clientSelectEvent[0].selectedIndex].text;
 
         $.ajax({
             method: "post",

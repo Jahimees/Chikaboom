@@ -19,7 +19,6 @@
     }
 
     function loadServiceSubtypes() {
-        console.log("load service subtypes")
         $.ajax({
             contentType: "application/json",
             dataType: "json",
@@ -36,7 +35,6 @@
     }
 
     function loadServiceTab(idAccount) {
-        console.log("LOG loadService tab");
         $.ajax({
             type: "get",
             url: "/accounts/" + idAccount + "/services",
@@ -124,7 +122,7 @@
                     "data-bs-toggle='modal' data-bs-target='#appointmentModal'></div>").text("Записаться")
 
                 orderTag.onclick = function () {
-                    $("#services-select").val(service.idService);
+                    $(".services-select").val(service.idService);
                 }
                 rowTag.append(orderTag);
             }

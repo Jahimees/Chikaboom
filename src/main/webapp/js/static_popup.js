@@ -179,15 +179,15 @@
     function showWarnPhoneDuplicate() {
         $("#r-phone-duplicate").css("display", "block");
     }
-}
 
-$("#login-submit-btn").on("click", () => {
-    if (validateAllAuthorizeFields()) {
-        let selectedCountryData = window.intlTelInputGlobals.getInstance(
-            document.querySelector("#l-input-phone")).getSelectedCountryData();
-        let $inputUsername = $("#l-input-phone");
-        let $hiddenInput = $("#l-hidden-input-phone");
-        $hiddenInput.val($inputUsername.val() + "_" + selectedCountryData.iso2);
-        $("#login-form").submit();
-    }
-})
+    $("#login-submit-btn").on("click", () => {
+        if (validateAllAuthorizeFields()) {
+            let selectedCountryData = window.intlTelInputGlobals.getInstance(
+                document.querySelector("#l-input-phone")).getSelectedCountryData();
+            let $inputUsername = $("#l-input-phone");
+            let $hiddenInput = $("#l-hidden-input-phone");
+            $hiddenInput.val($inputUsername.val() + "_" + selectedCountryData.iso2);
+            $("#login-form").submit();
+        }
+    })
+}

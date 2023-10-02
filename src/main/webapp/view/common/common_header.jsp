@@ -5,7 +5,7 @@
 <div class="header">
     <div class="header-middle-box">
         <a style="text-align: center; min-width: 90px" href="/chikaboom/main">
-            <img src="/image/logo_gradient.svg">
+            <img src="../../../image/logo_gradient.svg">
         </a>
         <div style="font-size: 50px">|</div>
         <a class="header-menu-link" href="/chikaboom/service">

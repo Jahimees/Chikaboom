@@ -1,6 +1,8 @@
 {
-    let $servicesSelect = $("#services-select");
-    let $clientSelect = $("#client-select");
+    let $serviceSelectApp = $("#service-select-app");
+    let $clientSelectApp = $("#client-select-app");
+    let $serviceSelectEv = $("#service-select-ev");
+    let $clientSelectEv = $("#client-select-ev");
     let $workingDaySelect = $("#working-day-select");
     let $workingTimeSelect = $("#working-time-select");
     let $declineMessageBtn = $("#decline-message-btn");
@@ -136,13 +138,17 @@
     let masterAppointmentsCache
 
     $("#appointmentModal").on("show.bs.modal", function () {
-        initAppointmentModal()
+        initAppointmentModal(false)
     })
 
     $("#createIncomeAppointmentModal").on("show.bs.modal", function () {
-        initAppointmentModal();
+       initAppointmentModalWithClient(false);
+    })
+
+    function initAppointmentModalWithClient(isCalendar, masterServices, masterWorkingDays, masterAppointments, clientsData) {
+        initAppointmentModal(isCalendar, masterServices, masterWorkingDays, masterAppointments);
         if (typeof clientsDataCache === "undefined") {
-            if (clientsData === null || typeof clientsData === "undefined") {
+            if (typeof clientsData === "undefined" || clientsData === null) {
                 clientsDataCache = loadClients(accountJson.idAccount)
             } else {
                 if (typeof clientsData === "undefined") {
@@ -150,10 +156,11 @@
                 }
             }
         }
-        fillClientsToModal(clientsDataCache);
-    })
 
-    function initAppointmentModal(masterServices, masterWorkingDays, masterAppointments) {
+        fillClientsToModal(clientsDataCache, isCalendar);
+    }
+
+    function initAppointmentModal(isCalendar, masterServices, masterWorkingDays, masterAppointments) {
         if (typeof masterServicesCache === "undefined") {
             if (typeof masterServices === "undefined") {
                 masterServicesCache = loadMastersServices(accountJson.idAccount);
@@ -169,7 +176,7 @@
                 masterWorkingDaysCache = masterWorkingDays;
             }
         }
-        fillServicesToModal(masterServicesCache);
+        fillServicesToModal(masterServicesCache, isCalendar);
 
         if (typeof masterAppointmentsCache === "undefined") {
             if (masterAppointments === null || typeof masterAppointments === "undefined") {
@@ -186,13 +193,19 @@
     }
 
     /////////////////////////////////////FILLING MODAL////////////////////////
-    function fillServicesToModal(servicesJson) {
-        $servicesSelect.html('');
+    function fillServicesToModal(servicesJson, isCalendar) {
+        let serviceSelect;
+        if (isCalendar) {
+            serviceSelect = $serviceSelectEv;
+        } else {
+            serviceSelect = $serviceSelectApp;
+        }
+        serviceSelect.html('')
 
         servicesJson.forEach(function (service) {
             let option = $("<option></option>").val(service.idService).text(service.name);
 
-            $servicesSelect.append(option);
+            serviceSelect.append(option);
         })
     }
 
@@ -221,11 +234,17 @@
         });
     }
 
-    function fillClientsToModal(clientsJSON) {
-        $clientSelect.html('');
+    function fillClientsToModal(clientsJSON, isCalendar) {
+        let clientSelect;
+        if (isCalendar) {
+            clientSelect = $("#client-select-ev");
+        } else {
+            clientSelect = $clientSelectApp;
+
+        }
 
         clientsJSON.forEach(client => {
-            $clientSelect.append($("<option></option>")
+            clientSelect.append($("<option></option>")
                 .val(client.idUserDetails)
                 .text(client.firstName + " " + client.lastName));
         })
@@ -336,7 +355,7 @@
             }
         })
 
-        let idService = parseInt($servicesSelect.val());
+        let idService = parseInt($serviceSelectApp.val());
         let currentService;
 
         masterServicesCache.forEach(function (service) {
@@ -464,7 +483,7 @@
             $appointmentWarn.css("display", "none");
             let master = accountMasterJson;
 
-            let idService = parseInt($servicesSelect.val());
+            let idService = parseInt($serviceSelectApp.val());
             let service;
             let servicesJson = loadMastersServices(masterId);
             servicesJson.forEach(function (serv) {
@@ -510,7 +529,7 @@
 
     function makeIncomeAppointment() {
         let clientUserDetails = {
-            idUserDetails: $clientSelect.val()
+            idUserDetails: $clientSelectApp.val()
         }
 
         doMakeAppointment(clientUserDetails, accountJson);

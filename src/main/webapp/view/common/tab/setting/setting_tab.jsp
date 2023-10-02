@@ -26,7 +26,7 @@
         </div>
         <div id="actual-news" style="height: 600px; overflow: auto" >
             <div class="news-block" style="display: inline-flex">
-                <img src="/image/test/timetable-news.svg" style="width: 100px;">
+                <img src="../../../../image/test/timetable-news.svg" style="width: 100px;">
                 <div class="small-black-text" style="margin: auto 0 auto 20px;">
                     <b>Настрой свой день!</b>
                     <br>
@@ -34,7 +34,7 @@
                 </div>
             </div>
             <div class="news-block" style="display: inline-flex">
-                <img src="/image/test/tooltip-news.jpg" style="width: 100px;">
+                <img src="../../../../image/test/tooltip-news.jpg" style="width: 100px;">
                 <div class="small-black-text" style="margin: auto 0 auto 20px;">
                     <b>Опа! Наводочка!</b>
                     <br>
@@ -42,7 +42,7 @@
                 </div>
             </div>
             <div class="news-block" style="display: inline-flex">
-                <img src="/image/test/phone-news.png" style="width: 100px;">
+                <img src="../../../../image/test/phone-news.png" style="width: 100px;">
                 <div class="small-black-text" style="margin: auto 0 auto 20px;">
                     <b>Алло-алло!</b>
                     <br>
@@ -51,7 +51,7 @@
                 </div>
             </div>
             <div class="news-block" style="display: inline-flex">
-                <img src="/image/test/clients-news.png" style="width: 100px;">
+                <img src="../../../../image/test/clients-news.png" style="width: 100px;">
                 <div class="small-black-text" style="margin: auto 0 auto 20px;">
                     <b>Ну что там с клиентами?</b>
                     <br>
@@ -59,7 +59,7 @@
                 </div>
             </div>
             <div class="news-block" style="display: inline-flex">
-                <img src="/image/test/name-news.png" style="width: 100px;">
+                <img src="../../../../image/test/name-news.png" style="width: 100px;">
                 <div class="small-black-text" style="margin: auto 0 auto 20px;">
                     <b>Ура! Личности - быть!</b>
                     <br>
