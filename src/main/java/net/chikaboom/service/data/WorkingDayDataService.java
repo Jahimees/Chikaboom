@@ -94,7 +94,6 @@ public class WorkingDayDataService implements DataService<WorkingDay> {
 
         if (workingDay.getWorkingDayStart() == null) {
             workingDay.setWorkingDayStart(Time.valueOf(DEFAULT_WORKING_DAY_START_TIME));
-
         }
         if (workingDay.getWorkingDayEnd() == null) {
             workingDay.setWorkingDayEnd(Time.valueOf(DEFAULT_WORKING_DAY_END_TIME));
