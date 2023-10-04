@@ -9,7 +9,7 @@
 <div id="service-type-content-placeholder" class="setting-content-placeholder">
 </div>
 
-<script src="/js/service.js"></script>
+<script src="../../../../js/service.js"></script>
 <script>
 
     $(document).ready(function () {

@@ -10,20 +10,20 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="/css/common.css">
-    <link rel="stylesheet" href="/css/account.css">
-    <link rel="stylesheet" href="/css/addition/carousel.css">
-    <link rel="stylesheet" href="/css/addition/menu_bar.css">
-    <link rel="stylesheet" href="/css/media/main_media.css">
-    <link rel="stylesheet" href="/css/popup.css">
+    <link rel="stylesheet" href="../../css/common.css">
+    <link rel="stylesheet" href="../../css/account.css">
+    <link rel="stylesheet" href="../../css/addition/carousel.css">
+    <link rel="stylesheet" href="../../css/addition/menu_bar.css">
+    <link rel="stylesheet" href="../../css/media/main_media.css">
+    <link rel="stylesheet" href="../../css/popup.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
     <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/source-sans-pro">
 
-    <script src="/js/util.js"></script>
+    <script src="../../js/util.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="/js/jquery-ui-1.10.4.custom.min.js"></script>
+    <script src="../../js/jquery-ui-1.10.4.custom.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
-    <script src="/js/countrycode/countryCode.js"></script>
+    <script src="../../js/countrycode/countryCode.js"></script>
 </head>
 <jsp:include page="common/popup/appointment_modal.jsp"/>
 <body>
@@ -33,11 +33,11 @@
     <div class="content" style="width: 95%">
         <div class="d-flex divided-background padding-0-0-0-5 ">
             <div style="padding: 0 0 30px;">
-                <img class="avatar-image" src="/image/user/${idAccount}/avatar.jpeg"
-                     onerror="this.src='/image/user/no_photo.jpg'"
+                <img class="avatar-image" src="../../image/user/${idAccount}/avatar.jpeg"
+                     onerror="this.src='../../../image/user/no_photo.jpg'"
                      alt="error on load">
                 <div class="d-flex flex-row-reverse master-only">
-                    <img src="/image/icon/edit_icon.svg">
+                    <img src="../../image/icon/edit_icon.svg">
                     <!-- Кнопка-триггер модального окна -->
                     <button id="make-appointment-btn" type="button" class="purple-button m-2 master-only" data-bs-toggle="modal"
                             data-bs-target="#appointmentModal">
@@ -101,16 +101,16 @@
             </div>
             <div class="d-inline-flex w-100" style="justify-content: center;">
                 <div>
-                    <img class="gallery_image" src="/image/serviceType/service_icon_4.png">
+                    <img class="gallery_image" src="../../image/serviceType/service_icon_4.png">
                 </div>
                 <div>
-                    <img class="gallery_image" src="/image/serviceType/service_icon_2.png">
+                    <img class="gallery_image" src="../../image/serviceType/service_icon_2.png">
                 </div>
                 <div>
-                    <img class="gallery_image" src="/image/serviceType/service_icon_6.png">
+                    <img class="gallery_image" src="../../image/serviceType/service_icon_6.png">
                 </div>
                 <div>
-                    <img class="gallery_image" src="/image/serviceType/service_icon_10.png">
+                    <img class="gallery_image" src="../../image/serviceType/service_icon_10.png">
                 </div>
             </div>
         </div>
@@ -137,7 +137,7 @@
             <div class="margin-0-20">
                 <div class="d-inline-flex margin-0-10">
                     <div>
-                        <img class="feedback-image" src="/image/user/no_photo.jpg">
+                        <img class="feedback-image" src="../../../image/user/no_photo.jpg">
                         <div class="small-text">01 янв 2001</div>
                     </div>
                     <div class="review-text-block">
@@ -153,7 +153,7 @@
                 </div>
                 <div class="d-inline-flex margin-0-10">
                     <div>
-                        <img class="feedback-image" src="/image/user/no_photo.jpg">
+                        <img class="feedback-image" src="../../../image/user/no_photo.jpg">
                         <div class="small-text">01 янв 2001</div>
                     </div>
                     <div class="review-text-block">

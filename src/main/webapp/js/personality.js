@@ -132,7 +132,7 @@
 
 
         piecesCount++;
-        if (photoSrc === "/image/user/no_photo.jpg") {
+        if (photoSrc === "../../../image/user/no_photo.jpg") {
             emptyPiecesCount++;
         }
 

@@ -12,10 +12,10 @@
             <form>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="services-select" class="form-control-label">Название услуги</label>
-                        <select class="form-control" id="services-select"></select>
-                        <label for="client-select" class="form-control-label">Клиент</label>
-                        <select class="form-control" id="client-select"></select>
+                        <label for="service-select-ev" class="form-control-label">Название услуги</label>
+                        <select class="form-control" id="service-select-ev"></select>
+                        <label for="client-select-ev" class="form-control-label">Клиент</label>
+                        <select class="form-control" id="client-select-ev"></select>
                     </div>
                 </div>
                 <div class="modal-footer">

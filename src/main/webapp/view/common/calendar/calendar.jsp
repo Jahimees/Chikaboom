@@ -3,8 +3,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
-<link href='/css/fullcalendar/fullcalendar.css' rel='stylesheet'/>
-<link href='/css/fullcalendar/style.css' rel='stylesheet'/>
+<link href='../../../css/fullcalendar/fullcalendar.css' rel='stylesheet'/>
+<link href='../../../css/fullcalendar/style.css' rel='stylesheet'/>
 
 <div>
     <div style="padding-top: 10px;" class="container-fluid row">

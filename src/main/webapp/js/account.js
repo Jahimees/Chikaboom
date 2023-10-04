@@ -18,7 +18,7 @@
         if (isMaster(accountJson)) {
             servicesJson = loadMastersServices(accountJson.idAccount);
             fillServiceTable(servicesJson, true);
-            initAppointmentModal(servicesJson)
+            initAppointmentModal(false, servicesJson)
             // fillServicesToModal(servicesJson);
             // fillWorkingDaysToModal(accountJson);
 

@@ -10,7 +10,7 @@
             <input id="avatar-input" type="file" accept="image/jpeg" name="file" hidden>
             <div class="photo-placeholder">
                 <img class="personality-avatar-image" src="/image/user/${idAccount}/avatar.jpeg"
-                     onerror="this.src='/image/user/no_photo.jpg'" alt="error on load" onclick="chooseAvatarImage()">
+                     onerror="this.src='../../../image/user/no_photo.jpg'" alt="error on load" onclick="chooseAvatarImage()">
             </div>
         </div>
         <div class="input-box">
