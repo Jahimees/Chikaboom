@@ -255,11 +255,31 @@
 <br>
 Пример тела запроса:
 <br>
-<code>{"password": "MyNeWPassw0rD","oldPassword": "myOldPassword11","username": "Jakline","email": "alex@mail.com","
-address": "Пушкинская 56","userDetails": {"about": {"text": "Привет, я занимаюсь профессиональной обработкой
-ноготочков","tags": "маникюр,педикюр,брови","profession": "Мастер по маникюру"},"socialNetwork": null,"phoneCode": {"
-countryCut": "by"},"phone": "+375441233243","firstName": "Василиса","lastName": "Прекрасная"},"accountSettings": {"
-defaultWorkingDayStart": "06:00:00","defaultWorkingDayEnd": "20:00:00","phoneVisible": false }
+<code>{
+    "password": "MyNeWPassw0rD",
+    "oldPassword": "myOldPassword11",
+    "username": "Jakline",
+    "email": "alex@mail.com",
+    "address": "Пушкинская 56",
+    "userDetails": {
+        "about": {
+            "text": "Привет, я занимаюсь профессиональной обработкой ноготочков",
+            "tags": "маникюр,педикюр,брови",
+            "profession": "Мастер по маникюру"
+        },
+        "socialNetwork": "@my_inst",
+        "phoneCode": {
+            "countryCut": "by"
+         },
+         "phone": "+375441233243",
+         "firstName": "Василиса",
+         "lastName": "Прекрасная"
+    },
+    "accountSettings": {"
+        defaultWorkingDayStart": "06:00:00",
+        "defaultWorkingDayEnd": "20:00:00",
+        "phoneVisible": false 
+    }
 }</code><br>
 
 ### Удаление <code>DELETE</code>:
