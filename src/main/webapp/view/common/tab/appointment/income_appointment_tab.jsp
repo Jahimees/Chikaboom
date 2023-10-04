@@ -9,7 +9,7 @@
                  data-bs-target="#createIncomeAppointmentModal">+ Создать запись
             </div>
             <div class="form-check form-switch padding-0-0-20-px">
-                <input class="form-check-input" type="checkbox" id="past-appointment-toggle" checked>
+                <input class="form-check-input" type="checkbox" id="past-appointment-toggle">
                 <label class="form-check-label small-black-text" for="past-appointment-toggle">
                     Отображать прошедшие записи
                 </label>
