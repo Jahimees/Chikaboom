@@ -125,6 +125,5 @@ public class Account implements BaseEntity, UserDetails {
         oldPassword = null;
         registrationDate = null;
         email = null;
-        userDetails.clearPersonalFields(accountSettings);
     }
 }

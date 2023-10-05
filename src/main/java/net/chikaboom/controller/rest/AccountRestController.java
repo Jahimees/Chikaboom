@@ -49,6 +49,7 @@ public class AccountRestController {
                 ((CustomPrincipal) customPrincipal).getIdAccount() != idAccount) {
 
             resultAccount.clearPersonalFields();
+            resultAccount.getUserDetails().clearPersonalFields(resultAccount.getAccountSettings());
         }
 
         return ResponseEntity.ok(resultAccount);

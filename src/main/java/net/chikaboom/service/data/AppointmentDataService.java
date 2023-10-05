@@ -5,13 +5,17 @@ import net.chikaboom.exception.NoSuchDataException;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.Appointment;
 import net.chikaboom.model.database.Service;
+import net.chikaboom.model.database.WorkingDay;
 import net.chikaboom.repository.AppointmentRepository;
 import org.apache.log4j.Logger;
 import org.springframework.security.acls.model.AlreadyExistsException;
 import org.springframework.security.acls.model.NotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Сервис предоставляет возможность обработки данных пользовательских записей на услуги
@@ -23,6 +27,7 @@ public class AppointmentDataService implements DataService<Appointment> {
     private final AppointmentRepository appointmentRepository;
     private final AccountDataService accountDataService;
     private final ServiceDataService serviceDataService;
+    private final WorkingDayDataService workingDayDataService;
     private final Logger logger = Logger.getLogger(this.getClass());
 
     /**
@@ -32,6 +37,7 @@ public class AppointmentDataService implements DataService<Appointment> {
      * @return объект записи
      */
     @Override
+    @Transactional(readOnly = true)
     public Optional<Appointment> findById(int idAppointment) {
         logger.info("Loading appointment info with id " + idAppointment);
 
@@ -82,7 +88,29 @@ public class AppointmentDataService implements DataService<Appointment> {
             throw new NotFoundException("Received service is null");
         }
 
-        appointment.setIdAppointment(0);
+        Timestamp appointmentDateTime = appointment.getAppointmentDateTime();
+
+        List<WorkingDay> masterWorkingDays = workingDayDataService.findWorkingDaysByIdAccount(
+                appointment.getMasterAccount().getIdAccount());
+
+        List<WorkingDay> workingDayList = masterWorkingDays.stream().filter(workingDay ->
+                        workingDay.getDate().getYear() == appointmentDateTime.getYear()
+                                && workingDay.getDate().getMonth() == appointmentDateTime.getMonth()
+                                && workingDay.getDate().getDate() == appointmentDateTime.getDate())
+                .collect(Collectors.toList());
+
+        if (workingDayList.isEmpty()) {
+            throw new NotFoundException("There is no working day for current master");
+        }
+
+        WorkingDay chosenWorkingDay = workingDayList.get(0);
+
+        //Время записи поставлено не раньше, чем начало рабочего дня
+        if (!((chosenWorkingDay.getWorkingDayStart().getHours() == appointmentDateTime.getHours()
+                && chosenWorkingDay.getWorkingDayStart().getMinutes() <= appointmentDateTime.getMinutes())
+                || chosenWorkingDay.getWorkingDayStart().getHours() < appointmentDateTime.getHours())) {
+            throw new IllegalArgumentException("You cannot create appointment earlier than working day starts");
+        }
 
         Optional<Service> serviceOptional = serviceDataService.findById(appointment.getService().getIdService());
 
@@ -90,6 +118,46 @@ public class AppointmentDataService implements DataService<Appointment> {
             throw new NotFoundException("Service not found");
         }
 
+        Service chosenMasterService = serviceOptional.get();
+        int[] chosenServiceTimeNumbers = chosenMasterService.getServiceTimeNumbers();
+
+        //Время записи поставлено так, что не выйдет за рамки конца рабочего дня
+        if (!((chosenWorkingDay.getWorkingDayEnd().getHours() == appointmentDateTime.getHours() + chosenServiceTimeNumbers[0]
+                && chosenWorkingDay.getWorkingDayEnd().getMinutes() >= appointmentDateTime.getMinutes() + chosenServiceTimeNumbers[1])
+                || chosenWorkingDay.getWorkingDayEnd().getHours() > appointmentDateTime.getHours() + chosenServiceTimeNumbers[0])) {
+
+            throw new IllegalArgumentException("You cannot create appointment which will finish after than working day ends");
+        }
+
+        List<Appointment> masterAppointmentList = findAllByIdAccount(appointment.getMasterAccount().getIdAccount(), false);
+
+        masterAppointmentList.forEach(masterAppointment -> {
+            Timestamp existAppointmentDateTime = masterAppointment.getAppointmentDateTime();
+            //Совпадение дня записи с новым днём записи
+            if (existAppointmentDateTime.getYear() == appointmentDateTime.getYear()
+                    && existAppointmentDateTime.getMonth() == appointmentDateTime.getMonth()
+                    && existAppointmentDateTime.getDate() == appointmentDateTime.getDate()) {
+
+                //Создаем временнЫе точки начала и конца записей и проверяем, не пересекаются ли они
+                int appDateTimeStart = appointmentDateTime.getHours() * 60 + appointmentDateTime.getMinutes();
+                int appDateTimeEnd = appDateTimeStart + (chosenServiceTimeNumbers[0] * 60 + chosenServiceTimeNumbers[1]);
+
+                int exAppDateTimeStart = existAppointmentDateTime.getHours() * 60 + existAppointmentDateTime.getMinutes();
+                int[] exServiceTimeNumbers = masterAppointment.getService().getServiceTimeNumbers();
+                int exAppDateTimeEnd = exAppDateTimeStart + (exServiceTimeNumbers[0] * 60 + exServiceTimeNumbers[1]);
+
+                if ((appDateTimeStart >= exAppDateTimeStart && appDateTimeStart < exAppDateTimeEnd) ||
+                        (appDateTimeEnd > exAppDateTimeStart && appDateTimeEnd <= exAppDateTimeEnd) ||
+                        (exAppDateTimeEnd > appDateTimeStart && exAppDateTimeEnd <= appDateTimeEnd) ||
+                        (exAppDateTimeStart >= appDateTimeStart && exAppDateTimeStart < appDateTimeEnd)) {
+
+                    throw new IllegalArgumentException("Cannot create the appointment cause it crosses with another appointment");
+                }
+
+            }
+        });
+
+        appointment.setIdAppointment(0);
         appointment.setService(serviceOptional.get());
         return appointmentRepository.saveAndFlush(appointment);
     }

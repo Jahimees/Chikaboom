@@ -1,5 +1,7 @@
 package net.chikaboom.controller.rest;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.Appointment;
@@ -14,12 +16,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 /**
  * REST контроллер для взаимодействия с сущностями типа {@link Appointment}
@@ -35,6 +39,10 @@ public class AppointmentRestController {
     private final AppointmentDataService appointmentDataService;
     private final UserDetailsDataService userDetailsDataService;
     private final AccountDataService accountDataService;
+    @PersistenceContext
+    private final EntityManager entityManager;
+
+    private final Logger logger = Logger.getLogger(this.getClass().getSimpleName());
 
     /**
      * Поиск записи по её идентификатору
@@ -44,6 +52,7 @@ public class AppointmentRestController {
      */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/appointments/{idAppointment}")
+    @Transactional(readOnly = true)
     public ResponseEntity<Appointment> findAppointment(@PathVariable int idAppointment) {
         Optional<Appointment> appointmentOptional = appointmentDataService.findById(idAppointment);
 
@@ -54,6 +63,10 @@ public class AppointmentRestController {
         Appointment appointment = appointmentOptional.get();
         Account appointmentAccountMaster = appointment.getMasterAccount();
         UserDetails clientDetails = appointment.getUserDetailsClient();
+//        TODO придумать механизм для упрощения
+        entityManager.detach(appointment);
+        entityManager.detach(appointmentAccountMaster);
+        entityManager.detach(clientDetails);
 
         CustomPrincipal principal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -62,16 +75,20 @@ public class AppointmentRestController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        return ResponseEntity.ok(appointmentOptional.get());
+        appointmentAccountMaster.clearPersonalFields();
+
+        return ResponseEntity.ok(appointment);
     }
 
     /**
      * Производит поиск всех записей. Необходимо быть авторизованным
      *
      * @return json, содержащий все возможные записи
+     * @deprecated нет необходимости в поиске всех записей
      */
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/appointments")
+    @Deprecated
     public ResponseEntity<List<Appointment>> findAllAppointments() {
         return ResponseEntity.ok(appointmentDataService.findAll());
     }
@@ -89,13 +106,14 @@ public class AppointmentRestController {
         CustomPrincipal principalAccount = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (userDetails.getIdUserDetails() != principalAccount.getIdUserDetails()
-        && appointment.getMasterAccount().getIdAccount() != principalAccount.getIdAccount()) {
+                && appointment.getMasterAccount().getIdAccount() != principalAccount.getIdAccount()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         Timestamp nowTime = Timestamp.valueOf(LocalDateTime.now());
 
         if (appointment.getAppointmentDateTime().getTime() - nowTime.getTime() < ONE_HOUR_MILLIS) {
+            logger.warning("Appointment will not be created. Cause appointment date time is earlier than present time");
             return ResponseEntity.badRequest().build();
         }
 
