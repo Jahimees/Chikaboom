@@ -279,7 +279,8 @@
         "defaultWorkingDayEnd": "20:00:00",
         "phoneVisible": false 
     }
-}</code><br>
+}</code>
+<br>
 
 ### Удаление <code>DELETE</code>:
 
@@ -333,11 +334,7 @@
     </tr>
 </tbody>
 </table>
-
-<br>
-<br>
-<b>Ответ</b>
-<br>
+<p><b>Ответ</b></p>
 <code>{
     "idAccountSettings": 1,
     "defaultWorkingDayStart": "09:00:00",
@@ -404,29 +401,114 @@
 <p>Параметры являются опциональными, однако следует помнить,
 что конец рабочего дня не должен быть раньше начала рабочего дня!</p>
 
-<b>Пример Json-тела запроса</b>
-<br>
-<code>
-{
+<p><b>Пример Json-тела запроса</b></p>
+<code>{
     "defaultWorkingDayStart": "10:00:00",
     "defaultWorkingDayEnd": "23:00:00",
     "phoneVisible": true
-}
-</code>
+}</code>
 <br>
 <p><b>Ответ:</b></p>
-<code>
-{
+<code>{
     "idAccountSettings": 1,
     "defaultWorkingDayStart": "10:00:00",
     "defaultWorkingDayEnd": "23:00:00",
     "phoneVisible": true
-}
-</code>
+}</code>
 <hr>
 
-
 ## Запись (Appointment)
+
+### Поиск <code>GET</code>
+
+<table>
+<thead>
+    <td>URL</td>
+    <td>Доступ</td>
+    <td>Описание</td>
+    <td>Дополнительная информация</td>
+</thead>
+<tbody>
+    <tr>
+        <td>
+            <code>/appointments/{idAppointment}</code>
+        </td>
+        <td>Только собственные записи</td>
+        <td>
+            Производит поиск записи по её id
+        </td>
+        <td>
+            -
+        </td>
+    </tr>
+    <tr>
+        <td>/appointments</td>
+        <td>ADMIN</td>
+        <td>Производит поиск всех возможных записей</td>
+        <td>Запрещено и невозможно к использованию</td>
+    </tr>
+</tbody>
+</table>
+
+<p><b>Пример ответа json</b></p>
+<code>{
+    "idAppointment": 54,
+    "masterAccount": {
+        //информация о мастере
+    },
+    "service": {
+        "idService": 8,
+        "name": "Подпиливание",
+        "price": 190.0,
+        "time": "2 часа 30 минут",
+        "account": {
+             //данные о владельце услуги (повторяет данные мастера)
+        },
+        "serviceSubtype": {
+            "idServiceSubtype": 1,
+            "name": "Маникюр",
+            "serviceType": {
+                "idServiceType": 1,
+                "name": "Ногтевой сервис"
+            }
+        }
+    },
+    "appointmentDateTime": "2023-09-27T08:00:00.000+00:00",
+    "userDetailsClient": {
+        //информация о клиенте
+    }
+}</code>
+<p>Как видно из ответа, данные приходят полностью, без внешних ключей. С одной стороны это выглядит громоздко, однако с другой - мы можем получить полную информацию сразу</p>
+
+### Создание <code>POST</code>
+
+<table>
+<thead>
+    <td>URL</td>
+    <td>Доступ</td>
+    <td>Описание</td>
+    <td>Дополнительная информация</td>
+</thead>
+<tbody>
+    <tr>
+        <td>
+            <code>/appointments</code>
+        </td>
+        <td>Необходимо быть авторизованным</td>
+        <td>
+            Создает новую запись
+        </td>
+        <td>
+            В теле запроса должен фигурировать Ваш аккаунт (либо как мастера, либо как клиента)
+        </td>
+    </tr>
+</tbody>
+</table>
+
+<p><b>Пример json-тела запроса</b></p>
+<code>
+    
+</code>
 
 <h4>Поиск:</h4>
 <code>Method=GET</code>
