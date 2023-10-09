@@ -40,17 +40,12 @@ public class AccountRestController {
             return ResponseEntity.notFound().build();
         }
 
-        Object customPrincipal = SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
-
         Account resultAccount = accountOptional.get();
 
-        if (customPrincipal.getClass() == String.class ||
-                ((CustomPrincipal) customPrincipal).getIdAccount() != idAccount) {
-
-            resultAccount.clearPersonalFields();
-            resultAccount.getUserDetails().clearPersonalFields(resultAccount.getAccountSettings());
-        }
+//        if (!isAuthorized(idAccount)) {
+//            resultAccount.clearPersonalFields();
+//            resultAccount.getUserDetails().clearPersonalFields(resultAccount.getAccountSettings());
+//        }
 
         return ResponseEntity.ok(resultAccount);
     }
@@ -96,6 +91,10 @@ public class AccountRestController {
             return ResponseEntity.notFound().build();
         }
 
+        if (!isAuthorized(idAccount)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         account.setIdAccount(idAccount);
         Account patchedAccount;
         try {
@@ -120,5 +119,16 @@ public class AccountRestController {
     public ResponseEntity<String> deleteAccount(@PathVariable int idAccount) {
         accountDataService.deleteById(idAccount);
         return ResponseEntity.ok().build();
+    }
+
+    private boolean isAuthorized(int idAccount) {
+        Object customPrincipal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (customPrincipal.getClass() == String.class ||
+                ((CustomPrincipal) customPrincipal).getIdAccount() != idAccount) {
+            return false;
+        }
+
+        return true;
     }
 }

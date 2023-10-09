@@ -12,7 +12,6 @@ import java.util.Optional;
 /**
  * REST контроллер для взаимодействия с сущностями типа {@link AccountSettings}
  */
-//TODO нет документации в README файле
 @RestController
 @RequiredArgsConstructor
 public class AccountSettingsRestController {
@@ -51,5 +50,4 @@ public class AccountSettingsRestController {
 
         return ResponseEntity.ok(accountSettingsDataService.patch(idAccount, accountSettings));
     }
-
 }

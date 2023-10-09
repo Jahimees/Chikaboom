@@ -13,7 +13,7 @@ import static net.chikaboom.util.constant.DbNamesConstant.*;
 @Entity
 @Data
 @Table(name = ACCOUNT_SETTINGS)
-public class AccountSettings {
+public class AccountSettings implements BaseEntity {
 
     public AccountSettings() {}
 

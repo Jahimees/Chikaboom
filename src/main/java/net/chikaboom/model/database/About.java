@@ -11,7 +11,7 @@ import static net.chikaboom.util.constant.DbNamesConstant.*;
 @Data
 @Entity
 @Table(name = ABOUT)
-public class About implements BaseEntity {
+public class About implements BaseEntity, Cloneable {
 
     /**
      * id сущности about
@@ -38,4 +38,15 @@ public class About implements BaseEntity {
      */
     @Column(name = PROFESSION)
     private String profession;
+
+    @Override
+    public About clone() {
+        try {
+            About clone = (About) super.clone();
+            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 }
