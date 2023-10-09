@@ -18,7 +18,7 @@
             + clientDetails.idUserDetails + "' data-bs-target='#clientInfoModal'>" + secureCleanValue(name) + "</div>";
 
         let deleteBtn = "";
-        if (clientDetails.masterOwner !== null && clientDetails.masterOwner.idAccount === accountJson.idAccount) {
+        if (typeof clientDetails.masterOwner !== "undefined" && clientDetails.masterOwner.idAccount === accountJson.idAccount) {
             deleteBtn = "<div class='edit-button col1' " +
                 "onclick='callConfirmDeleteClientUserDetails(" +
                 clientDetails.idUserDetails + "," + clientDetails.masterOwner.idAccount + ")' " +
@@ -182,6 +182,7 @@
     }
 
     function fillClientsTable(clientsJSON, tableId) {
+        console.log(clientsJSON)
         let tableName = tableId ? tableId : "default"
         let $dataTable = $("#" + tableName + "_table");
         loadedClientsDetails = [];

@@ -30,6 +30,7 @@ public class ServiceRestController {
      * @param idService идентификатор услуги
      * @return услуга в json-формате
      */
+//    TODO выдает слишком много информации о мастере
     @PreAuthorize("permitAll()")
     @GetMapping("/services/{idService}")
     public ResponseEntity<Service> findService(@PathVariable int idService) {
@@ -39,16 +40,42 @@ public class ServiceRestController {
     }
 
     /**
-     * Производит поиск всех возможных услуг. Необходимо быть авторизованным.
+     * Загружает информацию обо всех услугах, которыесоздал пользователь.
      *
-     * @return все пользовательские услуги.
-     * @deprecated нет необходимости в поиске сразу всех сервисов
+     * @param idAccount идентификатор аккаунта
+     * @return полную информацию в формате JSON обо всех созданных пользователем услугах
      */
-    @Deprecated
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/services")
-    public ResponseEntity<List<Service>> findAllServices() {
-        return ResponseEntity.ok(serviceDataService.findAll());
+//    TODO выдает слишком много информации (о мастере)
+    @PreAuthorize("permitAll()")
+    @GetMapping("/accounts/{idAccount}/services")
+    public ResponseEntity<List<Service>> findAllServicesByIdAccount(@PathVariable int idAccount) {
+        return ResponseEntity.ok(serviceDataService.findAllServicesByIdAccount(idAccount));
+    }
+
+    /**
+     * Поиск всех услуг по перечню подтипов услуг конкретного типа услуги.
+     * Выбирается тип услуги (напр. Барбершоп), выбирается несколько подтипом (Стрижка бороды, усов) и по этим
+     * параметрам производится поиск созданных пользовательских услуг.
+     * В случае, если передается пустой массив идентификаторов подтипов услуг, производится поиск всех услуг
+     * только по типу услуг.
+     * Если в массиве присутствуют идентификаторы подтипов услуг, которые не относятся к выбранной услуге,
+     * то они игнорируются.
+     *
+     * @param idServiceType     идентификатор типа услуги
+     * @param serviceSubtypeIds массив идентификаторов подтипов услуг
+     * @return список найденных услуг в формате json
+     */
+    @PreAuthorize("permitAll()")
+    @GetMapping("/service-types/{idServiceType}/service-subtypes/services")
+    public ResponseEntity<List<Service>> findAllServicesByServiceSubtypeIds(
+            @PathVariable int idServiceType, @RequestParam int[] serviceSubtypeIds) {
+        List<Service> serviceList;
+        try {
+            serviceList = serviceDataService.findServicesByServiceSubtypeIds(serviceSubtypeIds, idServiceType);
+        } catch (NoSuchDataException e) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(serviceList);
     }
 
     /**
@@ -126,43 +153,5 @@ public class ServiceRestController {
         serviceDataService.deleteById(idService);
 
         return ResponseEntity.ok().build();
-    }
-
-    /**
-     * Загружает информацию обо всех услугах, которыесоздал пользователь.
-     *
-     * @param idAccount идентификатор аккаунта
-     * @return полную информацию в формате JSON обо всех созданных пользователем услугах
-     */
-    @PreAuthorize("permitAll()")
-    @GetMapping("/accounts/{idAccount}/services")
-    public ResponseEntity<List<Service>> findAllServicesByIdAccount(@PathVariable int idAccount) {
-        return ResponseEntity.ok(serviceDataService.findAllServicesByIdAccount(idAccount));
-    }
-
-    /**
-     * Поиск всех услуг по перечню подтипов услуг конкретного типа услуги.
-     * Выбирается тип услуги (напр. Барбершоп), выбирается несколько подтипом (Стрижка бороды, усов) и по этим
-     * параметрам производится поиск созданных пользовательских услуг.
-     * В случае, если передается пустой массив идентификаторов подтипов услуг, производится поиск всех услуг
-     * только по типу услуг.
-     * Если в массиве присутствуют идентификаторы подтипов услуг, которые не относятся к выбранной услуге,
-     * то они игнорируются.
-     *
-     * @param idServiceType     идентификатор типа услуги
-     * @param serviceSubtypeIds массив идентификаторов подтипов услуг
-     * @return список найденных услуг в формате json
-     */
-    @PreAuthorize("permitAll()")
-    @GetMapping("/service-types/{idServiceType}/service-subtypes/services")
-    public ResponseEntity<List<Service>> findAllServicesByServiceSubtypeIds(
-            @PathVariable int idServiceType, @RequestParam int[] serviceSubtypeIds) {
-        List<Service> serviceList;
-        try {
-            serviceList = serviceDataService.findServicesByServiceSubtypeIds(serviceSubtypeIds, idServiceType);
-        } catch (NoSuchDataException e) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(serviceList);
     }
 }

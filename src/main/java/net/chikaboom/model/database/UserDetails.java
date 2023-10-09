@@ -94,6 +94,8 @@ public class UserDetails implements BaseEntity {
 
     public void clearPersonalFields(AccountSettings accountSettings) {
         phone = null;
+        phoneCode = null;
+        masterOwner = null;
         if (!accountSettings.isPhoneVisible()) {
             displayedPhone = null;
         }

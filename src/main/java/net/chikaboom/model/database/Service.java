@@ -1,5 +1,6 @@
 package net.chikaboom.model.database;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -58,10 +59,13 @@ public class Service implements BaseEntity {
      * а во второй - количество минут
      * @return массив, представляющий собой продолжительность услуги
      */
+    @Transient
+    @JsonIgnore
     public int[] getServiceTimeNumbers() {
         int[] resultTime = new int[2];
-        //2 часа 30 минут; 1 час 30 минут; 1 час; 30 минут
-        String[] splittedServiceDurationTime = time.replace(" минут", "").split(" час");
+        //2 часа 30 минут; 1 час 30 минут; 1 час; 30 минут; 5 часов
+        String[] splittedServiceDurationTime = time.replace(" минут", "").replace("а", "")
+                .replace("ов", "").split(" чс");
 
         if (splittedServiceDurationTime.length == 1) {
 //            TODO булшит. Если число меньше 24, то это полюбому часы? Это будет работать пока шаг по времени = 30 минут
@@ -73,14 +77,14 @@ public class Service implements BaseEntity {
                 resultTime[1] = Integer.parseInt(splittedServiceDurationTime[0]);
             }
         } else {
-
-            splittedServiceDurationTime[1] = splittedServiceDurationTime[1].replace("а", "");
-
             resultTime[0] = Integer.parseInt(splittedServiceDurationTime[0]);
-
             resultTime[1] = Integer.parseInt(splittedServiceDurationTime[1]);
         }
 
         return resultTime;
+    }
+
+    public void clearPersonalFields() {
+        account.clearPersonalFields();
     }
 }

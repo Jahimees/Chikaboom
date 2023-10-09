@@ -2,7 +2,7 @@
 
 ### Авторизация
 
-Для начала, необходимо авторизоваться, чтобы полноценно использовать API. 
+Для начала, необходимо авторизоваться, чтобы полноценно использовать API.
 Обратите внимание, что для авторизации используется номер телефона
 <br>
 <code>POST: /login?username=+375447635465_by&password=bbbbb</code>
@@ -255,30 +255,30 @@
 Пример тела запроса:
 <br>
 <code>{
-    "password": "MyNeWPassw0rD",
-    "oldPassword": "myOldPassword11",
-    "username": "Jakline",
-    "email": "alex@mail.com",
-    "address": "Пушкинская 56",
-    "userDetails": {
-        "about": {
-            "text": "Привет, я занимаюсь профессиональной обработкой ноготочков",
-            "tags": "маникюр,педикюр,брови",
-            "profession": "Мастер по маникюру"
-        },
-        "socialNetwork": "@my_inst",
-        "phoneCode": {
-            "countryCut": "by"
-         },
-         "phone": "+375441233243",
-         "firstName": "Василиса",
-         "lastName": "Прекрасная"
-    },
-    "accountSettings": {"
-        defaultWorkingDayStart": "06:00:00",
-        "defaultWorkingDayEnd": "20:00:00",
-        "phoneVisible": false 
-    }
+"password": "MyNeWPassw0rD",
+"oldPassword": "myOldPassword11",
+"username": "Jakline",
+"email": "alex@mail.com",
+"address": "Пушкинская 56",
+"userDetails": {
+"about": {
+"text": "Привет, я занимаюсь профессиональной обработкой ноготочков",
+"tags": "маникюр,педикюр,брови",
+"profession": "Мастер по маникюру"
+},
+"socialNetwork": "@my_inst",
+"phoneCode": {
+"countryCut": "by"
+},
+"phone": "+375441233243",
+"firstName": "Василиса",
+"lastName": "Прекрасная"
+},
+"accountSettings": {"
+defaultWorkingDayStart": "06:00:00",
+"defaultWorkingDayEnd": "20:00:00",
+"phoneVisible": false
+}
 }</code>
 <br>
 
@@ -355,16 +355,10 @@
 </thead>
 <tbody>
     <tr>
-        <td>
-            <code>/accounts/{idAccount}/settings</code>
-        </td>
-        <td>искомый аккаунт == авторизованный аккаунт</td>
-        <td>
-            Позволяет частично изменять данные настроек аккаунта.
-        </td>
-        <td>
-            -
-        </td>
+        <td><code>/accounts/{idAccount}/settings</code></td>
+        <td>Искомый аккаунт == авторизованный аккаунт</td>
+        <td>Позволяет частично изменять данные настроек аккаунта.</td>
+        <td>-</td>
     </tr>
 </tbody>
 </table>
@@ -430,22 +424,34 @@
 </thead>
 <tbody>
     <tr>
-        <td>
-            <code>/appointments/{idAppointment}</code>
-        </td>
+        <td><code>/appointments/{idAppointment}</code></td>
         <td>Только собственные записи</td>
-        <td>
-            Производит поиск записи по её id
-        </td>
-        <td>
-            -
-        </td>
+        <td>Производит поиск записи по её id</td>
+        <td>-</td>
     </tr>
     <tr>
-        <td>/appointments</td>
+        <td><code>/appointments</code></td>
         <td>ADMIN</td>
         <td>Производит поиск всех возможных записей</td>
         <td>Запрещено и невозможно к использованию</td>
+    </tr>
+    <tr>
+        <td><code>/accounts/{idAccount}/income-appointments</code></td>
+        <td>ALL</td>
+        <td>Производит поиск записей к определенному мастеру</td>
+        <td>idAccount - идентификатор аккаунта МАСТЕРА</td>
+    </tr>
+    <tr>
+        <td><code>/accounts/{idAccount}/outcome-appointments</code></td>
+        <td>Только владелец аккаунта имеет доступ к своим записям</td>
+        <td>Производит поиск записей определенного клиента</td>
+        <td>idAccount - идентификатор аккаунта КЛИЕНТА</td>
+    </tr>
+    <tr>
+        <td><code>/accounts/{idMasterAccount}/appointments?idUserDetails={idUserDetails}</code></td>
+        <td>MASTER и владелец аккаунта</td>
+        <td>Поиск всех записей определенного клиента к определенному мастеру</td>
+        <td>-</td>
     </tr>
 </tbody>
 </table>
@@ -478,7 +484,8 @@
         //информация о клиенте
     }
 }</code>
-<p>Как видно из ответа, данные приходят полностью, без внешних ключей. С одной стороны это выглядит громоздко, однако с другой - мы можем получить полную информацию сразу</p>
+<p>Как видно из ответа, данные приходят полностью, без внешних ключей. С одной стороны это выглядит громоздко, 
+однако с другой - мы можем получить полную информацию сразу</p>
 
 ### Создание <code>POST</code>
 
@@ -506,130 +513,419 @@
 </table>
 
 <p><b>Пример json-тела запроса</b></p>
-<code>
-    
+<code>{
+    "masterAccount": {
+        "idAccount": 23     
+    },
+    "service": {
+        "idService": 13
+    },
+    "appointmentDateTime": "2023-10-13T15:30:00.000+03:00",
+    "userDetailsClient": {
+        "idUserDetails": 46        
+    }
+}</code>
+<p>Ответ аналогичен ответу при поиске.</p>
+<p>Обратите внимание на то, что необходимо знать идентификаторы аккаунта, услуги, а также деталей клиента. 
+Также, стоит обратить внимание на формат даты. Если попытаться на сервер отправить дату в формате 
+<code>2023-10-13T15:30:00.000+0<label style="color: red">0</label>:00
+</code>, то данные на сервере сохраняться на +3 часа, поскольку сервер хранит дату и время именно в часовом поясе +3,
+что необходимо учитывать при отправке запроса.</p>
+
+### Полное изменение <code>PUT</code>
+
+<table>
+<thead>
+    <td>URL</td>
+    <td>Доступ</td>
+    <td>Описание</td>
+    <td>Дополнительная информация</td>
+</thead>
+<tbody>
+    <tr>
+        <td><code>/appointments/{idAppointment}</code></td>
+        <td>ADMIN</td>
+        <td>Полностью замещает существующую запись</td>
+        <td>Команда запрещена и невозможна к использованию</td>
+    </tr>
+</tbody>
+</table>
+
+### Удаление <code>DELETE</code>
+
+<table>
+<thead>
+    <td>URL</td>
+    <td>Доступ</td>
+    <td>Описание</td>
+    <td>Дополнительная информация</td>
+</thead>
+<tbody>
+    <tr>
+        <td>/appointments/{idAppointment}</td>
+        <td>Авторизован + необходимо быть участником удаляемой записи (мастером или клиентом)</td>
+        <td>Производит удаление записи по id</td>
+        <td>-</td>
+    </tr>
+    <tr>
+        <td>/accounts/{idAccount}/outcome-appointments/{idAppointment}</td>
+        <td>CLIENT + необходимо быть участником удаляемой записи (клиентом)</td>
+        <td>Производит удаление записи по id</td>
+        <td>-</td>
+    </tr>
+    <tr>
+        <td>/accounts/{idAccount}/income-appointments/{idAppointment}</td>
+        <td>MASTER + необходимо быть участником удаляемой записи (мастером)</td>
+        <td>Производит удаление записи по id</td>
+        <td>-</td>
+    </tr>
+</tbody>
+</table>
+
+<p>По большому счёту, разницы в указанных методах нет. Скорее всего, в будущих версиях какой-либо из методов будет упразднён.</p>
+
+## Услуги (Service)
+
+### Поиск <code>GET</code>
+
+<table>
+<thead>
+    <td>URL</td>
+    <td>Доступ</td>
+    <td>Описание</td>
+    <td>Дополнительная информация</td>
+</thead>
+<tbody>
+    <tr>
+        <td>/services/{idService}</td>
+        <td>ALL</td>
+        <td>Производит поиск услуги по её id</td>
+        <td>-</td>
+    </tr>
+    <tr>
+        <td>/accounts/{idAccountMaster}/services</td>
+        <td>ALL</td>
+        <td>Производит поиск всех услуг выбранного мастера</td>
+        <td>-</td>
+    </tr>
+    <tr>
+        <td>/service-types/{idServiceType}/service-subtypes/services?serviceSubtypeIds=1,2,4,5</td>
+        <td>ALL</td>
+        <td>
+            Поиск всех услуг по перечню подтипов услуг конкретного типа услуги. 
+            Выбирается тип услуги (напр. Барбершоп), выбирается несколько подтипом (Стрижка бороды, усов) и по этим
+            параметрам производится поиск созданных пользовательских услуг.
+        </td>
+        <td>-</td>
+    </tr>
+</tbody>
+</table>
+
+### Создание <code>POST</code></h4>
+
+<table>
+<thead>
+    <td>URL</td>
+    <td>Доступ</td>
+    <td>Описание</td>
+    <td>Дополнительная информация</td>
+</thead>
+<tbody>
+    <tr>
+        <td>/services</td>
+        <td>MASTER</td>
+        <td>Производит создание услуги для мастера</td>
+        <td>Указанный idAccount в теле запроса должен совпадать с idAccount авторизованного пользователя</td>
+    </tr>
+</tbody>
+</table>
+
+Тело запроса:
+<code>{
+"name": "Покрытие гель-лаком", //название услуги
+"price": 123.0, //Цена<br>
+"time": "1 час 30 минут", //строго x час(а,ов) или x час(а,ов) xx минут. Время на услугу
+"account": {
+"idAccount": 13 //чей аккаунт
+},<br>
+"serviceSubtype": {
+"idServiceSubtype": 7 //id подтипа услуги
+}
+}
 </code>
+<p>Все поля обязательны</p>
 
-<h4>Поиск:</h4>
-<code>Method=GET</code>
-<code>/appointments permit=AUTHORIZED</code> - возвращает все возможные записи. Доступ есть у авторизованного
-пользователя.
-<br>
-<code>Method=GET</code>
-<code>/appointments/{idAppointment} permit=ALL</code> - возвращает конкретную запись. Доступ есть у авторизованного
-пользователя.
-<br>
-<code>Method=GET</code>
-<code>/accounts/{idAccount}/income-appointments permit=ALL</code> - возвращает входящие записи к выбранному мастеру.
-<br>
-<code>Method=GET</code>
-<code>/accounts/{idAccount}/outcome-appointments permit=AUTHORIZED</code> - возвращает исходящие записи аккаунта.
-Доступ только к своим записям
+### Полное изменение <code>PUT</code>
 
-<h4>Создание:</h4>
-<code>Method=POST</code>
-<code>/appointments permit=AUTHORIZED</code>
-<br>
-Json-тело:
+Все параметры обязательны
 
-<code>
-{
-    "masterAccount": {<br>
-        "idAccount": 13<br>
-    },<br>
-    "clientAccount": {<br>
-        "idAccount": 14<br>
-    },<br>
-    "service": {<br>
-        "idService": 6<br>
-    },<br>
-    "appointmentDateTime": "2023-08-27T12:00:00.000+00:00"<br>
-}<br>
-</code>
-<p>Обратите внимание на формат даты! В базе, время хранится в нулевом часовом поясе.</p>
-<p>Соответственно, если Вы находитесь в Минске (+3), то он необходимого времени отнимите 3 часа.</p>
-<p>В данном примере запись на 15:00</p>
-
-<h4>Удаление:</h4>
-Удалить запись на услугу можно только в случае, если вы авторизованы и связаны с этой записью (мастер или клиент).
-<br>
-<code>Method=DELETE</code>
-<code>/appointments/{idAppointment} permit=AUTHORIZED</code> - Удаление записи на услугу.
-<br>
-<code>Method=DELETE</code>
-<code>/accounts/{idAccount}/outcome-appointments/{idAppointment} permit=CLIENT</code> - Удаление входящей записи на
-услугу. (Как клиента)
-<br>
-<code>Method=DELETE</code>
-<code>/accounts/{idAccount}/income-appointments/{idAppointment} permit=MASTER</code> - Удаление исходящей записи на
-услугу. (Как мастера)
-
-<h3>Услуги (service)</h3>
-<h4>Поиск:</h4>
-<code>Method=GET</code>
-<code>/services permit=AUTHORIZED</code> - Получение всех услуг. Необходимо быть авторизованным
-<br>
-<code>Method=GET</code>
-<code>/services/{idService} permit=ALL</code> - Получение конкретной услуги по id
-<br>
-<code>Method=GET</code>
-<code>/accounts/{idAccount}/services permit=ALL</code> - Возвращает все созданные услуги мастером
-<br>
-<code>Method=GET</code>
-<code>/service-types/{idServiceType}/service-subtypes/services permit=ALL</code> - Поиск всех услуг по перечню подтипов
-услуг конкретного типа услуги.
-<br>
-
-<h4>Создание:</h4>
-<code>Method=POST</code>
-<code>/services permit=MASTER</code> - Создание услуги.
+<table>
+<thead>
+    <td>URL</td>
+    <td>Доступ</td>
+    <td>Описание</td>
+    <td>Дополнительная информация</td>
+</thead>
+<tbody>
+    <tr>
+        <td>/services/{idService}</td>
+        <td>MASTER</td>
+        <td>Производит полное изменение услуги мастера</td>
+        <td>Указанный idAccount в json-теле должен совпадать с авторизованным пользователем</td>
+    </tr>
+</tbody>
+</table>
 <br>
 Тело запроса:
-
-<code>
-{
-    "name": "Покрытие гель-лаком", //название услуги<br>
+<code>{
+    "name": "Покрытие гель-лаком", //название услуги
     "price": 123.0, //Цена<br>
-    "time": "1 час 30 минут", //строго x час(а) или x час(а) xx минут. Время на услугу<br>
-    "account": {<br>
-        "idAccount": 13 //чей аккаунт<br>
+    "time": "1 час 30 минут", //строго x час(а,ов) или x час(а,ов) xx минут. Время на услугу
+    "account": {
+        "idAccount": 13 //чей аккаунт
     },<br>
-    "serviceSubtype": {<br>
-        "idServiceSubtype": 7 //id подтипа услуги<br>
-    }<br>
-}
-</code><br>
-Все поля обязательны
-
-<h4>Изменение:</h4>
-Все параметры обязательны
-<br>
-<code>Method=PUT</code>
-<code>/services/{idService} permit=MASTER</code> - Изменение услуги. Возможно изменить только свою услугу
-<br>
-Json-тело точно такое же как у создания
+    "serviceSubtype": {
+        "idServiceSubtype": 7 //id подтипа услуги
+    }
+}</code>
 <br>
 
-<h4>Удаление:</h4>
+### Удаление <code>DELETE</code>
+
 <code>Method=DELETE</code>
 <code>/services/{idService} permit=MASTER</code> - Удаляет услугу. Возможно удалить только свою услугу
 
-<h3>Подтипы услуг (serviceSubtype)</h3>
-<h4>Поиск:</h4>
-<code>Method=GET</code>
-<code>/service-subtypes permit=ALL</code> - Получение всех подуслуг.
-<br>
-<code>Method=GET</code>
-<code>/service-subtypes/{idServiceSubtype} permit=ALL</code> - Производит поиск подтипа услуги по её идентификатору.
-<br>
-<code>Method=GET</code>
-<code>/service-types/{idServiceType}/service-subtypes permit=ALL</code> - Производит поиск всех подтипов услуг по
-идентификатору типа услуги.
+<table>
+<thead>
+    <td>URL</td>
+    <td>Доступ</td>
+    <td>Описание</td>
+    <td>Дополнительная информация</td>
+</thead>
+<tbody>
+    <tr>
+        <td>/services/{idService}</td>
+        <td>MASTER</td>
+        <td>Производит полное удаление услуги мастера</td>
+        <td>Указанный сервис должен принадлежать авторизованному пользователю</td>
+    </tr>
+</tbody>
+</table>
 
-<h3>Типы услуг (serviceType)</h3>
-<h4>Поиск:</h4>
+## Подтипы услуг (serviceSubtype)
+
+### Поиск <code>GET</code>
+
 <code>Method=GET</code>
-<code>/service-types permit=ALL</code> - Получение всех типов услуг.
-<br>
-<code>Method=GET</code>
-<code>/service-types/{idServiceType} permit=ALL</code> - Получение типа услуги по её идентификатору.
+
+<table>
+<thead>
+    <td>URL</td>
+    <td>Доступ</td>
+    <td>Описание</td>
+    <td>Дополнительная информация</td>
+</thead>
+<tbody>
+    <tr>
+        <td>/service-subtypes</td>
+        <td>ALL</td>
+        <td>Производит поиск всех возможных подтипов услуг</td>
+        <td>Скорее всего, этот метод Вам не понадобится</td>
+    </tr>
+    <tr>
+        <td>/service-subtypes/{idServiceSubtype}</td>
+        <td>ALL</td>
+        <td>Производит поиск конкретного подтипа услуги по его id</td>
+        <td>-</td>
+    </tr>
+    <tr>
+        <td>/service-types/{idServiceType}/service-subtypes</td>
+        <td>ALL</td>
+        <td>Производит поиск всех подтипов услуг по типу услуги</td>
+        <td>-</td>
+    </tr>
+</tbody>
+</table>
+
+## Типы услуг (serviceType)
+
+### Поиск <code>GET</code>
+
+<table>
+<thead>
+    <td>URL</td>
+    <td>Доступ</td>
+    <td>Описание</td>
+    <td>Дополнительная информация</td>
+</thead>
+<tbody>
+    <tr>
+        <td>/service-types</td>
+        <td>ALL</td>
+        <td>Производит поиск всех возможных типов услуг</td>
+        <td>-</td>
+    </tr>
+    <tr>
+        <td>/service-types/{idServiceType}</td>
+        <td>ALL</td>
+        <td>Производит поиск конкретного типа услуги по его id</td>
+        <td>-</td>
+    </tr>
+</tbody>
+</table>
+
+## Детали пользователя (userDetails)
+
+### Поиск <code>GET</code>
+
+<table>
+<thead>
+    <td>URL</td>
+    <td>Доступ</td>
+    <td>Описание</td>
+    <td>Дополнительная информация</td>
+</thead>
+<tbody>
+    <tr>
+        <td>/accounts/{idAccount}/clients</td>
+        <td>Мастер + idAccount совпадает с авторизованным пользователем</td>
+        <td>Производит поиск всей информации о пользователях, которые являются клиентом мастера</td>
+        <td>-</td>
+    </tr>
+</tbody>
+</table>
+
+### Создание <code>POST</code>
+
+<table>
+<thead>
+    <td>URL</td>
+    <td>Доступ</td>
+    <td>Описание</td>
+    <td>Дополнительная информация</td>
+</thead>
+<tbody>
+    <tr>
+        <td>/user-details</td>
+        <td>MASTER</td>
+        <td>Производит создание пользовательской информации (клиента без владельца. Виден только самому мастеру)</td>
+        <td>-</td>
+    </tr>
+</tbody>
+</table>
+
+<p>Тело запроса создания:</p>
+<code>{
+    displayedPhone: "+375 44 123 23 23",
+    firstName: "Алёша", //обязательное поле
+    lastName: "Попович",
+    about: {
+        text: "Клиент отличается капризностью",
+    },
+    phoneCode: {
+        countryCut: "by" //поле обязательно, если указан телефон
+    },
+    masterOwner: {
+        idAccount: 13 //совпадает с Вашим аккаунтом, обязательное поле
+    }
+}</code>
+
+### Изменение <code>PATCH</code>
+
+<table>
+<thead>
+    <td>URL</td>
+    <td>Доступ</td>
+    <td>Описание</td>
+    <td>Дополнительная информация</td>
+</thead>
+<tbody>
+    <tr>
+        <td>/user-details/{idUserDetails}</td>
+        <td>MASTER</td>
+        <td>Производит частичное изменение выбранных полей пользовательской информации, которую ранее создавал ЭТОТ мастер</td>
+        <td>-</td>
+    </tr>
+</tbody>
+</table>
+
+
+<p>Тело запроса изменения:</p>
+<code>{
+    displayedPhone: "+375 44 123 23 23",
+    firstName: "Алёша",
+    lastName: "Попович",
+    about: {
+        text: "Клиент отличается капризностью",
+    },
+    phoneCode: {
+        countryCut: "by" //поле обязательно, если указан телефон
+    }
+}</code>
+
+### Удаление <code>DELETE</code>
+
+<table>
+<thead>
+    <td>URL</td>
+    <td>Доступ</td>
+    <td>Описание</td>
+    <td>Дополнительная информация</td>
+</thead>
+<tbody>
+    <tr>
+        <td>/accounts/{idAccount}/clients/{idUserDetails}</td>
+        <td>MASTER</td>
+        <td>Удаляет пользовательскую информацию о клиенте ранее созданную авторизованным мастером</td>
+        <td>Невозможно удалить чужого клиента</td>
+    </tr>
+</tbody>
+</table>
+
+## Рабочие дни мастера (workingDays)
+
+### Поиск <code>GET</code>
+
+<table>
+<thead>
+    <td>URL</td>
+    <td>Доступ</td>
+    <td>Описание</td>
+    <td>Дополнительная информация</td>
+</thead>
+<tbody>
+    <tr>
+        <td>/accounts/{idAccount}/working-days</td>
+        <td>ALL</td>
+        <td>Возвращает все рабочие дни указанного мастера</td>
+        <td>-</td>
+    </tr>
+</tbody>
+</table>
+
+### Создание <code>POST</code>
+
+<table>
+<thead>
+    <td>URL</td>
+    <td>Доступ</td>
+    <td>Описание</td>
+    <td>Дополнительная информация</td>
+</thead>
+<tbody>
+    <tr>
+        <td>/accounts/{idAccount}/working-days</td>
+        <td>MASTER</td>
+        <td>Создает новый рабочий день для мастера</td>
+        <td>-</td>
+    </tr>
+</tbody>
+</table>
+<p>Тело запроса для создания:</p>
+<code>{
+    idAccount: 13,
+    date: "2023-09-05T00:00:00.000+00:00",
+    workingDayStart: "09:00:00", // необязательное
+    workingDayEnd: "15:00:00" //необязательное
+}
+</code>

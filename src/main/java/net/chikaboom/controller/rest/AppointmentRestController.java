@@ -3,10 +3,8 @@ package net.chikaboom.controller.rest;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
-import net.chikaboom.model.database.Account;
-import net.chikaboom.model.database.Appointment;
-import net.chikaboom.model.database.CustomPrincipal;
-import net.chikaboom.model.database.UserDetails;
+import net.chikaboom.model.database.*;
+import net.chikaboom.model.response.CustomResponseObject;
 import net.chikaboom.repository.AppointmentRepository;
 import net.chikaboom.service.data.AccountDataService;
 import net.chikaboom.service.data.AppointmentDataService;
@@ -94,6 +92,60 @@ public class AppointmentRestController {
     }
 
     /**
+     * Производит поиск входящих записей к мастеру
+     *
+     * @param idAccount идентификатор аккаунта мастера
+     * @return список записей к указанному мастеру
+     */
+//    TODO ВОЗВРАЩАЕТ СЛИШКОМ МНОГО ИНФОРМАЦИИ
+    @PreAuthorize("permitAll()")
+    @GetMapping("/accounts/{idAccount}/income-appointments")
+    public ResponseEntity<List<Appointment>> findIncomeAppointments(@PathVariable int idAccount) {
+        return findAppointmentsByIdAccount(idAccount, false);
+    }
+
+    /**
+     * Производит поиск исходящих записей клиента
+     *
+     * @param idAccount идентификатор аккаунта клиента
+     * @return список записей на которые записан клиент
+     */
+    @PreAuthorize("isAuthenticated() && #idAccount == authentication.principal.idAccount")
+    @GetMapping("/accounts/{idAccount}/outcome-appointments")
+    public ResponseEntity<List<Appointment>> findOutcomeAppointments(@PathVariable int idAccount) {
+        return findAppointmentsByIdAccount(idAccount, true);
+    }
+
+    /**
+     * Поиск всех записей клиента к определенному мастеру
+     *
+     * @param idMasterAccount идентификатор аккаунта мастера
+     * @param idUserDetails   идентификатора информации о клиенте
+     * @return список записей к мастеру
+     */
+    @PreAuthorize("isAuthenticated() && #idMasterAccount == authentication.principal.idAccount")
+    @GetMapping("/accounts/{idMasterAccount}/appointments")
+    public ResponseEntity<List<Appointment>> clientAppointmentsByIdUserDetails(@PathVariable int idMasterAccount,
+                                                                               @RequestParam int idUserDetails) {
+        Optional<UserDetails> userDetailsOptional = userDetailsDataService.findUserDetailsById(idUserDetails);
+
+        if (!userDetailsOptional.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Optional<Account> masterAccountOptional = accountDataService.findById(idMasterAccount);
+
+        if (!masterAccountOptional.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(
+                appointmentRepository.findAllByUserDetailsClientAndMasterAccount(
+                        userDetailsOptional.get(),
+                        masterAccountOptional.get()));
+    }
+
+    /**
      * Создаёт запись на услугу
      *
      * @param appointment json-объект записи
@@ -101,20 +153,28 @@ public class AppointmentRestController {
      */
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/appointments")
-    public ResponseEntity<Appointment> createAppointment(@RequestBody Appointment appointment) {
+    public ResponseEntity<BaseEntity> createAppointment(@RequestBody Appointment appointment) {
         UserDetails userDetails = appointment.getUserDetailsClient();
         CustomPrincipal principalAccount = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (userDetails.getIdUserDetails() != principalAccount.getIdUserDetails()
                 && appointment.getMasterAccount().getIdAccount() != principalAccount.getIdAccount()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            CustomResponseObject errorObject = new CustomResponseObject(403,
+                    "You cannot create appointment in which you are not play any role (client or master)",
+                    "POST:/appointments");
+
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorObject);
         }
 
         Timestamp nowTime = Timestamp.valueOf(LocalDateTime.now());
 
         if (appointment.getAppointmentDateTime().getTime() - nowTime.getTime() < ONE_HOUR_MILLIS) {
             logger.warning("Appointment will not be created. Cause appointment date time is earlier than present time");
-            return ResponseEntity.badRequest().build();
+            CustomResponseObject errorObject = new CustomResponseObject(400,
+                    "Appointment will not be created. Cause appointment date time is earlier than present time",
+                    "POST:/appointments");
+
+            return ResponseEntity.badRequest().body(errorObject);
         }
 
         return ResponseEntity.ok(appointmentDataService.create(appointment));
@@ -128,7 +188,7 @@ public class AppointmentRestController {
      * @param appointment   новый объект записи, который заменит старый
      * @return обновлённую запись на услугу
      */
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/appointments/{idAppointment}")
     public ResponseEntity<Appointment> replaceAppointment(@PathVariable int idAppointment, @RequestBody Appointment appointment) {
         Optional<Appointment> appointmentOptional = appointmentDataService.findById(idAppointment);
@@ -181,60 +241,6 @@ public class AppointmentRestController {
 
         appointmentDataService.deleteById(idAppointment);
         return ResponseEntity.ok().build();
-    }
-
-    /**
-     * Производит поиск входящих записей к мастеру
-     *
-     * @param idAccount идентификатор аккаунта мастера
-     * @return список записей к указанному мастеру
-     */
-    @PreAuthorize("permitAll()")
-    @GetMapping("/accounts/{idAccount}/income-appointments")
-    public ResponseEntity<List<Appointment>> findIncomeAppointments(@PathVariable int idAccount) {
-        return findAppointmentsByIdAccount(idAccount, false);
-    }
-
-    /**
-     * Производит поиск исходящих записей клиента
-     *
-     * @param idAccount идентификатор аккаунта клиента
-     * @return список записей на которые записан клиент
-     */
-    @PreAuthorize("isAuthenticated() && #idAccount == authentication.principal.idAccount")
-    @GetMapping("/accounts/{idAccount}/outcome-appointments")
-    public ResponseEntity<List<Appointment>> findOutcomeAppointments(@PathVariable int idAccount) {
-        return findAppointmentsByIdAccount(idAccount, true);
-    }
-
-    /**
-     * TODO НЕТ ДОКУМЕНТАЦИИ В README
-     * Поиск всех записей клиента к определенному мастеру
-     *
-     * @param idMasterAccount идентификатор аккаунта мастера
-     * @param idUserDetails   идентификатора информации о клиенте
-     * @return список записей к мастеру
-     */
-    @PreAuthorize("hasRole('MASTER')")
-    @GetMapping("/accounts/{idMasterAccount}/appointments")
-    public ResponseEntity<List<Appointment>> clientAppointmentsByIdUserDetails(@PathVariable int idMasterAccount,
-                                                                               @RequestParam int idUserDetails) {
-        Optional<UserDetails> userDetailsOptional = userDetailsDataService.findUserDetailsById(idUserDetails);
-
-        if (!userDetailsOptional.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Optional<Account> masterAccountOptional = accountDataService.findById(idMasterAccount);
-
-        if (!masterAccountOptional.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok(
-                appointmentRepository.findAllByUserDetailsClientAndMasterAccount(
-                        userDetailsOptional.get(),
-                        masterAccountOptional.get()));
     }
 
     /**

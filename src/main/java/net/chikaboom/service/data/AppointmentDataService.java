@@ -100,6 +100,7 @@ public class AppointmentDataService implements DataService<Appointment> {
                 .collect(Collectors.toList());
 
         if (workingDayList.isEmpty()) {
+//            TODO custom handlers for REST!!!!
             throw new NotFoundException("There is no working day for current master");
         }
 
@@ -151,6 +152,7 @@ public class AppointmentDataService implements DataService<Appointment> {
                         (exAppDateTimeEnd > appDateTimeStart && exAppDateTimeEnd <= appDateTimeEnd) ||
                         (exAppDateTimeStart >= appDateTimeStart && exAppDateTimeStart < appDateTimeEnd)) {
 
+//                    TODO response in json
                     throw new IllegalArgumentException("Cannot create the appointment cause it crosses with another appointment");
                 }
 

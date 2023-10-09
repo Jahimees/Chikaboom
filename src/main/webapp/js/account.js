@@ -12,17 +12,13 @@
         $("#username-placeholder").text(nameText ? nameText : "@" + accountJson.username);
         if (accountJson.accountSettings.phoneVisible) {
             let phoneText = "Телефон: " + accountJson.userDetails.displayedPhone
-
             $("#phone-placeholder").text(phoneText)
 }
         if (isMaster(accountJson)) {
             servicesJson = loadMastersServices(accountJson.idAccount);
             fillServiceTable(servicesJson, true);
             initAppointmentModal(false, servicesJson)
-            // fillServicesToModal(servicesJson);
-            // fillWorkingDaysToModal(accountJson);
 
-            // masterAppointmentsJson = loadMastersAppointments(accountJson.idAccount);
             let addressData = accountJson.address != null ? accountJson.address : "";
             $("#address-placeholder").text("Адрес: " + addressData);
             $("#profession-placeholder").text(accountJson.userDetails.about !== null ? accountJson.userDetails.about.profession : "");

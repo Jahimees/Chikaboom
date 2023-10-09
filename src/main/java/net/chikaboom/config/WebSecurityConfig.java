@@ -1,8 +1,11 @@
 package net.chikaboom.config;
 
+import lombok.RequiredArgsConstructor;
 import net.chikaboom.controller.error.handler.CustomAccessDeniedHandler;
+import net.chikaboom.controller.error.handler.CustomLoginSuccessHandler;
+import net.chikaboom.controller.error.handler.CustomLogoutSuccessHandler;
 import net.chikaboom.controller.error.handler.LoginFailureHandler;
-import org.springframework.beans.factory.annotation.Autowired;
+import net.chikaboom.util.CustomWebAuthenticationDetailsSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -18,16 +21,14 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class WebSecurityConfig {
 
     private final LoginFailureHandler loginFailureHandler;
+    private final CustomLoginSuccessHandler customLoginSuccessHandler;
+    private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
     private final CustomAccessDeniedHandler accessDeniedHandler;
-
-    @Autowired
-    public WebSecurityConfig(LoginFailureHandler loginFailureHandler, CustomAccessDeniedHandler accessDeniedHandler) {
-        this.loginFailureHandler = loginFailureHandler;
-        this.accessDeniedHandler = accessDeniedHandler;
-    }
+    private final CustomWebAuthenticationDetailsSource customWebAuthenticationDetailsSource;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -38,16 +39,18 @@ public class WebSecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/chikaboom/main#login")
+                        .authenticationDetailsSource(customWebAuthenticationDetailsSource)
                         .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/chikaboom/main")
+                        .successHandler(customLoginSuccessHandler)
                         .failureHandler(loginFailureHandler)
                         .usernameParameter("username")
                         .passwordParameter("password")
                         .permitAll()
-
                 )
                 .logout(logout -> {
                     logout.permitAll();
+                    logout.logoutSuccessHandler(customLogoutSuccessHandler);
                     logout.logoutSuccessUrl("/chikaboom/main");
                 })
                 .exceptionHandling(exceptionHandler ->
