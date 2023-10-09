@@ -137,9 +137,7 @@
      * @param validations массив правил валидации поля
      */
     function addField(labelText, fieldName, inputType, placeHolderText, isPhoneCode, validations, fieldType, nestedObjectType) {
-        let divLabel = document.createElement("div");
-        divLabel.setAttribute("class", "common-black-text");
-        divLabel.innerText = labelText;
+        let divLabel = $("<div class='common-black-text'></div>").text(labelText)
 
         let inputField = document.createElement(fieldType ? fieldType : "input");
         if (isPhoneCode) {
@@ -159,12 +157,13 @@
         fieldPlaceholder.append(divLabel);
         if (typeof (validations) !== "undefined") {
             validations.forEach(function (validation) {
-                let invalidLabel = document.createElement("label");
-                invalidLabel.setAttribute("class", "invalid-field-label-popup");
-                invalidLabel.innerText = validation.invalidMessage;
-                invalidLabel.setAttribute("display", "none");
-                invalidLabel.setAttribute("id", inputField.name + "-" + validation.invalidReason);
-                invalidLabel.setAttribute("reason", validation.invalidReason);
+                let invalidLabel = $("<label class='invalid-field-label-popup' id='" +
+                     + "'></label>")
+                invalidLabel.text(validation.invalidMessage)
+                    .attr("display", "none")
+                    .attr("id", inputField.name + "-" + validation.invalidReason)
+                    .attr("reason", validation.invalidReason);
+
                 fieldPlaceholder.append(invalidLabel);
             });
             inputField.setAttribute("valid", false);
@@ -175,9 +174,8 @@
         fields.push(inputField);
 
         if (isPhoneCode) {
-            let span = document.createElement('span');
-            span.setAttribute("id", "error-msg-edit-phone");
-            span.classList.add("hidden");
+            let span = $("<span class='hidden' id='error-msg-edit-phone'></span>")
+
             inputField.after(span);
             initPhoneCodeWidget("edit-phone");
         }

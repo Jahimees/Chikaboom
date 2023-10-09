@@ -38,25 +38,17 @@
             async: false,
             success: function (data) {
                 data.forEach(function (subtype) {
-                    let divMediumText = document.createElement("div");
-                    divMediumText.setAttribute("class", "medium-text")
-
-                    let input = document.createElement("input");
-                    input.setAttribute("type", "checkbox");
-                    input.setAttribute("class", "service-subtype-checkbox");
-                    input.setAttribute("id", subtype.idServiceSubtype);
-
-                    let label = document.createElement("label");
-                    label.setAttribute("for", subtype.idServiceSubtype);
-                    label.innerText = subtype.name;
+                    let divMediumText = $("<div class='medium-text'></div>")
+                    let input = $("<input type='checkbox' class='service-subtype-checkbox' id='" + subtype.idServiceSubtype + "'>")
+                    let label = $("<label for='" + subtype.idServiceSubtype + "'></label>").text(subtype.name)
 
                     divMediumText.appendChild(input);
                     divMediumText.appendChild(label);
 
                     $("#service-subtype-block").append(divMediumText);
-                    let serviceTypeNamePlaceHolder = $("#service-type-name-placeholder")[0];
-                    serviceTypeNamePlaceHolder.innerText = subtype.serviceType.name;
-                    serviceTypeNamePlaceHolder.setAttribute("style", "text-decoration: none; color: #523870")
+                    let serviceTypeNamePlaceHolder = $("#service-type-name-placeholder");
+                    serviceTypeNamePlaceHolder.text(subtype.serviceType.name)
+                    serviceTypeNamePlaceHolder.attr("style", "text-decoration: none; color: #523870")
                 })
             }
         })
