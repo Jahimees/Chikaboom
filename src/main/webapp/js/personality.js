@@ -170,4 +170,16 @@
         let height = $(window).height();
         $(".flex-box-purple").attr("style", "height: " + height + "px");
     }
+
+///////////////////////////////LOGOUT////////////////////////////////////////////
+    $("#logout-form").submit(() => {
+        $.ajax({
+            method: "post",
+            url: "/logout?isRequestFromUI=true",
+            success: () => {
+                console.log("logout...")
+                location.href = '/chikaboom/service/search/2';
+            }
+        })
+    })
 }

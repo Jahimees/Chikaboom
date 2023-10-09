@@ -186,8 +186,10 @@
                 document.querySelector("#l-input-phone")).getSelectedCountryData();
             let $inputUsername = $("#l-input-phone");
             let $hiddenInput = $("#l-hidden-input-phone");
+            let $loginForm = $("#login-form");
             $hiddenInput.val($inputUsername.val() + "_" + selectedCountryData.iso2);
-            $("#login-form").submit();
+            $loginForm.append("<input name='isRequestFromUI' value='true' hidden='hidden'>")
+            $loginForm.submit();
         }
     })
 }

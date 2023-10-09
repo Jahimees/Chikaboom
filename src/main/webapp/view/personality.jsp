@@ -98,10 +98,12 @@
                     <div class="menu-text"><a href="#">Отзывы</a></div>
                 </div>
             </sec:authorize>
-            <div id="logout-btn" class="menu-child button" selected="false">
-                <div><img class="small-icon" src="../../image/icon/exit_icon.svg" alt="no_image"></div>
-                <div class="menu-text"><a href="/logout">Выйти</a></div>
-            </div>
+            <form id="logout-form">
+                <div onclick="$('#logout-form').submit()" id="logout-btn" class="menu-child button" selected="false">
+                    <div><img class="small-icon" src="../../image/icon/exit_icon.svg" alt="no_image"></div>
+                    <div class="menu-text"><a>Выйти</a></div>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -119,7 +121,7 @@
 </html>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-crossorigin="anonymous">
+        crossorigin="anonymous">
 </script>
 
 <script type="text/javascript" src="../../js/personality.js"></script>

@@ -4,10 +4,12 @@ import com.google.i18n.phonenumbers.NumberParseException;
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.controller.RegistrationController;
 import net.chikaboom.model.database.Account;
+import net.chikaboom.model.database.CustomPrincipal;
 import net.chikaboom.service.data.AccountDataService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,7 +36,23 @@ public class AccountRestController {
     public ResponseEntity<Account> findAccount(@PathVariable int idAccount) {
         Optional<Account> accountOptional = accountDataService.findById(idAccount);
 
-        return accountOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        if (!accountOptional.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Object customPrincipal = SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+
+        Account resultAccount = accountOptional.get();
+
+        if (customPrincipal.getClass() == String.class ||
+                ((CustomPrincipal) customPrincipal).getIdAccount() != idAccount) {
+
+            resultAccount.clearPersonalFields();
+            resultAccount.getUserDetails().clearPersonalFields(resultAccount.getAccountSettings());
+        }
+
+        return ResponseEntity.ok(resultAccount);
     }
 
     /**
@@ -60,28 +78,6 @@ public class AccountRestController {
     @PostMapping
     public ResponseEntity<Account> createAccount(@RequestBody Account account) {
         return ResponseEntity.ok(accountDataService.create(account));
-    }
-
-    /**
-     * Производит изменение аккаунта (полная замена).
-     * Необходимо быть авторизованным. Невозможно изменять чужой аккаунт.
-     *
-     * @param idAccount идентификатор изменяемого аккаунта
-     * @param account   новая версия аккаунта
-     * @return измененный аккаунт
-     */
-    @PreAuthorize("isAuthenticated() && #idAccount == authentication.principal.idAccount")
-    @PutMapping("/{idAccount}")
-    public ResponseEntity<Account> replaceAccount(@PathVariable int idAccount, @RequestBody Account account) {
-        Optional<Account> accountOptional = accountDataService.findById(idAccount);
-
-        if (!accountOptional.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        account.setIdAccount(idAccount);
-
-        return ResponseEntity.ok(accountDataService.update(account));
     }
 
     /**

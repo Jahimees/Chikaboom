@@ -44,8 +44,8 @@ public class WorkingDaysRestController {
      * @param workingDay рабочий день, который необходимо сохранить в базе данных
      * @return созданный рабочий день
      */
-    @PostMapping("/accounts/{idAccount}/working-days")
     @PreAuthorize("hasRole('MASTER') and #idAccount == authentication.principal.idAccount")
+    @PostMapping("/accounts/{idAccount}/working-days")
     public ResponseEntity<WorkingDay> createWorkingDayForAccount(@PathVariable int idAccount,
                                                                  @RequestBody WorkingDay workingDay) {
         Optional<Account> accountOptional = accountDataService.findById(idAccount);

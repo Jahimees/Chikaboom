@@ -33,7 +33,7 @@
 
 .menu-text > a {
     font-size: 16px;
-    color: white;
+    color: white !important;
     font-family: 'Source Sans Pro', sans-serif;
     letter-spacing: 2px;
     vertical-align: -webkit-baseline-middle;

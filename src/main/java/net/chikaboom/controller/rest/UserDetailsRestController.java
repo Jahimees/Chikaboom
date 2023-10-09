@@ -1,10 +1,8 @@
 package net.chikaboom.controller.rest;
 
 import lombok.RequiredArgsConstructor;
-import net.chikaboom.controller.RegistrationController;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.CustomPrincipal;
-import net.chikaboom.model.database.ServiceSubtype;
 import net.chikaboom.model.database.UserDetails;
 import net.chikaboom.service.data.AccountDataService;
 import net.chikaboom.service.data.UserDetailsDataService;
@@ -24,7 +22,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserDetailsRestController {
 
-//    TODO нет документации в readme
     private final UserDetailsDataService userDetailsDataService;
     private final AccountDataService accountDataService;
 
@@ -80,7 +77,7 @@ public class UserDetailsRestController {
     }
 
     /**
-     * Производит поиск пользовательской информации о клиентов конкретного мастера
+     * Производит поиск пользовательской информации о клиентах конкретного мастера
      *
      * @param idAccount идентификатор аккаунта мастера, чьих клиентов нужно найти
      * @return список найденных клиентов

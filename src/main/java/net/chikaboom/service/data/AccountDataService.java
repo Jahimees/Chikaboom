@@ -144,6 +144,8 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
         return accountRepository.save(account);
     }
 
+//    TODO сброс сессии
+
     /**
      * Применяет частичное изменение объекта, игнорируя null поля и неизменные поля
      *
@@ -166,6 +168,8 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
         if (userDetails != null) {
 
             if (userDetails.getPhoneCode() != null
+                    && userDetails.getPhoneCode().getCountryCut() != null
+                    && !userDetails.getPhoneCode().getCountryCut().isEmpty()
                     && userDetails.getPhone() != null
                     && !userDetails.getPhone().isEmpty()) {
 
@@ -237,6 +241,15 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
 
         if (account.getAddress() != null && !account.getAddress().isEmpty()) {
             patchedAccount.setAddress(account.getAddress());
+        }
+
+        if (account.getAccountSettings() != null) {
+            AccountSettings accountSettings = account.getAccountSettings();
+            if (accountSettings.getDefaultWorkingDayStart() != null
+                    || accountSettings.getDefaultWorkingDayEnd() != null
+                    || patchedAccount.getAccountSettings().isPhoneVisible() != accountSettings.isPhoneVisible()) {
+                accountSettingsDataService.patch(account.getIdAccount(), accountSettings);
+            }
         }
 
         logger.info("Saving account...");
