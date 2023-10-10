@@ -58,7 +58,7 @@ public class UserDetailsRestController {
     @PreAuthorize("isAuthenticated()")
     @PatchMapping("/user-details/{idUserDetails}")
     public ResponseEntity<UserDetails> patchUserDetails(@PathVariable int idUserDetails, @RequestBody UserDetails userDetails) {
-        Optional<UserDetails> oldUserDetailsOptional = userDetailsDataService.findUserDetailsById(idUserDetails);
+        Optional<UserDetails> oldUserDetailsOptional = userDetailsDataService.findById(idUserDetails);
 
         if (!oldUserDetailsOptional.isPresent()) {
             return ResponseEntity.notFound().build();
@@ -110,7 +110,7 @@ public class UserDetailsRestController {
             return ResponseEntity.notFound().build();
         }
 
-        Optional<UserDetails> userDetailsOptional = userDetailsDataService.findUserDetailsById(idUserDetails);
+        Optional<UserDetails> userDetailsOptional = userDetailsDataService.findById(idUserDetails);
 
         if (!userDetailsOptional.isPresent()) {
             return ResponseEntity.notFound().build();

@@ -10,7 +10,7 @@ import java.util.Optional;
  */
 public interface DataService<T> {
 
-    Optional<T> findById(int id);
+    T findById(int id);
 
     List<T> findAll();
 

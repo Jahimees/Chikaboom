@@ -127,7 +127,7 @@ public class AppointmentRestController {
     @GetMapping("/accounts/{idMasterAccount}/appointments")
     public ResponseEntity<List<Appointment>> clientAppointmentsByIdUserDetails(@PathVariable int idMasterAccount,
                                                                                @RequestParam int idUserDetails) {
-        Optional<UserDetails> userDetailsOptional = userDetailsDataService.findUserDetailsById(idUserDetails);
+        Optional<UserDetails> userDetailsOptional = userDetailsDataService.findById(idUserDetails);
 
         if (!userDetailsOptional.isPresent()) {
             return ResponseEntity.notFound().build();

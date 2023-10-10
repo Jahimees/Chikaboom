@@ -2,10 +2,13 @@ package net.chikaboom.service.data;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import lombok.RequiredArgsConstructor;
+import net.chikaboom.facade.converter.PhoneCodeFacadeConverter;
+import net.chikaboom.facade.converter.UserDetailsFacadeConverter;
+import net.chikaboom.facade.dto.AboutFacade;
+import net.chikaboom.facade.dto.PhoneCodeFacade;
+import net.chikaboom.facade.dto.UserDetailsFacade;
 import net.chikaboom.model.database.About;
-import net.chikaboom.model.database.PhoneCode;
 import net.chikaboom.model.database.UserDetails;
-import net.chikaboom.repository.PhoneCodeRepository;
 import net.chikaboom.repository.UserDetailsRepository;
 import net.chikaboom.util.PhoneNumberUtils;
 import org.springframework.security.acls.model.NotFoundException;
@@ -14,17 +17,21 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Сервис предоставляет возможность обработки данных пользовательской информации.
  */
 @Service
 @RequiredArgsConstructor
-public class UserDetailsDataService implements DataService<UserDetails> {
+public class UserDetailsDataService implements DataService<UserDetailsFacade> {
 
     private final UserDetailsRepository userDetailsRepository;
     private final AboutDataService aboutDataService;
-    private final PhoneCodeRepository phoneCodeRepository;
+    private final PhoneCodeDataService phoneCodeDataService;
+
+    private final UserDetailsFacadeConverter userDetailsFacadeConverter;
+    private final PhoneCodeFacadeConverter phoneCodeFacadeConverter;
 
     /**
      * Производит поиск деталей пользователя по их id
@@ -33,8 +40,14 @@ public class UserDetailsDataService implements DataService<UserDetails> {
      * @return пользовательскую информацию
      */
     @Override
-    public Optional<UserDetails> findById(int idUserDetails) {
-        return userDetailsRepository.findById(idUserDetails);
+    public UserDetailsFacade findById(int idUserDetails) {
+        Optional<UserDetails> userDetailsOptional = userDetailsRepository.findById(idUserDetails);
+
+        if (!userDetailsOptional.isPresent()) {
+            throw new NotFoundException("There is no found user details with id " + idUserDetails);
+        }
+
+        return userDetailsFacadeConverter.convertToDto(userDetailsOptional.get());
     }
 
     /**
@@ -43,8 +56,9 @@ public class UserDetailsDataService implements DataService<UserDetails> {
      * @return список объектов пользовательской информации
      */
     @Override
-    public List<UserDetails> findAll() {
-        return userDetailsRepository.findAll();
+    public List<UserDetailsFacade> findAll() {
+        return userDetailsRepository.findAll().stream().map(
+                userDetailsFacadeConverter::convertToDto).collect(Collectors.toList());
     }
 
     /**
@@ -60,48 +74,54 @@ public class UserDetailsDataService implements DataService<UserDetails> {
     /**
      * Производит обновление объекта в базе данных. Внимание! Полностью перезаписывает объект
      *
-     * @param userDetails объект пользовательской информации
+     * @param userDetailsFacade объект пользовательской информации
      * @return обновленный объект пользовательской информации
      */
     @Override
-    public UserDetails update(UserDetails userDetails) {
-        if (!userDetailsRepository.existsById(userDetails.getIdUserDetails())) {
+    public UserDetailsFacade update(UserDetailsFacade userDetailsFacade) {
+        if (!userDetailsRepository.existsById(userDetailsFacade.getIdUserDetails())) {
             throw new NotFoundException("Target userDetails not found in database");
         }
 
-        return userDetailsRepository.saveAndFlush(userDetails);
+        return userDetailsFacadeConverter.convertToDto(
+                userDetailsRepository.saveAndFlush(
+                        userDetailsFacadeConverter.convertToModel(userDetailsFacade)));
     }
 
     /**
      * Создает пользователськую информацию в базе данных
      *
-     * @param userDetails пользовательская информация, которая должна быть сохранена в базе
+     * @param userDetailsFacade пользовательская информация, которая должна быть сохранена в базе
      * @return созданную пользовательскую информацию
      */
     @Override
-    public UserDetails create(UserDetails userDetails) {
-        About about = userDetails.getAbout();
-        if (about != null) {
-            aboutDataService.create(userDetails.getAbout());
+    public UserDetailsFacade create(UserDetailsFacade userDetailsFacade) {
+        AboutFacade aboutFacade = userDetailsFacade.getAboutFacade();
+        if (aboutFacade != null) {
+            aboutDataService.create(userDetailsFacade.getAboutFacade());
         } else {
-            userDetails.setAbout(aboutDataService.create(new About()));
+            userDetailsFacade.setAboutFacade(aboutDataService.create(new AboutFacade()));
         }
 
-        if (userDetails.getPhoneCode() != null) {
-            userDetails.setPhoneCode(phoneCodeRepository.findFirstByCountryCut(userDetails.getPhoneCode().getCountryCut()));
+        if (userDetailsFacade.getPhoneCodeFacade() != null) {
+            userDetailsFacade.setPhoneCodeFacade(
+                    phoneCodeDataService.findFirstByCountryCut(userDetailsFacade.getPhoneCodeFacade().getCountryCut()));
         }
 
-        if (userDetails.getDisplayedPhone() != null && !userDetails.getDisplayedPhone().equals("")) {
+        if (userDetailsFacade.getDisplayedPhone() != null && !userDetailsFacade.getDisplayedPhone().equals("")
+                && userDetailsFacade.getPhoneCodeFacade() != null) {
             try {
-                userDetails.setDisplayedPhone(PhoneNumberUtils.formatNumberInternational(
-                        userDetails.getDisplayedPhone(),
-                        userDetails.getPhoneCode().getCountryCut()));
+                userDetailsFacade.setDisplayedPhone(PhoneNumberUtils.formatNumberInternational(
+                        userDetailsFacade.getDisplayedPhone(),
+                        userDetailsFacade.getPhoneCodeFacade().getCountryCut()));
             } catch (NumberParseException e) {
                 throw new IllegalArgumentException("Cannot save user details. Phone is incorrect. " + e.getMessage());
             }
         }
 
-        return userDetailsRepository.saveAndFlush(userDetails);
+        return userDetailsFacadeConverter.convertToDto(
+                userDetailsRepository.saveAndFlush(
+                        userDetailsFacadeConverter.convertToModel(userDetailsFacade)));
     }
 
     /**
@@ -123,16 +143,6 @@ public class UserDetailsDataService implements DataService<UserDetails> {
     }
 
     /**
-     * Производит поиск пользовательской информации по идентификатору
-     *
-     * @param idUserDetails идентификатор пользовательской информации
-     * @return найденную пользовательскую информацию
-     */
-    public Optional<UserDetails> findUserDetailsById(int idUserDetails) {
-        return userDetailsRepository.findById(idUserDetails);
-    }
-
-    /**
      * Производит поиск пользовательской информации по номеру телефона
      *
      * @param phone      номер телефона
@@ -140,20 +150,25 @@ public class UserDetailsDataService implements DataService<UserDetails> {
      * @return найденную пользовательскую информацию
      * @throws NumberParseException возникает, когда невозможно отформатировать номер телефона
      */
-    public Optional<UserDetails> findUserDetailsByPhone(String phone, String countryCut) throws NumberParseException {
+    public UserDetailsFacade findUserDetailsByPhone(String phone, String countryCut) throws NumberParseException {
         String formedPhone = PhoneNumberUtils.formatNumberInternational(phone, countryCut);
+        Optional<UserDetails> userDetailsOptional = userDetailsRepository.findUserDetailsByPhone(formedPhone);
 
-        return userDetailsRepository.findUserDetailsByPhone(formedPhone);
+        if (!userDetailsOptional.isPresent()) {
+            throw new NotFoundException("There is not found userDetails with phone " + phone);
+        }
+
+        return userDetailsFacadeConverter.convertToDto(userDetailsOptional.get());
     }
 
     /**
      * Изменение данных пользовательской информации
      *
-     * @param userDetails обновляемая пользователская информация
+     * @param userDetailsFacade обновляемая пользователская информация
      * @return обновленная пользовательская информация
      */
-    public UserDetails patch(UserDetails userDetails) {
-        Optional<UserDetails> userDetailsFromDbOptional = userDetailsRepository.findById(userDetails.getIdUserDetails());
+    public UserDetailsFacade patch(UserDetailsFacade userDetailsFacade) {
+        Optional<UserDetails> userDetailsFromDbOptional = userDetailsRepository.findById(userDetailsFacade.getIdUserDetails());
 
         if (!userDetailsFromDbOptional.isPresent()) {
             throw new NotFoundException("User details not found");
@@ -161,40 +176,45 @@ public class UserDetailsDataService implements DataService<UserDetails> {
 
         UserDetails patchedUserDetails = userDetailsFromDbOptional.get();
 
-        if (userDetails.getLastName() != null && !userDetails.getLastName().isEmpty()) {
-            patchedUserDetails.setLastName(userDetails.getLastName());
+        if (userDetailsFacade.getLastName() != null && !userDetailsFacade.getLastName().isEmpty()) {
+            patchedUserDetails.setLastName(userDetailsFacade.getLastName());
         }
 
-        if (userDetails.getFirstName() != null && !userDetails.getFirstName().isEmpty()) {
-            patchedUserDetails.setFirstName(userDetails.getFirstName());
+        if (userDetailsFacade.getFirstName() != null && !userDetailsFacade.getFirstName().isEmpty()) {
+            patchedUserDetails.setFirstName(userDetailsFacade.getFirstName());
         }
 
-        if (userDetails.getDisplayedPhone() != null && !userDetails.getDisplayedPhone().isEmpty() &&
-                userDetails.getPhoneCode() != null &&
-                !userDetails.getPhoneCode().getCountryCut().isEmpty()) {
+        if (userDetailsFacade.getDisplayedPhone() != null && !userDetailsFacade.getDisplayedPhone().isEmpty() &&
+                userDetailsFacade.getPhoneCodeFacade() != null &&
+                !userDetailsFacade.getPhoneCodeFacade().getCountryCut().isEmpty()) {
             try {
-                PhoneCode newPhoneCode = phoneCodeRepository.findFirstByCountryCut(userDetails.getPhoneCode().getCountryCut());
+                PhoneCodeFacade newPhoneCode = phoneCodeDataService.findFirstByCountryCut(
+                        userDetailsFacade.getPhoneCodeFacade().getCountryCut());
 
-                patchedUserDetails.setPhoneCode(newPhoneCode);
+                patchedUserDetails.setPhoneCode(phoneCodeFacadeConverter.convertToModel(newPhoneCode));
                 patchedUserDetails.setDisplayedPhone(PhoneNumberUtils.formatNumberInternational(
-                        userDetails.getDisplayedPhone(), newPhoneCode.getCountryCut()));
+                        userDetailsFacade.getDisplayedPhone(), newPhoneCode.getCountryCut()));
             } catch (NumberParseException e) {
                 throw new IllegalArgumentException("Cannot save user details. Phone is incorrect. " + e.getMessage());
             }
         }
 
-        if (userDetails.getAbout() != null) {
+        if (userDetailsFacade.getAboutFacade() != null) {
             About oldAbout = patchedUserDetails.getAbout();
-            if (userDetails.getAbout().getText() != null && !userDetails.getAbout().getText().isEmpty()) {
-                oldAbout.setText(userDetails.getAbout().getText());
+            if (userDetailsFacade.getAboutFacade().getText() != null &&
+                    !userDetailsFacade.getAboutFacade().getText().isEmpty()) {
+
+                oldAbout.setText(userDetailsFacade.getAboutFacade().getText());
             }
 
-            if (userDetails.getAbout().getProfession() != null && !userDetails.getAbout().getProfession().isEmpty()) {
-                oldAbout.setProfession(userDetails.getAbout().getProfession());
+            if (userDetailsFacade.getAboutFacade().getProfession() != null &&
+                    !userDetailsFacade.getAboutFacade().getProfession().isEmpty()) {
+
+                oldAbout.setProfession(userDetailsFacade.getAboutFacade().getProfession());
             }
         }
 
-        return userDetailsRepository.save(patchedUserDetails);
+        return userDetailsFacadeConverter.convertToDto(userDetailsRepository.save(patchedUserDetails));
     }
 
     /**
@@ -204,8 +224,9 @@ public class UserDetailsDataService implements DataService<UserDetails> {
      * @param idMasterAccount идентификатор мастера
      * @return список клиентов мастера
      */
-    public List<UserDetails> findClientsWithExtraInfo(int idMasterAccount) {
-        List<UserDetailsRepository.ExtendedUserDetails> resultObjects = userDetailsRepository.getListExtendedUserDetails(idMasterAccount);
+    public List<UserDetailsFacade> findClientsWithExtraInfo(int idMasterAccount) {
+        List<UserDetailsRepository.ExtendedUserDetails> resultObjects =
+                userDetailsRepository.getListExtendedUserDetails(idMasterAccount);
 
         List<Integer> idUserDetailsClientList = new ArrayList<>();
         for (UserDetailsRepository.ExtendedUserDetails resultObject : resultObjects) {
@@ -226,6 +247,7 @@ public class UserDetailsDataService implements DataService<UserDetails> {
             }
         }
 
-        return resultUserDetailsList;
+        return resultUserDetailsList.stream().map(
+                userDetailsFacadeConverter::convertToDto).collect(Collectors.toList());
     }
 }

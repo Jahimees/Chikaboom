@@ -4,7 +4,12 @@ import com.google.i18n.phonenumbers.NumberParseException;
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.exception.NoSuchDataException;
 import net.chikaboom.exception.UserAlreadyExistsException;
-import net.chikaboom.model.database.About;
+import net.chikaboom.facade.converter.AccountFacadeConverter;
+import net.chikaboom.facade.converter.UserDetailsFacadeConverter;
+import net.chikaboom.facade.dto.AboutFacade;
+import net.chikaboom.facade.dto.AccountFacade;
+import net.chikaboom.facade.dto.AccountSettingsFacade;
+import net.chikaboom.facade.dto.UserDetailsFacade;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.AccountSettings;
 import net.chikaboom.repository.AccountRepository;
@@ -12,6 +17,7 @@ import net.chikaboom.repository.PhoneCodeRepository;
 import net.chikaboom.util.PhoneNumberUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.acls.model.NotFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,22 +28,29 @@ import org.springframework.stereotype.Service;
 import java.sql.Time;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Сервис предназначен для обработки информации об аккаунте.
  */
 @RequiredArgsConstructor
 @Service
-public class AccountDataService implements UserDetailsService, DataService<Account> {
+public class AccountDataService implements UserDetailsService, DataService<AccountFacade> {
 
     @Value("${regexp.email}")
     private String EMAIL_REGEXP;
 
+    private final AccountFacadeConverter accountFacadeConverter;
+    private final UserDetailsFacadeConverter userDetailsFacadeConverter;
+
     private final AccountRepository accountRepository;
+    private final PhoneCodeRepository phoneCodeRepository;
+
     private final UserDetailsDataService userDetailsDataService;
     private final AccountSettingsDataService accountSettingsDataService;
     private final AboutDataService aboutDataService;
-    private final PhoneCodeRepository phoneCodeRepository;
+    private final PhoneCodeDataService phoneCodeDataService;
+
     private final BCryptPasswordEncoder passwordEncoder;
     private final Logger logger = Logger.getLogger(this.getClass());
 
@@ -66,8 +79,14 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
      * @throws NoSuchDataException возникает, если аккаунт не был найден
      */
     @Override
-    public Optional<Account> findById(int idAccount) {
-        return accountRepository.findById(idAccount);
+    public AccountFacade findById(int idAccount) {
+        Optional<Account> accountOptional = accountRepository.findById(idAccount);
+
+        if (!accountOptional.isPresent()) {
+            throw new NotFoundException("There is no account with id " + idAccount);
+        }
+
+        return accountFacadeConverter.convertToDto(accountOptional.get());
     }
 
     /**
@@ -76,8 +95,8 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
      * @return список всех аккаунтов
      */
     @Override
-    public List<Account> findAll() {
-        return accountRepository.findAll();
+    public List<AccountFacade> findAll() {
+        return accountRepository.findAll().stream().map(accountFacadeConverter::convertToDto).collect(Collectors.toList());
     }
 
     /**
@@ -93,55 +112,68 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
     /**
      * Обновляет данные об аккаунте
      *
-     * @param account объект аккаунта
+     * @param accountFacade объект аккаунта
      * @return обновленный объект
      */
     @Override
-    public Account update(Account account) {
-        return accountRepository.save(account);
+    public AccountFacade update(AccountFacade accountFacade) {
+        Optional<Account> accountOptional = accountRepository.findById(accountFacade.getIdAccount());
+
+        if (!accountOptional.isPresent()) {
+            throw new NotFoundException("there is no account with id " + accountFacade.getIdAccount());
+        }
+
+        return accountFacadeConverter.convertToDto(
+                accountRepository.save(
+                        accountFacadeConverter.convertToModel(accountFacade)));
     }
 
     /**
      * Создаёт новый объект аккаунта в базе.
      *
-     * @param account создаваемый объект
+     * @param accountFacade создаваемый объект
      * @return созданный объект
      */
     @Override
-    public Account create(Account account) {
+    public AccountFacade create(AccountFacade accountFacade) {
         try {
-            if (isAccountExists(account)) {
+            if (isAccountExists(accountFacade)) {
                 throw new UserAlreadyExistsException("The same user already exists");
             }
         } catch (NumberParseException e) {
             throw new IllegalArgumentException("The phone is invalid. Cannot create the account");
         }
 
-        account.setIdAccount(0);
-        net.chikaboom.model.database.UserDetails userDetails = account.getUserDetails();
-        if (userDetails == null) {
-            userDetails = userDetailsDataService.create(new net.chikaboom.model.database.UserDetails());
+        accountFacade.setIdAccount(0);
+        UserDetailsFacade userDetailsFacade = accountFacade.getUserDetailsFacade();
+        if (userDetailsFacade == null) {
+            userDetailsFacade = userDetailsDataService.create(new UserDetailsFacade());
         } else {
             try {
-                userDetails.setPhoneCode(phoneCodeRepository.findFirstByCountryCut(userDetails.getPhoneCode().getCountryCut()));
-                userDetails.setPhone(PhoneNumberUtils.formatNumberInternational(
-                        userDetails.getPhone(), userDetails.getPhoneCode().getCountryCut()));
-                userDetails.setDisplayedPhone(userDetails.getPhone());
+                userDetailsFacade.setPhoneCodeFacade(
+                        phoneCodeDataService.findFirstByCountryCut(
+                                userDetailsFacade.getPhoneCodeFacade().getCountryCut()));
 
-                userDetailsDataService.create(userDetails);
+                userDetailsFacade.setPhone(PhoneNumberUtils.formatNumberInternational(
+                        userDetailsFacade.getPhone(), userDetailsFacade.getPhoneCodeFacade().getCountryCut()));
+                userDetailsFacade.setDisplayedPhone(userDetailsFacade.getPhone());
+
+                userDetailsDataService.create(userDetailsFacade);
             } catch (NumberParseException e) {
                 throw new IllegalArgumentException("Cannot save user details. Phone is incorrect. " + e.getMessage());
             }
         }
 
-        AccountSettings accountSettings = accountSettingsDataService.create(new AccountSettings(
+        AccountSettingsFacade accountSettingsFacade = accountSettingsDataService.create(new AccountSettingsFacade(
                 new Time(9, 0, 0),
                 new Time(18, 0, 0)
         ));
-        account.setAccountSettings(accountSettings);
-        account.setUserDetails(userDetails);
+        accountFacade.setAccountSettingsFacade(accountSettingsFacade);
+        accountFacade.setUserDetailsFacade(userDetailsFacade);
 
-        return accountRepository.save(account);
+        return accountFacadeConverter.convertToDto(
+                accountRepository.save(
+                        accountFacadeConverter.convertToModel(accountFacade)));
     }
 
 //    TODO сброс сессии
@@ -149,126 +181,127 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
     /**
      * Применяет частичное изменение объекта, игнорируя null поля и неизменные поля
      *
-     * @param account новый аккаунт, который нужно изменить. Обязательно должен содержать idAccount != 0
+     * @param accountFacade новый аккаунт, который нужно изменить. Обязательно должен содержать idAccount != 0
      * @return обновленный аккаунт
      */
-    public Account patch(Account account) throws NumberParseException {
-        Account patchedAccount = accountRepository.findById(account.getIdAccount())
-                .orElseThrow(() -> new NoSuchDataException("This user doesn't exist"));
+    public AccountFacade patch(AccountFacade accountFacade) throws NumberParseException {
+        AccountFacade patchedAccountFacade = this.findById(accountFacade.getIdAccount());
 
-        net.chikaboom.model.database.UserDetails patchedUserDetails = patchedAccount.getUserDetails();
-        net.chikaboom.model.database.UserDetails userDetails = account.getUserDetails();
+        UserDetailsFacade patchedUserDetailsFacade = patchedAccountFacade.getUserDetailsFacade();
+        UserDetailsFacade userDetailsFacade = accountFacade.getUserDetailsFacade();
 
-        if (patchedUserDetails == null) {
-            patchedUserDetails = new net.chikaboom.model.database.UserDetails();
-            patchedAccount.setUserDetails(patchedUserDetails);
-            patchedUserDetails = userDetailsDataService.create(patchedUserDetails);
+        if (patchedUserDetailsFacade == null) {
+            patchedUserDetailsFacade = new UserDetailsFacade();
+            patchedAccountFacade.setUserDetailsFacade(patchedUserDetailsFacade);
+            patchedUserDetailsFacade = userDetailsDataService.create(patchedUserDetailsFacade);
         }
 
-        if (userDetails != null) {
+        if (userDetailsFacade != null) {
 
-            if (userDetails.getPhoneCode() != null
-                    && userDetails.getPhoneCode().getCountryCut() != null
-                    && !userDetails.getPhoneCode().getCountryCut().isEmpty()
-                    && userDetails.getPhone() != null
-                    && !userDetails.getPhone().isEmpty()) {
+            if (userDetailsFacade.getPhoneCodeFacade() != null
+                    && userDetailsFacade.getPhoneCodeFacade().getCountryCut() != null
+                    && !userDetailsFacade.getPhoneCodeFacade().getCountryCut().isEmpty()
+                    && userDetailsFacade.getPhone() != null
+                    && !userDetailsFacade.getPhone().isEmpty()) {
 
-                if (userDetailsDataService.existsUserDetailsByPhone(userDetails.getPhone(),
-                        userDetails.getPhoneCode().getCountryCut())) {
+                if (userDetailsDataService.existsUserDetailsByPhone(userDetailsFacade.getPhone(),
+                        userDetailsFacade.getPhoneCodeFacade().getCountryCut())) {
                     throw new UserAlreadyExistsException("User with the same phone already exists");
                 } else {
                     String formattedPhone = PhoneNumberUtils.formatNumberInternational(
-                            userDetails.getPhone(), userDetails.getPhoneCode().getCountryCut());
+                            userDetailsFacade.getPhone(), userDetailsFacade.getPhoneCodeFacade().getCountryCut());
 
-                    patchedUserDetails.setPhoneCode(
-                            phoneCodeRepository.findFirstByCountryCut(userDetails.getPhoneCode().getCountryCut()));
-                    patchedUserDetails.setPhone(formattedPhone);
-                    patchedUserDetails.setDisplayedPhone(formattedPhone);
+                    patchedUserDetailsFacade.setPhoneCodeFacade(
+                            phoneCodeDataService.findFirstByCountryCut(userDetailsFacade.getPhoneCodeFacade().getCountryCut()));
+                    patchedUserDetailsFacade.setPhone(formattedPhone);
+                    patchedUserDetailsFacade.setDisplayedPhone(formattedPhone);
                 }
             }
 
-            if (userDetails.getAbout() != null) {
-                About patchedAbout = userDetails.getAbout();
-                if (patchedAccount.getUserDetails().getAbout() == null
-                        || patchedAccount.getUserDetails().getAbout().getIdAbout() == 0) {
+            if (userDetailsFacade.getAboutFacade() != null) {
+                AboutFacade patchedAbout = userDetailsFacade.getAboutFacade();
+                if (patchedAccountFacade.getUserDetailsFacade().getAboutFacade() == null
+                        || patchedAccountFacade.getUserDetailsFacade().getAboutFacade().getIdAbout() == 0) {
 
-                    patchedAccount.getUserDetails().setAbout(aboutDataService.create(new About()));
+                    patchedAccountFacade.getUserDetailsFacade().setAboutFacade(aboutDataService.create(new AboutFacade()));
                 }
 
-                patchedUserDetails.getAbout().setText(patchedAbout.getText());
-                patchedUserDetails.getAbout().setProfession(patchedAbout.getProfession());
-                patchedUserDetails.getAbout().setTags(patchedAbout.getTags());
+                patchedUserDetailsFacade.getAboutFacade().setText(patchedAbout.getText());
+                patchedUserDetailsFacade.getAboutFacade().setProfession(patchedAbout.getProfession());
+                patchedUserDetailsFacade.getAboutFacade().setTags(patchedAbout.getTags());
             }
 
-            if (userDetails.getFirstName() != null) {
-                patchedUserDetails.setFirstName(userDetails.getFirstName());
+            if (userDetailsFacade.getFirstName() != null) {
+                patchedUserDetailsFacade.setFirstName(userDetailsFacade.getFirstName());
             }
 
-            if (userDetails.getLastName() != null) {
-                patchedUserDetails.setLastName(userDetails.getLastName());
+            if (userDetailsFacade.getLastName() != null) {
+                patchedUserDetailsFacade.setLastName(userDetailsFacade.getLastName());
             }
         }
 
-        if (account.getPassword() != null && !account.getPassword().isEmpty()) {
-            if (passwordEncoder.matches(account.getOldPassword(), patchedAccount.getPassword())) {
-                patchedAccount.setPassword(passwordEncoder.encode(account.getPassword()));
+        if (accountFacade.getPassword() != null && !accountFacade.getPassword().isEmpty()) {
+            if (passwordEncoder.matches(accountFacade.getOldPassword(), patchedAccountFacade.getPassword())) {
+                patchedAccountFacade.setPassword(passwordEncoder.encode(accountFacade.getPassword()));
             } else {
                 throw new BadCredentialsException("Old password is incorrect");
             }
         }
 
-        if (account.getUsername() != null && !account.getUsername().isEmpty()) {
-            if (!account.getUsername().equals(patchedAccount.getUsername())) {
-                if (accountRepository.existsAccountByUsername(account.getUsername())) {
+        if (accountFacade.getUsername() != null && !accountFacade.getUsername().isEmpty()) {
+            if (!accountFacade.getUsername().equals(patchedAccountFacade.getUsername())) {
+                if (accountRepository.existsAccountByUsername(accountFacade.getUsername())) {
                     throw new UserAlreadyExistsException("User with the same username already exists");
                 } else {
-                    patchedAccount.setUsername(account.getUsername());
+                    patchedAccountFacade.setUsername(accountFacade.getUsername());
                 }
             }
         }
 
-        if (account.getEmail() != null && !account.getEmail().isEmpty()) {
-            if (accountRepository.existsByEmail(account.getEmail())) {
+        if (accountFacade.getEmail() != null && !accountFacade.getEmail().isEmpty()) {
+            if (accountRepository.existsByEmail(accountFacade.getEmail())) {
                 throw new UserAlreadyExistsException("User with the same email already exists");
             } else {
-                if (account.getEmail().matches(EMAIL_REGEXP)) {
-                    patchedAccount.setEmail(account.getEmail());
+                if (accountFacade.getEmail().matches(EMAIL_REGEXP)) {
+                    patchedAccountFacade.setEmail(accountFacade.getEmail());
                 } else {
                     throw new IllegalArgumentException("This email value doesn't matches the template form.");
                 }
             }
         }
 
-        if (account.getAddress() != null && !account.getAddress().isEmpty()) {
-            patchedAccount.setAddress(account.getAddress());
+        if (accountFacade.getAddress() != null && !accountFacade.getAddress().isEmpty()) {
+            patchedAccountFacade.setAddress(accountFacade.getAddress());
         }
 
-        if (account.getAccountSettings() != null) {
-            AccountSettings accountSettings = account.getAccountSettings();
-            if (accountSettings.getDefaultWorkingDayStart() != null
-                    || accountSettings.getDefaultWorkingDayEnd() != null
-                    || patchedAccount.getAccountSettings().isPhoneVisible() != accountSettings.isPhoneVisible()) {
-                accountSettingsDataService.patch(account.getIdAccount(), accountSettings);
+        if (accountFacade.getAccountSettingsFacade() != null) {
+            AccountSettingsFacade accountSettingsFacade = accountFacade.getAccountSettingsFacade();
+            if (accountSettingsFacade.getDefaultWorkingDayStart() != null
+                    || accountSettingsFacade.getDefaultWorkingDayEnd() != null
+                    || patchedAccountFacade.getAccountSettingsFacade().isPhoneVisible() != accountSettingsFacade.isPhoneVisible()) {
+                accountSettingsDataService.patch(accountFacade.getIdAccount(), accountSettingsFacade);
             }
         }
 
         logger.info("Saving account...");
-        return accountRepository.save(patchedAccount);
+        return accountFacadeConverter.convertToDto(
+                accountRepository.save(
+                        accountFacadeConverter.convertToModel(patchedAccountFacade)));
     }
 
     /**
      * Проверяет, существует ли аккаунт в базе. Проверяет по id, имени пользователя и номеру телефона.
      *
-     * @param account искомый аккаунт
+     * @param accountFacade искомый аккаунт
      * @return true - в случае, если такой аккаунт существует, false - в ином случае
      */
-    public boolean isAccountExists(Account account) throws NumberParseException {
-        net.chikaboom.model.database.UserDetails userDetails = account.getUserDetails();
+    public boolean isAccountExists(AccountFacade accountFacade) throws NumberParseException {
+        UserDetailsFacade userDetailsFacade = accountFacade.getUserDetailsFacade();
 
-        return accountRepository.existsById(account.getIdAccount())
-                || accountRepository.existsAccountByUsername(account.getUsername())
+        return accountRepository.existsById(accountFacade.getIdAccount())
+                || accountRepository.existsAccountByUsername(accountFacade.getUsername())
                 || userDetailsDataService.existsUserDetailsByPhone(
-                userDetails.getPhone(),
-                userDetails.getPhoneCode().getCountryCut());
+                userDetailsFacade.getPhone(),
+                userDetailsFacade.getPhoneCodeFacade().getCountryCut());
     }
 }

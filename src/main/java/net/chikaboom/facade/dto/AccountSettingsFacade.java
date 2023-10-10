@@ -7,6 +7,13 @@ import java.sql.Time;
 @Data
 public class AccountSettingsFacade implements Facade {
 
+    public AccountSettingsFacade() {}
+
+    public AccountSettingsFacade(Time defaultWorkingDayStart, Time defaultWorkingDayEnd) {
+        this.defaultWorkingDayStart = defaultWorkingDayStart;
+        this.defaultWorkingDayEnd = defaultWorkingDayEnd;
+    }
+
     /**
      * Идентификатор настроек аккаунта
      */

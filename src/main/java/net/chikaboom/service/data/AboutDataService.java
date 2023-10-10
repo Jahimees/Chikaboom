@@ -1,6 +1,8 @@
 package net.chikaboom.service.data;
 
 import lombok.RequiredArgsConstructor;
+import net.chikaboom.facade.converter.AboutFacadeConverter;
+import net.chikaboom.facade.dto.AboutFacade;
 import net.chikaboom.model.database.About;
 import net.chikaboom.repository.AboutRepository;
 import org.springframework.security.acls.model.AlreadyExistsException;
@@ -9,15 +11,17 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Сервис предназначен для обработки информации "О себе".
  */
 @Service
 @RequiredArgsConstructor
-public class AboutDataService implements DataService<About> {
+public class AboutDataService implements DataService<AboutFacade> {
 
     private final AboutRepository aboutRepository;
+    private final AboutFacadeConverter aboutFacadeConverter;
 
     /**
      * Производит поиск объекта "о себе" пользователя
@@ -25,8 +29,13 @@ public class AboutDataService implements DataService<About> {
      * @return объект "о себе"
      */
     @Override
-    public Optional<About> findById(int idAbout) {
-        return aboutRepository.findById(idAbout);
+    public AboutFacade findById(int idAbout) {
+        Optional<About> aboutOptional = aboutRepository.findById(idAbout);
+        if (!aboutOptional.isPresent()) {
+            throw new NotFoundException("about object wasn't found");
+        }
+
+        return aboutFacadeConverter.convertToDto(aboutOptional.get());
     }
 
     /**
@@ -35,8 +44,8 @@ public class AboutDataService implements DataService<About> {
      * @return список объектов
      */
     @Override
-    public List<About> findAll() {
-        return aboutRepository.findAll();
+    public List<AboutFacade> findAll() {
+        return aboutRepository.findAll().stream().map(aboutFacadeConverter::convertToDto).collect(Collectors.toList());
     }
 
     /**
@@ -50,29 +59,32 @@ public class AboutDataService implements DataService<About> {
 
     /**
      * Производит обновление объекта "о себе". Внимание! Производит полную замену объекта.
-     * @param about новый объект
+     * @param aboutFacade новый объект
      * @return сохраненный объект
      */
     @Override
-    public About update(About about) {
+    public AboutFacade update(AboutFacade aboutFacade) {
+        About about = aboutFacadeConverter.convertToModel(aboutFacade);
         if (!aboutRepository.existsById(about.getIdAbout())) {
             throw new NotFoundException("Current About object not found");
         }
 
-        return aboutRepository.saveAndFlush(about);
+        return aboutFacadeConverter.convertToDto(aboutRepository.saveAndFlush(about));
     }
 
     /**
      * Производит создание объекта "о себе"
-     * @param about создаваемый объект
+     * @param aboutFacade создаваемый объект
      * @return созданный объект
      */
     @Override
-    public About create(About about) {
+    public AboutFacade create(AboutFacade aboutFacade) {
+        About about = aboutFacadeConverter.convertToModel(aboutFacade);
+
         if (aboutRepository.existsById(about.getIdAbout())) {
             throw new AlreadyExistsException("Same About object already exists");
         }
-
-        return aboutRepository.saveAndFlush(about);
+//TODO AOP?
+        return aboutFacadeConverter.convertToDto(aboutRepository.saveAndFlush(about));
     }
 }

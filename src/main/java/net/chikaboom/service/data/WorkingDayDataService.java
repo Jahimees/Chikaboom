@@ -1,17 +1,20 @@
 package net.chikaboom.service.data;
 
 import lombok.RequiredArgsConstructor;
-import net.chikaboom.exception.NoSuchDataException;
-import net.chikaboom.model.database.Account;
+import net.chikaboom.facade.converter.AccountFacadeConverter;
+import net.chikaboom.facade.converter.WorkingDayFacadeConverter;
+import net.chikaboom.facade.dto.AccountFacade;
+import net.chikaboom.facade.dto.WorkingDayFacade;
 import net.chikaboom.model.database.WorkingDay;
-import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.repository.WorkingDaysRepository;
 import org.springframework.security.acls.model.AlreadyExistsException;
+import org.springframework.security.acls.model.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.sql.Time;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static net.chikaboom.util.constant.UtilConstant.DEFAULT_WORKING_DAY_END_TIME;
 import static net.chikaboom.util.constant.UtilConstant.DEFAULT_WORKING_DAY_START_TIME;
@@ -21,10 +24,14 @@ import static net.chikaboom.util.constant.UtilConstant.DEFAULT_WORKING_DAY_START
  */
 @Service
 @RequiredArgsConstructor
-public class WorkingDayDataService implements DataService<WorkingDay> {
+public class WorkingDayDataService implements DataService<WorkingDayFacade> {
 
     private final WorkingDaysRepository workingDaysRepository;
-    private final AccountRepository accountRepository;
+    private final AccountDataService accountDataService;
+
+    private final WorkingDayFacadeConverter workingDayFacadeConverter;
+    private final AccountFacadeConverter accountFacadeConverter;
+//    private final AccountRepository accountRepository;
 
     /**
      * Производит поиск конкретного рабочего дня пользователя
@@ -33,8 +40,14 @@ public class WorkingDayDataService implements DataService<WorkingDay> {
      * @return рабочий день пользователя
      */
     @Override
-    public Optional<WorkingDay> findById(int idWorkingDay) {
-        return workingDaysRepository.findById(idWorkingDay);
+    public WorkingDayFacade findById(int idWorkingDay) {
+        Optional<WorkingDay> workingDayOptional = workingDaysRepository.findById(idWorkingDay);
+
+        if (!workingDayOptional.isPresent()) {
+            throw new NotFoundException("There is not found working day with id " + idWorkingDay);
+        }
+
+        return workingDayFacadeConverter.convertToDto(workingDayOptional.get());
     }
 
     /**
@@ -45,8 +58,9 @@ public class WorkingDayDataService implements DataService<WorkingDay> {
      */
     @Override
     @Deprecated
-    public List<WorkingDay> findAll() {
-        return workingDaysRepository.findAll();
+    public List<WorkingDayFacade> findAll() {
+        return workingDaysRepository.findAll().stream().map(
+                workingDayFacadeConverter::convertToDto).collect(Collectors.toList());
     }
 
     /**
@@ -62,7 +76,7 @@ public class WorkingDayDataService implements DataService<WorkingDay> {
     /**
      * Производит обновление рабочего дня. Внимание! Полностью перезаписывает объект в базе данных
      *
-     * @param workingDay новый объект рабочего дня
+     * @param workingDayFacade новый объект рабочего дня
      * @return обновленный рабочий день
      * @deprecated в приложении существует лишь одно состояние данного объекта - только существует. Инчае объект не
      * хранится в базе данных. Возможно, в будущем будет возможность изменять рабочее время дня, а не пересоздавать
@@ -70,46 +84,58 @@ public class WorkingDayDataService implements DataService<WorkingDay> {
      */
     @Override
     @Deprecated
-    public WorkingDay update(WorkingDay workingDay) {
-        return workingDaysRepository.save(workingDay);
+    public WorkingDayFacade update(WorkingDayFacade workingDayFacade) {
+        Optional<WorkingDay> workingDayOptional = workingDaysRepository.findById(workingDayFacade.getIdWorkingDay());
+
+        if (!workingDayOptional.isPresent()) {
+            throw new NotFoundException("There is not found working day");
+        }
+
+        return workingDayFacadeConverter.convertToDto(
+                workingDaysRepository.save(
+                        workingDayFacadeConverter.convertToModel(workingDayFacade)));
     }
 
     /**
      * Создает объект рабочего дня в базе данных
      *
-     * @param workingDay сохраняемый в базу данных объект
+     * @param workingDayFacade сохраняемый в базу данных объект
      * @return созданных объект
      */
     @Override
-    public WorkingDay create(WorkingDay workingDay) {
-        if (workingDay.getAccount() == null || workingDay.getDate() == null) {
+    public WorkingDayFacade create(WorkingDayFacade workingDayFacade) {
+        if (workingDayFacade.getAccountFacade() == null || workingDayFacade.getDate() == null) {
             throw new IllegalArgumentException("There is empty account or date");
         }
 
-        if (isWorkingDayExists(workingDay)) {
+        if (isWorkingDayExists(workingDayFacade)) {
             throw new AlreadyExistsException("Same working day for this user already exists");
         }
 
-        workingDay.setIdWorkingDay(0);
+        workingDayFacade.setIdWorkingDay(0);
 
-        if (workingDay.getWorkingDayStart() == null) {
-            workingDay.setWorkingDayStart(Time.valueOf(DEFAULT_WORKING_DAY_START_TIME));
+        if (workingDayFacade.getWorkingDayStart() == null) {
+            workingDayFacade.setWorkingDayStart(Time.valueOf(DEFAULT_WORKING_DAY_START_TIME));
         }
-        if (workingDay.getWorkingDayEnd() == null) {
-            workingDay.setWorkingDayEnd(Time.valueOf(DEFAULT_WORKING_DAY_END_TIME));
+        if (workingDayFacade.getWorkingDayEnd() == null) {
+            workingDayFacade.setWorkingDayEnd(Time.valueOf(DEFAULT_WORKING_DAY_END_TIME));
         }
 
-        return workingDaysRepository.save(workingDay);
+        return workingDayFacadeConverter.convertToDto(
+                workingDaysRepository.save(
+                        workingDayFacadeConverter.convertToModel(workingDayFacade)));
     }
 
     /**
      * Проверяет существует ли уже такой рабочий день. Проверка производится по аккаунту и дате
      *
-     * @param workingDay проверяемый рабочий день
+     * @param workingDayFacade проверяемый рабочий день
      * @return true - если ррабочий день существует, false - в противном случае
      */
-    public boolean isWorkingDayExists(WorkingDay workingDay) {
-        return workingDaysRepository.existsByAccountAndDate(workingDay.getAccount(), workingDay.getDate());
+    public boolean isWorkingDayExists(WorkingDayFacade workingDayFacade) {
+        return workingDaysRepository.existsByAccountAndDate(
+                accountFacadeConverter.convertToModel(
+                        workingDayFacade.getAccountFacade()), workingDayFacade.getDate());
     }
 
     /**
@@ -128,10 +154,11 @@ public class WorkingDayDataService implements DataService<WorkingDay> {
      *
      * @return рабочие дни мастера
      */
-    public List<WorkingDay> findWorkingDaysByIdAccount(int idAccount) {
-        Account account = accountRepository.findById(idAccount)
-                .orElseThrow(() -> new NoSuchDataException("Cannot find account with id " + idAccount));
+    public List<WorkingDayFacade> findWorkingDaysByIdAccount(int idAccount) {
+        AccountFacade accountFacade = accountDataService.findById(idAccount);
 
-        return workingDaysRepository.findWorkingDaysByAccount(account);
+        return workingDaysRepository
+                .findWorkingDaysByAccount(accountFacadeConverter.convertToModel(accountFacade))
+                .stream().map(workingDayFacadeConverter::convertToDto).collect(Collectors.toList());
     }
 }
