@@ -4,6 +4,9 @@ import net.chikaboom.model.database.PhoneCode;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.awt.font.OpenType;
+import java.util.Optional;
+
 /**
  * Интерфейс для CRUD обработки таблицы PhoneCode
  */
@@ -15,5 +18,5 @@ public interface PhoneCodeRepository extends JpaRepository<PhoneCode, Integer> {
      * @param countryCut сокращенное название страны
      * @return сущность телефонного кода
      */
-    PhoneCode findFirstByCountryCut(String countryCut);
+    Optional<PhoneCode> findFirstByCountryCut(String countryCut);
 }

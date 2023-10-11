@@ -1,26 +1,34 @@
 package net.chikaboom.service.data;
 
-import lombok.RequiredArgsConstructor;
-import net.chikaboom.model.database.Account;
+import net.chikaboom.facade.converter.AccountSettingsFacadeConverter;
+import net.chikaboom.facade.dto.AccountFacade;
+import net.chikaboom.facade.dto.AccountSettingsFacade;
 import net.chikaboom.model.database.AccountSettings;
-import net.chikaboom.repository.AccountRepository;
 import net.chikaboom.repository.AccountSettingsRepository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.acls.model.AlreadyExistsException;
 import org.springframework.security.acls.model.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Сервис предназначен для обработки информации настроек аккаунта
  */
 @Service
-@RequiredArgsConstructor
-public class AccountSettingsDataService implements DataService<AccountSettings> {
+public class AccountSettingsDataService implements DataService<AccountSettingsFacade> {
 
+    //Внедрение зависимостей через сеттер, поскольку AccountDataService вызывает циклическую ошибку инициализации бина
     private final AccountSettingsRepository accountSettingsRepository;
-    private final AccountRepository accountRepository;
+    private final AccountDataService accountDataService;
+
+    public AccountSettingsDataService(AccountSettingsRepository accountSettingsRepository,
+                                      @Lazy AccountDataService accountDataService) {
+        this.accountSettingsRepository = accountSettingsRepository;
+        this.accountDataService = accountDataService;
+    }
 
     /**
      * Производит поиск настроек аккаунта по id
@@ -29,8 +37,14 @@ public class AccountSettingsDataService implements DataService<AccountSettings> 
      * @return настройки аккаунта
      */
     @Override
-    public Optional<AccountSettings> findById(int idAccountSettings) {
-        return accountSettingsRepository.findById(idAccountSettings);
+    public AccountSettingsFacade findById(int idAccountSettings) {
+        Optional<AccountSettings> accountSettings = accountSettingsRepository.findById(idAccountSettings);
+
+        if (!accountSettings.isPresent()) {
+            throw new NotFoundException("There is no account settings with " + idAccountSettings);
+        }
+
+        return AccountSettingsFacadeConverter.convertToDto(accountSettings.get());
     }
 
     /**
@@ -39,14 +53,10 @@ public class AccountSettingsDataService implements DataService<AccountSettings> 
      * @param idAccount идентификатор аккаунта
      * @return настройки аккаунта
      */
-    public Optional<AccountSettings> findByIdAccount(int idAccount) {
-        Optional<Account> accountOptional = accountRepository.findById(idAccount);
+    public AccountSettingsFacade findByIdAccount(int idAccount) {
+        AccountFacade accountFacade = accountDataService.findById(idAccount);
 
-        if (!accountOptional.isPresent()) {
-            throw new NotFoundException("Account with id " + idAccount + " not found");
-        }
-
-        return Optional.ofNullable(accountOptional.get().getAccountSettings());
+        return accountFacade.getAccountSettingsFacade();
     }
 
     /**
@@ -57,8 +67,10 @@ public class AccountSettingsDataService implements DataService<AccountSettings> 
      */
     @Override
     @Deprecated
-    public List<AccountSettings> findAll() {
-        return accountSettingsRepository.findAll();
+    public List<AccountSettingsFacade> findAll() {
+        return accountSettingsRepository.findAll().stream().map(
+                        AccountSettingsFacadeConverter::convertToDto)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -74,16 +86,18 @@ public class AccountSettingsDataService implements DataService<AccountSettings> 
     /**
      * Производит обновление настроек аккаунта. Внимание! Полностью изменяет объект аккаунта
      *
-     * @param accountSettings новый объект настроек аккаунта
+     * @param accountSettingsFacade новый объект настроек аккаунта
      * @return обновленный объект настроек аккаунта
      * @deprecated метод требует целого нового объекта. Есть вероятность потери данных, в случае,
      * если Вы предварительно не загрузили объект из базы. Лучше воспользуйтесь методом patch
      */
     @Override
     @Deprecated
-    public AccountSettings update(AccountSettings accountSettings) {
-        if (accountSettingsRepository.existsById(accountSettings.getIdAccountSettings())) {
-            return accountSettingsRepository.save(accountSettings);
+    public AccountSettingsFacade update(AccountSettingsFacade accountSettingsFacade) {
+        if (accountSettingsRepository.existsById(accountSettingsFacade.getIdAccountSettings())) {
+            AccountSettings accountSettings = AccountSettingsFacadeConverter.convertToModel(accountSettingsFacade);
+
+            return AccountSettingsFacadeConverter.convertToDto(accountSettingsRepository.save(accountSettings));
         } else {
             throw new NotFoundException("Account settings not found");
         }
@@ -97,50 +111,56 @@ public class AccountSettingsDataService implements DataService<AccountSettings> 
      * @param newAccountSettings новые настройки аккаунта
      * @return обновленные настройки аккаунта
      */
-    public AccountSettings patch(int idAccount, AccountSettings newAccountSettings) {
-        Optional<Account> accountOptional = accountRepository.findById(idAccount);
-        if (!accountOptional.isPresent() || accountOptional.get().getAccountSettings() == null) {
-            throw new NotFoundException("Account or settings are empty");
+    public AccountSettingsFacade patch(int idAccount, AccountSettingsFacade newAccountSettings) {
+        AccountFacade accountFacade = accountDataService.findById(idAccount);
+
+        if (accountFacade.getAccountSettingsFacade() == null) {
+            throw new NotFoundException("Settings are empty");
         }
 
         if (newAccountSettings == null) {
             throw new NotFoundException("new account settings are empty");
         }
 
-        AccountSettings changedAccountSettings = accountOptional.get().getAccountSettings();
+        AccountSettingsFacade changedAccountSettingsFacade = accountFacade.getAccountSettingsFacade();
 
         if (newAccountSettings.getDefaultWorkingDayStart() != null) {
-            changedAccountSettings.setDefaultWorkingDayStart(newAccountSettings.getDefaultWorkingDayStart());
+            changedAccountSettingsFacade.setDefaultWorkingDayStart(newAccountSettings.getDefaultWorkingDayStart());
         }
 
         if (newAccountSettings.getDefaultWorkingDayEnd() != null) {
-            changedAccountSettings.setDefaultWorkingDayEnd(newAccountSettings.getDefaultWorkingDayEnd());
+            changedAccountSettingsFacade.setDefaultWorkingDayEnd(newAccountSettings.getDefaultWorkingDayEnd());
         }
 
-        if (changedAccountSettings.getDefaultWorkingDayStart().getTime()
-                >= changedAccountSettings.getDefaultWorkingDayEnd().getTime()) {
+        if (changedAccountSettingsFacade.getDefaultWorkingDayStart().getTime()
+                >= changedAccountSettingsFacade.getDefaultWorkingDayEnd().getTime()) {
             throw new IllegalArgumentException("Illegal time values. Working end time less than working start time");
         }
 
-        if (newAccountSettings.isPhoneVisible() != changedAccountSettings.isPhoneVisible()) {
-            changedAccountSettings.setPhoneVisible(newAccountSettings.isPhoneVisible());
+        if (newAccountSettings.isPhoneVisible() != changedAccountSettingsFacade.isPhoneVisible()) {
+            changedAccountSettingsFacade.setPhoneVisible(newAccountSettings.isPhoneVisible());
         }
 
-        return accountSettingsRepository.saveAndFlush(changedAccountSettings);
+        return AccountSettingsFacadeConverter.convertToDto(
+                accountSettingsRepository.saveAndFlush(
+                        AccountSettingsFacadeConverter.convertToModel(
+                                changedAccountSettingsFacade)));
     }
 
     /**
      * Производит создание настроек аккаунта в базе данных
      *
-     * @param accountSettings создаваемый объект настроек аккаунта
+     * @param accountSettingsFacade создаваемый объект настроек аккаунта
      * @return созданный объект настроек аккаунта
      */
     @Override
-    public AccountSettings create(AccountSettings accountSettings) {
-        if (accountSettingsRepository.existsById(accountSettings.getIdAccountSettings())) {
+    public AccountSettingsFacade create(AccountSettingsFacade accountSettingsFacade) {
+        if (accountSettingsRepository.existsById(accountSettingsFacade.getIdAccountSettings())) {
             throw new AlreadyExistsException("Account settings already exists");
         }
 
-        return accountSettingsRepository.saveAndFlush(accountSettings);
+        return AccountSettingsFacadeConverter.convertToDto(
+                accountSettingsRepository.saveAndFlush(
+                        AccountSettingsFacadeConverter.convertToModel(accountSettingsFacade)));
     }
 }

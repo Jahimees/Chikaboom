@@ -192,8 +192,6 @@
 
 <script>
 
-    var masterAppointmentsJson;
-
     $(document).ready(function () {
        initializePage(${idAccount});
     })

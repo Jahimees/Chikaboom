@@ -14,6 +14,6 @@
 <script>
     $(document).ready(function () {
         loadWorkingDaysDataAndLoadCalendar(${idAccount});
-        reloadWorkingDayDuration(accountJson.accountSettings);
+        reloadWorkingDayDuration(accountFacadeJson.accountSettingsFacade);
     });
 </script>

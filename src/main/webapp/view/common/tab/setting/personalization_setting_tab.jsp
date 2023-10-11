@@ -25,7 +25,7 @@
 <script>
     $(document).ready(function () {
         $("#default-working-time-placeholder")
-            .attr("placeholder", accountJson.accountSettings.defaultWorkingDayStart +
-                " - " + accountJson.accountSettings.defaultWorkingDayEnd);
+            .attr("placeholder", accountFacadeJson.accountSettingsFacade.defaultWorkingDayStart +
+                " - " + accountFacadeJson.accountSettingsFacade.defaultWorkingDayEnd);
     });
 </script>

@@ -39,11 +39,6 @@ public class Role implements BaseEntity, GrantedAuthority {
         }
     }
 
-    public Role(ApplicationRole role) {
-        this.idRole = role.getValue();
-        this.name = role.name();
-    }
-
     /**
      * id сущности в таблице role
      */

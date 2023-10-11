@@ -13,7 +13,7 @@ import static net.chikaboom.util.constant.DbNamesConstant.*;
 @Entity
 @Table(name = ACCOUNT_ROLES)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class AccountRoles {
+public class AccountRoles implements BaseEntity {
 
     /**
      * Идентификатор сущности

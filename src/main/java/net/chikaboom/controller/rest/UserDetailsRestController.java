@@ -1,9 +1,12 @@
 package net.chikaboom.controller.rest;
 
 import lombok.RequiredArgsConstructor;
-import net.chikaboom.model.database.Account;
+import net.chikaboom.facade.dto.AccountFacade;
+import net.chikaboom.facade.dto.Facade;
+import net.chikaboom.facade.dto.UserDetailsFacade;
 import net.chikaboom.model.database.CustomPrincipal;
 import net.chikaboom.model.database.UserDetails;
+import net.chikaboom.model.response.CustomResponseObject;
 import net.chikaboom.service.data.AccountDataService;
 import net.chikaboom.service.data.UserDetailsDataService;
 import org.springframework.http.HttpStatus;
@@ -13,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * REST контроллер для взаимодействия с сущностями типа {@link UserDetails}
@@ -28,52 +30,64 @@ public class UserDetailsRestController {
     /**
      * Создает данные пользователя. Разрешено к использованию только мастерам.
      *
-     * @param userDetails создаваемые данные пользователя
+     * @param userDetailsFacade создаваемые данные пользователя
      * @return созданные данные пользователя
      */
     @PreAuthorize("hasRole('MASTER')")
     @PostMapping("/user-details")
-    public ResponseEntity<UserDetails> createUserDetails(@RequestBody UserDetails userDetails) {
+    public ResponseEntity<Facade> createUserDetails(@RequestBody UserDetailsFacade userDetailsFacade) {
         CustomPrincipal principal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (userDetails.getIdUserDetails() != 0) {
-            return ResponseEntity.badRequest().build();
+        if (userDetailsFacade.getIdUserDetails() != 0) {
+            return new ResponseEntity<>(new CustomResponseObject(
+                    HttpStatus.BAD_REQUEST.value(),
+                    "userDetails shouldn't have an id",
+                    "POST:/user-details"
+            ), HttpStatus.BAD_REQUEST);
         }
 
-        if (userDetails.getMasterOwner() == null || userDetails.getMasterOwner().getIdAccount() != principal.getIdAccount()) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        if (userDetailsFacade.getMasterOwnerFacade() == null ||
+                userDetailsFacade.getMasterOwnerFacade().getIdAccount() != principal.getIdAccount()) {
+
+            return new ResponseEntity<>(new CustomResponseObject(
+                    HttpStatus.FORBIDDEN.value(),
+                    "User details doesn't have masterOwner id or not matches with authenticated account",
+                    "POST:/user-details"
+            ), HttpStatus.FORBIDDEN);
         }
 
-        return ResponseEntity.ok(userDetailsDataService.create(userDetails));
+        return ResponseEntity.ok(userDetailsDataService.create(userDetailsFacade));
     }
 
     /**
      * Изменяет данные пользовательских данных. Можно использовать только авторизованному пользователю, мастеру.
      * Возможно воздействовать только на те сущности, которые принадлежат аккаунту мастера.
      *
-     * @param idUserDetails идентификатор пользовательской информации
-     * @param userDetails новый обновленный объект к сохранению
+     * @param idUserDetails          идентификатор пользовательской информации
+     * @param userDetailsFacadeParam новый обновленный объект к сохранению
      * @return обновленный объект
      */
     @PreAuthorize("isAuthenticated()")
     @PatchMapping("/user-details/{idUserDetails}")
-    public ResponseEntity<UserDetails> patchUserDetails(@PathVariable int idUserDetails, @RequestBody UserDetails userDetails) {
-        Optional<UserDetails> oldUserDetailsOptional = userDetailsDataService.findUserDetailsById(idUserDetails);
-
-        if (!oldUserDetailsOptional.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Facade> patchUserDetails(@PathVariable int idUserDetails,
+                                                   @RequestBody UserDetailsFacade userDetailsFacadeParam) {
+        UserDetailsFacade userDetailsFacadeDb = userDetailsDataService.findById(idUserDetails);
 
         CustomPrincipal principal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (oldUserDetailsOptional.get().getMasterOwner() == null ||
-        oldUserDetailsOptional.get().getMasterOwner().getIdAccount() != principal.getIdAccount()) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        if (userDetailsFacadeDb.getMasterOwnerFacade() == null ||
+                userDetailsFacadeDb.getMasterOwnerFacade().getIdAccount() != principal.getIdAccount()) {
+
+            return new ResponseEntity<>(new CustomResponseObject(
+                    HttpStatus.FORBIDDEN.value(),
+                    "Changing someone else's userDetails not allowed",
+                    "PATCH:/user-details/" + idUserDetails
+            ), HttpStatus.FORBIDDEN);
         }
 
-        userDetails.setIdUserDetails(idUserDetails);
+        userDetailsFacadeParam.setIdUserDetails(idUserDetails);
 
-        return ResponseEntity.ok(userDetailsDataService.patch(userDetails));
+        return ResponseEntity.ok(userDetailsDataService.patch(userDetailsFacadeParam));
     }
 
     /**
@@ -84,11 +98,14 @@ public class UserDetailsRestController {
      */
     @PreAuthorize("isAuthenticated() && #idAccount == authentication.principal.idAccount")
     @GetMapping("/accounts/{idAccount}/clients")
-    public ResponseEntity<List<UserDetails>> findClients(@PathVariable int idAccount) {
-        Optional<Account> accountOptional = accountDataService.findById(idAccount);
-
-        if (!accountOptional.isPresent()) {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<List<? extends Facade>> findClients(@PathVariable int idAccount) {
+        if (!accountDataService.isAccountExistsById(idAccount)) {
+            return new ResponseEntity<>(List.of(new CustomResponseObject(
+                    HttpStatus.NOT_FOUND.value(),
+                    "There not found account with id " + idAccount,
+                    "GET:/accounts/" + idAccount + "/clients"
+            )),
+                    HttpStatus.NOT_FOUND);
         }
 
         return ResponseEntity.ok(userDetailsDataService.findClientsWithExtraInfo(idAccount));
@@ -97,31 +114,32 @@ public class UserDetailsRestController {
     /**
      * Удаляет выбранную пользовательскую информацию. Удалять пользовательскую информацию может только владелец
      *
-     * @param idAccount идентификатор мастера-владельца пользовательской информации
+     * @param idAccount     идентификатор мастера-владельца пользовательской информации
      * @param idUserDetails идентификтор пользовательской информации
      * @return json-ответ сервера
      */
     @PreAuthorize("isAuthenticated() && #idAccount == authentication.principal.idAccount")
     @DeleteMapping("/accounts/{idAccount}/clients/{idUserDetails}")
-    public ResponseEntity<String> deleteUserDetails(@PathVariable int idAccount, @PathVariable int idUserDetails) {
-        Optional<Account> accountOptional = accountDataService.findById(idAccount);
+    public ResponseEntity<Facade> deleteUserDetails(@PathVariable int idAccount, @PathVariable int idUserDetails) {
+        AccountFacade accountFacade = accountDataService.findById(idAccount);
 
-        if (!accountOptional.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
+        UserDetailsFacade userDetailsFacade = userDetailsDataService.findById(idUserDetails);
 
-        Optional<UserDetails> userDetailsOptional = userDetailsDataService.findUserDetailsById(idUserDetails);
+        if (userDetailsFacade.getMasterOwnerFacade().getIdAccount() != accountFacade.getIdAccount()) {
 
-        if (!userDetailsOptional.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        if (userDetailsOptional.get().getMasterOwner().getIdAccount() != accountOptional.get().getIdAccount()) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(new CustomResponseObject(
+                    HttpStatus.FORBIDDEN.value(),
+                    "You can't delete someone else's userDetails",
+                    "DELETE:/accounts/" + idAccount + "/clients/" + idUserDetails
+            ), HttpStatus.FORBIDDEN);
         }
 
         userDetailsDataService.deleteById(idUserDetails);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new CustomResponseObject(
+                HttpStatus.OK.value(),
+                "UserDetails with id " + idUserDetails + " deleted",
+                "DELETE:/accounts/" + idAccount + "/clients/" + idUserDetails
+        ));
     }
 }

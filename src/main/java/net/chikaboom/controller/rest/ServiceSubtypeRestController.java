@@ -2,8 +2,12 @@ package net.chikaboom.controller.rest;
 
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.exception.NoSuchDataException;
+import net.chikaboom.facade.dto.Facade;
+import net.chikaboom.facade.dto.ServiceSubtypeFacade;
 import net.chikaboom.model.database.ServiceSubtype;
+import net.chikaboom.model.response.CustomResponseObject;
 import net.chikaboom.service.data.ServiceSubtypeDataService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * REST контроллер для взаимодействия с сущностями типа {@link ServiceSubtype}
@@ -30,10 +33,8 @@ public class ServiceSubtypeRestController {
      */
     @PreAuthorize("permitAll()")
     @GetMapping("/service-subtypes/{idServiceSubtype}")
-    public ResponseEntity<ServiceSubtype> findServiceSubtype(int idServiceSubtype) {
-        Optional<ServiceSubtype> serviceSubtype = serviceSubtypeDataService.findById(idServiceSubtype);
-
-        return serviceSubtype.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<ServiceSubtypeFacade> findServiceSubtype(int idServiceSubtype) {
+        return ResponseEntity.ok(serviceSubtypeDataService.findById(idServiceSubtype));
     }
 
     /**
@@ -43,7 +44,7 @@ public class ServiceSubtypeRestController {
      */
     @PreAuthorize("permitAll()")
     @GetMapping("/service-subtypes")
-    public ResponseEntity<List<ServiceSubtype>> findAllServiceSubtypes() {
+    public ResponseEntity<List<ServiceSubtypeFacade>> findAllServiceSubtypes() {
         return ResponseEntity.ok(serviceSubtypeDataService.findAll());
     }
 
@@ -55,12 +56,17 @@ public class ServiceSubtypeRestController {
      */
     @PreAuthorize("permitAll()")
     @GetMapping("/service-types/{idServiceType}/service-subtypes")
-    public ResponseEntity<List<ServiceSubtype>> findAllServiceSubtypesByIdServiceType(@PathVariable int idServiceType) {
-        List<ServiceSubtype> serviceSubtypeList;
+    public ResponseEntity<List<? extends Facade>> findAllServiceSubtypesByIdServiceType(@PathVariable int idServiceType) {
+        List<ServiceSubtypeFacade> serviceSubtypeList;
         try {
             serviceSubtypeList = serviceSubtypeDataService.findAllServiceSubtypesByIdServiceType(idServiceType);
         } catch (NoSuchDataException e) {
-            return ResponseEntity.notFound().build();
+
+            return new ResponseEntity<>(List.of(new CustomResponseObject(
+                    HttpStatus.NOT_FOUND.value(),
+                    "No one serviceSubtype found. Server may have problems. Please report it",
+                    "GET:/service-types/" + idServiceType + "/service-subtypes"
+            )), HttpStatus.NOT_FOUND);
         }
 
         return ResponseEntity.ok(serviceSubtypeList);

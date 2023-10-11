@@ -1,15 +1,16 @@
 package net.chikaboom.controller.rest;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
-import net.chikaboom.model.database.*;
+import net.chikaboom.facade.dto.AccountFacade;
+import net.chikaboom.facade.dto.AppointmentFacade;
+import net.chikaboom.facade.dto.Facade;
+import net.chikaboom.facade.dto.UserDetailsFacade;
+import net.chikaboom.model.database.Appointment;
+import net.chikaboom.model.database.CustomPrincipal;
 import net.chikaboom.model.response.CustomResponseObject;
-import net.chikaboom.repository.AppointmentRepository;
 import net.chikaboom.service.data.AccountDataService;
 import net.chikaboom.service.data.AppointmentDataService;
 import net.chikaboom.service.data.UserDetailsDataService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,11 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-import java.util.logging.Logger;
 
 /**
  * REST контроллер для взаимодействия с сущностями типа {@link Appointment}
@@ -30,17 +27,9 @@ import java.util.logging.Logger;
 @RequiredArgsConstructor
 public class AppointmentRestController {
 
-    @Value("${one_hour_millis}")
-    private long ONE_HOUR_MILLIS;
-
-    private final AppointmentRepository appointmentRepository;
     private final AppointmentDataService appointmentDataService;
     private final UserDetailsDataService userDetailsDataService;
     private final AccountDataService accountDataService;
-    @PersistenceContext
-    private final EntityManager entityManager;
-
-    private final Logger logger = Logger.getLogger(this.getClass().getSimpleName());
 
     /**
      * Поиск записи по её идентификатору
@@ -51,31 +40,21 @@ public class AppointmentRestController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/appointments/{idAppointment}")
     @Transactional(readOnly = true)
-    public ResponseEntity<Appointment> findAppointment(@PathVariable int idAppointment) {
-        Optional<Appointment> appointmentOptional = appointmentDataService.findById(idAppointment);
+    public ResponseEntity<AppointmentFacade> findAppointment(@PathVariable int idAppointment) {
+        AppointmentFacade appointmentFacade = appointmentDataService.findById(idAppointment);
 
-        if (!appointmentOptional.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
+        AccountFacade accountFacadeMaster = appointmentFacade.getMasterAccountFacade();
+        UserDetailsFacade clientDetailsFacade = appointmentFacade.getUserDetailsFacadeClient();
 
-        Appointment appointment = appointmentOptional.get();
-        Account appointmentAccountMaster = appointment.getMasterAccount();
-        UserDetails clientDetails = appointment.getUserDetailsClient();
-//        TODO придумать механизм для упрощения
-        entityManager.detach(appointment);
-        entityManager.detach(appointmentAccountMaster);
-        entityManager.detach(clientDetails);
+        CustomPrincipal principal = (CustomPrincipal) SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal();
 
-        CustomPrincipal principal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (principal.getIdAccount() != appointmentAccountMaster.getIdAccount()
-                && principal.getIdUserDetails() != clientDetails.getIdUserDetails()) {
+        if (principal.getIdAccount() != accountFacadeMaster.getIdAccount()
+                && principal.getIdUserDetails() != clientDetailsFacade.getIdUserDetails()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        appointmentAccountMaster.clearPersonalFields();
-
-        return ResponseEntity.ok(appointment);
+        return ResponseEntity.ok(appointmentFacade);
     }
 
     /**
@@ -87,7 +66,7 @@ public class AppointmentRestController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/appointments")
     @Deprecated
-    public ResponseEntity<List<Appointment>> findAllAppointments() {
+    public ResponseEntity<List<AppointmentFacade>> findAllAppointments() {
         return ResponseEntity.ok(appointmentDataService.findAll());
     }
 
@@ -97,10 +76,10 @@ public class AppointmentRestController {
      * @param idAccount идентификатор аккаунта мастера
      * @return список записей к указанному мастеру
      */
-//    TODO ВОЗВРАЩАЕТ СЛИШКОМ МНОГО ИНФОРМАЦИИ
+//    TODO ВОЗВРАЩАЕТ СЛИШКОМ МНОГО ИНФОРМАЦИИ. Донастройка фасада
     @PreAuthorize("permitAll()")
     @GetMapping("/accounts/{idAccount}/income-appointments")
-    public ResponseEntity<List<Appointment>> findIncomeAppointments(@PathVariable int idAccount) {
+    public ResponseEntity<List<AppointmentFacade>> findIncomeAppointments(@PathVariable int idAccount) {
         return findAppointmentsByIdAccount(idAccount, false);
     }
 
@@ -112,7 +91,7 @@ public class AppointmentRestController {
      */
     @PreAuthorize("isAuthenticated() && #idAccount == authentication.principal.idAccount")
     @GetMapping("/accounts/{idAccount}/outcome-appointments")
-    public ResponseEntity<List<Appointment>> findOutcomeAppointments(@PathVariable int idAccount) {
+    public ResponseEntity<List<AppointmentFacade>> findOutcomeAppointments(@PathVariable int idAccount) {
         return findAppointmentsByIdAccount(idAccount, true);
     }
 
@@ -125,40 +104,32 @@ public class AppointmentRestController {
      */
     @PreAuthorize("isAuthenticated() && #idMasterAccount == authentication.principal.idAccount")
     @GetMapping("/accounts/{idMasterAccount}/appointments")
-    public ResponseEntity<List<Appointment>> clientAppointmentsByIdUserDetails(@PathVariable int idMasterAccount,
-                                                                               @RequestParam int idUserDetails) {
-        Optional<UserDetails> userDetailsOptional = userDetailsDataService.findUserDetailsById(idUserDetails);
+    public ResponseEntity<List<AppointmentFacade>> clientAppointmentsByIdUserDetails(@PathVariable int idMasterAccount,
+                                                                                     @RequestParam int idUserDetails) {
+        UserDetailsFacade userDetailsFacade = userDetailsDataService.findById(idUserDetails);
 
-        if (!userDetailsOptional.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Optional<Account> masterAccountOptional = accountDataService.findById(idMasterAccount);
-
-        if (!masterAccountOptional.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
+        AccountFacade masterAccountFacade = accountDataService.findById(idMasterAccount);
 
         return ResponseEntity.ok(
-                appointmentRepository.findAllByUserDetailsClientAndMasterAccount(
-                        userDetailsOptional.get(),
-                        masterAccountOptional.get()));
+                appointmentDataService.findAllByUserDetailsClientAndMasterAccount(
+                        userDetailsFacade,
+                        masterAccountFacade));
     }
 
     /**
      * Создаёт запись на услугу
      *
-     * @param appointment json-объект записи
+     * @param appointmentFacade json-объект записи
      * @return созданную запись в виде json
      */
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/appointments")
-    public ResponseEntity<BaseEntity> createAppointment(@RequestBody Appointment appointment) {
-        UserDetails userDetails = appointment.getUserDetailsClient();
+    public ResponseEntity<Facade> createAppointment(@RequestBody AppointmentFacade appointmentFacade) {
+        UserDetailsFacade userDetailsFacade = appointmentFacade.getUserDetailsFacadeClient();
         CustomPrincipal principalAccount = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (userDetails.getIdUserDetails() != principalAccount.getIdUserDetails()
-                && appointment.getMasterAccount().getIdAccount() != principalAccount.getIdAccount()) {
+        if (userDetailsFacade.getIdUserDetails() != principalAccount.getIdUserDetails()
+                && appointmentFacade.getMasterAccountFacade().getIdAccount() != principalAccount.getIdAccount()) {
             CustomResponseObject errorObject = new CustomResponseObject(403,
                     "You cannot create appointment in which you are not play any role (client or master)",
                     "POST:/appointments");
@@ -166,51 +137,41 @@ public class AppointmentRestController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorObject);
         }
 
-        Timestamp nowTime = Timestamp.valueOf(LocalDateTime.now());
-
-        if (appointment.getAppointmentDateTime().getTime() - nowTime.getTime() < ONE_HOUR_MILLIS) {
-            logger.warning("Appointment will not be created. Cause appointment date time is earlier than present time");
-            CustomResponseObject errorObject = new CustomResponseObject(400,
-                    "Appointment will not be created. Cause appointment date time is earlier than present time",
-                    "POST:/appointments");
-
-            return ResponseEntity.badRequest().body(errorObject);
-        }
-
-        return ResponseEntity.ok(appointmentDataService.create(appointment));
+        return ResponseEntity.ok(appointmentDataService.create(appointmentFacade));
     }
 
     /**
      * Изменяет существующую запись. Необходимо быть авторизованным. Нельзя изменять записи, не принадлежащие
      * аутентифицированному пользователю.
      *
-     * @param idAppointment идентификатор записи, которую нужно удалить
-     * @param appointment   новый объект записи, который заменит старый
+     * @param idAppointment          идентификатор записи, которую нужно удалить
+     * @param appointmentFacadeParam новый объект записи, который заменит старый
      * @return обновлённую запись на услугу
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/appointments/{idAppointment}")
-    public ResponseEntity<Appointment> replaceAppointment(@PathVariable int idAppointment, @RequestBody Appointment appointment) {
-        Optional<Appointment> appointmentOptional = appointmentDataService.findById(idAppointment);
+    public ResponseEntity<Facade> replaceAppointment(@PathVariable int idAppointment,
+                                                     @RequestBody AppointmentFacade appointmentFacadeParam) {
+        AppointmentFacade appointmentFacadeDb = appointmentDataService.findById(idAppointment);
 
-        if (!appointmentOptional.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Appointment appointmentFromDb = appointmentOptional.get();
-        Account masterAccount = appointmentFromDb.getMasterAccount();
-        UserDetails clientDetails = appointmentFromDb.getUserDetailsClient();
+        AccountFacade masterAccountFacade = appointmentFacadeDb.getMasterAccountFacade();
+        UserDetailsFacade clientDetailsFacade = appointmentFacadeDb.getUserDetailsFacadeClient();
         CustomPrincipal principal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (principal.getIdAccount() != masterAccount.getIdAccount()
-                && principal.getIdUserDetails() != clientDetails.getIdUserDetails()
-                || (masterAccount.getIdAccount() != appointment.getMasterAccount().getIdAccount())
-                || clientDetails.getIdUserDetails() == appointment.getUserDetailsClient().getIdUserDetails()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-        appointment.setIdAppointment(idAppointment);
+        if (principal.getIdAccount() != masterAccountFacade.getIdAccount()
+                && principal.getIdUserDetails() != clientDetailsFacade.getIdUserDetails()
+                || (masterAccountFacade.getIdAccount() != appointmentFacadeParam.getMasterAccountFacade().getIdAccount())
+                || clientDetailsFacade.getIdUserDetails() == appointmentFacadeParam.getUserDetailsFacadeClient().getIdUserDetails()) {
 
-        return ResponseEntity.ok(appointmentDataService.update(appointment));
+            return new ResponseEntity<>(new CustomResponseObject(
+                    HttpStatus.FORBIDDEN.value(),
+                    "You can't get access to appointment replacement command",
+                    "PUT:/appointments/" + idAppointment
+            ), HttpStatus.FORBIDDEN);
+        }
+        appointmentFacadeParam.setIdAppointment(idAppointment);
+
+        return ResponseEntity.ok(appointmentDataService.update(appointmentFacadeParam));
     }
 
     /**
@@ -222,25 +183,29 @@ public class AppointmentRestController {
      */
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/appointments/{idAppointment}")
-    public ResponseEntity<String> deleteAppointment(@PathVariable int idAppointment) {
-        Optional<Appointment> optionalAppointment = appointmentDataService.findById(idAppointment);
+    public ResponseEntity<Facade> deleteAppointment(@PathVariable int idAppointment) {
+        AppointmentFacade appointmentFacade = appointmentDataService.findById(idAppointment);
 
-        if (!optionalAppointment.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Appointment appointment = optionalAppointment.get();
         CustomPrincipal principal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Account masterAccount = appointment.getMasterAccount();
-        UserDetails userDetailsClient = appointment.getUserDetailsClient();
+        AccountFacade masterAccountFacade = appointmentFacade.getMasterAccountFacade();
+        UserDetailsFacade userDetailsFacadeClient = appointmentFacade.getUserDetailsFacadeClient();
 
-        if (principal.getIdAccount() != masterAccount.getIdAccount()
-                && principal.getIdUserDetails() != userDetailsClient.getIdUserDetails()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        if (principal.getIdAccount() != masterAccountFacade.getIdAccount()
+                && principal.getIdUserDetails() != userDetailsFacadeClient.getIdUserDetails()) {
+
+            return new ResponseEntity<>(new CustomResponseObject(
+                    HttpStatus.FORBIDDEN.value(),
+                    "You can't delete not your appointment",
+                    "DELETE:/appointments/" + idAppointment
+            ), HttpStatus.FORBIDDEN);
         }
 
         appointmentDataService.deleteById(idAppointment);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new CustomResponseObject(
+                HttpStatus.OK.value(),
+                "Appointment with id " + idAppointment + " deleted",
+                "DELETE:/appointments/" + idAppointment
+        ));
     }
 
     /**
@@ -252,27 +217,36 @@ public class AppointmentRestController {
      */
     @PreAuthorize("hasRole('CLIENT') && #idAccount == authentication.principal.idAccount")
     @DeleteMapping("/accounts/{idAccount}/outcome-appointments/{idAppointment}")
-    public ResponseEntity<String> deleteOutcomeAppointment(@PathVariable int idAccount, @PathVariable int idAppointment) {
-        Optional<Appointment> appointmentOptional = appointmentDataService.findById(idAppointment);
+    public ResponseEntity<Facade> deleteOutcomeAppointment(@PathVariable int idAccount, @PathVariable int idAppointment) {
+        AppointmentFacade appointmentFacade = appointmentDataService.findById(idAppointment);
 
-        if (!appointmentOptional.isPresent()) {
-            return ResponseEntity.notFound().build();
+        AccountFacade accountFacadeFromDb = accountDataService.findById(idAccount);
+
+        if (accountFacadeFromDb.getUserDetailsFacade() == null) {
+            return new ResponseEntity<>(new CustomResponseObject(
+                    HttpStatus.NOT_FOUND.value(),
+                    "There is empty userDetails in account with id " + idAccount,
+                    "DELTE:/accounts/" + idAccount + "/outcome-appointments/" + idAccount
+            ), HttpStatus.NOT_FOUND);
         }
 
-        Appointment appointment = appointmentOptional.get();
-        Optional<Account> accountFromDb = accountDataService.findById(idAccount);
+        if (appointmentFacade.getUserDetailsFacadeClient().getIdUserDetails() !=
+                accountFacadeFromDb.getUserDetailsFacade().getIdUserDetails()) {
 
-        if (!accountFromDb.isPresent() || accountFromDb.get().getUserDetails() == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        if (appointment.getUserDetailsClient().getIdUserDetails() != accountFromDb.get().getUserDetails().getIdUserDetails()) {
-            return new ResponseEntity<>("You can't delete not your appointment", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(new CustomResponseObject(
+                    HttpStatus.FORBIDDEN.value(),
+                    "You can't delete not your appointment",
+                    "DELETE:/accounts/" + idAccount + "/outcome-appointments/" + idAppointment
+            ), HttpStatus.FORBIDDEN);
         }
 
         appointmentDataService.deleteById(idAppointment);
 
-        return ResponseEntity.ok("Deleted");
+        return ResponseEntity.ok(new CustomResponseObject(
+                HttpStatus.OK.value(),
+                "Appointment with id " + idAppointment + " deleted",
+                "DELETE:/appointments/" + idAppointment
+        ));
     }
 
     /**
@@ -285,22 +259,25 @@ public class AppointmentRestController {
      */
     @PreAuthorize("hasRole('MASTER') && #idAccount == authentication.principal.idAccount")
     @DeleteMapping("/accounts/{idAccount}/income-appointments/{idAppointment}")
-    public ResponseEntity<String> deleteIncomeAppointment(@PathVariable int idAccount, @PathVariable int idAppointment) {
-        Optional<Appointment> appointmentOptional = appointmentDataService.findById(idAppointment);
+    public ResponseEntity<Facade> deleteIncomeAppointment(@PathVariable int idAccount, @PathVariable int idAppointment) {
+        AppointmentFacade appointmentFacade = appointmentDataService.findById(idAppointment);
 
-        if (!appointmentOptional.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
+        if (appointmentFacade.getMasterAccountFacade().getIdAccount() != idAccount) {
 
-        Appointment appointment = appointmentOptional.get();
-
-        if (appointment.getMasterAccount().getIdAccount() != idAccount) {
-            return new ResponseEntity<>("You can't delete not your appointment", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(new CustomResponseObject(
+                    HttpStatus.FORBIDDEN.value(),
+                    "You can't delete not your appointment",
+                    "DELETE:/accounts/" + idAccount + "/income-appointments/" + idAppointment
+            ), HttpStatus.FORBIDDEN);
         }
 
         appointmentDataService.deleteById(idAppointment);
 
-        return ResponseEntity.ok("Deleted");
+        return ResponseEntity.ok(new CustomResponseObject(
+                HttpStatus.OK.value(),
+                "Appointment with id " + idAppointment + " deleted",
+                "DELETE:/accounts/" + idAccount + "/income-appointments/" + idAppointment
+        ));
     }
 
     /**
@@ -311,8 +288,8 @@ public class AppointmentRestController {
      * @param isClient  флаг, необходимо ли переданный аккаунт рассматривать как клиента или как мастера
      * @return список записей в виде json
      */
-    private ResponseEntity<List<Appointment>> findAppointmentsByIdAccount(int idAccount, boolean isClient) {
-        List<Appointment> appointmentList = appointmentDataService.findAllByIdAccount(idAccount, isClient);
+    private ResponseEntity<List<AppointmentFacade>> findAppointmentsByIdAccount(int idAccount, boolean isClient) {
+        List<AppointmentFacade> appointmentList = appointmentDataService.findAllByIdAccount(idAccount, isClient);
 
         return ResponseEntity.ok(appointmentList);
     }

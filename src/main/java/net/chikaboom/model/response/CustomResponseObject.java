@@ -1,7 +1,7 @@
 package net.chikaboom.model.response;
 
 import lombok.Data;
-import net.chikaboom.model.database.BaseEntity;
+import net.chikaboom.facade.dto.Facade;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
  * Объект-ответ, используется для ответов в json-формате
  */
 @Data
-public class CustomResponseObject implements BaseEntity {
+public class CustomResponseObject implements Facade {
     private Timestamp timestamp;
     private int status;
     private String message;

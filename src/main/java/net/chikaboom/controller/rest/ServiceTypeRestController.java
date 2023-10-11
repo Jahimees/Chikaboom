@@ -1,8 +1,8 @@
 package net.chikaboom.controller.rest;
 
 import lombok.RequiredArgsConstructor;
+import net.chikaboom.facade.dto.ServiceTypeFacade;
 import net.chikaboom.model.database.Service;
-import net.chikaboom.model.database.ServiceType;
 import net.chikaboom.service.data.ServiceTypeDataService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * REST контроллер для взаимодействия с сущностями типа {@link Service}
@@ -32,10 +31,8 @@ public class ServiceTypeRestController {
      */
     @PreAuthorize("permitAll()")
     @GetMapping("/{idServiceType}")
-    public ResponseEntity<ServiceType> findServiceType(@PathVariable int idServiceType) {
-        Optional<ServiceType> serviceTypeOptional = serviceTypeDataService.findById(idServiceType);
-
-        return serviceTypeOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<ServiceTypeFacade> findServiceType(@PathVariable int idServiceType) {
+        return ResponseEntity.ok(serviceTypeDataService.findById(idServiceType));
     }
 
     /**
@@ -45,7 +42,7 @@ public class ServiceTypeRestController {
      */
     @PreAuthorize("permitAll()")
     @GetMapping
-    public ResponseEntity<List<ServiceType>> findAllServiceTypes() {
+    public ResponseEntity<List<ServiceTypeFacade>> findAllServiceTypes() {
         return ResponseEntity.ok(serviceTypeDataService.findAll());
     }
 }

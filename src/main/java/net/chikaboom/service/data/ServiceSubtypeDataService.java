@@ -1,15 +1,18 @@
 package net.chikaboom.service.data;
 
 import lombok.RequiredArgsConstructor;
-import net.chikaboom.exception.NoSuchDataException;
+import net.chikaboom.facade.converter.ServiceSubtypeFacadeConverter;
+import net.chikaboom.facade.converter.ServiceTypeFacadeConverter;
+import net.chikaboom.facade.dto.ServiceSubtypeFacade;
+import net.chikaboom.facade.dto.ServiceTypeFacade;
 import net.chikaboom.model.database.ServiceSubtype;
-import net.chikaboom.model.database.ServiceType;
 import net.chikaboom.repository.ServiceSubtypeRepository;
-import org.apache.log4j.Logger;
+import org.springframework.security.acls.model.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Сервис предоставляет возможность обработки данных подтипа услугии.
@@ -22,16 +25,20 @@ public class ServiceSubtypeDataService {
     private final ServiceSubtypeRepository serviceSubtypeRepository;
     private final ServiceTypeDataService serviceTypeDataService;
 
-    private final Logger logger = Logger.getLogger(this.getClass());
-
     /**
      * Производит поиск подтипа услуги по его идентификатору
      *
      * @param idServiceSubtype идентификатор подтипа услуги
      * @return найденный подтип услуги
      */
-    public Optional<ServiceSubtype> findById(int idServiceSubtype) {
-        return serviceSubtypeRepository.findById(idServiceSubtype);
+    public ServiceSubtypeFacade findById(int idServiceSubtype) {
+        Optional<ServiceSubtype> serviceSubtypeOptional = serviceSubtypeRepository.findById(idServiceSubtype);
+
+        if (!serviceSubtypeOptional.isPresent()) {
+            throw new NotFoundException("There not found serviceSubtype with id " + idServiceSubtype);
+        }
+
+        return ServiceSubtypeFacadeConverter.convertToDto(serviceSubtypeOptional.get());
     }
 
     /**
@@ -39,8 +46,9 @@ public class ServiceSubtypeDataService {
      *
      * @return список всех подтипов услуг
      */
-    public List<ServiceSubtype> findAll() {
-        return serviceSubtypeRepository.findAll();
+    public List<ServiceSubtypeFacade> findAll() {
+        return serviceSubtypeRepository.findAll().stream().map(ServiceSubtypeFacadeConverter::convertToDto)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -48,11 +56,11 @@ public class ServiceSubtypeDataService {
      *
      * @return коллекцию подуслуг
      */
-    public List<ServiceSubtype> findAllServiceSubtypesByIdServiceType(int idServiceType) {
-        logger.info("Searching all service subtypes of service type with id " + idServiceType);
-        ServiceType serviceType = serviceTypeDataService.findById(idServiceType).
-                orElseThrow(() -> new NoSuchDataException("Cannot find service with id " + idServiceType));
+    public List<ServiceSubtypeFacade> findAllServiceSubtypesByIdServiceType(int idServiceType) {
+        ServiceTypeFacade serviceTypeFacade = serviceTypeDataService.findById(idServiceType);
 
-        return serviceSubtypeRepository.findAllByServiceType(serviceType);
+        return serviceSubtypeRepository
+                .findAllByServiceType(ServiceTypeFacadeConverter.convertToModel(serviceTypeFacade))
+                .stream().map(ServiceSubtypeFacadeConverter::convertToDto).collect(Collectors.toList());
     }
 }

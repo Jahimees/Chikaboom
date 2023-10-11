@@ -2,9 +2,12 @@ package net.chikaboom.controller.rest;
 
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.exception.NoSuchDataException;
-import net.chikaboom.model.database.Account;
+import net.chikaboom.facade.dto.AccountFacade;
+import net.chikaboom.facade.dto.Facade;
+import net.chikaboom.facade.dto.ServiceFacade;
 import net.chikaboom.model.database.CustomPrincipal;
 import net.chikaboom.model.database.Service;
+import net.chikaboom.model.response.CustomResponseObject;
 import net.chikaboom.service.data.ServiceDataService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * REST контроллер для взаимодействия с сущностями типа {@link Service}
@@ -33,10 +35,10 @@ public class ServiceRestController {
 //    TODO выдает слишком много информации о мастере
     @PreAuthorize("permitAll()")
     @GetMapping("/services/{idService}")
-    public ResponseEntity<Service> findService(@PathVariable int idService) {
-        Optional<Service> serviceOptional = serviceDataService.findById(idService);
+    public ResponseEntity<ServiceFacade> findService(@PathVariable int idService) {
+        ServiceFacade serviceFacade = serviceDataService.findById(idService);
 
-        return serviceOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(serviceFacade);
     }
 
     /**
@@ -48,7 +50,7 @@ public class ServiceRestController {
 //    TODO выдает слишком много информации (о мастере)
     @PreAuthorize("permitAll()")
     @GetMapping("/accounts/{idAccount}/services")
-    public ResponseEntity<List<Service>> findAllServicesByIdAccount(@PathVariable int idAccount) {
+    public ResponseEntity<List<ServiceFacade>> findAllServicesByIdAccount(@PathVariable int idAccount) {
         return ResponseEntity.ok(serviceDataService.findAllServicesByIdAccount(idAccount));
     }
 
@@ -67,66 +69,77 @@ public class ServiceRestController {
      */
     @PreAuthorize("permitAll()")
     @GetMapping("/service-types/{idServiceType}/service-subtypes/services")
-    public ResponseEntity<List<Service>> findAllServicesByServiceSubtypeIds(
+    public ResponseEntity<List<? extends Facade>> findAllServicesByServiceSubtypeIds(
             @PathVariable int idServiceType, @RequestParam int[] serviceSubtypeIds) {
-        List<Service> serviceList;
+
+        List<ServiceFacade> serviceList;
         try {
             serviceList = serviceDataService.findServicesByServiceSubtypeIds(serviceSubtypeIds, idServiceType);
         } catch (NoSuchDataException e) {
-            return ResponseEntity.notFound().build();
+
+            return new ResponseEntity<>(List.of(
+                    new CustomResponseObject(
+                            HttpStatus.NOT_FOUND.value(),
+                            "No one service found by serviceSubtype ids. Please check serviceSubtypeId array." +
+                                    "May be ServiceType doesn't mathes with any one received serviceSubtypeId",
+                            "GET:/service-types/" + idServiceType + "/service-subtypes/services"
+                    )
+            ), HttpStatus.NOT_FOUND);
         }
+
         return ResponseEntity.ok(serviceList);
     }
 
     /**
      * Создает данные об услуге мастера. Необходимо иметь роль мастера. Невозможно создать услугу другому пользователю
      *
-     * @param service услуга, которую предоставляет мастер
+     * @param serviceFacade услуга, которую предоставляет мастер
      * @return созданная услуга
      */
     @PreAuthorize("hasRole('MASTER')")
     @PostMapping("/services")
-    public ResponseEntity<Service> createService(@RequestBody Service service) {
-        Account masterAccount = service.getAccount();
+    public ResponseEntity<Facade> createService(@RequestBody ServiceFacade serviceFacade) {
+        AccountFacade masterAccountFacade = serviceFacade.getAccountFacade();
         CustomPrincipal principal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (principal.getIdAccount() != masterAccount.getIdAccount()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        if (principal.getIdAccount() != masterAccountFacade.getIdAccount()) {
+            return new ResponseEntity<>(new CustomResponseObject(
+                    HttpStatus.FORBIDDEN.value(),
+                    "Authenticated user is not matches with account in creation service",
+                    "POST:/services"
+            ), HttpStatus.FORBIDDEN);
         }
 
-        if (service.getAccount().getIdAccount() != principal.getIdAccount()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-
-        return ResponseEntity.ok(serviceDataService.create(service));
+        return ResponseEntity.ok(serviceDataService.create(serviceFacade));
     }
 
     /**
      * Обновляет данные об услуге мастера (полная замена). Необходимо иметь роль мастера. Невозможно изменить услугу
      * другому пользователю.
      *
-     * @param service услуга, которую предоставляет мастер
+     * @param serviceFacadeParam услуга, которую предоставляет мастер
      * @return обновленная услуга
      */
     @PreAuthorize("hasRole('MASTER')")
     @PutMapping("/services/{idService}")
-    public ResponseEntity<Service> replaceService(@PathVariable int idService, @RequestBody Service service) {
-        Optional<Service> serviceOptional = serviceDataService.findById(idService);
-
-        if (!serviceOptional.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Facade> replaceService(@PathVariable int idService, @RequestBody ServiceFacade serviceFacadeParam) {
+        ServiceFacade serviceFacadeDb = serviceDataService.findById(idService);
 
         CustomPrincipal principal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (service.getAccount().getIdAccount() != principal.getIdAccount()
-                || serviceOptional.get().getAccount().getIdAccount() != principal.getIdAccount()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        if (serviceFacadeParam.getAccountFacade().getIdAccount() != principal.getIdAccount()
+                || serviceFacadeDb.getAccountFacade().getIdAccount() != principal.getIdAccount()) {
+
+            return new ResponseEntity<>(new CustomResponseObject(
+                    HttpStatus.FORBIDDEN.value(),
+                    "Authenticated user is not matches with account in updation service",
+                    "PUT:/services/" + idService
+            ), HttpStatus.FORBIDDEN);
         }
 
-        service.setIdService(idService);
+        serviceFacadeParam.setIdService(idService);
 
-        return ResponseEntity.ok(serviceDataService.update(service));
+        return ResponseEntity.ok(serviceDataService.update(serviceFacadeParam));
     }
 
     /**
@@ -137,21 +150,26 @@ public class ServiceRestController {
      */
     @PreAuthorize("hasRole('MASTER')")
     @DeleteMapping("/services/{idService}")
-    public ResponseEntity<Object> deleteService(@PathVariable int idService) {
-        Optional<Service> serviceOptional = serviceDataService.findById(idService);
-
-        if (!serviceOptional.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Facade> deleteService(@PathVariable int idService) {
+        ServiceFacade serviceFacade = serviceDataService.findById(idService);
 
         CustomPrincipal customPrincipal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (serviceOptional.get().getAccount().getIdAccount() != customPrincipal.getIdAccount()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        if (serviceFacade.getAccountFacade().getIdAccount() != customPrincipal.getIdAccount()) {
+
+            return new ResponseEntity<>(new CustomResponseObject(
+                    HttpStatus.FORBIDDEN.value(),
+                    "You can't delete not your service",
+                    "DELETE:/services/" + idService
+            ), HttpStatus.FORBIDDEN);
         }
 
         serviceDataService.deleteById(idService);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new CustomResponseObject(
+                HttpStatus.OK.value(),
+                "Service with id " + idService + " deleted",
+                "DELETE:/services/" + idService
+        ));
     }
 }

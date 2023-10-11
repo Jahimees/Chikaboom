@@ -1,28 +1,30 @@
 {
-    let servicesJson;
+    let servicesFacadeJson;
 
     function initializePage(idAccount) {
-        accountJson = loadAccount(idAccount);
+        accountFacadeJson = loadAccount(idAccount);
 
         let nameText;
-        if (accountJson.userDetails != null) {
-            nameText = (accountJson.userDetails.firstName ? accountJson.userDetails.firstName + " " : "")
-                + (accountJson.userDetails.lastName ? accountJson.userDetails.lastName + " " : "")
+        if (accountFacadeJson.userDetailsFacade != null) {
+            nameText = (accountFacadeJson.userDetailsFacade.firstName ? accountFacadeJson.userDetailsFacade.firstName + " " : "")
+                + (accountFacadeJson.userDetailsFacade.lastName ? accountFacadeJson.userDetailsFacade.lastName + " " : "")
         }
-        $("#username-placeholder").text(nameText ? nameText : "@" + accountJson.username);
-        if (accountJson.accountSettings.phoneVisible) {
-            let phoneText = "Телефон: " + accountJson.userDetails.displayedPhone
+        $("#username-placeholder").text(nameText ? nameText : "@" + accountFacadeJson.username);
+        if (accountFacadeJson.accountSettingsFacade.phoneVisible) {
+            let phoneText = "Телефон: " + accountFacadeJson.userDetailsFacade.displayedPhone
             $("#phone-placeholder").text(phoneText)
 }
-        if (isMaster(accountJson)) {
-            servicesJson = loadMastersServices(accountJson.idAccount);
-            fillServiceTable(servicesJson, true);
-            initAppointmentModal(false, servicesJson)
+        if (isMaster(accountFacadeJson)) {
+            servicesFacadeJson = loadMastersServices(accountFacadeJson.idAccount);
+            fillServiceTable(servicesFacadeJson, true);
+            initAppointmentModal(false, servicesFacadeJson)
 
-            let addressData = accountJson.address != null ? accountJson.address : "";
+            let addressData = accountFacadeJson.address != null ? accountFacadeJson.address : "";
             $("#address-placeholder").text("Адрес: " + addressData);
-            $("#profession-placeholder").text(accountJson.userDetails.about !== null ? accountJson.userDetails.about.profession : "");
-            $("#about-text-placeholder").text(accountJson.userDetails.about !== null ? accountJson.userDetails.about.text : "");
+            $("#profession-placeholder").text(accountFacadeJson.userDetailsFacade.aboutFacade !== null ?
+                accountFacadeJson.userDetailsFacade.aboutFacade.profession : "");
+            $("#about-text-placeholder").text(accountFacadeJson.userDetailsFacade.aboutFacade !== null ?
+                accountFacadeJson.userDetailsFacade.aboutFacade.text : "");
         } else {
             $(".master-only").remove();
             $(".main-information").css("height", "auto");
@@ -30,7 +32,7 @@
     }
 
     function loadAccount(idAccount) {
-        var accountJson
+        var accountFacadeJson
 
         $.ajax({
             contentType: "application/json",
@@ -39,20 +41,20 @@
             async: false,
             url: "/accounts/" + idAccount,
             success: function (data) {
-                return accountJson = data;
+                return accountFacadeJson = data;
             },
             error: function () {
                 location.href = "/chikaboom/404";
             }
         });
 
-        return accountJson;
+        return accountFacadeJson;
     }
 
-    function isMaster(accountJson) {
+    function isMaster(accountFacadeJson) {
         var result = false;
 
-        accountJson.roles.forEach(function (role) {
+        accountFacadeJson.rolesFacade.forEach(function (role) {
             if (role.name === "ROLE_MASTER") {
                 result = true;
             }

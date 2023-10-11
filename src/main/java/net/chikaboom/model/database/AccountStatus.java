@@ -44,6 +44,7 @@ public class AccountStatus implements BaseEntity {
     /**
      * Внешний ключ к status. Определяет конкретный тип статуса
      */
-    @Column(name = ID_STATUS)
-    private int idStatus;
+    @ManyToOne
+    @JoinColumn(name = ID_STATUS)
+    private Status status;
 }

@@ -3,8 +3,11 @@ package net.chikaboom.controller.rest;
 import com.google.i18n.phonenumbers.NumberParseException;
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.controller.RegistrationController;
+import net.chikaboom.facade.dto.AccountFacade;
+import net.chikaboom.facade.dto.Facade;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.CustomPrincipal;
+import net.chikaboom.model.response.CustomResponseObject;
 import net.chikaboom.service.data.AccountDataService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * REST контроллер для взаимодействия с сущностями типа {@link Account}
@@ -33,26 +35,10 @@ public class AccountRestController {
      */
     @PreAuthorize("permitAll()")
     @GetMapping("/{idAccount}")
-    public ResponseEntity<Account> findAccount(@PathVariable int idAccount) {
-        Optional<Account> accountOptional = accountDataService.findById(idAccount);
+    public ResponseEntity<AccountFacade> findAccount(@PathVariable int idAccount) {
+        AccountFacade accountFacade = accountDataService.findById(idAccount);
 
-        if (!accountOptional.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Object customPrincipal = SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
-
-        Account resultAccount = accountOptional.get();
-
-        if (customPrincipal.getClass() == String.class ||
-                ((CustomPrincipal) customPrincipal).getIdAccount() != idAccount) {
-
-            resultAccount.clearPersonalFields();
-            resultAccount.getUserDetails().clearPersonalFields(resultAccount.getAccountSettings());
-        }
-
-        return ResponseEntity.ok(resultAccount);
+        return ResponseEntity.ok(accountFacade);
     }
 
     /**
@@ -62,7 +48,7 @@ public class AccountRestController {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
-    public ResponseEntity<List<Account>> findAllAccounts() {
+    public ResponseEntity<List<AccountFacade>> findAllAccounts() {
         return new ResponseEntity<>(accountDataService.findAll(), HttpStatus.OK);
     }
 
@@ -70,14 +56,14 @@ public class AccountRestController {
      * Создает аккаунт. Разрешено к использованию только администраторам.
      * Для создания аккаунта см. {@link RegistrationController}.
      *
-     * @param account создаваемый аккаунт
+     * @param accountFacade создаваемый аккаунт
      * @return созданный аккаунта
      */
     @Deprecated
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<Account> createAccount(@RequestBody Account account) {
-        return ResponseEntity.ok(accountDataService.create(account));
+    public ResponseEntity<AccountFacade> createAccount(@RequestBody AccountFacade accountFacade) {
+        return ResponseEntity.ok(accountDataService.create(accountFacade));
     }
 
     /**
@@ -89,22 +75,33 @@ public class AccountRestController {
      */
     @PreAuthorize("isAuthenticated() && #idAccount == authentication.principal.idAccount")
     @PatchMapping("/{idAccount}")
-    public ResponseEntity<Account> changeAccount(@PathVariable int idAccount, @RequestBody Account account) {
-        Optional<Account> accountFromDb = accountDataService.findById(idAccount);
+    public ResponseEntity<Facade> changeAccount(@PathVariable int idAccount, @RequestBody AccountFacade accountFacade) {
+        accountFacade.setIdAccount(idAccount);
 
-        if (!accountFromDb.isPresent()) {
-            return ResponseEntity.notFound().build();
+        try {
+            if (!accountDataService.isAccountExists(accountFacade)) {
+                return new ResponseEntity<>(new CustomResponseObject(
+                        404,
+                        "Account does not exist", "PATCH:/accouts/" + idAccount),
+                        HttpStatus.NOT_FOUND);
+            }
+        } catch (NumberParseException e) {
+            throw new IllegalArgumentException("There is illegal phone number arguments", e);
         }
 
-        account.setIdAccount(idAccount);
-        Account patchedAccount;
+        if (!isAuthorized(idAccount)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        accountFacade.setIdAccount(idAccount);
+        AccountFacade patchedAccountFacade;
         try {
-            patchedAccount = accountDataService.patch(account);
+            patchedAccountFacade = accountDataService.patch(accountFacade);
         } catch (NumberParseException e) {
             return ResponseEntity.badRequest().build();
         }
 
-        return ResponseEntity.ok(patchedAccount);
+        return ResponseEntity.ok(patchedAccountFacade);
     }
 
     //    TODO LOGOUT!!!!
@@ -120,5 +117,12 @@ public class AccountRestController {
     public ResponseEntity<String> deleteAccount(@PathVariable int idAccount) {
         accountDataService.deleteById(idAccount);
         return ResponseEntity.ok().build();
+    }
+
+    private boolean isAuthorized(int idAccount) {
+        Object customPrincipal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return customPrincipal.getClass() != String.class &&
+                ((CustomPrincipal) customPrincipal).getIdAccount() == idAccount;
     }
 }

@@ -122,10 +122,10 @@ public class Account implements BaseEntity, UserDetails {
 
 //    TODO Переделать
     public void clearPersonalFields() {
-        password = null;
-        oldPassword = null;
-        registrationDate = null;
-        email = null;
-        accountSettings = null;
+//        password = null;
+//        oldPassword = null;
+//        registrationDate = null;
+//        email = null;
+//        accountSettings = null;
     }
 }

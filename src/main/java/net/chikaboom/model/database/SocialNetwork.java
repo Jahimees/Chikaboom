@@ -15,6 +15,7 @@ import static net.chikaboom.util.constant.DbNamesConstant.*;
 @Entity
 @Table(name = SOCIAL_NETWORK)
 public class SocialNetwork implements BaseEntity {
+
     /**
      * id сущности в таблице social_network
      */
@@ -27,5 +28,4 @@ public class SocialNetwork implements BaseEntity {
      */
     @Column(name = LINK)
     private String link;
-
 }

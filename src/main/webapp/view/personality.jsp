@@ -129,13 +129,13 @@
 <script type="text/javascript" src="../../js/dynamic_popup.js"></script>
 
 <script>
-    let accountJson;
+    let accountFacadeJson;
 
     $(document).ready(function () {
-        accountJson = loadAccount(${idAccount});
+        accountFacadeJson = loadAccount(${idAccount});
         let url = new URL(window.location.href);
         var currentTab = url.searchParams.get("tabName")
-        $(".username-placeholder").text(accountJson.username);
+        $(".username-placeholder").text(accountFacadeJson.username);
         if (currentTab === null) {
             $("#settings-btn").click();
         } else {

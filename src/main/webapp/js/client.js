@@ -5,10 +5,7 @@
         let tableName = tableId ? tableId : "default";
 
         loadedClientsDetails.push(clientDetails);
-        let phoneText = "";
-        if (clientDetails.userDetails !== null) {
-            phoneText = clientDetails.displayedPhone ? clientDetails.displayedPhone : "Номер не указан";
-        }
+        let phoneText = clientDetails.displayedPhone ? clientDetails.displayedPhone : "Номер не указан";
 
         let name = (clientDetails.firstName ? clientDetails.firstName + " " : "")
             + (clientDetails.lastName ? clientDetails.lastName : "");
@@ -18,10 +15,11 @@
             + clientDetails.idUserDetails + "' data-bs-target='#clientInfoModal'>" + secureCleanValue(name) + "</div>";
 
         let deleteBtn = "";
-        if (typeof clientDetails.masterOwner !== "undefined" && clientDetails.masterOwner.idAccount === accountJson.idAccount) {
+        if (typeof clientDetails.masterOwnerFacade !== "undefined" &&
+            clientDetails.masterOwnerFacade.idAccount === accountFacadeJson.idAccount) {
             deleteBtn = "<div class='edit-button col1' " +
                 "onclick='callConfirmDeleteClientUserDetails(" +
-                clientDetails.idUserDetails + "," + clientDetails.masterOwner.idAccount + ")' " +
+                clientDetails.idUserDetails + "," + clientDetails.masterOwnerFacade.idAccount + ")' " +
                 "idUserDetails='" + clientDetails.idUserDetails + "'>" +
                 "<img src='/image/icon/cross_icon.svg' width='22px'>" +
                 "</div>"
@@ -83,14 +81,14 @@
                 displayedPhone: phoneVal,
                 firstName: firstNameVal,
                 lastName: lastNameVal,
-                about: {
+                aboutFacade: {
                     text: aboutVal,
                 },
-                phoneCode: {
+                phoneCodeFacade: {
                     phoneCode: phoneCode,
                     countryCut: countryCut
                 },
-                masterOwner: {
+                masterOwnerFacade: {
                     idAccount: idAccount
                 }
             }
@@ -103,8 +101,8 @@
                 contentType: "application/json",
                 dataType: "json",
                 data: JSON.stringify(userDetailsObject),
-                success: function (clientDetails) {
-                    addRowToDataTable(clientDetails, "client");
+                success: function (clientDetailsFacade) {
+                    addRowToDataTable(clientDetailsFacade, "client");
                     callMessagePopup("Клиент создан", "Клиент успешно создан!")
                 },
                 error: function () {
@@ -182,7 +180,6 @@
     }
 
     function fillClientsTable(clientsJSON, tableId) {
-        console.log(clientsJSON)
         let tableName = tableId ? tableId : "default"
         let $dataTable = $("#" + tableName + "_table");
         loadedClientsDetails = [];
@@ -194,8 +191,8 @@
 
         initDataTable(tableName);
 
-        clientsJSON.forEach(function (clientDetails) {
-            addRowToDataTable(clientDetails, 'client')
+        clientsJSON.forEach(function (clientDetailsFacade) {
+            addRowToDataTable(clientDetailsFacade, 'client')
         })
     }
 
@@ -218,29 +215,30 @@
             let $clintAboutInput = $("#client-about-input-upd");
             let $clientPhoneInput = $("#client-phone-input-upd");
 
-            loadedClientsDetails.forEach(function (details) {
-                if (details.idUserDetails == idUserDetails) {
+            loadedClientsDetails.forEach(function (detailsFacade) {
+                if (detailsFacade.idUserDetails == idUserDetails) {
 
-                    $clientFirstNameInput.val(details.firstName);
-                    $clientLastNameInput.val(details.lastName);
+                    $clientFirstNameInput.val(detailsFacade.firstName);
+                    $clientLastNameInput.val(detailsFacade.lastName);
 
-                    $clintAboutInput.val(details.about ? details.about.text : "");
-                    $clientPhoneInput.val(details.displayedPhone);
+                    console.log(detailsFacade)
+                    $clintAboutInput.val(detailsFacade.aboutFacade ? detailsFacade.aboutFacade.text : "");
+                    $clientPhoneInput.val(detailsFacade.displayedPhone);
 
-                    if (details.phoneCode !== null && typeof details.phoneCode !== "undefined") {
+                    if (detailsFacade.phoneCodeFacade !== null && typeof detailsFacade.phoneCodeFacade !== "undefined") {
                         window.intlTelInputGlobals.getInstance(
                             document.querySelector("#client-phone-input-upd"))
-                            .setCountry(details.phoneCode.countryCut);
+                            .setCountry(detailsFacade.phoneCodeFacade.countryCut);
                     }
 
-                    let lastVisitDate = details.lastVisitDate ? new Date(details.lastVisitDate).toLocaleDateString('ru') : "-"
-                    $("#client-visit-count-upd").text("Количество посещений: " + details.visitCount);
+                    let lastVisitDate = detailsFacade.lastVisitDate ? new Date(detailsFacade.lastVisitDate).toLocaleDateString('ru') : "-"
+                    $("#client-visit-count-upd").text("Количество посещений: " + detailsFacade.visitCount);
                     $("#client-last-visit-date-upd").text("Последнее посещение: " + lastVisitDate);
 
                     loadClientAppointmentsInfoForModal(idUserDetails);
 
-                    if (details.masterOwner != null && typeof details.masterOwner != 'undefined') {
-                        shownUserDetails = details;
+                    if (detailsFacade.masterOwnerFacade != null && typeof detailsFacade.masterOwnerFacade != 'undefined') {
+                        shownUserDetails = detailsFacade;
                         let $closeClientInfoBtn = $("#close-client-info-btn");
 
                         $closeClientInfoBtn.before("<button id='save-client-info-btn' class='popup-btn' type='button' " +
@@ -287,10 +285,10 @@
                     phoneCode: phoneCode,
                     countryCut: countryCut
                 },
-                about: {
+                aboutFacade: {
                     text: aboutText
                 },
-                masterOwner: shownUserDetails.masterOwner
+                masterOwnerFacade: shownUserDetails.masterOwnerFacade
             }
 
             $.ajax({
@@ -302,7 +300,7 @@
                 success: () => {
                     $("#close-client-info-btn").click();
                     callMessagePopup("Данные сохранены", "Данные клиента успешно сохранены!");
-                    let clientsJSON = loadClients(shownUserDetails.masterOwner.idAccount);
+                    let clientsJSON = loadClients(shownUserDetails.masterOwnerFacade.idAccount);
                     fillClientsTable(clientsJSON, 'client');
                 },
                 error: () => {
@@ -338,7 +336,7 @@
         }
 
         if (!window.intlTelInputGlobals.getInstance(
-            document.querySelector("#client-phone-input-upd")).isValidNumber()
+                document.querySelector("#client-phone-input-upd")).isValidNumber()
             && $("#client-phone-input-upd").val() !== '') {
             flag = false;
         }
@@ -349,7 +347,7 @@
     function loadClientAppointmentsInfoForModal(idUserDetails) {
         $.ajax({
             method: "get",
-            url: "/accounts/" + accountJson.idAccount + "/appointments",
+            url: "/accounts/" + accountFacadeJson.idAccount + "/appointments",
             async: false,
             contentType: "application/text",
             dataType: "json",
@@ -376,12 +374,12 @@
 
         initDataTable(tableName);
 
-        appointmentsJSON.forEach(function (appointment) {
-            let serviceNameVal = appointment.service.name;
-            let appointmentDateVal = new Date(appointment.appointmentDateTime).toLocaleDateString('ru');
-            let appointmentTimeVal = new Date(appointment.appointmentDateTime).toLocaleTimeString('ru');
-            let durationTimeVal = appointment.service.time;
-            let priceVal = appointment.service.price;
+        appointmentsJSON.forEach(function (appointmentFacade) {
+            let serviceNameVal = appointmentFacade.serviceFacade.name;
+            let appointmentDateVal = new Date(appointmentFacade.appointmentDateTime).toLocaleDateString('ru');
+            let appointmentTimeVal = new Date(appointmentFacade.appointmentDateTime).toLocaleTimeString('ru');
+            let durationTimeVal = appointmentFacade.serviceFacade.time;
+            let priceVal = appointmentFacade.serviceFacade.price;
 
             $dataTable.DataTable().row.add([
                 serviceNameVal,
