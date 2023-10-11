@@ -4,21 +4,20 @@ import lombok.RequiredArgsConstructor;
 import net.chikaboom.exception.NoSuchDataException;
 import net.chikaboom.facade.converter.AccountFacadeConverter;
 import net.chikaboom.facade.converter.AppointmentFacadeConverter;
-import net.chikaboom.facade.dto.AccountFacade;
-import net.chikaboom.facade.dto.AppointmentFacade;
-import net.chikaboom.facade.dto.ServiceFacade;
-import net.chikaboom.facade.dto.WorkingDayFacade;
+import net.chikaboom.facade.converter.UserDetailsFacadeConverter;
+import net.chikaboom.facade.dto.*;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.Appointment;
-import net.chikaboom.model.database.Service;
-import net.chikaboom.model.database.WorkingDay;
+import net.chikaboom.model.database.UserDetails;
 import net.chikaboom.repository.AppointmentRepository;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.acls.model.AlreadyExistsException;
 import org.springframework.security.acls.model.NotFoundException;
 import org.springframework.transaction.annotation.Transactional;
-import sun.security.krb5.internal.APOptions;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,13 +29,15 @@ import java.util.stream.Collectors;
 @org.springframework.stereotype.Service
 public class AppointmentDataService implements DataService<AppointmentFacade> {
 
+    @Value("${one_hour_millis}")
+    private long ONE_HOUR_MILLIS;
+
     private final AppointmentRepository appointmentRepository;
     private final AccountDataService accountDataService;
     private final ServiceDataService serviceDataService;
     private final WorkingDayDataService workingDayDataService;
 
-    private final AppointmentFacadeConverter appointmentFacadeConverter;
-    private final AccountFacadeConverter accountFacadeConverter;
+    private final Logger logger = Logger.getLogger(this.getClass().getSimpleName());
 
     /**
      * Производит поиск записи по идентификатору.
@@ -53,7 +54,7 @@ public class AppointmentDataService implements DataService<AppointmentFacade> {
             throw new NotFoundException("There not found appointment with id " + idAppointment);
         }
 
-        return appointmentFacadeConverter.convertToDto(appointmentOptional.get());
+        return AppointmentFacadeConverter.convertToDto(appointmentOptional.get());
     }
 
     /**
@@ -64,7 +65,7 @@ public class AppointmentDataService implements DataService<AppointmentFacade> {
     @Override
     public List<AppointmentFacade> findAll() {
         return appointmentRepository.findAll()
-                .stream().map(appointmentFacadeConverter::convertToDto).collect(Collectors.toList());
+                .stream().map(AppointmentFacadeConverter::convertToDto).collect(Collectors.toList());
     }
 
     /**
@@ -89,9 +90,9 @@ public class AppointmentDataService implements DataService<AppointmentFacade> {
             throw new NotFoundException("There not found appointment with id " + appointmentFacade.getIdAppointment());
         }
 
-        return appointmentFacadeConverter.convertToDto(
+        return AppointmentFacadeConverter.convertToDto(
                 appointmentRepository.save(
-                        appointmentFacadeConverter.convertToModel(appointmentFacade)));
+                        AppointmentFacadeConverter.convertToModel(appointmentFacade)));
     }
 
     /**
@@ -102,6 +103,15 @@ public class AppointmentDataService implements DataService<AppointmentFacade> {
      */
     @Override
     public AppointmentFacade create(AppointmentFacade appointmentFacade) {
+        Timestamp nowTime = Timestamp.valueOf(LocalDateTime.now());
+
+        if (appointmentFacade.getAppointmentDateTime().getTime() - nowTime.getTime() < ONE_HOUR_MILLIS) {
+            logger.warn("Appointment will not be created. Cause appointment date time is earlier than present time");
+
+            throw new IllegalArgumentException("Appointment will not be created. " +
+                    "Cause appointment date time is earlier than present time");
+        }
+
         if (isAppointmentExists(appointmentFacade)) {
             throw new AlreadyExistsException("The same appointment already exists");
         }
@@ -178,9 +188,9 @@ public class AppointmentDataService implements DataService<AppointmentFacade> {
 
         appointmentFacade.setIdAppointment(0);
         appointmentFacade.setServiceFacade(chosenMasterService);
-        return appointmentFacadeConverter.convertToDto(
+        return AppointmentFacadeConverter.convertToDto(
                 appointmentRepository.saveAndFlush(
-                        appointmentFacadeConverter.convertToModel(appointmentFacade)));
+                        AppointmentFacadeConverter.convertToModel(appointmentFacade)));
     }
 
     /**
@@ -191,7 +201,7 @@ public class AppointmentDataService implements DataService<AppointmentFacade> {
      */
     public List<AppointmentFacade> findAllByIdAccount(int idAccount, boolean isClient) throws NoSuchDataException {
         AccountFacade accountFacade = accountDataService.findById(idAccount);
-        Account accountModel = accountFacadeConverter.convertToModel(accountFacade);
+        Account accountModel = AccountFacadeConverter.convertToModel(accountFacade);
 
         List<Appointment> appointmentList;
         if (isClient) {
@@ -200,7 +210,7 @@ public class AppointmentDataService implements DataService<AppointmentFacade> {
             appointmentList = appointmentRepository.findAllByMasterAccount(accountModel);
         }
 
-        return appointmentList.stream().map(appointmentFacadeConverter::convertToDto).collect(Collectors.toList());
+        return appointmentList.stream().map(AppointmentFacadeConverter::convertToDto).collect(Collectors.toList());
     }
 
     /**
@@ -214,6 +224,15 @@ public class AppointmentDataService implements DataService<AppointmentFacade> {
 //        TODO проверка на рамки рабочего дня
         return appointmentRepository.existsByAppointmentDateTimeAndMasterAccount(
                 appointmentFacade.getAppointmentDateTime(),
-                accountFacadeConverter.convertToModel(appointmentFacade.getMasterAccountFacade()));
+                AccountFacadeConverter.convertToModel(appointmentFacade.getMasterAccountFacade()));
+    }
+
+    public List<AppointmentFacade> findAllByUserDetailsClientAndMasterAccount(UserDetailsFacade userDetailsClientFacade,
+                                                                              AccountFacade masterAccountFacade) {
+        UserDetails userDetailsClient = UserDetailsFacadeConverter.convertToModel(userDetailsClientFacade);
+        Account masterAccount = AccountFacadeConverter.convertToModel(masterAccountFacade);
+
+        return appointmentRepository.findAllByUserDetailsClientAndMasterAccount(userDetailsClient, masterAccount)
+                .stream().map(AppointmentFacadeConverter::convertToDto).collect(Collectors.toList());
     }
 }

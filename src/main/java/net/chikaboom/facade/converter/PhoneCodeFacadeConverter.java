@@ -2,13 +2,22 @@ package net.chikaboom.facade.converter;
 
 import net.chikaboom.facade.dto.PhoneCodeFacade;
 import net.chikaboom.model.database.PhoneCode;
-import org.springframework.stereotype.Component;
 
-@Component
-public class PhoneCodeFacadeConverter implements FacadeConverter<PhoneCodeFacade, PhoneCode> {
+/**
+ * DOCS {@link FacadeConverter}
+ */
+public final class PhoneCodeFacadeConverter implements FacadeConverter {
 
-    @Override
-    public PhoneCodeFacade convertToDto(PhoneCode model) {
+    private PhoneCodeFacadeConverter() {
+    }
+
+    /**
+     * Конвертирует объект базы данных в объект фасада - DTO
+     *
+     * @param model объект модели
+     * @return объект фасада - DTO
+     */
+    public static PhoneCodeFacade convertToDto(PhoneCode model) {
         PhoneCodeFacade phoneCodeFacade = new PhoneCodeFacade();
 
         phoneCodeFacade.setIdPhoneCode(model.getIdPhoneCode());
@@ -19,8 +28,13 @@ public class PhoneCodeFacadeConverter implements FacadeConverter<PhoneCodeFacade
         return phoneCodeFacade;
     }
 
-    @Override
-    public PhoneCode convertToModel(PhoneCodeFacade facade) {
+    /**
+     * Конвертирует объект фасада в объект модели
+     *
+     * @param facade объект фасада - DTO
+     * @return объект модели
+     */
+    public static PhoneCode convertToModel(PhoneCodeFacade facade) {
         PhoneCode phoneCode = new PhoneCode();
 
         phoneCode.setIdPhoneCode(facade.getIdPhoneCode());

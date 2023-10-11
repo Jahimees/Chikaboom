@@ -3,7 +3,7 @@ package net.chikaboom.facade.dto;
 import lombok.Data;
 
 /**
- * Определяет модель таблицы About в базе данных
+ * DOCS {@link Facade}
  */
 @Data
 public class AboutFacade implements Facade {
@@ -27,4 +27,13 @@ public class AboutFacade implements Facade {
      * Краткое отражение вида деятельности мастера
      */
     private String profession;
+
+    public AboutFacade() {
+    }
+
+    public AboutFacade(String text, String tags, String profession) {
+        this.text = text;
+        this.tags = tags;
+        this.profession = profession;
+    }
 }

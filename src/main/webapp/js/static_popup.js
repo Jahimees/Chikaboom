@@ -4,7 +4,7 @@
             let selectedCountryData = window.intlTelInputGlobals.getInstance(
                 document.querySelector("#r-input-phone")).getSelectedCountryData();
 
-            let phoneCode = {
+            let phoneCodeFacade = {
                 phoneCode: selectedCountryData.dialCode,
                 countryCut: selectedCountryData.iso2
             }
@@ -14,9 +14,9 @@
             let roles = $("role :checked, :radio")[0].checked ?
                 [{name: "ROLE_CLIENT"}] : [{name: "ROLE_CLIENT"}, {name: "ROLE_MASTER"}];
 
-            let account = {
-                userDetails: {
-                    phoneCode: phoneCode,
+            let accountFacade = {
+                userDetailsFacade: {
+                    phoneCodeFacade: phoneCodeFacade,
                     phone: phone,
                 },
                 password: password,
@@ -29,7 +29,7 @@
                 url: "/chikaboom/registration",
                 contentType: "application/json",
                 dataType: "json",
-                data: JSON.stringify(account),
+                data: JSON.stringify(accountFacade),
                 success: function () {
                     $("#registerModal").modal('hide');
                     callMessagePopup("Регистрация успешна!", "Вы успешно прошли регистрацию!")

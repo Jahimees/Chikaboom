@@ -11,9 +11,7 @@ import net.chikaboom.facade.dto.AccountFacade;
 import net.chikaboom.facade.dto.AccountSettingsFacade;
 import net.chikaboom.facade.dto.UserDetailsFacade;
 import net.chikaboom.model.database.Account;
-import net.chikaboom.model.database.AccountSettings;
 import net.chikaboom.repository.AccountRepository;
-import net.chikaboom.repository.PhoneCodeRepository;
 import net.chikaboom.util.PhoneNumberUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,25 +31,21 @@ import java.util.stream.Collectors;
 /**
  * Сервис предназначен для обработки информации об аккаунте.
  */
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class AccountDataService implements UserDetailsService, DataService<AccountFacade> {
 
     @Value("${regexp.email}")
     private String EMAIL_REGEXP;
 
-    private final AccountFacadeConverter accountFacadeConverter;
-    private final UserDetailsFacadeConverter userDetailsFacadeConverter;
-
     private final AccountRepository accountRepository;
-    private final PhoneCodeRepository phoneCodeRepository;
-
     private final UserDetailsDataService userDetailsDataService;
-    private final AccountSettingsDataService accountSettingsDataService;
     private final AboutDataService aboutDataService;
     private final PhoneCodeDataService phoneCodeDataService;
+    private final AccountSettingsDataService accountSettingsDataService;
 
     private final BCryptPasswordEncoder passwordEncoder;
+
     private final Logger logger = Logger.getLogger(this.getClass());
 
     /**
@@ -86,7 +80,7 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
             throw new NotFoundException("There is no account with id " + idAccount);
         }
 
-        return accountFacadeConverter.convertToDto(accountOptional.get());
+        return AccountFacadeConverter.convertToDto(accountOptional.get());
     }
 
     /**
@@ -96,7 +90,7 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
      */
     @Override
     public List<AccountFacade> findAll() {
-        return accountRepository.findAll().stream().map(accountFacadeConverter::convertToDto).collect(Collectors.toList());
+        return accountRepository.findAll().stream().map(AccountFacadeConverter::convertToDto).collect(Collectors.toList());
     }
 
     /**
@@ -123,9 +117,9 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
             throw new NotFoundException("there is no account with id " + accountFacade.getIdAccount());
         }
 
-        return accountFacadeConverter.convertToDto(
+        return AccountFacadeConverter.convertToDto(
                 accountRepository.save(
-                        accountFacadeConverter.convertToModel(accountFacade)));
+                        AccountFacadeConverter.convertToModel(accountFacade)));
     }
 
     /**
@@ -171,9 +165,9 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
         accountFacade.setAccountSettingsFacade(accountSettingsFacade);
         accountFacade.setUserDetailsFacade(userDetailsFacade);
 
-        return accountFacadeConverter.convertToDto(
+        return AccountFacadeConverter.convertToDto(
                 accountRepository.save(
-                        accountFacadeConverter.convertToModel(accountFacade)));
+                        AccountFacadeConverter.convertToModel(accountFacade)));
     }
 
 //    TODO сброс сессии
@@ -185,7 +179,7 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
      * @return обновленный аккаунт
      */
     public AccountFacade patch(AccountFacade accountFacade) throws NumberParseException {
-        AccountFacade patchedAccountFacade = this.findById(accountFacade.getIdAccount());
+        AccountFacade patchedAccountFacade = findById(accountFacade.getIdAccount());
 
         UserDetailsFacade patchedUserDetailsFacade = patchedAccountFacade.getUserDetailsFacade();
         UserDetailsFacade userDetailsFacade = accountFacade.getUserDetailsFacade();
@@ -219,16 +213,23 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
             }
 
             if (userDetailsFacade.getAboutFacade() != null) {
-                AboutFacade patchedAbout = userDetailsFacade.getAboutFacade();
+                AboutFacade patchedAboutFacade = userDetailsFacade.getAboutFacade();
                 if (patchedAccountFacade.getUserDetailsFacade().getAboutFacade() == null
                         || patchedAccountFacade.getUserDetailsFacade().getAboutFacade().getIdAbout() == 0) {
 
-                    patchedAccountFacade.getUserDetailsFacade().setAboutFacade(aboutDataService.create(new AboutFacade()));
-                }
+                    patchedAccountFacade.getUserDetailsFacade().setAboutFacade(aboutDataService.create(new AboutFacade(
+                            patchedAboutFacade.getText(),
+                            patchedAboutFacade.getTags(),
+                            patchedAboutFacade.getProfession()
+                    )));
+                } else {
 
-                patchedUserDetailsFacade.getAboutFacade().setText(patchedAbout.getText());
-                patchedUserDetailsFacade.getAboutFacade().setProfession(patchedAbout.getProfession());
-                patchedUserDetailsFacade.getAboutFacade().setTags(patchedAbout.getTags());
+                    patchedUserDetailsFacade.getAboutFacade().setText(patchedAboutFacade.getText());
+                    patchedUserDetailsFacade.getAboutFacade().setProfession(patchedAboutFacade.getProfession());
+                    patchedUserDetailsFacade.getAboutFacade().setTags(patchedAboutFacade.getTags());
+
+                    aboutDataService.update(patchedUserDetailsFacade.getAboutFacade());
+                }
             }
 
             if (userDetailsFacade.getFirstName() != null) {
@@ -238,6 +239,8 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
             if (userDetailsFacade.getLastName() != null) {
                 patchedUserDetailsFacade.setLastName(userDetailsFacade.getLastName());
             }
+
+            userDetailsDataService.update(patchedUserDetailsFacade);
         }
 
         if (accountFacade.getPassword() != null && !accountFacade.getPassword().isEmpty()) {
@@ -279,14 +282,15 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
             if (accountSettingsFacade.getDefaultWorkingDayStart() != null
                     || accountSettingsFacade.getDefaultWorkingDayEnd() != null
                     || patchedAccountFacade.getAccountSettingsFacade().isPhoneVisible() != accountSettingsFacade.isPhoneVisible()) {
+
                 accountSettingsDataService.patch(accountFacade.getIdAccount(), accountSettingsFacade);
             }
         }
 
         logger.info("Saving account...");
-        return accountFacadeConverter.convertToDto(
+        return AccountFacadeConverter.convertToDto(
                 accountRepository.save(
-                        accountFacadeConverter.convertToModel(patchedAccountFacade)));
+                        AccountFacadeConverter.convertToModel(patchedAccountFacade)));
     }
 
     /**
@@ -303,5 +307,20 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
                 || userDetailsDataService.existsUserDetailsByPhone(
                 userDetailsFacade.getPhone(),
                 userDetailsFacade.getPhoneCodeFacade().getCountryCut());
+    }
+
+    public boolean isAccountExistsById(int idAccount) {
+        return accountRepository.existsById(idAccount);
+    }
+
+    public AccountFacade findAccountByUserDetails(UserDetailsFacade userDetailsFacade) throws BadCredentialsException {
+        net.chikaboom.model.database.UserDetails userDetails = UserDetailsFacadeConverter.convertToModel(userDetailsFacade);
+
+        Optional<Account> accountOptional = accountRepository.findAccountByUserDetails(userDetails);
+        if (!accountOptional.isPresent()) {
+            throw new BadCredentialsException("Bad credentials");
+        }
+
+        return AccountFacadeConverter.convertToDto(accountOptional.get());
     }
 }

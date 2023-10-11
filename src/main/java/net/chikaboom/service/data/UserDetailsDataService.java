@@ -2,16 +2,15 @@ package net.chikaboom.service.data;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import lombok.RequiredArgsConstructor;
-import net.chikaboom.facade.converter.PhoneCodeFacadeConverter;
 import net.chikaboom.facade.converter.UserDetailsFacadeConverter;
 import net.chikaboom.facade.dto.AboutFacade;
 import net.chikaboom.facade.dto.PhoneCodeFacade;
 import net.chikaboom.facade.dto.UserDetailsFacade;
-import net.chikaboom.model.database.About;
 import net.chikaboom.model.database.UserDetails;
 import net.chikaboom.repository.UserDetailsRepository;
 import net.chikaboom.util.PhoneNumberUtils;
 import org.springframework.security.acls.model.NotFoundException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -30,9 +29,6 @@ public class UserDetailsDataService implements DataService<UserDetailsFacade> {
     private final AboutDataService aboutDataService;
     private final PhoneCodeDataService phoneCodeDataService;
 
-    private final UserDetailsFacadeConverter userDetailsFacadeConverter;
-    private final PhoneCodeFacadeConverter phoneCodeFacadeConverter;
-
     /**
      * Производит поиск деталей пользователя по их id
      *
@@ -47,7 +43,7 @@ public class UserDetailsDataService implements DataService<UserDetailsFacade> {
             throw new NotFoundException("There is no found user details with id " + idUserDetails);
         }
 
-        return userDetailsFacadeConverter.convertToDto(userDetailsOptional.get());
+        return UserDetailsFacadeConverter.convertToDto(userDetailsOptional.get());
     }
 
     /**
@@ -58,7 +54,7 @@ public class UserDetailsDataService implements DataService<UserDetailsFacade> {
     @Override
     public List<UserDetailsFacade> findAll() {
         return userDetailsRepository.findAll().stream().map(
-                userDetailsFacadeConverter::convertToDto).collect(Collectors.toList());
+                UserDetailsFacadeConverter::convertToDto).collect(Collectors.toList());
     }
 
     /**
@@ -83,9 +79,9 @@ public class UserDetailsDataService implements DataService<UserDetailsFacade> {
             throw new NotFoundException("Target userDetails not found in database");
         }
 
-        return userDetailsFacadeConverter.convertToDto(
+        return UserDetailsFacadeConverter.convertToDto(
                 userDetailsRepository.saveAndFlush(
-                        userDetailsFacadeConverter.convertToModel(userDetailsFacade)));
+                        UserDetailsFacadeConverter.convertToModel(userDetailsFacade)));
     }
 
     /**
@@ -98,7 +94,7 @@ public class UserDetailsDataService implements DataService<UserDetailsFacade> {
     public UserDetailsFacade create(UserDetailsFacade userDetailsFacade) {
         AboutFacade aboutFacade = userDetailsFacade.getAboutFacade();
         if (aboutFacade != null) {
-            aboutDataService.create(userDetailsFacade.getAboutFacade());
+            userDetailsFacade.setAboutFacade(aboutDataService.create(userDetailsFacade.getAboutFacade()));
         } else {
             userDetailsFacade.setAboutFacade(aboutDataService.create(new AboutFacade()));
         }
@@ -119,9 +115,9 @@ public class UserDetailsDataService implements DataService<UserDetailsFacade> {
             }
         }
 
-        return userDetailsFacadeConverter.convertToDto(
+        return UserDetailsFacadeConverter.convertToDto(
                 userDetailsRepository.saveAndFlush(
-                        userDetailsFacadeConverter.convertToModel(userDetailsFacade)));
+                        UserDetailsFacadeConverter.convertToModel(userDetailsFacade)));
     }
 
     /**
@@ -150,15 +146,16 @@ public class UserDetailsDataService implements DataService<UserDetailsFacade> {
      * @return найденную пользовательскую информацию
      * @throws NumberParseException возникает, когда невозможно отформатировать номер телефона
      */
-    public UserDetailsFacade findUserDetailsByPhone(String phone, String countryCut) throws NumberParseException {
+    public UserDetailsFacade findUserDetailsByPhone(String phone, String countryCut) throws NumberParseException,
+            BadCredentialsException {
         String formedPhone = PhoneNumberUtils.formatNumberInternational(phone, countryCut);
         Optional<UserDetails> userDetailsOptional = userDetailsRepository.findUserDetailsByPhone(formedPhone);
 
         if (!userDetailsOptional.isPresent()) {
-            throw new NotFoundException("There is not found userDetails with phone " + phone);
+            throw new BadCredentialsException("There is not found userDetails with phone " + phone);
         }
 
-        return userDetailsFacadeConverter.convertToDto(userDetailsOptional.get());
+        return UserDetailsFacadeConverter.convertToDto(userDetailsOptional.get());
     }
 
     /**
@@ -168,20 +165,14 @@ public class UserDetailsDataService implements DataService<UserDetailsFacade> {
      * @return обновленная пользовательская информация
      */
     public UserDetailsFacade patch(UserDetailsFacade userDetailsFacade) {
-        Optional<UserDetails> userDetailsFromDbOptional = userDetailsRepository.findById(userDetailsFacade.getIdUserDetails());
-
-        if (!userDetailsFromDbOptional.isPresent()) {
-            throw new NotFoundException("User details not found");
-        }
-
-        UserDetails patchedUserDetails = userDetailsFromDbOptional.get();
+        UserDetailsFacade userDetailsFacadeFromDb = findById(userDetailsFacade.getIdUserDetails());
 
         if (userDetailsFacade.getLastName() != null && !userDetailsFacade.getLastName().isEmpty()) {
-            patchedUserDetails.setLastName(userDetailsFacade.getLastName());
+            userDetailsFacadeFromDb.setLastName(userDetailsFacade.getLastName());
         }
 
         if (userDetailsFacade.getFirstName() != null && !userDetailsFacade.getFirstName().isEmpty()) {
-            patchedUserDetails.setFirstName(userDetailsFacade.getFirstName());
+            userDetailsFacadeFromDb.setFirstName(userDetailsFacade.getFirstName());
         }
 
         if (userDetailsFacade.getDisplayedPhone() != null && !userDetailsFacade.getDisplayedPhone().isEmpty() &&
@@ -191,8 +182,8 @@ public class UserDetailsDataService implements DataService<UserDetailsFacade> {
                 PhoneCodeFacade newPhoneCode = phoneCodeDataService.findFirstByCountryCut(
                         userDetailsFacade.getPhoneCodeFacade().getCountryCut());
 
-                patchedUserDetails.setPhoneCode(phoneCodeFacadeConverter.convertToModel(newPhoneCode));
-                patchedUserDetails.setDisplayedPhone(PhoneNumberUtils.formatNumberInternational(
+                userDetailsFacadeFromDb.setPhoneCodeFacade(newPhoneCode);
+                userDetailsFacadeFromDb.setDisplayedPhone(PhoneNumberUtils.formatNumberInternational(
                         userDetailsFacade.getDisplayedPhone(), newPhoneCode.getCountryCut()));
             } catch (NumberParseException e) {
                 throw new IllegalArgumentException("Cannot save user details. Phone is incorrect. " + e.getMessage());
@@ -200,21 +191,24 @@ public class UserDetailsDataService implements DataService<UserDetailsFacade> {
         }
 
         if (userDetailsFacade.getAboutFacade() != null) {
-            About oldAbout = patchedUserDetails.getAbout();
+            AboutFacade oldAboutFacade = userDetailsFacadeFromDb.getAboutFacade();
             if (userDetailsFacade.getAboutFacade().getText() != null &&
                     !userDetailsFacade.getAboutFacade().getText().isEmpty()) {
 
-                oldAbout.setText(userDetailsFacade.getAboutFacade().getText());
+                oldAboutFacade.setText(userDetailsFacade.getAboutFacade().getText());
             }
 
             if (userDetailsFacade.getAboutFacade().getProfession() != null &&
                     !userDetailsFacade.getAboutFacade().getProfession().isEmpty()) {
 
-                oldAbout.setProfession(userDetailsFacade.getAboutFacade().getProfession());
+                oldAboutFacade.setProfession(userDetailsFacade.getAboutFacade().getProfession());
             }
+
+            aboutDataService.update(oldAboutFacade);
         }
 
-        return userDetailsFacadeConverter.convertToDto(userDetailsRepository.save(patchedUserDetails));
+        return UserDetailsFacadeConverter.convertToDto(userDetailsRepository.save(
+                UserDetailsFacadeConverter.convertToModel(userDetailsFacadeFromDb)));
     }
 
     /**
@@ -248,6 +242,6 @@ public class UserDetailsDataService implements DataService<UserDetailsFacade> {
         }
 
         return resultUserDetailsList.stream().map(
-                userDetailsFacadeConverter::convertToDto).collect(Collectors.toList());
+                UserDetailsFacadeConverter::convertToDto).collect(Collectors.toList());
     }
 }

@@ -24,8 +24,6 @@ public class ServiceSubtypeDataService {
 
     private final ServiceSubtypeRepository serviceSubtypeRepository;
     private final ServiceTypeDataService serviceTypeDataService;
-    private final ServiceSubtypeFacadeConverter serviceSubtypeFacadeConverter;
-    private final ServiceTypeFacadeConverter serviceTypeFacadeConverter;
 
     /**
      * Производит поиск подтипа услуги по его идентификатору
@@ -40,7 +38,7 @@ public class ServiceSubtypeDataService {
             throw new NotFoundException("There not found serviceSubtype with id " + idServiceSubtype);
         }
 
-        return serviceSubtypeFacadeConverter.convertToDto(serviceSubtypeOptional.get());
+        return ServiceSubtypeFacadeConverter.convertToDto(serviceSubtypeOptional.get());
     }
 
     /**
@@ -49,7 +47,7 @@ public class ServiceSubtypeDataService {
      * @return список всех подтипов услуг
      */
     public List<ServiceSubtypeFacade> findAll() {
-        return serviceSubtypeRepository.findAll().stream().map(serviceSubtypeFacadeConverter::convertToDto)
+        return serviceSubtypeRepository.findAll().stream().map(ServiceSubtypeFacadeConverter::convertToDto)
                 .collect(Collectors.toList());
     }
 
@@ -62,7 +60,7 @@ public class ServiceSubtypeDataService {
         ServiceTypeFacade serviceTypeFacade = serviceTypeDataService.findById(idServiceType);
 
         return serviceSubtypeRepository
-                .findAllByServiceType(serviceTypeFacadeConverter.convertToModel(serviceTypeFacade))
-                .stream().map(serviceSubtypeFacadeConverter::convertToDto).collect(Collectors.toList());
+                .findAllByServiceType(ServiceTypeFacadeConverter.convertToModel(serviceTypeFacade))
+                .stream().map(ServiceSubtypeFacadeConverter::convertToDto).collect(Collectors.toList());
     }
 }

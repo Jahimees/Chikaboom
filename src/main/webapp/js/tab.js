@@ -100,24 +100,31 @@
 //////////////////////////////////SETTING TAB//////////////////////////////////////////////
     function openEditEmailPopup() {
         dropAllFields();
-        addField("Электронная почта", "email", "text", "example@gmail.com", false, [new Validation("Неверный формат электронной почты", InvalidReason.EMAIL)]);
+        addField("Электронная почта", "email", "text", "example@gmail.com",false,
+            [new Validation("Неверный формат электронной почты", InvalidReason.EMAIL)]);
         $("#editModal").modal('show');
     }
 
     function openPhoneEditPopup() {
         dropAllFields();
-        addField("Номер телефона", "phone", "text", null, true, [new Validation("Неверный шаблон телефона", InvalidReason.PHONE),
+        addField("Номер телефона", "phone", "text", null,
+            true,
+            [new Validation("Неверный шаблон телефона", InvalidReason.PHONE),
                 new Validation("Поле не может быть пустым", InvalidReason.EMPTY),
                 new Validation("Неверный формат телефона", InvalidReason.PHONE)],
-            'input', 'userDetails');
+            'input', 'userDetailsFacade');
         $("#editModal").modal('show');
     }
 
     function openPasswordEditPopup() {
         dropAllFields();
-        addField("Старый пароль", "oldPassword", "password", "*****", false, [new Validation("Поле не может быть пустым", InvalidReason.EMPTY)]);
-        addField("Новый пароль", "password", "password", "*****", false, [new Validation("Поле не может быть пустым", InvalidReason.EMPTY)]);
-        addField("Подтвердите новый пароль", "confirmNewPassword", "password", "*****", false, [new Validation("Поле не может быть пустым", InvalidReason.EMPTY)]);
+        addField("Старый пароль", "oldPassword", "password", "*****",
+            false, [new Validation("Поле не может быть пустым", InvalidReason.EMPTY)]);
+        addField("Новый пароль", "password", "password", "*****",
+            false, [new Validation("Поле не может быть пустым", InvalidReason.EMPTY)]);
+        addField("Подтвердите новый пароль", "confirmNewPassword", "password",
+            "*****", false,
+            [new Validation("Поле не может быть пустым", InvalidReason.EMPTY)]);
         $("#editModal").modal('show');
     }
 
@@ -144,10 +151,14 @@
     function openEditAboutPopup() {
         dropAllFields();
         let professionInputField = addField("Вид деятельности", "profession", "text", "Мастер по маникюру", false,
-            [new Validation("Название слишком длинное", InvalidReason.LONG)], "input", "about");
-        let aboutTextInputField = addField("О себе", "text", "text", "Напишите пару слов о себе", false, [], "textarea", "about");
-        professionInputField.value = accountJson.userDetails.about != null ? accountJson.userDetails.about.profession : "";
-        aboutTextInputField.value = accountJson.userDetails.about != null ? accountJson.userDetails.about.text : "";
+            [new Validation("Название слишком длинное", InvalidReason.LONG)],
+            "input", "aboutFacade");
+        let aboutTextInputField = addField("О себе", "text", "text",
+            "Напишите пару слов о себе", false, [], "textarea", "aboutFacade");
+        professionInputField.value = accountFacadeJson.userDetailsFacade.aboutFacade != null ?
+            accountFacadeJson.userDetailsFacade.aboutFacade.profession : "";
+        aboutTextInputField.value = accountFacadeJson.userDetailsFacade.aboutFacade != null ?
+            accountFacadeJson.userDetailsFacade.aboutFacade.text : "";
         $("#editModal").modal('show');
     }
 
@@ -155,13 +166,15 @@
         dropAllFields();
         let firstNameInputField = addField("Имя", "firstName", "text", "Валерия", false,
             [new Validation("Название слишком длинное", InvalidReason.LONG),
-                new Validation("Имя может содержать только буквы", InvalidReason.NAME)], "input", 'userDetails');
+                new Validation("Имя может содержать только буквы", InvalidReason.NAME)],
+            "input", 'userDetailsFacade');
         let lastNameInputField = addField("Фамилия", "lastName", "text", "Лаврушкина", false,
             [new Validation("Название слишком длинное", InvalidReason.LONG),
-                new Validation("Фамилия может содержать только буквы", InvalidReason.NAME)], "input", 'userDetails');
-        if (accountJson.userDetails !== null) {
-            firstNameInputField.value = accountJson.userDetails.firstName != null ? accountJson.userDetails.firstName : "";
-            lastNameInputField.value = accountJson.userDetails.lastName != null ? accountJson.userDetails.lastName : "";
+                new Validation("Фамилия может содержать только буквы", InvalidReason.NAME)],
+            "input", 'userDetailsFacade');
+        if (typeof accountFacadeJson.userDetailsFacade !== "undefined") {
+            firstNameInputField.value = accountFacadeJson.userDetailsFacade.firstName != null ? accountFacadeJson.userDetailsFacade.firstName : "";
+            lastNameInputField.value = accountFacadeJson.userDetailsFacade.lastName != null ? accountFacadeJson.userDetailsFacade.lastName : "";
         } else {
             firstNameInputField.value = "";
             lastNameInputField.value = "";
@@ -171,8 +184,14 @@
 
     function openEditAddressPopup() {
         dropAllFields();
-        let addressInputField = addField("Адрес", "address", "text", "Укажите свой адрес работы", false, [], "input");
+        let addressInputField = addField("Адрес", "address", "text",
+            "Укажите свой адрес работы", false, [], "input");
         addressInputField.id = "address-input";
+
+        if (typeof accountFacadeJson.address != "undefined") {
+            addressInputField.value = accountFacadeJson.address;
+        }
+
         $("#address-input").suggestions({
             token: "1d06cefc6ea71518b0141a136c76497406f321b2",
             type: "ADDRESS",
@@ -191,38 +210,43 @@
     }
 
     function fillGeneralSettingTab(idAccount) {
-        if (typeof accountJson == "undefined") {
-            accountJson = loadAccount(idAccount);
+        if (typeof accountFacadeJson == "undefined") {
+            accountFacadeJson = loadAccount(idAccount);
         }
 
-        $("#email-placeholder").val(accountJson.email);
+        $("#email-placeholder").val(accountFacadeJson.email);
 
         let phoneText = "";
-        if (accountJson.userDetails === null) {
-            accountJson.userDetails = {};
+        if (accountFacadeJson.userDetailsFacade === null) {
+            accountFacadeJson.userDetailsFacade = {};
         }
 
-        if (accountJson.userDetails.phoneCode !== null && typeof accountJson.userDetails.phoneCode !== "undefined") {
-            phoneText = accountJson.userDetails.displayedPhone !== null ? accountJson.userDetails.displayedPhone : " ";
+        if (accountFacadeJson.userDetailsFacade.phoneCodeFacade !== null && typeof
+            accountFacadeJson.userDetailsFacade.phoneCodeFacade !== "undefined") {
+            phoneText = accountFacadeJson.userDetailsFacade.displayedPhone !== null ?
+                accountFacadeJson.userDetailsFacade.displayedPhone : " ";
         }
 
         $("#phone-placeholder").val(phoneText);
-        $("#phone-invisible-toggle").prop("checked", accountJson.phoneVisible)
-        $("#username-placeholder").val(accountJson.username);
-        let nameText = (accountJson.userDetails.firstName ? accountJson.userDetails.firstName + " " : "") +
-            (accountJson.userDetails.lastName ? accountJson.userDetails.lastName : "");
+        $("#phone-invisible-toggle").prop("checked", accountFacadeJson.accountSettingsFacade.phoneVisible)
+        $("#username-placeholder").val(accountFacadeJson.username);
+        let nameText = (accountFacadeJson.userDetailsFacade.firstName ? accountFacadeJson.userDetailsFacade.firstName + " " : "") +
+            (accountFacadeJson.userDetailsFacade.lastName ? accountFacadeJson.userDetailsFacade.lastName : "");
         $("#name-placeholder").val(nameText);
-        $("#greeting-info-box").text("Добро пожаловать, " + (nameText ? nameText : accountJson.username) + "!");
+        $("#greeting-info-box").text("Добро пожаловать, " + (nameText ? nameText : accountFacadeJson.username) + "!");
 
-        if (accountJson.roles[0].name === "ROLE_MASTER") {
-            let aboutProfession = accountJson.userDetails.about != null
-            && typeof accountJson.userDetails.about != 'undefined'
-                ? accountJson.userDetails.about.profession : "";
+        if (accountFacadeJson.rolesFacade.length === 2 &&
+            (accountFacadeJson.rolesFacade[0].name === "ROLE_MASTER" ||
+                accountFacadeJson.rolesFacade[1].name === "ROLE_MASTER")) {
+            let aboutProfession = accountFacadeJson.userDetailsFacade.aboutFacade != null
+            && typeof accountFacadeJson.userDetailsFacade.aboutFacade != 'undefined'
+                ? accountFacadeJson.userDetailsFacade.aboutFacade.profession : "";
 
-            let aboutText = accountJson.userDetails.about != null
-            && typeof accountJson.userDetails.about != 'undefined' ? accountJson.userDetails.about.text : "";
+            let aboutText = accountFacadeJson.userDetailsFacade.aboutFacade != null
+            && typeof accountFacadeJson.userDetailsFacade.aboutFacade != 'undefined' ?
+                accountFacadeJson.userDetailsFacade.aboutFacade.text : "";
 
-            $("#address-placeholder").val(accountJson.address);
+            $("#address-placeholder").val(accountFacadeJson.address);
             $("#about-profession-placeholder").val(aboutProfession != null ? aboutProfession : "");
             $("#about-text-placeholder").text(aboutText != null && aboutText !== "" ? aboutText : "");
         }

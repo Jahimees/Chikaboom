@@ -26,23 +26,20 @@ public class AccountSettingsRestController {
     @PreAuthorize("isAuthenticated() && #idAccount == authentication.principal.idAccount")
     @GetMapping("/accounts/{idAccount}/settings")
     public ResponseEntity<AccountSettingsFacade> findAccountSettingsByIdAccount(@PathVariable int idAccount) {
-        AccountSettingsFacade accountSettings = accountSettingsDataService.findByIdAccount(idAccount);
-
-        return ResponseEntity.ok(accountSettings);
+        return ResponseEntity.ok(accountSettingsDataService.findByIdAccount(idAccount));
     }
 
     /**
      * Производит частичное изменение настроек профиля в зависимости от параметров, которые присутсвуют в запросе
      *
-     * @param idAccount       идентификатор аккаунта
+     * @param idAccount             идентификатор аккаунта
      * @param accountSettingsFacade объект с новыми данными, которые должны быть сохранены в базу данных
      * @return обновленный объект настроек
      */
     @PreAuthorize("isAuthenticated() && #idAccount == authentication.principal.idAccount")
     @PatchMapping("/accounts/{idAccount}/settings")
     public ResponseEntity<AccountSettingsFacade> patchAccountSettings(@PathVariable int idAccount,
-                                                                @RequestBody AccountSettingsFacade accountSettingsFacade) {
-
+                                                                      @RequestBody AccountSettingsFacade accountSettingsFacade) {
         return ResponseEntity.ok(accountSettingsDataService.patch(idAccount, accountSettingsFacade));
     }
 }

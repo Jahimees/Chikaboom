@@ -2,13 +2,21 @@ package net.chikaboom.facade.converter;
 
 import net.chikaboom.facade.dto.StatusFacade;
 import net.chikaboom.model.database.Status;
-import org.springframework.stereotype.Component;
 
-@Component
-public class StatusFacadeConverter implements FacadeConverter<StatusFacade, Status> {
+/**
+ * DOCS {@link FacadeConverter}
+ */
+public final class StatusFacadeConverter implements FacadeConverter {
 
-    @Override
-    public StatusFacade convertToDto(Status model) {
+    private StatusFacadeConverter() {}
+
+    /**
+     * Конвертирует объект базы данных в объект фасада - DTO
+     *
+     * @param model объект модели
+     * @return объект фасада - DTO
+     */
+    public static StatusFacade convertToDto(Status model) {
         StatusFacade statusFacade = new StatusFacade();
 
         statusFacade.setIdStatus(model.getIdStatus());
@@ -17,8 +25,13 @@ public class StatusFacadeConverter implements FacadeConverter<StatusFacade, Stat
         return statusFacade;
     }
 
-    @Override
-    public Status convertToModel(StatusFacade facade) {
+    /**
+     * Конвертирует объект фасада в объект модели
+     *
+     * @param facade объект фасада - DTO
+     * @return объект модели
+     */
+    public static Status convertToModel(StatusFacade facade) {
         Status status = new Status();
 
         status.setIdStatus(facade.getIdStatus());

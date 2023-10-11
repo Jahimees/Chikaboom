@@ -15,7 +15,6 @@ import java.util.Optional;
 public class PhoneCodeDataService {
 
     private final PhoneCodeRepository phoneCodeRepository;
-    private final PhoneCodeFacadeConverter phoneCodeFacadeConverter;
 
     public PhoneCodeFacade findById(int id) {
         Optional<PhoneCode> phoneCodeOptional = phoneCodeRepository.findById(id);
@@ -24,7 +23,7 @@ public class PhoneCodeDataService {
             throw new NotFoundException("There not found phoneCode with id " + id);
         }
 
-        return phoneCodeFacadeConverter.convertToDto(phoneCodeOptional.get());
+        return PhoneCodeFacadeConverter.convertToDto(phoneCodeOptional.get());
     }
 
     public PhoneCodeFacade findFirstByCountryCut(String countryCut) {
@@ -34,6 +33,6 @@ public class PhoneCodeDataService {
             throw new NotFoundException("There not found phoneCode with country cut " + countryCut);
         }
 
-        return phoneCodeFacadeConverter.convertToDto(phoneCodeOptional.get());
+        return PhoneCodeFacadeConverter.convertToDto(phoneCodeOptional.get());
     }
 }

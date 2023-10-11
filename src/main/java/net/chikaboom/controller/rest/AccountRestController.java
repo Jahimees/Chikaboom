@@ -4,8 +4,10 @@ import com.google.i18n.phonenumbers.NumberParseException;
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.controller.RegistrationController;
 import net.chikaboom.facade.dto.AccountFacade;
+import net.chikaboom.facade.dto.Facade;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.CustomPrincipal;
+import net.chikaboom.model.response.CustomResponseObject;
 import net.chikaboom.service.data.AccountDataService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * REST контроллер для взаимодействия с сущностями типа {@link Account}
@@ -74,8 +75,19 @@ public class AccountRestController {
      */
     @PreAuthorize("isAuthenticated() && #idAccount == authentication.principal.idAccount")
     @PatchMapping("/{idAccount}")
-    public ResponseEntity<AccountFacade> changeAccount(@PathVariable int idAccount, @RequestBody AccountFacade accountFacade) {
-        accountDataService.findById(idAccount);//вызов ошибки если не найден
+    public ResponseEntity<Facade> changeAccount(@PathVariable int idAccount, @RequestBody AccountFacade accountFacade) {
+        accountFacade.setIdAccount(idAccount);
+
+        try {
+            if (!accountDataService.isAccountExists(accountFacade)) {
+                return new ResponseEntity<>(new CustomResponseObject(
+                        404,
+                        "Account does not exist", "PATCH:/accouts/" + idAccount),
+                        HttpStatus.NOT_FOUND);
+            }
+        } catch (NumberParseException e) {
+            throw new IllegalArgumentException("There is illegal phone number arguments", e);
+        }
 
         if (!isAuthorized(idAccount)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -110,11 +122,7 @@ public class AccountRestController {
     private boolean isAuthorized(int idAccount) {
         Object customPrincipal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (customPrincipal.getClass() == String.class ||
-                ((CustomPrincipal) customPrincipal).getIdAccount() != idAccount) {
-            return false;
-        }
-
-        return true;
+        return customPrincipal.getClass() != String.class &&
+                ((CustomPrincipal) customPrincipal).getIdAccount() == idAccount;
     }
 }

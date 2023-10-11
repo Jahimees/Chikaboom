@@ -5,6 +5,9 @@ import lombok.Data;
 import java.sql.Timestamp;
 import java.util.Set;
 
+/**
+ * DOCS {@link Facade}
+ */
 @Data
 public class AccountFacade implements Facade {
 
@@ -38,7 +41,7 @@ public class AccountFacade implements Facade {
     /**
      * Содержит все роли пользователя
      */
-    private Set<RoleFacade> roleFacades;
+    private Set<RoleFacade> rolesFacade;
 
     /**
      * Адрес пользователя

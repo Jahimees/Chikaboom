@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 public class ServiceTypeDataService {
 
     private final ServiceTypeRepository serviceTypeRepository;
-    private final ServiceTypeFacadeConverter serviceTypeFacadeConverter;
 
     /**
      * Производит поиск типа услуги по его идентификатору.
@@ -35,7 +34,7 @@ public class ServiceTypeDataService {
             throw new NotFoundException("There not found serviceType with id " + idServiceType);
         }
 
-        return serviceTypeFacadeConverter.convertToDto(serviceTypeOptional.get());
+        return ServiceTypeFacadeConverter.convertToDto(serviceTypeOptional.get());
     }
 
     /**
@@ -45,6 +44,6 @@ public class ServiceTypeDataService {
      */
     public List<ServiceTypeFacade> findAll() {
         return serviceTypeRepository.findAll().stream().map(
-                serviceTypeFacadeConverter::convertToDto).collect(Collectors.toList());
+                ServiceTypeFacadeConverter::convertToDto).collect(Collectors.toList());
     }
 }

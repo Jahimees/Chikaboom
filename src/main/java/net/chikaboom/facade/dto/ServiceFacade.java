@@ -3,6 +3,9 @@ package net.chikaboom.facade.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
+/**
+ * DOCS {@link Facade}
+ */
 @Data
 public class ServiceFacade implements Facade {
 

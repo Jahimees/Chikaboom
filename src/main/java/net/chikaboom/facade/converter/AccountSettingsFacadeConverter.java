@@ -2,33 +2,55 @@ package net.chikaboom.facade.converter;
 
 import net.chikaboom.facade.dto.AccountSettingsFacade;
 import net.chikaboom.model.database.AccountSettings;
-import org.springframework.stereotype.Component;
 
 import java.sql.Time;
 
-@Component
-public class AccountSettingsFacadeConverter implements FacadeConverter<AccountSettingsFacade, AccountSettings> {
+/**
+ * DOCS {@link FacadeConverter}
+ */
+public final class AccountSettingsFacadeConverter implements FacadeConverter {
 
-    @Override
-    public AccountSettingsFacade convertToDto(AccountSettings model) {
+    private AccountSettingsFacadeConverter() {
+    }
+
+    /**
+     * Конвертирует объект базы данных в объект фасада - DTO
+     *
+     * @param model объект модели
+     * @return объект фасада - DTO
+     */
+    public static AccountSettingsFacade convertToDto(AccountSettings model) {
         AccountSettingsFacade accountSettingsFacade = new AccountSettingsFacade();
 
         accountSettingsFacade.setIdAccountSettings(model.getIdAccountSettings());
         accountSettingsFacade.setPhoneVisible(model.isPhoneVisible());
-        accountSettingsFacade.setDefaultWorkingDayStart((Time) model.getDefaultWorkingDayStart().clone());
-        accountSettingsFacade.setDefaultWorkingDayEnd((Time) model.getDefaultWorkingDayEnd().clone());
+        if (model.getDefaultWorkingDayStart() != null) {
+            accountSettingsFacade.setDefaultWorkingDayStart((Time) model.getDefaultWorkingDayStart().clone());
+        }
+        if (model.getDefaultWorkingDayEnd() != null) {
+            accountSettingsFacade.setDefaultWorkingDayEnd((Time) model.getDefaultWorkingDayEnd().clone());
+        }
 
         return accountSettingsFacade;
     }
 
-    @Override
-    public AccountSettings convertToModel(AccountSettingsFacade facade) {
+    /**
+     * Конвертирует объект фасада в объект модели
+     *
+     * @param facade объект фасада - DTO
+     * @return объект модели
+     */
+    public static AccountSettings convertToModel(AccountSettingsFacade facade) {
         AccountSettings accountSettings = new AccountSettings();
 
         accountSettings.setIdAccountSettings(facade.getIdAccountSettings());
         accountSettings.setPhoneVisible(facade.isPhoneVisible());
-        accountSettings.setDefaultWorkingDayStart((Time) facade.getDefaultWorkingDayStart().clone());
-        accountSettings.setDefaultWorkingDayEnd((Time) facade.getDefaultWorkingDayEnd().clone());
+        if (facade.getDefaultWorkingDayStart() != null) {
+            accountSettings.setDefaultWorkingDayStart((Time) facade.getDefaultWorkingDayStart().clone());
+        }
+        if (facade.getDefaultWorkingDayEnd() != null) {
+            accountSettings.setDefaultWorkingDayEnd((Time) facade.getDefaultWorkingDayEnd().clone());
+        }
 
         return accountSettings;
     }

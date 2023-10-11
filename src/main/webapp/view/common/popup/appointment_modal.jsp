@@ -36,6 +36,6 @@
 <script>
     function makeOutcomeAppointment() {
         let client = ${objectMapper.writeValueAsString(sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal)};
-        doMakeAppointment(client, accountJson);
+        doMakeAppointment(client, accountFacadeJson);
     }
 </script>

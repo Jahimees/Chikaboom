@@ -1,18 +1,21 @@
 package net.chikaboom.controller.rest;
 
 import lombok.RequiredArgsConstructor;
-import net.chikaboom.model.database.Account;
-import net.chikaboom.model.database.AccountSettings;
+import net.chikaboom.facade.dto.AccountFacade;
+import net.chikaboom.facade.dto.AccountSettingsFacade;
+import net.chikaboom.facade.dto.Facade;
+import net.chikaboom.facade.dto.WorkingDayFacade;
 import net.chikaboom.model.database.WorkingDay;
+import net.chikaboom.model.response.CustomResponseObject;
 import net.chikaboom.service.data.AccountDataService;
 import net.chikaboom.service.data.AccountSettingsDataService;
 import net.chikaboom.service.data.WorkingDayDataService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * REST контроллер для взаимодействия с сущностями типа {@link WorkingDay}
@@ -33,44 +36,36 @@ public class WorkingDaysRestController {
      */
     @PreAuthorize("permitAll()")
     @GetMapping("/accounts/{idAccount}/working-days")
-    public ResponseEntity<List<WorkingDay>> findWorkingDaysByIdAccount(@PathVariable int idAccount) {
+    public ResponseEntity<List<WorkingDayFacade>> findWorkingDaysByIdAccount(@PathVariable int idAccount) {
         return ResponseEntity.ok(workingDayDataService.findWorkingDaysByIdAccount(idAccount));
     }
 
     /**
      * Создает рабочий день мастера
      *
-     * @param idAccount  идентификатор аккаунта, на котором создается рабочий день
-     * @param workingDay рабочий день, который необходимо сохранить в базе данных
+     * @param idAccount        идентификатор аккаунта, на котором создается рабочий день
+     * @param workingDayFacade рабочий день, который необходимо сохранить в базе данных
      * @return созданный рабочий день
      */
     @PreAuthorize("hasRole('MASTER') and #idAccount == authentication.principal.idAccount")
     @PostMapping("/accounts/{idAccount}/working-days")
-    public ResponseEntity<WorkingDay> createWorkingDayForAccount(@PathVariable int idAccount,
-                                                                 @RequestBody WorkingDay workingDay) {
-        Optional<Account> accountOptional = accountDataService.findById(idAccount);
+    public ResponseEntity<WorkingDayFacade> createWorkingDayForAccount(@PathVariable int idAccount,
+                                                                       @RequestBody WorkingDayFacade workingDayFacade) {
+        AccountFacade accountFacade = accountDataService.findById(idAccount);
 
-        if (!accountOptional.isPresent()) {
-            return ResponseEntity.notFound().build();
+        workingDayFacade.setAccountFacade(accountFacade);
+
+        AccountSettingsFacade accountSettingsFacade = accountSettingsDataService.findByIdAccount(idAccount);
+
+        if (workingDayFacade.getWorkingDayStart() == null) {
+            workingDayFacade.setWorkingDayStart(accountSettingsFacade.getDefaultWorkingDayStart());
         }
 
-        workingDay.setAccount(accountOptional.get());
-
-        Optional<AccountSettings> accountSettings = accountSettingsDataService.findByIdAccount(idAccount);
-
-        if (!accountSettings.isPresent()) {
-            return ResponseEntity.notFound().build();
+        if (workingDayFacade.getWorkingDayEnd() == null) {
+            workingDayFacade.setWorkingDayEnd(accountSettingsFacade.getDefaultWorkingDayEnd());
         }
 
-        if (workingDay.getWorkingDayStart() == null) {
-            workingDay.setWorkingDayStart(accountSettings.get().getDefaultWorkingDayStart());
-        }
-
-        if (workingDay.getWorkingDayEnd() == null) {
-            workingDay.setWorkingDayEnd(accountSettings.get().getDefaultWorkingDayEnd());
-        }
-
-        return ResponseEntity.ok(workingDayDataService.create(workingDay));
+        return ResponseEntity.ok(workingDayDataService.create(workingDayFacade));
     }
 
     /**
@@ -82,18 +77,29 @@ public class WorkingDaysRestController {
      */
     @PreAuthorize("hasRole('MASTER') && #idAccount == authentication.principal.idAccount")
     @DeleteMapping("/accounts/{idAccount}/working-days/{idWorkingDay}")
-    public ResponseEntity<String> deleteWorkingDay(@PathVariable int idAccount, @PathVariable int idWorkingDay) {
-        Optional<Account> accountOptional = accountDataService.findById(idAccount);
-
-        if (!accountOptional.isPresent()) {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<Facade> deleteWorkingDay(@PathVariable int idAccount, @PathVariable int idWorkingDay) {
+        if (accountDataService.isAccountExistsById(idAccount)) {
+            return new ResponseEntity<>(new CustomResponseObject(
+                    HttpStatus.NOT_EXTENDED.value(),
+                    "There not found account with id " + idAccount,
+                    "DELETE:/accounts/" + idAccount + "/working-days/" + idWorkingDay
+            ), HttpStatus.NOT_FOUND);
         }
 
         if (!workingDayDataService.isWorkingDayExists(idWorkingDay)) {
-            return ResponseEntity.notFound().build();
+
+            return new ResponseEntity<>(new CustomResponseObject(
+                    HttpStatus.NOT_FOUND.value(),
+                    "There not found deletion working day. Please check the idWorkingDay " + idWorkingDay,
+                    "DELETE:/accounts/" + idAccount + "/working-days/" + idWorkingDay
+            ), HttpStatus.NOT_FOUND);
         }
 
         workingDayDataService.deleteById(idWorkingDay);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new CustomResponseObject(
+                HttpStatus.OK.value(),
+                "WorkingDay with id " + idWorkingDay + " deleted",
+                "DELETE:/accounts/" + idAccount + "/working-days/" + idWorkingDay
+        ));
     }
 }

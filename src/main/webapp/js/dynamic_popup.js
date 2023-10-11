@@ -20,10 +20,10 @@
      */
     function confirmEdit() {
         if (validateAllFields()) {
-            let url = "/accounts/" + accountJson.idAccount;
+            let url = "/accounts/" + accountFacadeJson.idAccount;
 
             let accountJsonPatch = {
-                userDetails: {}
+                userDetailsFacade: {}
             }
 
             Array.from($(".popup-input-field")).forEach(field => {
@@ -31,22 +31,22 @@
                 let fieldValue = field.value !== null ? field.value : "";
 
                 if (nestedObjectType != null && nestedObjectType !== "") {
-                    if (nestedObjectType === 'userDetails') {
-                        accountJsonPatch.userDetails[field.name] = fieldValue;
+                    if (nestedObjectType === 'userDetailsFacade') {
+                        accountJsonPatch.userDetailsFacade[field.name] = fieldValue;
 
                         if (field.id === "edit-phone") {
                             let countryData = window.intlTelInputGlobals.getInstance(
                                 document.querySelector("#edit-phone")).getSelectedCountryData();
-                            accountJsonPatch.userDetails["phoneCode"] = {
+                            accountJsonPatch.userDetailsFacade["phoneCodeFacade"] = {
                                 phoneCode: countryData.dialCode,
                                 countryCut: countryData.iso2
                             };
                         }
                     } else {
-                        if (accountJsonPatch.userDetails[nestedObjectType] == null) {
-                            accountJsonPatch.userDetails[nestedObjectType] = {};
+                        if (typeof accountJsonPatch.userDetailsFacade[nestedObjectType] == "undefined") {
+                            accountJsonPatch.userDetailsFacade[nestedObjectType] = {};
                         }
-                        accountJsonPatch.userDetails[nestedObjectType][field.name] = fieldValue;
+                        accountJsonPatch.userDetailsFacade[nestedObjectType][field.name] = fieldValue;
                     }
                 } else {
                     accountJsonPatch[field.name] = fieldValue;
@@ -63,9 +63,9 @@
                     $("#editModal").modal('hide');
                     callMessagePopup("Изменения прошли успешно!", "Изменения прошли успешно!")
 
-                    accountJson = data;
+                    accountFacadeJson = data;
 
-                    loadSettingTab('general', accountJson.idAccount);
+                    loadSettingTab('general', accountFacadeJson.idAccount);
                     countPercentage();
                 },
                 error: function () {
@@ -77,10 +77,10 @@
 
     function confirmAccountSettingsEdit() {
         if (validateAllFields()) {
-            let url = "/accounts/" + accountJson.idAccount + "/settings";
+            let url = "/accounts/" + accountFacadeJson.idAccount + "/settings";
 
             let accountSettingsJson = {
-                idAccountSettings: accountJson.accountSettings.idAccountSettings,
+                idAccountSettings: accountFacadeJson.accountSettingsFacade.idAccountSettings,
             }
             Array.from($(".popup-input-field")).forEach(field => {
                 if (field.name === 'defaultWorkingDayStart' || field.name === 'defaultWorkingDayEnd') {
@@ -102,9 +102,9 @@
                     $("#editModal").modal('hide');
                     callMessagePopup("Изменения прошли успешно!", "Изменения прошли успешно!")
 
-                    accountJson.accountSettings = data;
+                    accountFacadeJson.accountSettingsFacade = data;
 
-                    loadSettingTab('personalization', accountJson.idAccount);
+                    loadSettingTab('personalization', accountFacadeJson.idAccount);
                 },
                 error: function () {
                     $("#e-input-data-incorrect-label").css("display", "block");
@@ -157,8 +157,7 @@
         fieldPlaceholder.append(divLabel);
         if (typeof (validations) !== "undefined") {
             validations.forEach(function (validation) {
-                let invalidLabel = $("<label class='invalid-field-label-popup' id='" +
-                     + "'></label>")
+                let invalidLabel = $("<label class='invalid-field-label-popup'></label>")
                 invalidLabel.text(validation.invalidMessage)
                     .attr("display", "none")
                     .attr("id", inputField.name + "-" + validation.invalidReason)
@@ -174,9 +173,10 @@
         fields.push(inputField);
 
         if (isPhoneCode) {
-            let span = $("<span class='hidden' id='error-msg-edit-phone'></span>")
+            // let span = $("<div id='error-msg-edit-phone'>asddd</div>")
 
-            inputField.after(span);
+            // console.log(span)
+            // inputField.append(span);
             initPhoneCodeWidget("edit-phone");
         }
 

@@ -12,7 +12,7 @@
     let $serviceCostPlaceholder = $("#service-cost-placeholder");
     let $serviceTimePlaceholder = $("#service-time-placeholder");
 
-    function fillAppointmentsTable(appointmentsJSON, isIncomeAppointment, idCurrentAccount, tableId) {
+    function fillAppointmentsTable(appointmentsFacadeJson, isIncomeAppointment, idCurrentAccount, tableId) {
         let tableName = tableId ? tableId : "default";
         let $dataTable = $("#" + tableName + "_table");
 
@@ -28,40 +28,47 @@
             minute: 'numeric'
         }
 
-        appointmentsJSON.forEach(function (appointment) {
+        appointmentsFacadeJson.forEach(function (appointmentFacade) {
             let nameText, phoneText;
 
             if (isIncomeAppointment) {
-                nameText = (appointment.userDetailsClient.firstName ? appointment.userDetailsClient.firstName + " " : " ") +
-                    (appointment.userDetailsClient.lastName ? appointment.userDetailsClient.lastName : "");
-                phoneText = appointment.userDetailsClient.displayedPhone ? appointment.userDetailsClient.displayedPhone : " ";
+                nameText = (appointmentFacade.userDetailsFacadeClient.firstName ?
+                        appointmentFacade.userDetailsFacadeClient.firstName + " " : " ") +
+                    (appointmentFacade.userDetailsFacadeClient.lastName ?
+                        appointmentFacade.userDetailsFacadeClient.lastName : "");
+                phoneText = appointmentFacade.userDetailsFacadeClient.displayedPhone ?
+                    appointmentFacade.userDetailsFacadeClient.displayedPhone : " ";
             } else {
-                let firstName = secureCleanValue(appointment.masterAccount.userDetails.firstName ? appointment.masterAccount.userDetails.firstName + " " : " ")
-                let lastName = secureCleanValue(appointment.masterAccount.userDetails.lastName ? appointment.masterAccount.userDetails.lastName : "")
-                let visibleName = (firstName + " " + lastName).trim() ? (firstName + " " + lastName).trim() : appointment.masterAccount.username;
-                nameText = "<a href='/chikaboom/account/" + appointment.masterAccount.idAccount + "'>" + visibleName + "</a>";
-                phoneText = appointment.masterAccount.userDetails.displayedPhone ? appointment.masterAccount.userDetails.displayedPhone : " ";
+                let firstName = secureCleanValue(appointmentFacade.masterAccountFacade.userDetailsFacade.firstName ?
+                    appointmentFacade.masterAccountFacade.userDetailsFacade.firstName + " " : " ")
+                let lastName = secureCleanValue(appointmentFacade.masterAccountFacade.userDetailsFacade.lastName ?
+                    appointmentFacade.masterAccountFacade.userDetailsFacade.lastName : "")
+                let visibleName = (firstName + " " + lastName).trim() ?
+                    (firstName + " " + lastName).trim() : appointmentFacade.masterAccountFacade.username;
+                nameText = "<a href='/chikaboom/account/" + appointmentFacade.masterAccountFacade.idAccount + "'>" + visibleName + "</a>";
+                phoneText = appointmentFacade.masterAccountFacade.userDetailsFacade.displayedPhone ?
+                    appointmentFacade.masterAccountFacade.userDetailsFacade.displayedPhone : " ";
             }
 
             let rowNode = $dataTable.DataTable().row.add([
-                secureCleanValue(appointment.service.name),
-                new Date(appointment.appointmentDateTime).toLocaleDateString('ru'),
-                new Date(appointment.appointmentDateTime).toLocaleTimeString("ru", timeOptions),
-                secureCleanValue(appointment.service.price),
-                secureCleanValue(appointment.service.time),
+                secureCleanValue(appointmentFacade.serviceFacade.name),
+                new Date(appointmentFacade.appointmentDateTime).toLocaleDateString('ru'),
+                new Date(appointmentFacade.appointmentDateTime).toLocaleTimeString("ru", timeOptions),
+                secureCleanValue(appointmentFacade.serviceFacade.price),
+                secureCleanValue(appointmentFacade.serviceFacade.time),
                 secureCleanValue(phoneText),
                 nameText,
                 isIncomeAppointment ?
-                    "<img onclick='callConfirmDeleteIncomeAppointmentPopup(" + appointment.masterAccount.idAccount
-                    + "," + appointment.idAppointment + ")' src='/image/icon/cross_icon.svg' style='cursor: pointer; width: 15px' >"
+                    "<img onclick='callConfirmDeleteIncomeAppointmentPopup(" + appointmentFacade.masterAccountFacade.idAccount
+                    + "," + appointmentFacade.idAppointment + ")' src='/image/icon/cross_icon.svg' style='cursor: pointer; width: 15px' >"
 
                     : "<img onclick='callConfirmDeleteOutcomeAppointmentPopup(" + idCurrentAccount
-                    + "," + appointment.idAppointment + ")' src='/image/icon/cross_icon.svg' style='cursor: pointer; width: 15px'>",
+                    + "," + appointmentFacade.idAppointment + ")' src='/image/icon/cross_icon.svg' style='cursor: pointer; width: 15px'>",
             ])
                 .draw()
                 .node();
 
-            if (new Date(appointment.appointmentDateTime).getTime() <= new Date().getTime()) {
+            if (new Date(appointmentFacade.appointmentDateTime).getTime() <= new Date().getTime()) {
                 $(rowNode).addClass("past-appointment");
             }
         })
@@ -76,8 +83,12 @@
                 dataType: "json",
                 async: false,
                 success: function (json) {
-                    masterAppointmentsCache = json;
-                    fillAppointmentsTable(json, isIncomeAppointments, idAccount, "appointment")
+                    masterAppointmentsFacadeCache = json;
+                    fillAppointmentsTable(
+                        json,
+                        isIncomeAppointments,
+                        idAccount,
+                        "appointment")
                 }
             })
         } else {
@@ -135,7 +146,7 @@
     let clientsDataCache;
     let masterServicesCache
     let masterWorkingDaysCache
-    let masterAppointmentsCache
+    let masterAppointmentsFacadeCache
 
     $("#appointmentModal").on("show.bs.modal", function () {
         initAppointmentModal(false)
@@ -145,14 +156,14 @@
        initAppointmentModalWithClient(false);
     })
 
-    function initAppointmentModalWithClient(isCalendar, masterServices, masterWorkingDays, masterAppointments, clientsData) {
-        initAppointmentModal(isCalendar, masterServices, masterWorkingDays, masterAppointments);
+    function initAppointmentModalWithClient(isCalendar, masterServicesFacade, masterWorkingDaysFacade, masterAppointments, clientsDataFacade) {
+        initAppointmentModal(isCalendar, masterServicesFacade, masterWorkingDaysFacade, masterAppointments);
         if (typeof clientsDataCache === "undefined") {
-            if (typeof clientsData === "undefined" || clientsData === null) {
-                clientsDataCache = loadClients(accountJson.idAccount)
+            if (typeof clientsDataFacade === "undefined" || clientsDataFacade === null) {
+                clientsDataCache = loadClients(accountFacadeJson.idAccount)
             } else {
-                if (typeof clientsData === "undefined") {
-                    clientsDataCache = clientsData;
+                if (typeof clientsDataFacade === "undefined") {
+                    clientsDataCache = clientsDataFacade;
                 }
             }
         }
@@ -160,30 +171,30 @@
         fillClientsToModal(clientsDataCache, isCalendar);
     }
 
-    function initAppointmentModal(isCalendar, masterServices, masterWorkingDays, masterAppointments) {
+    function initAppointmentModal(isCalendar, masterServicesFacade, masterWorkingDaysFacade, masterAppointmentsFacade) {
         if (typeof masterServicesCache === "undefined") {
-            if (typeof masterServices === "undefined") {
-                masterServicesCache = loadMastersServices(accountJson.idAccount);
+            if (typeof masterServicesFacade === "undefined") {
+                masterServicesCache = loadMastersServices(accountFacadeJson.idAccount);
             } else {
-                masterServicesCache = masterServices;
+                masterServicesCache = masterServicesFacade;
             }
         }
 
         if (typeof masterWorkingDaysCache === "undefined") {
-            if (typeof masterWorkingDays === "undefined") {
-                masterWorkingDaysCache = loadWorkingDaysData(accountJson.idAccount);
+            if (typeof masterWorkingDaysFacade === "undefined") {
+                masterWorkingDaysCache = loadWorkingDaysData(accountFacadeJson.idAccount);
             } else {
-                masterWorkingDaysCache = masterWorkingDays;
+                masterWorkingDaysCache = masterWorkingDaysFacade;
             }
         }
         fillServicesToModal(masterServicesCache, isCalendar);
 
-        if (typeof masterAppointmentsCache === "undefined") {
-            if (masterAppointments === null || typeof masterAppointments === "undefined") {
-                masterAppointmentsCache = loadMastersAppointments(accountJson.idAccount)
+        if (typeof masterAppointmentsFacadeCache === "undefined") {
+            if (masterAppointmentsFacade === null || typeof masterAppointmentsFacade === "undefined") {
+                masterAppointmentsFacadeCache = loadMastersAppointments(accountFacadeJson.idAccount)
             } else {
-                if (typeof masterAppointments === "undefined") {
-                    masterAppointmentsCache = masterAppointments;
+                if (typeof masterAppointmentsFacade === "undefined") {
+                    masterAppointmentsFacadeCache = masterAppointmentsFacade;
                 }
             }
         }
@@ -209,10 +220,10 @@
         })
     }
 
-    function fillWorkingDaysToModal(workingDays) {
+    function fillWorkingDaysToModal(workingDaysFacade) {
         $workingDaySelect.html('');
 
-        workingDays.forEach(function (workingDay) {
+        workingDaysFacade.forEach(function (workingDay) {
             let today = new Date();
             let workingDayObj = new Date(workingDay.date);
             if ((today.getFullYear() < workingDayObj.getFullYear())
@@ -316,8 +327,8 @@
         }
 
         // masterAppointmentsJson
-        masterAppointmentsCache.forEach(function (masterAppointment) {
-            let appointmentDateTime = new Date(masterAppointment.appointmentDateTime);
+        masterAppointmentsFacadeCache.forEach(function (masterAppointmentFacade) {
+            let appointmentDateTime = new Date(masterAppointmentFacade.appointmentDateTime);
 
             if (appointmentDateTime.getDate() === chosenDate.getDate()
                 && appointmentDateTime.getMonth() === chosenDate.getMonth()
@@ -337,7 +348,7 @@
                         // Подсчёт количества клеточек со свободным временем (каждая клетка - полчаса)
                         workingCells[i].value = false;
 
-                        let serviceTime = masterAppointment.service.time;
+                        let serviceTime = masterAppointmentFacade.serviceFacade.time;
                         let serviceDurationTime = serviceTime.replace(' минут', '').split(' час');
 
                         if (serviceDurationTime.length === 1) {
@@ -356,19 +367,19 @@
         })
 
         let idService = parseInt($serviceSelectApp.val());
-        let currentService;
+        let currentServiceFacade;
 
-        masterServicesCache.forEach(function (service) {
-            if (service.idService === idService) {
-                currentService = service;
+        masterServicesCache.forEach(function (serviceFacade) {
+            if (serviceFacade.idService === idService) {
+                currentServiceFacade = serviceFacade;
             }
         })
 
-        let serviceDurationTime = currentService.time.replace(' минут', '').split(' час');
+        let serviceDurationTime = currentServiceFacade.time.replace(' минут', '').split(' час');
         let serviceDurationNumber;
 
-        $serviceCostPlaceholder.text("Стоимость услуги: " + currentService.price + " р.");
-        $serviceTimePlaceholder.text("Время услуги: " + currentService.time);
+        $serviceCostPlaceholder.text("Стоимость услуги: " + currentServiceFacade.price + " р.");
+        $serviceTimePlaceholder.text("Время услуги: " + currentServiceFacade.time);
 
         if (serviceDurationTime.length === 1) {
             serviceDurationNumber = 1;
@@ -414,7 +425,7 @@
 
     //////////////////////////////// LOADING DATA/////////////////////
     function loadWorkingDaysData(idAccount) {
-        let workingDaysFromServer
+        let workingDaysFacadeFromServer
         $.ajax({
             method: "get",
             url: "/accounts/" + idAccount + "/working-days",
@@ -422,18 +433,18 @@
             dataType: "json",
             async: false,
             success: function (data) {
-                workingDaysFromServer = data;
+                workingDaysFacadeFromServer = data;
             },
             error: function () {
                 callMessagePopup("Что-то пошло не так!", "Невозможно загрузить расписание!");
             }
         })
 
-        return workingDaysFromServer ? workingDaysFromServer : []
+        return workingDaysFacadeFromServer ? workingDaysFacadeFromServer : []
     }
 
     function loadMastersAppointments(idAccount) {
-        let masterAppointmentsJson;
+        let masterAppointmentsFacadeJson;
 
         $.ajax({
             type: "get",
@@ -442,19 +453,19 @@
             dataType: "json",
             async: false,
             success: function (data) {
-                masterAppointmentsJson = data;
+                masterAppointmentsFacadeJson = data;
             },
             error: function () {
                 callMessagePopup("Невозможно загрузить записи!", "Что-то пошло не так. Невозможно загрузить записи!")
             }
         })
 
-        return masterAppointmentsJson;
+        return masterAppointmentsFacadeJson;
     }
 
     /////////////////////////////DO MAKE APPOINTMENT////////////////////////
-    function doMakeAppointment(client, accountMasterJson) {
-        let masterId = accountMasterJson.idAccount;
+    function doMakeAppointment(clientPrincipal, accountMasterFacadeJson) {
+        let masterId = accountMasterFacadeJson.idAccount;
 
         let workingDayVal = $workingDaySelect.val();
         let workingTimeVal = $workingTimeSelect.val();
@@ -465,10 +476,10 @@
             $closeModalBtn.click();
 
             callMessagePopup("Запись отклонена!", "Не выбрана дата записи! Или, возможно, мастер ещё не настроил свой график работы!");
-        } else if (typeof client === 'undefined' || client === null || client.idAccount === 0) {
+        } else if (typeof clientPrincipal === 'undefined' || clientPrincipal === null || clientPrincipal.idAccount === 0) {
             $closeModalBtn.click();
             callMessagePopup("Запись отклонена!", "Сначала необходимо авторизоваться!")
-        } else if (client.idAccount === masterId) {
+        } else if (clientPrincipal.idAccount === masterId) {
             $closeModalBtn.click();
             callMessagePopup("Запись отклонена!", "Нельзя записываться самому к себе на услуги!")
         } else {
@@ -481,7 +492,7 @@
             appointmentDateTime.setMinutes(splittedTime[1]);
 
             $appointmentWarn.css("display", "none");
-            let master = accountMasterJson;
+            let master = accountMasterFacadeJson;
 
             let idService = parseInt($serviceSelectApp.val());
             let service;
@@ -493,11 +504,11 @@
             })
 
             let appointmentToSend = {
-                masterAccount: master,
-                userDetailsClient: {
-                    idUserDetails: client.idUserDetails
+                masterAccountFacade: master,
+                userDetailsFacadeClient: {
+                    idUserDetails: clientPrincipal.idUserDetails
                 },
-                service: service,
+                serviceFacade: service,
                 appointmentDateTime: appointmentDateTime
             }
 
@@ -511,10 +522,10 @@
                     $('#appointmentModal').modal('hide');
                     $('#createIncomeAppointmentModal').modal('hide');
                     callMessagePopup("Запись оформлена!", "Вы успешно записались на услугу!")
-                    masterAppointmentsCache = loadMastersAppointments(accountMasterJson.idAccount);
+                    masterAppointmentsFacadeCache = loadMastersAppointments(accountMasterFacadeJson.idAccount);
 
                     if (typeof $.fn.DataTable != "undefined") {
-                        fillAppointmentsTable(masterAppointmentsCache, true, accountMasterJson.idAccount, "appointment");
+                        fillAppointmentsTable(masterAppointmentsFacadeCache, true, accountMasterFacadeJson.idAccount, "appointment");
                     }
 
                     calculateServiceTime();
@@ -528,10 +539,10 @@
     }
 
     function makeIncomeAppointment() {
-        let clientUserDetails = {
+        let clientUserDetailsFacade = {
             idUserDetails: $clientSelectApp.val()
         }
 
-        doMakeAppointment(clientUserDetails, accountJson);
+        doMakeAppointment(clientUserDetailsFacade, accountFacadeJson);
     }
 }

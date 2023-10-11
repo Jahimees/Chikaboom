@@ -2,13 +2,22 @@ package net.chikaboom.facade.converter;
 
 import net.chikaboom.facade.dto.AboutFacade;
 import net.chikaboom.model.database.About;
-import org.springframework.stereotype.Component;
 
-@Component
-public class AboutFacadeConverter implements FacadeConverter<AboutFacade, About> {
+/**
+ * DOCS {@link FacadeConverter}
+ */
+public final class AboutFacadeConverter implements FacadeConverter {
 
-    @Override
-    public AboutFacade convertToDto(About model) {
+    private AboutFacadeConverter() {
+    }
+
+    /**
+     * Конвертирует объект базы данных в объект фасада - DTO
+     *
+     * @param model объект модели
+     * @return объект фасада - DTO
+     */
+    public static AboutFacade convertToDto(About model) {
         AboutFacade aboutFacade = new AboutFacade();
 
         aboutFacade.setIdAbout(model.getIdAbout());
@@ -19,8 +28,13 @@ public class AboutFacadeConverter implements FacadeConverter<AboutFacade, About>
         return aboutFacade;
     }
 
-    @Override
-    public About convertToModel(AboutFacade facade) {
+    /**
+     * Конвертирует объект фасада в объект модели
+     *
+     * @param facade объект фасада - DTO
+     * @return объект модели
+     */
+    public static About convertToModel(AboutFacade facade) {
         About about = new About();
 
         about.setIdAbout(facade.getIdAbout());

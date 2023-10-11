@@ -23,13 +23,13 @@ function loadMasterAppointments() {
     let appointmentsForCalendar = [];
     $.ajax({
         type: "get",
-        url: "/accounts/" + accountJson.idAccount + "/income-appointments",
+        url: "/accounts/" + accountFacadeJson.idAccount + "/income-appointments",
         contentType: "application/json",
         dataType: "json",
-        success: function (masterAppointments) {
-            masterAppointments.forEach(function (masterAppointment) {
-                let visitorName = masterAppointment.userDetailsClient.firstName ? masterAppointment.userDetailsClient.firstName : "Неизвестный";
-                let title = masterAppointment.service.name + " - " + visitorName;
+        success: function (masterAppointmentsFacade) {
+            masterAppointmentsFacade.forEach(function (masterAppointment) {
+                let visitorName = masterAppointment.userDetailsFacadeClient.firstName ? masterAppointment.userDetailsFacadeClient.firstName : "Неизвестный";
+                let title = masterAppointment.serviceFacade.name + " - " + visitorName;
                 let appointmentDateTimeStart = new Date(masterAppointment.appointmentDateTime);
                 let appointmentDateTimeEnd = calculateEndServiceTime(masterAppointment)
 
@@ -52,9 +52,9 @@ function loadMasterAppointments() {
     })
 }
 
-function calculateEndServiceTime(masterAppointment) {
+function calculateEndServiceTime(masterAppointmentFacade) {
 
-    let serviceTime = masterAppointment.service.time;
+    let serviceTime = masterAppointmentFacade.serviceFacade.time;
     let serviceDurationTime = serviceTime.replace(' минут', '').split(' час');
     let duration;
 
@@ -67,7 +67,7 @@ function calculateEndServiceTime(masterAppointment) {
         duration += serviceDurationTime[1] === '' ? 0 : 30;
     }
 
-    let appointmentDateTimeEnd = new Date(masterAppointment.appointmentDateTime);
+    let appointmentDateTimeEnd = new Date(masterAppointmentFacade.appointmentDateTime);
     let minutes = appointmentDateTimeEnd.getMinutes() + duration;
     appointmentDateTimeEnd.setMinutes(minutes);
 
@@ -102,16 +102,16 @@ var initializeRightCalendar = function () {
 function addOrRemoveWorkingDate(date) {
     var flag = true;
 
-    workingDays.forEach(function (workingDay) {
+    workingDays.forEach(function (workingDayFacade) {
         var chosenDate = new Date((date))
-        var workingDate = new Date((workingDay.date))
+        var workingDate = new Date((workingDayFacade.date))
         if (chosenDate.getDate() === workingDate.getDate()
             && chosenDate.getMonth() === workingDate.getMonth()
             && chosenDate.getFullYear() === workingDate.getFullYear()) {
 
-            removeWorkingDay(workingDay)
+            removeWorkingDay(workingDayFacade)
 
-            var index = workingDays.indexOf(workingDay);
+            var index = workingDays.indexOf(workingDayFacade);
             workingDays.splice(index, 1)
             flag = false;
         }
@@ -129,7 +129,7 @@ function addOrRemoveWorkingDate(date) {
                 new Date("2000-09-09 " + $("#working-time-end").val().trim() + ":00").toLocaleTimeString('ru')
 
             let workingDayForSend = {
-                idAccount: accountJson.idAccount,
+                idAccount: accountFacadeJson.idAccount,
                 date: currentDateObj,
                 workingDayStart: startVal,
                 workingDayEnd: endVal
@@ -145,7 +145,7 @@ function addOrRemoveWorkingDate(date) {
 function removeWorkingDay(workingDay) {
     $.ajax({
         method: "delete",
-        url: "/accounts/" + accountJson.idAccount + "/working-days/" + workingDay.idWorkingDay,
+        url: "/accounts/" + accountFacadeJson.idAccount + "/working-days/" + workingDay.idWorkingDay,
         error: () => {
             callMessagePopup("Ошибка удаления рабочих дней",
                 "Невозможно удалить данные о рабочем дне из базы данных!")
@@ -158,7 +158,7 @@ function saveWorkingDays(workingDayForSend) {
     let createdWorkingDay
     $.ajax({
         type: "POST",
-        url: "/accounts/" + accountJson.idAccount + "/working-days",
+        url: "/accounts/" + accountFacadeJson.idAccount + "/working-days",
         contentType: "application/json",
         dataType: "json",
         data: JSON.stringify(workingDayForSend),
@@ -277,11 +277,11 @@ var newEvent = (start, end) => {
         }
 
         let appointmentToSend = {
-            masterAccount: accountJson,
-            userDetailsClient: {
+            masterAccountFacade: accountFacadeJson,
+            userDetailsFacadeClient: {
                 idUserDetails: $clientSelectEvent.val()
             },
-            service: {
+            serviceFacade: {
                 idService: $serviceSelectEvent.val()
             },
             appointmentDateTime: appointmentDateTime
@@ -323,21 +323,9 @@ var editEvent = function (calEvent) {
     $('input#editTitle').val(calEvent.title);
     let $updateEventModal = $("#updateEventModal");
     $updateEventModal.modal('show');
-    // $('#update').unbind();
-    // $('#update').on('click', function () {
-    //     var title = $('input#editTitle').val();
-    //     $updateEventModal.modal('hide');
-    //     if (title) {
-    //         calEvent.title = title
-    //         $cal.fullCalendar('updateEvent', calEvent);
-    //     } else {
-    //         callMessagePopup("Невозможно обновить событие", "Название не может быть пустым")
-    //     }
-    // });
 
     $('#delete').on('click', function () {
         $('#delete').unbind();
-        // if (calEvent._id.includes("_fc")) {
         $.ajax({
             method: "delete",
             url: "/appointments/" + calEvent._id,

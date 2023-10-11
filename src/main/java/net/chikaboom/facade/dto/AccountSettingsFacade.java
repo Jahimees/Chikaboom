@@ -4,6 +4,9 @@ import lombok.Data;
 
 import java.sql.Time;
 
+/**
+ * DOCS {@link Facade}
+ */
 @Data
 public class AccountSettingsFacade implements Facade {
 

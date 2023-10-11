@@ -2,6 +2,9 @@ package net.chikaboom.facade.dto;
 
 import lombok.Data;
 
+/**
+ * DOCS {@link Facade}
+ */
 @Data
 public class SocialNetworkFacade implements Facade {
 

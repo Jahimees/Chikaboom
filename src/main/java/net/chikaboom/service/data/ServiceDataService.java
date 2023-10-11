@@ -1,12 +1,10 @@
 package net.chikaboom.service.data;
 
 import lombok.RequiredArgsConstructor;
-import net.chikaboom.exception.NoSuchDataException;
 import net.chikaboom.facade.converter.AccountFacadeConverter;
 import net.chikaboom.facade.converter.ServiceFacadeConverter;
 import net.chikaboom.facade.dto.AccountFacade;
 import net.chikaboom.facade.dto.ServiceFacade;
-import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.Service;
 import net.chikaboom.repository.ServiceRepository;
 import net.chikaboom.repository.specification.ServiceSpecifications;
@@ -26,8 +24,6 @@ public class ServiceDataService implements DataService<ServiceFacade> {
 
     private final ServiceRepository serviceRepository;
     private final AccountDataService accountDataService;
-    private final ServiceFacadeConverter serviceFacadeConverter;
-    private final AccountFacadeConverter accountFacadeConverter;
 
     /**
      * Производит поиск услуги по идентификатору.
@@ -43,7 +39,7 @@ public class ServiceDataService implements DataService<ServiceFacade> {
             throw new NotFoundException("There not found service with id " + idService);
         }
 
-        return serviceFacadeConverter.convertToDto(serviceOptional.get());
+        return ServiceFacadeConverter.convertToDto(serviceOptional.get());
     }
 
     /**
@@ -54,7 +50,7 @@ public class ServiceDataService implements DataService<ServiceFacade> {
     @Override
     public List<ServiceFacade> findAll() {
         return serviceRepository.findAll().stream().map(
-                serviceFacadeConverter::convertToDto).collect(Collectors.toList());
+                ServiceFacadeConverter::convertToDto).collect(Collectors.toList());
     }
 
     /**
@@ -81,9 +77,9 @@ public class ServiceDataService implements DataService<ServiceFacade> {
             throw new NotFoundException("There not found service with id " + serviceFacade.getIdService());
         }
 
-        return serviceFacadeConverter.convertToDto(
+        return ServiceFacadeConverter.convertToDto(
                 serviceRepository.save(
-                        serviceFacadeConverter.convertToModel(serviceFacade)));
+                        ServiceFacadeConverter.convertToModel(serviceFacade)));
     }
 
     /**
@@ -99,9 +95,9 @@ public class ServiceDataService implements DataService<ServiceFacade> {
         }
         serviceFacade.setIdService(0);
 
-        return serviceFacadeConverter.convertToDto(
+        return ServiceFacadeConverter.convertToDto(
                 serviceRepository.save(
-                        serviceFacadeConverter.convertToModel(serviceFacade)));
+                        ServiceFacadeConverter.convertToModel(serviceFacade)));
     }
 
     /**
@@ -113,8 +109,8 @@ public class ServiceDataService implements DataService<ServiceFacade> {
         AccountFacade accountFacade = accountDataService.findById(idAccount);
 
         return serviceRepository
-                .findAllByAccount(accountFacadeConverter.convertToModel(accountFacade))
-                .stream().map(serviceFacadeConverter::convertToDto).collect(Collectors.toList());
+                .findAllByAccount(AccountFacadeConverter.convertToModel(accountFacade))
+                .stream().map(ServiceFacadeConverter::convertToDto).collect(Collectors.toList());
     }
 
     /**
@@ -129,7 +125,7 @@ public class ServiceDataService implements DataService<ServiceFacade> {
                 ServiceSpecifications.servicesByServiceSubtypeIdArray(serviceSubtypeIdArray, idServiceType)
         );
 
-        return serviceList.stream().map(serviceFacadeConverter::convertToDto).collect(Collectors.toList());
+        return serviceList.stream().map(ServiceFacadeConverter::convertToDto).collect(Collectors.toList());
     }
 
     /**

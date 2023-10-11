@@ -5,6 +5,9 @@ import net.chikaboom.model.database.Account;
 
 import java.sql.Timestamp;
 
+/**
+ * DOCS {@link Facade}
+ */
 @Data
 public class UserDetailsFacade implements Facade {
 

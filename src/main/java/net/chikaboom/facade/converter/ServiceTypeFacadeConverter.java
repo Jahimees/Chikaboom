@@ -2,13 +2,21 @@ package net.chikaboom.facade.converter;
 
 import net.chikaboom.facade.dto.ServiceTypeFacade;
 import net.chikaboom.model.database.ServiceType;
-import org.springframework.stereotype.Component;
 
-@Component
-public class ServiceTypeFacadeConverter implements FacadeConverter<ServiceTypeFacade, ServiceType> {
+/**
+ * DOCS {@link FacadeConverter}
+ */
+public final class ServiceTypeFacadeConverter implements FacadeConverter {
 
-    @Override
-    public ServiceTypeFacade convertToDto(ServiceType model) {
+    private ServiceTypeFacadeConverter() {}
+
+    /**
+     * Конвертирует объект базы данных в объект фасада - DTO
+     *
+     * @param model объект модели
+     * @return объект фасада - DTO
+     */
+    public static ServiceTypeFacade convertToDto(ServiceType model) {
         ServiceTypeFacade serviceTypeFacade = new ServiceTypeFacade();
 
         serviceTypeFacade.setIdServiceType(model.getIdServiceType());
@@ -17,8 +25,13 @@ public class ServiceTypeFacadeConverter implements FacadeConverter<ServiceTypeFa
         return serviceTypeFacade;
     }
 
-    @Override
-    public ServiceType convertToModel(ServiceTypeFacade facade) {
+    /**
+     * Конвертирует объект фасада в объект модели
+     *
+     * @param facade объект фасада - DTO
+     * @return объект модели
+     */
+    public static ServiceType convertToModel(ServiceTypeFacade facade) {
         ServiceType serviceType = new ServiceType();
 
         serviceType.setIdServiceType(facade.getIdServiceType());

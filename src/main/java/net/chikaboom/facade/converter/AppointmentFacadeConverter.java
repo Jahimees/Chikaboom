@@ -1,42 +1,66 @@
 package net.chikaboom.facade.converter;
 
-import lombok.RequiredArgsConstructor;
 import net.chikaboom.facade.dto.AppointmentFacade;
 import net.chikaboom.model.database.Appointment;
-import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
 
-@Component
-@RequiredArgsConstructor
-public class AppointmentFacadeConverter implements FacadeConverter<AppointmentFacade, Appointment> {
+/**
+ * DOCS {@link FacadeConverter}
+ */
+public final class AppointmentFacadeConverter implements FacadeConverter {
 
-    private final ServiceFacadeConverter serviceFacadeConverter;
-    private final AccountFacadeConverter accountFacadeConverter;
-    private final UserDetailsFacadeConverter userDetailsFacadeConverter;
+    private AppointmentFacadeConverter() {
+    }
 
-    @Override
-    public AppointmentFacade convertToDto(Appointment model) {
+    /**
+     * Конвертирует объект базы данных в объект фасада - DTO
+     *
+     * @param model объект модели
+     * @return объект фасада - DTO
+     */
+    public static AppointmentFacade convertToDto(Appointment model) {
         AppointmentFacade appointmentFacade = new AppointmentFacade();
 
         appointmentFacade.setIdAppointment(model.getIdAppointment());
-        appointmentFacade.setAppointmentDateTime((Timestamp) model.getAppointmentDateTime().clone());
-        appointmentFacade.setServiceFacade(serviceFacadeConverter.convertToDto(model.getService()));
-        appointmentFacade.setMasterAccountFacade(accountFacadeConverter.convertToDto(model.getMasterAccount()));
-        appointmentFacade.setUserDetailsFacadeClient(userDetailsFacadeConverter.convertToDto(model.getUserDetailsClient()));
+        if (model.getAppointmentDateTime() != null) {
+            appointmentFacade.setAppointmentDateTime((Timestamp) model.getAppointmentDateTime().clone());
+        }
+        if (model.getService() != null) {
+            appointmentFacade.setServiceFacade(ServiceFacadeConverter.convertToDto(model.getService()));
+        }
+        if (model.getMasterAccount() != null) {
+            appointmentFacade.setMasterAccountFacade(AccountFacadeConverter.convertToDto(model.getMasterAccount()));
+        }
+        if (model.getUserDetailsClient() != null) {
+            appointmentFacade.setUserDetailsFacadeClient(UserDetailsFacadeConverter.convertToDto(model.getUserDetailsClient()));
+        }
 
         return appointmentFacade;
     }
 
-    @Override
-    public Appointment convertToModel(AppointmentFacade facade) {
+    /**
+     * Конвертирует объект фасада в объект модели
+     *
+     * @param facade объект фасада - DTO
+     * @return объект модели
+     */
+    public static Appointment convertToModel(AppointmentFacade facade) {
         Appointment appointment = new Appointment();
 
         appointment.setIdAppointment(facade.getIdAppointment());
-        appointment.setAppointmentDateTime((Timestamp) facade.getAppointmentDateTime().clone());
-        appointment.setService(serviceFacadeConverter.convertToModel(facade.getServiceFacade()));
-        appointment.setMasterAccount(accountFacadeConverter.convertToModel(facade.getMasterAccountFacade()));
-        appointment.setUserDetailsClient(userDetailsFacadeConverter.convertToModel(facade.getUserDetailsFacadeClient()));
+        if (facade.getAppointmentDateTime() != null) {
+            appointment.setAppointmentDateTime((Timestamp) facade.getAppointmentDateTime().clone());
+        }
+        if (facade.getServiceFacade() != null) {
+            appointment.setService(ServiceFacadeConverter.convertToModel(facade.getServiceFacade()));
+        }
+        if (facade.getMasterAccountFacade() != null) {
+            appointment.setMasterAccount(AccountFacadeConverter.convertToModel(facade.getMasterAccountFacade()));
+        }
+        if (facade.getUserDetailsFacadeClient() != null) {
+            appointment.setUserDetailsClient(UserDetailsFacadeConverter.convertToModel(facade.getUserDetailsFacadeClient()));
+        }
 
         return appointment;
     }

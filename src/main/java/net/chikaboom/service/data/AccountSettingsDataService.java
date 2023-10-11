@@ -1,11 +1,11 @@
 package net.chikaboom.service.data;
 
-import lombok.RequiredArgsConstructor;
 import net.chikaboom.facade.converter.AccountSettingsFacadeConverter;
 import net.chikaboom.facade.dto.AccountFacade;
 import net.chikaboom.facade.dto.AccountSettingsFacade;
 import net.chikaboom.model.database.AccountSettings;
 import net.chikaboom.repository.AccountSettingsRepository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.acls.model.AlreadyExistsException;
 import org.springframework.security.acls.model.NotFoundException;
 import org.springframework.stereotype.Service;
@@ -18,14 +18,17 @@ import java.util.stream.Collectors;
  * Сервис предназначен для обработки информации настроек аккаунта
  */
 @Service
-@RequiredArgsConstructor
 public class AccountSettingsDataService implements DataService<AccountSettingsFacade> {
 
+    //Внедрение зависимостей через сеттер, поскольку AccountDataService вызывает циклическую ошибку инициализации бина
     private final AccountSettingsRepository accountSettingsRepository;
     private final AccountDataService accountDataService;
-//    private final AccountRepository accountRepository;
 
-    private final AccountSettingsFacadeConverter accountSettingsFacadeConverter;
+    public AccountSettingsDataService(AccountSettingsRepository accountSettingsRepository,
+                                      @Lazy AccountDataService accountDataService) {
+        this.accountSettingsRepository = accountSettingsRepository;
+        this.accountDataService = accountDataService;
+    }
 
     /**
      * Производит поиск настроек аккаунта по id
@@ -41,7 +44,7 @@ public class AccountSettingsDataService implements DataService<AccountSettingsFa
             throw new NotFoundException("There is no account settings with " + idAccountSettings);
         }
 
-        return accountSettingsFacadeConverter.convertToDto(accountSettings.get());
+        return AccountSettingsFacadeConverter.convertToDto(accountSettings.get());
     }
 
     /**
@@ -66,7 +69,7 @@ public class AccountSettingsDataService implements DataService<AccountSettingsFa
     @Deprecated
     public List<AccountSettingsFacade> findAll() {
         return accountSettingsRepository.findAll().stream().map(
-                        accountSettingsFacadeConverter::convertToDto)
+                        AccountSettingsFacadeConverter::convertToDto)
                 .collect(Collectors.toList());
     }
 
@@ -92,9 +95,9 @@ public class AccountSettingsDataService implements DataService<AccountSettingsFa
     @Deprecated
     public AccountSettingsFacade update(AccountSettingsFacade accountSettingsFacade) {
         if (accountSettingsRepository.existsById(accountSettingsFacade.getIdAccountSettings())) {
-            AccountSettings accountSettings = accountSettingsFacadeConverter.convertToModel(accountSettingsFacade);
+            AccountSettings accountSettings = AccountSettingsFacadeConverter.convertToModel(accountSettingsFacade);
 
-            return accountSettingsFacadeConverter.convertToDto(accountSettingsRepository.save(accountSettings));
+            return AccountSettingsFacadeConverter.convertToDto(accountSettingsRepository.save(accountSettings));
         } else {
             throw new NotFoundException("Account settings not found");
         }
@@ -138,9 +141,9 @@ public class AccountSettingsDataService implements DataService<AccountSettingsFa
             changedAccountSettingsFacade.setPhoneVisible(newAccountSettings.isPhoneVisible());
         }
 
-        return accountSettingsFacadeConverter.convertToDto(
+        return AccountSettingsFacadeConverter.convertToDto(
                 accountSettingsRepository.saveAndFlush(
-                        accountSettingsFacadeConverter.convertToModel(
+                        AccountSettingsFacadeConverter.convertToModel(
                                 changedAccountSettingsFacade)));
     }
 
@@ -156,8 +159,8 @@ public class AccountSettingsDataService implements DataService<AccountSettingsFa
             throw new AlreadyExistsException("Account settings already exists");
         }
 
-        return accountSettingsFacadeConverter.convertToDto(
+        return AccountSettingsFacadeConverter.convertToDto(
                 accountSettingsRepository.saveAndFlush(
-                        accountSettingsFacadeConverter.convertToModel(accountSettingsFacade)));
+                        AccountSettingsFacadeConverter.convertToModel(accountSettingsFacade)));
     }
 }

@@ -1,35 +1,52 @@
 package net.chikaboom.facade.converter;
 
-import lombok.RequiredArgsConstructor;
 import net.chikaboom.facade.dto.AccountRolesFacade;
 import net.chikaboom.model.database.AccountRoles;
-import org.springframework.stereotype.Component;
 
-@Component
-@RequiredArgsConstructor
-public class AccountRolesFacadeConverter implements FacadeConverter<AccountRolesFacade, AccountRoles> {
+/**
+ * DOCS {@link FacadeConverter}
+ */
+public final class AccountRolesFacadeConverter implements FacadeConverter {
 
-    private final AccountFacadeConverter accountFacadeConverter;
-    private final RoleFacadeConverter roleFacadeConverter;
+    private AccountRolesFacadeConverter() {
+    }
 
-    @Override
-    public AccountRolesFacade convertToDto(AccountRoles model) {
+    /**
+     * Конвертирует объект базы данных в объект фасада - DTO
+     *
+     * @param model объект модели
+     * @return объект фасада - DTO
+     */
+    public static AccountRolesFacade convertToDto(AccountRoles model) {
         AccountRolesFacade accountRolesFacade = new AccountRolesFacade();
 
         accountRolesFacade.setIdAccountRoles(model.getIdAccountRoles());
-        accountRolesFacade.setAccountFacade(accountFacadeConverter.convertToDto(model.getAccount()));
-        accountRolesFacade.setRoleFacade(roleFacadeConverter.convertToDto(model.getRole()));
+        if (model.getAccount() != null) {
+            accountRolesFacade.setAccountFacade(AccountFacadeConverter.convertToDto(model.getAccount()));
+        }
+        if (model.getRole() != null) {
+            accountRolesFacade.setRoleFacade(RoleFacadeConverter.convertToDto(model.getRole()));
+        }
 
         return accountRolesFacade;
     }
 
-    @Override
-    public AccountRoles convertToModel(AccountRolesFacade facade) {
+    /**
+     * Конвертирует объект фасада в объект модели
+     *
+     * @param facade объект фасада - DTO
+     * @return объект модели
+     */
+    public static AccountRoles convertToModel(AccountRolesFacade facade) {
         AccountRoles accountRoles = new AccountRoles();
 
         accountRoles.setIdAccountRoles(facade.getIdAccountRoles());
-        accountRoles.setAccount(accountFacadeConverter.convertToModel(facade.getAccountFacade()));
-        accountRoles.setRole(roleFacadeConverter.convertToModel(facade.getRoleFacade()));
+        if (facade.getAccountFacade() != null) {
+            accountRoles.setAccount(AccountFacadeConverter.convertToModel(facade.getAccountFacade()));
+        }
+        if (facade.getRoleFacade() != null) {
+            accountRoles.setRole(RoleFacadeConverter.convertToModel(facade.getRoleFacade()));
+        }
 
         return accountRoles;
     }

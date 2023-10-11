@@ -2,7 +2,7 @@ package net.chikaboom.controller;
 
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.controller.error.AdviceController;
-import net.chikaboom.model.database.Account;
+import net.chikaboom.facade.dto.AccountFacade;
 import net.chikaboom.service.RegistrationActionService;
 import org.apache.log4j.Logger;
 import org.springframework.http.ResponseEntity;
@@ -28,14 +28,14 @@ public class RegistrationController {
      * Передает управление и данные в сервис {@link RegistrationActionService}
      * В случае ошибки возвращает объект-ответ-ошибки с помощью {@link AdviceController}
      * <p>
-     * @param account объект регистрируемого аккаунта
+     * @param accountFacade объект регистрируемого аккаунта
      *
      * @return объект-ответ, содержащий название страницы, на которую должен будет осуществлен переход и http статус.
      */
     @PostMapping
-    public ResponseEntity<?> register(@RequestBody Account account) {
+    public ResponseEntity<AccountFacade> register(@RequestBody AccountFacade accountFacade) {
         logger.info("Start registration process.");
 
-        return ResponseEntity.ok(registrationActionService.register(account));
+        return ResponseEntity.ok(registrationActionService.register(accountFacade));
     }
 }

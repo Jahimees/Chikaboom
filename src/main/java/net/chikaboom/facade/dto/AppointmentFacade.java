@@ -4,6 +4,9 @@ import lombok.Data;
 
 import java.sql.Timestamp;
 
+/**
+ * DOCS {@link Facade}
+ */
 @Data
 public class AppointmentFacade implements Facade {
 

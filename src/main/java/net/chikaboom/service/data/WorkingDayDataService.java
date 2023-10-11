@@ -29,8 +29,6 @@ public class WorkingDayDataService implements DataService<WorkingDayFacade> {
     private final WorkingDaysRepository workingDaysRepository;
     private final AccountDataService accountDataService;
 
-    private final WorkingDayFacadeConverter workingDayFacadeConverter;
-    private final AccountFacadeConverter accountFacadeConverter;
 //    private final AccountRepository accountRepository;
 
     /**
@@ -47,7 +45,7 @@ public class WorkingDayDataService implements DataService<WorkingDayFacade> {
             throw new NotFoundException("There is not found working day with id " + idWorkingDay);
         }
 
-        return workingDayFacadeConverter.convertToDto(workingDayOptional.get());
+        return WorkingDayFacadeConverter.convertToDto(workingDayOptional.get());
     }
 
     /**
@@ -60,7 +58,7 @@ public class WorkingDayDataService implements DataService<WorkingDayFacade> {
     @Deprecated
     public List<WorkingDayFacade> findAll() {
         return workingDaysRepository.findAll().stream().map(
-                workingDayFacadeConverter::convertToDto).collect(Collectors.toList());
+                WorkingDayFacadeConverter::convertToDto).collect(Collectors.toList());
     }
 
     /**
@@ -91,9 +89,9 @@ public class WorkingDayDataService implements DataService<WorkingDayFacade> {
             throw new NotFoundException("There is not found working day");
         }
 
-        return workingDayFacadeConverter.convertToDto(
+        return WorkingDayFacadeConverter.convertToDto(
                 workingDaysRepository.save(
-                        workingDayFacadeConverter.convertToModel(workingDayFacade)));
+                        WorkingDayFacadeConverter.convertToModel(workingDayFacade)));
     }
 
     /**
@@ -121,9 +119,9 @@ public class WorkingDayDataService implements DataService<WorkingDayFacade> {
             workingDayFacade.setWorkingDayEnd(Time.valueOf(DEFAULT_WORKING_DAY_END_TIME));
         }
 
-        return workingDayFacadeConverter.convertToDto(
+        return WorkingDayFacadeConverter.convertToDto(
                 workingDaysRepository.save(
-                        workingDayFacadeConverter.convertToModel(workingDayFacade)));
+                        WorkingDayFacadeConverter.convertToModel(workingDayFacade)));
     }
 
     /**
@@ -134,7 +132,7 @@ public class WorkingDayDataService implements DataService<WorkingDayFacade> {
      */
     public boolean isWorkingDayExists(WorkingDayFacade workingDayFacade) {
         return workingDaysRepository.existsByAccountAndDate(
-                accountFacadeConverter.convertToModel(
+                AccountFacadeConverter.convertToModel(
                         workingDayFacade.getAccountFacade()), workingDayFacade.getDate());
     }
 
@@ -158,7 +156,7 @@ public class WorkingDayDataService implements DataService<WorkingDayFacade> {
         AccountFacade accountFacade = accountDataService.findById(idAccount);
 
         return workingDaysRepository
-                .findWorkingDaysByAccount(accountFacadeConverter.convertToModel(accountFacade))
-                .stream().map(workingDayFacadeConverter::convertToDto).collect(Collectors.toList());
+                .findWorkingDaysByAccount(AccountFacadeConverter.convertToModel(accountFacade))
+                .stream().map(WorkingDayFacadeConverter::convertToDto).collect(Collectors.toList());
     }
 }

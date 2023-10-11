@@ -37,33 +37,35 @@
             dataType: "json",
             async: false,
             success: function (data) {
-                data.forEach(function (subtype) {
+                data.forEach(function (serviceSubtypeFacade) {
                     let divMediumText = $("<div class='medium-text'></div>")
-                    let input = $("<input type='checkbox' class='service-subtype-checkbox' id='" + subtype.idServiceSubtype + "'>")
-                    let label = $("<label for='" + subtype.idServiceSubtype + "'></label>").text(subtype.name)
+                    let input = $("<input type='checkbox' class='service-subtype-checkbox' id='" +
+                        serviceSubtypeFacade.idServiceSubtype + "'>")
+                    let label = $("<label for='" + serviceSubtypeFacade.idServiceSubtype + "'></label>")
+                        .text(serviceSubtypeFacade.name)
 
                     divMediumText.appendChild(input);
                     divMediumText.appendChild(label);
 
                     $("#service-subtype-block").append(divMediumText);
                     let serviceTypeNamePlaceHolder = $("#service-type-name-placeholder");
-                    serviceTypeNamePlaceHolder.text(subtype.serviceType.name)
+                    serviceTypeNamePlaceHolder.text(serviceSubtypeFacade.serviceTypeFacade.name)
                     serviceTypeNamePlaceHolder.attr("style", "text-decoration: none; color: #523870")
                 })
             }
         })
     }
 
-    function fillResultSearchTable(serviceListJson) {
+    function fillResultSearchTable(serviceFacadeListJson) {
         let searchResultPlaceHolder = $("#search-result-placeholder");
         searchResultPlaceHolder.html("");
 
-        if (serviceListJson.length !== 0) {
-            serviceListJson.forEach(function (service) {
-                let price = service.price;
-                let serviceName = service.name;
-                let idMasterAccount = service.account.idAccount
-                let masterName = service.account.username;
+        if (serviceFacadeListJson.length !== 0) {
+            serviceFacadeListJson.forEach(function (serviceFacade) {
+                let price = serviceFacade.price;
+                let serviceName = serviceFacade.name;
+                let idMasterAccount = serviceFacade.accountFacade.idAccount
+                let masterName = serviceFacade.accountFacade.username;
 
                 let accountLink = $("<a class='col-xl-3 non-decorated-link' href='/chikaboom/account/" + idMasterAccount + "'></a>")
                 let imgAvatar = $("<img class='result-image' src='/image/user/" + idMasterAccount + "/avatar.jpeg'>")
