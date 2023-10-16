@@ -3,19 +3,25 @@ package net.chikaboom.controller.rest;
 import com.google.i18n.phonenumbers.NumberParseException;
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.controller.RegistrationController;
+import net.chikaboom.facade.converter.AccountFacadeConverter;
 import net.chikaboom.facade.dto.AccountFacade;
 import net.chikaboom.facade.dto.Facade;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.CustomPrincipal;
 import net.chikaboom.model.response.CustomResponseObject;
 import net.chikaboom.service.data.AccountDataService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * REST контроллер для взаимодействия с сущностями типа {@link Account}
@@ -35,10 +41,17 @@ public class AccountRestController {
      */
     @PreAuthorize("permitAll()")
     @GetMapping("/{idAccount}")
-    public ResponseEntity<AccountFacade> findAccount(@PathVariable int idAccount) {
-        AccountFacade accountFacade = accountDataService.findById(idAccount);
+    public ResponseEntity<Facade> findAccount(@PathVariable int idAccount) {
+        Optional<Account> accountOptional = accountDataService.findById(idAccount);
 
-        return ResponseEntity.ok(accountFacade);
+        return accountOptional.<ResponseEntity<Facade>>map(account -> ResponseEntity.ok(
+                convertToDto(idAccount, account))).orElseGet(
+                () -> new ResponseEntity<>(new CustomResponseObject(
+                        HttpStatus.NOT_FOUND.value(),
+                        "There not found account with id " + idAccount,
+                        "GET:/accounts/" + idAccount
+                ), HttpStatus.NOT_FOUND));
+
     }
 
     /**
@@ -49,7 +62,11 @@ public class AccountRestController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<AccountFacade>> findAllAccounts() {
-        return new ResponseEntity<>(accountDataService.findAll(), HttpStatus.OK);
+
+        List<AccountFacade> accountFacades = accountDataService.findAll()
+                .stream().map(AccountFacadeConverter::toDtoForNotAccountUser).collect(Collectors.toList());
+
+        return new ResponseEntity<>(accountFacades, HttpStatus.OK);
     }
 
     /**
@@ -63,7 +80,11 @@ public class AccountRestController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<AccountFacade> createAccount(@RequestBody AccountFacade accountFacade) {
-        return ResponseEntity.ok(accountDataService.create(accountFacade));
+        Account accountModel = AccountFacadeConverter.convertToModel(accountFacade);
+
+        Account createdAccount = accountDataService.create(accountModel);
+
+        return ResponseEntity.ok(AccountFacadeConverter.toDtoForAccountUser(createdAccount));
     }
 
     /**
@@ -77,9 +98,10 @@ public class AccountRestController {
     @PatchMapping("/{idAccount}")
     public ResponseEntity<Facade> changeAccount(@PathVariable int idAccount, @RequestBody AccountFacade accountFacade) {
         accountFacade.setIdAccount(idAccount);
+        Account accountModel = AccountFacadeConverter.convertToModel(accountFacade);
 
         try {
-            if (!accountDataService.isAccountExists(accountFacade)) {
+            if (!accountDataService.isAccountExists(accountModel)) {
                 return new ResponseEntity<>(new CustomResponseObject(
                         404,
                         "Account does not exist", "PATCH:/accouts/" + idAccount),
@@ -89,19 +111,41 @@ public class AccountRestController {
             throw new IllegalArgumentException("There is illegal phone number arguments", e);
         }
 
+        AccountFacade accountFacadeFromDb = AccountFacadeConverter.convertToDto(accountDataService.findById(idAccount).get());
+
         if (!isAuthorized(idAccount)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        accountFacade.setIdAccount(idAccount);
-        AccountFacade patchedAccountFacade;
+        accountModel.setIdAccount(idAccount);
+        Account patchedAccount;
         try {
-            patchedAccountFacade = accountDataService.patch(accountFacade);
+            patchedAccount = accountDataService.patch(accountModel);
         } catch (NumberParseException e) {
             return ResponseEntity.badRequest().build();
         }
 
-        return ResponseEntity.ok(patchedAccountFacade);
+
+        if (!patchedAccount.getUsername().equals(accountFacadeFromDb.getUsername()) ||
+                !patchedAccount.getUserDetails().getPhone().equals(accountFacadeFromDb.getUserDetailsFacade().getPhone()) ||
+                !patchedAccount.getPassword().equals(accountFacadeFromDb.getPassword())) {
+
+            URI location;
+            try {
+                location = new URI("redirect:/logout");
+            } catch (URISyntaxException e) {
+                return new ResponseEntity<>(new CustomResponseObject(
+                        HttpStatus.NOT_FOUND.value(),
+                        "Not found logout page... WTF. Just.. Just get away please",
+                        "/logout"
+                ), HttpStatus.NOT_FOUND);
+            }
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.setLocation(location);
+            return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
+        }
+
+        return ResponseEntity.ok(convertToDto(idAccount, patchedAccount));
     }
 
     //    TODO LOGOUT!!!!
@@ -116,6 +160,7 @@ public class AccountRestController {
     @DeleteMapping("/{idAccount}")
     public ResponseEntity<String> deleteAccount(@PathVariable int idAccount) {
         accountDataService.deleteById(idAccount);
+
         return ResponseEntity.ok().build();
     }
 
@@ -124,5 +169,12 @@ public class AccountRestController {
 
         return customPrincipal.getClass() != String.class &&
                 ((CustomPrincipal) customPrincipal).getIdAccount() == idAccount;
+    }
+
+    private AccountFacade convertToDto(int idAccount, Account account) {
+        CustomPrincipal customPrincipal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return customPrincipal.getIdAccount() == idAccount ? AccountFacadeConverter
+                .toDtoForAccountUser(account) : AccountFacadeConverter.toDtoForNotAccountUser(account);
     }
 }

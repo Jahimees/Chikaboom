@@ -22,6 +22,7 @@
                 serviceSubtypeIds: serviceSubtypeIdListStr
             },
             success: function (data) {
+                console.log("Endpoint 18 done::: ")
                 fillResultSearchTable(data);
             }
         })
@@ -37,6 +38,7 @@
             dataType: "json",
             async: false,
             success: function (data) {
+                console.log("Endpoint 10 done::: ")
                 data.forEach(function (serviceSubtypeFacade) {
                     let divMediumText = $("<div class='medium-text'></div>")
                     let input = $("<input type='checkbox' class='service-subtype-checkbox' id='" +
@@ -44,8 +46,8 @@
                     let label = $("<label for='" + serviceSubtypeFacade.idServiceSubtype + "'></label>")
                         .text(serviceSubtypeFacade.name)
 
-                    divMediumText.appendChild(input);
-                    divMediumText.appendChild(label);
+                    divMediumText.append(input);
+                    divMediumText.append(label);
 
                     $("#service-subtype-block").append(divMediumText);
                     let serviceTypeNamePlaceHolder = $("#service-type-name-placeholder");

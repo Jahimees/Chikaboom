@@ -14,6 +14,49 @@ public final class AppointmentFacadeConverter implements FacadeConverter {
     }
 
     /**
+     * Поля:
+     * id, appointmentDateTime, service(все, кроме serviceSubtypeFacade)
+     */
+    public static AppointmentFacade toDtoForDataTableInModal(Appointment model) {
+        AppointmentFacade appointmentFacade = new AppointmentFacade();
+
+        appointmentFacade.setIdAppointment(model.getIdAppointment());
+        if (model.getAppointmentDateTime() != null) {
+            appointmentFacade.setAppointmentDateTime((Timestamp) model.getAppointmentDateTime().clone());
+        }
+        if (model.getService() != null) {
+            appointmentFacade.setServiceFacade(ServiceFacadeConverter.toDtoForAppointmentDataTable(model.getService()));
+            appointmentFacade.getServiceFacade().setServiceSubtypeFacade(null);
+        }
+
+        return appointmentFacade;
+    }
+
+    /**
+     * Поля:
+     * id, appointmentDateTime, service, masterAccount, userDetailsClient
+     */
+    public static AppointmentFacade toDtoForAppointmentDataTable(Appointment model) {
+        AppointmentFacade appointmentFacade = new AppointmentFacade();
+
+        appointmentFacade.setIdAppointment(model.getIdAppointment());
+        if (model.getAppointmentDateTime() != null) {
+            appointmentFacade.setAppointmentDateTime((Timestamp) model.getAppointmentDateTime().clone());
+        }
+        if (model.getService() != null) {
+            appointmentFacade.setServiceFacade(ServiceFacadeConverter.toDtoForAppointmentDataTable(model.getService()));
+        }
+        if (model.getMasterAccount() != null) {
+            appointmentFacade.setMasterAccountFacade(AccountFacadeConverter.toDtoAppointmentDataTable(model.getMasterAccount()));
+        }
+        if (model.getUserDetailsClient() != null) {
+            appointmentFacade.setUserDetailsFacadeClient(UserDetailsFacadeConverter.toDtoAppointmentDataTable(model.getUserDetailsClient()));
+        }
+
+        return appointmentFacade;
+    }
+
+    /**
      * Конвертирует объект базы данных в объект фасада - DTO
      *
      * @param model объект модели
@@ -29,8 +72,9 @@ public final class AppointmentFacadeConverter implements FacadeConverter {
         if (model.getService() != null) {
             appointmentFacade.setServiceFacade(ServiceFacadeConverter.convertToDto(model.getService()));
         }
+//        TODO warning place 4 really warning place. for master, client? only id? What endpoint
         if (model.getMasterAccount() != null) {
-            appointmentFacade.setMasterAccountFacade(AccountFacadeConverter.convertToDto(model.getMasterAccount()));
+            appointmentFacade.setMasterAccountFacade(AccountFacadeConverter.toDtoForNotAccountUser(model.getMasterAccount()));
         }
         if (model.getUserDetailsClient() != null) {
             appointmentFacade.setUserDetailsFacadeClient(UserDetailsFacadeConverter.convertToDto(model.getUserDetailsClient()));

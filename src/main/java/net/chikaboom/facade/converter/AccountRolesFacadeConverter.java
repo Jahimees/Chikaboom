@@ -21,8 +21,9 @@ public final class AccountRolesFacadeConverter implements FacadeConverter {
         AccountRolesFacade accountRolesFacade = new AccountRolesFacade();
 
         accountRolesFacade.setIdAccountRoles(model.getIdAccountRoles());
+//        TODO warning place 2
         if (model.getAccount() != null) {
-            accountRolesFacade.setAccountFacade(AccountFacadeConverter.convertToDto(model.getAccount()));
+            accountRolesFacade.setAccountFacade(AccountFacadeConverter.toDtoOnlyId(model.getAccount()));
         }
         if (model.getRole() != null) {
             accountRolesFacade.setRoleFacade(RoleFacadeConverter.convertToDto(model.getRole()));

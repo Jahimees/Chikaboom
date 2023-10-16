@@ -27,6 +27,8 @@ function loadMasterAppointments() {
         contentType: "application/json",
         dataType: "json",
         success: function (masterAppointmentsFacade) {
+            console.log("Endpoint 11 conflict ep 2 ep 4::: ");
+            console.log(masterAppointmentsFacade);
             masterAppointmentsFacade.forEach(function (masterAppointment) {
                 let visitorName = masterAppointment.userDetailsFacadeClient.firstName ? masterAppointment.userDetailsFacadeClient.firstName : "Неизвестный";
                 let title = masterAppointment.serviceFacade.name + " - " + visitorName;
@@ -109,11 +111,13 @@ function addOrRemoveWorkingDate(date) {
             && chosenDate.getMonth() === workingDate.getMonth()
             && chosenDate.getFullYear() === workingDate.getFullYear()) {
 
-            removeWorkingDay(workingDayFacade)
+            let error = removeWorkingDay(workingDayFacade)
 
-            var index = workingDays.indexOf(workingDayFacade);
-            workingDays.splice(index, 1)
-            flag = false;
+            if (!error) {
+                var index = workingDays.indexOf(workingDayFacade);
+                workingDays.splice(index, 1)
+                flag = false;
+            }
         }
     })
 
@@ -143,14 +147,18 @@ function addOrRemoveWorkingDate(date) {
 }
 
 function removeWorkingDay(workingDay) {
+    let errorFlag = false;
     $.ajax({
         method: "delete",
         url: "/accounts/" + accountFacadeJson.idAccount + "/working-days/" + workingDay.idWorkingDay,
+        async: false,
         error: () => {
+            errorFlag = true;
             callMessagePopup("Ошибка удаления рабочих дней",
                 "Невозможно удалить данные о рабочем дне из базы данных!")
         }
     })
+    return errorFlag;
 }
 
 function saveWorkingDays(workingDayForSend) {
@@ -164,6 +172,7 @@ function saveWorkingDays(workingDayForSend) {
         data: JSON.stringify(workingDayForSend),
         async: false,
         success: (data) => {
+            console.log("Endpoint 12 done::: ")
             createdWorkingDay = data;
         },
         error: () => {
@@ -297,6 +306,7 @@ var newEvent = (start, end) => {
             dataType: "json",
             data: JSON.stringify(appointmentToSend),
             success: function (data) {
+                console.log("Endpoint 13 done::: ");
                 let endTime = calculateEndServiceTime(data);
                 let eventData = {
                     id: data.idAppointment,
@@ -367,11 +377,12 @@ var disableEnter = function () {
 function loadWorkingDaysDataAndLoadCalendar(idAccount) {
     $.ajax({
         method: "get",
-        url: "/accounts/" + idAccount + "/working-days",
+        url: "/accounts/" + idAccount + "/working-days?full=true",
         contentType: "application/json",
         dataType: "json",
         async: false,
         success: function (data) {
+            console.log("Endpoint 14 done::: ")
             workingDays = data ? data : [];
             loadAccountCalendar();
         },

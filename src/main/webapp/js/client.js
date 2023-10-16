@@ -102,6 +102,7 @@
                 dataType: "json",
                 data: JSON.stringify(userDetailsObject),
                 success: function (clientDetailsFacade) {
+                    console.log("Endpoint 5 done:::")
                     addRowToDataTable(clientDetailsFacade, "client");
                     callMessagePopup("Клиент создан", "Клиент успешно создан!")
                 },
@@ -169,6 +170,7 @@
             dataType: "json",
             async: false,
             success: function (data) {
+                console.log("Endpoint 6 done:::")
                 response = data;
             },
             error: function () {
@@ -221,7 +223,6 @@
                     $clientFirstNameInput.val(detailsFacade.firstName);
                     $clientLastNameInput.val(detailsFacade.lastName);
 
-                    console.log(detailsFacade)
                     $clintAboutInput.val(detailsFacade.aboutFacade ? detailsFacade.aboutFacade.text : "");
                     $clientPhoneInput.val(detailsFacade.displayedPhone);
 
@@ -355,6 +356,7 @@
                 idUserDetails: idUserDetails
             },
             success: function (data) {
+                console.log("Endpoint 7 done::: ");
                 fillClientAppointmentsTableForModal(data, 'client_appointments')
             },
             error: function () {

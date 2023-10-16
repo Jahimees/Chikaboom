@@ -12,7 +12,8 @@ public final class AboutFacadeConverter implements FacadeConverter {
     }
 
     /**
-     * Конвертирует объект базы данных в объект фасада - DTO
+     * Конвертирует объект базы данных в объект фасада - DTO.
+     * Полная информация
      *
      * @param model объект модели
      * @return объект фасада - DTO

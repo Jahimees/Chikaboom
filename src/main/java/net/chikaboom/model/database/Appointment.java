@@ -26,14 +26,14 @@ public class Appointment implements BaseEntity {
     /**
      * Аккаунт мастера, оказывающего услугу
      */
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = ID_ACCOUNT_MASTER)
     private Account masterAccount;
 
     /**
      * Пользовательская услуга, на которую записывается клиент
      */
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = ID_SERVICE)
     private Service service;
 
@@ -46,7 +46,7 @@ public class Appointment implements BaseEntity {
     /**
      * Пользовательская информация о клиенте
      */
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = ID_USER_DETAILS_CLIENT)
     private UserDetails userDetailsClient;
 

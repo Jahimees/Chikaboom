@@ -2,13 +2,7 @@ package net.chikaboom.service.data;
 
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.exception.NoSuchDataException;
-import net.chikaboom.facade.converter.AccountFacadeConverter;
-import net.chikaboom.facade.converter.AppointmentFacadeConverter;
-import net.chikaboom.facade.converter.UserDetailsFacadeConverter;
-import net.chikaboom.facade.dto.*;
-import net.chikaboom.model.database.Account;
-import net.chikaboom.model.database.Appointment;
-import net.chikaboom.model.database.UserDetails;
+import net.chikaboom.model.database.*;
 import net.chikaboom.repository.AppointmentRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +21,7 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 @org.springframework.stereotype.Service
-public class AppointmentDataService implements DataService<AppointmentFacade> {
+public class AppointmentDataService implements DataService<Appointment> {
 
     @Value("${one_hour_millis}")
     private long ONE_HOUR_MILLIS;
@@ -47,14 +41,8 @@ public class AppointmentDataService implements DataService<AppointmentFacade> {
      */
     @Override
     @Transactional(readOnly = true)
-    public AppointmentFacade findById(int idAppointment) {
-        Optional<Appointment> appointmentOptional = appointmentRepository.findById(idAppointment);
-
-        if (!appointmentOptional.isPresent()) {
-            throw new NotFoundException("There not found appointment with id " + idAppointment);
-        }
-
-        return AppointmentFacadeConverter.convertToDto(appointmentOptional.get());
+    public Optional<Appointment> findById(int idAppointment) {
+        return appointmentRepository.findById(idAppointment);
     }
 
     /**
@@ -63,9 +51,8 @@ public class AppointmentDataService implements DataService<AppointmentFacade> {
      * @return список всех существующих записей
      */
     @Override
-    public List<AppointmentFacade> findAll() {
-        return appointmentRepository.findAll()
-                .stream().map(AppointmentFacadeConverter::convertToDto).collect(Collectors.toList());
+    public List<Appointment> findAll() {
+        return appointmentRepository.findAll();
     }
 
     /**
@@ -79,52 +66,50 @@ public class AppointmentDataService implements DataService<AppointmentFacade> {
     /**
      * Обновляет (полностью перезаписывает) запись на услугу в базе данных
      *
-     * @param appointmentFacade обновленный объект записи
+     * @param appointment обновленный объект записи
      * @return сохранённый объект записи
      */
     @Override
-    public AppointmentFacade update(AppointmentFacade appointmentFacade) {
-        Optional<Appointment> appointmentOptional = appointmentRepository.findById(appointmentFacade.getIdAppointment());
+    public Appointment update(Appointment appointment) {
+        Optional<Appointment> appointmentOptional = appointmentRepository.findById(appointment.getIdAppointment());
 
         if (!appointmentOptional.isPresent()) {
-            throw new NotFoundException("There not found appointment with id " + appointmentFacade.getIdAppointment());
+            throw new NotFoundException("There not found appointment with id " + appointment.getIdAppointment());
         }
 
-        return AppointmentFacadeConverter.convertToDto(
-                appointmentRepository.save(
-                        AppointmentFacadeConverter.convertToModel(appointmentFacade)));
+        return appointmentRepository.save(appointment);
     }
 
     /**
      * Создаёт объект записи на услугу в базе
      *
-     * @param appointmentFacade создаваемый объект
+     * @param appointment создаваемый объект
      * @return созданный объект записи на услугу
      */
     @Override
-    public AppointmentFacade create(AppointmentFacade appointmentFacade) {
+    public Appointment create(Appointment appointment) {
         Timestamp nowTime = Timestamp.valueOf(LocalDateTime.now());
 
-        if (appointmentFacade.getAppointmentDateTime().getTime() - nowTime.getTime() < ONE_HOUR_MILLIS) {
+        if (appointment.getAppointmentDateTime().getTime() - nowTime.getTime() < ONE_HOUR_MILLIS) {
             logger.warn("Appointment will not be created. Cause appointment date time is earlier than present time");
 
             throw new IllegalArgumentException("Appointment will not be created. " +
                     "Cause appointment date time is earlier than present time");
         }
 
-        if (isAppointmentExists(appointmentFacade)) {
+        if (isAppointmentExists(appointment)) {
             throw new AlreadyExistsException("The same appointment already exists");
         }
-        if (appointmentFacade.getServiceFacade() == null) {
+        if (appointment.getService() == null) {
             throw new NotFoundException("Received service is null");
         }
 
-        Timestamp appointmentDateTime = appointmentFacade.getAppointmentDateTime();
+        Timestamp appointmentDateTime = appointment.getAppointmentDateTime();
 
-        List<WorkingDayFacade> masterWorkingDays = workingDayDataService.findWorkingDaysByIdAccount(
-                appointmentFacade.getMasterAccountFacade().getIdAccount());
+        List<WorkingDay> masterWorkingDays = workingDayDataService.findWorkingDaysByIdAccount(
+                appointment.getMasterAccount().getIdAccount());
 
-        List<WorkingDayFacade> workingDayList = masterWorkingDays.stream().filter(workingDay ->
+        List<WorkingDay> workingDayList = masterWorkingDays.stream().filter(workingDay ->
                         workingDay.getDate().getYear() == appointmentDateTime.getYear()
                                 && workingDay.getDate().getMonth() == appointmentDateTime.getMonth()
                                 && workingDay.getDate().getDate() == appointmentDateTime.getDate())
@@ -135,7 +120,7 @@ public class AppointmentDataService implements DataService<AppointmentFacade> {
             throw new NotFoundException("There is no working day for current master");
         }
 
-        WorkingDayFacade chosenWorkingDay = workingDayList.get(0);
+        WorkingDay chosenWorkingDay = workingDayList.get(0);
 
         //Время записи поставлено не раньше, чем начало рабочего дня
         if (!((chosenWorkingDay.getWorkingDayStart().getHours() == appointmentDateTime.getHours()
@@ -144,8 +129,15 @@ public class AppointmentDataService implements DataService<AppointmentFacade> {
             throw new IllegalArgumentException("You cannot create appointment earlier than working day starts");
         }
 
-        ServiceFacade chosenMasterService = serviceDataService.findById(appointmentFacade
-                .getServiceFacade().getIdService());
+        Optional<Service> chosenMasterServiceOptional = serviceDataService.findById(appointment
+                .getService().getIdService());
+
+        if (!chosenMasterServiceOptional.isPresent()) {
+            throw new NotFoundException("There not found service");
+        }
+
+        Service chosenMasterService = chosenMasterServiceOptional.get();
+
         int[] chosenServiceTimeNumbers = chosenMasterService.getServiceTimeNumbers();
 
         //Время записи поставлено так, что не выйдет за рамки конца рабочего дня
@@ -156,11 +148,11 @@ public class AppointmentDataService implements DataService<AppointmentFacade> {
             throw new IllegalArgumentException("You cannot create appointment which will finish after than working day ends");
         }
 
-        List<AppointmentFacade> masterAppointmentList = findAllByIdAccount(appointmentFacade
-                .getMasterAccountFacade().getIdAccount(), false);
+        List<Appointment> masterAppointmentList = findAllByIdAccount(appointment
+                .getMasterAccount().getIdAccount(), false);
 
-        masterAppointmentList.forEach(masterAppointmentFacade -> {
-            Timestamp existAppointmentDateTime = masterAppointmentFacade.getAppointmentDateTime();
+        masterAppointmentList.forEach(masterAppointment -> {
+            Timestamp existAppointmentDateTime = masterAppointment.getAppointmentDateTime();
             //Совпадение дня записи с новым днём записи
             if (existAppointmentDateTime.getYear() == appointmentDateTime.getYear()
                     && existAppointmentDateTime.getMonth() == appointmentDateTime.getMonth()
@@ -171,7 +163,7 @@ public class AppointmentDataService implements DataService<AppointmentFacade> {
                 int appDateTimeEnd = appDateTimeStart + (chosenServiceTimeNumbers[0] * 60 + chosenServiceTimeNumbers[1]);
 
                 int exAppDateTimeStart = existAppointmentDateTime.getHours() * 60 + existAppointmentDateTime.getMinutes();
-                int[] exServiceTimeNumbers = masterAppointmentFacade.getServiceFacade().getServiceTimeNumbers();
+                int[] exServiceTimeNumbers = masterAppointment.getService().getServiceTimeNumbers();
                 int exAppDateTimeEnd = exAppDateTimeStart + (exServiceTimeNumbers[0] * 60 + exServiceTimeNumbers[1]);
 
                 if ((appDateTimeStart >= exAppDateTimeStart && appDateTimeStart < exAppDateTimeEnd) ||
@@ -186,11 +178,10 @@ public class AppointmentDataService implements DataService<AppointmentFacade> {
             }
         });
 
-        appointmentFacade.setIdAppointment(0);
-        appointmentFacade.setServiceFacade(chosenMasterService);
-        return AppointmentFacadeConverter.convertToDto(
-                appointmentRepository.saveAndFlush(
-                        AppointmentFacadeConverter.convertToModel(appointmentFacade)));
+        appointment.setIdAppointment(0);
+        appointment.setService(chosenMasterService);
+
+        return appointmentRepository.saveAndFlush(appointment);
     }
 
     /**
@@ -199,40 +190,42 @@ public class AppointmentDataService implements DataService<AppointmentFacade> {
      * @return коллекцию записей на услуги
      * @throws NoSuchDataException возникает, если аккаунт не был найден
      */
-    public List<AppointmentFacade> findAllByIdAccount(int idAccount, boolean isClient) throws NoSuchDataException {
-        AccountFacade accountFacade = accountDataService.findById(idAccount);
-        Account accountModel = AccountFacadeConverter.convertToModel(accountFacade);
+    public List<Appointment> findAllByIdAccount(int idAccount, boolean isClient) throws NoSuchDataException {
+        Optional<Account> accountOptional = accountDataService.findById(idAccount);
+
+        if (!accountOptional.isPresent()) {
+            throw new NotFoundException("There not found account with id " + idAccount);
+        }
+
+        Account account = accountOptional.get();
 
         List<Appointment> appointmentList;
         if (isClient) {
-            appointmentList = appointmentRepository.findAllByUserDetailsClient(accountModel.getUserDetails());
+            appointmentList = appointmentRepository.findAllByUserDetailsClient(account.getUserDetails());
         } else {
-            appointmentList = appointmentRepository.findAllByMasterAccount(accountModel);
+            appointmentList = appointmentRepository.findAllByMasterAccount(account);
         }
 
-        return appointmentList.stream().map(AppointmentFacadeConverter::convertToDto).collect(Collectors.toList());
+        return appointmentList;
     }
 
     /**
      * Проверяет, возможно ли создать запись с указанными параметрами. Метод требует доработки
      *
-     * @param appointmentFacade проверяемый объект записи
+     * @param appointment проверяемый объект записи
      * @return true - если запись можно создавать, false - в ином случае
      */
-    public boolean isAppointmentExists(AppointmentFacade appointmentFacade) {
+    public boolean isAppointmentExists(Appointment appointment) {
 //        TODO проверка по времени записи
 //        TODO проверка на рамки рабочего дня
         return appointmentRepository.existsByAppointmentDateTimeAndMasterAccount(
-                appointmentFacade.getAppointmentDateTime(),
-                AccountFacadeConverter.convertToModel(appointmentFacade.getMasterAccountFacade()));
+                appointment.getAppointmentDateTime(),
+                appointment.getMasterAccount());
     }
 
-    public List<AppointmentFacade> findAllByUserDetailsClientAndMasterAccount(UserDetailsFacade userDetailsClientFacade,
-                                                                              AccountFacade masterAccountFacade) {
-        UserDetails userDetailsClient = UserDetailsFacadeConverter.convertToModel(userDetailsClientFacade);
-        Account masterAccount = AccountFacadeConverter.convertToModel(masterAccountFacade);
+    public List<Appointment> findAllByUserDetailsClientAndMasterAccount(UserDetails userDetailsClient,
+                                                                        Account masterAccount) {
 
-        return appointmentRepository.findAllByUserDetailsClientAndMasterAccount(userDetailsClient, masterAccount)
-                .stream().map(AppointmentFacadeConverter::convertToDto).collect(Collectors.toList());
+        return appointmentRepository.findAllByUserDetailsClientAndMasterAccount(userDetailsClient, masterAccount);
     }
 }

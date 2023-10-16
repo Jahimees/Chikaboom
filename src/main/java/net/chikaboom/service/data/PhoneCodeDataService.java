@@ -1,38 +1,38 @@
 package net.chikaboom.service.data;
 
 import lombok.RequiredArgsConstructor;
-import net.chikaboom.facade.converter.PhoneCodeFacadeConverter;
-import net.chikaboom.facade.dto.PhoneCodeFacade;
 import net.chikaboom.model.database.PhoneCode;
 import net.chikaboom.repository.PhoneCodeRepository;
-import org.springframework.security.acls.model.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * Сервис предоставляет возможность работы с сущностью кода телефона страны
+ */
 @Service
 @RequiredArgsConstructor
 public class PhoneCodeDataService {
 
     private final PhoneCodeRepository phoneCodeRepository;
 
-    public PhoneCodeFacade findById(int id) {
-        Optional<PhoneCode> phoneCodeOptional = phoneCodeRepository.findById(id);
-
-        if (!phoneCodeOptional.isPresent()) {
-            throw new NotFoundException("There not found phoneCode with id " + id);
-        }
-
-        return PhoneCodeFacadeConverter.convertToDto(phoneCodeOptional.get());
+    /**
+     * Производит поиск кода телефона по идентификатору
+     *
+     * @param id идентификатор кода телефона
+     * @return объект кода телефона
+     */
+    public Optional<PhoneCode> findById(int id) {
+        return phoneCodeRepository.findById(id);
     }
 
-    public PhoneCodeFacade findFirstByCountryCut(String countryCut) {
-        Optional<PhoneCode> phoneCodeOptional = phoneCodeRepository.findFirstByCountryCut(countryCut);
-
-        if (!phoneCodeOptional.isPresent()) {
-            throw new NotFoundException("There not found phoneCode with country cut " + countryCut);
-        }
-
-        return PhoneCodeFacadeConverter.convertToDto(phoneCodeOptional.get());
+    /**
+     * Производит поиск по сокращенному названию страны
+     *
+     * @param countryCut сокращенное двухбуквенное название страны
+     * @return объект кода телефона страны
+     */
+    public Optional<PhoneCode> findFirstByCountryCut(String countryCut) {
+        return phoneCodeRepository.findFirstByCountryCut(countryCut);
     }
 }

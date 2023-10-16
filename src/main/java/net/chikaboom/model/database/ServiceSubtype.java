@@ -30,7 +30,7 @@ public class ServiceSubtype implements BaseEntity {
     /**
      * Родительский тип услуги для данной подуслуги
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = ID_SERVICE_TYPE)
     private ServiceType serviceType;
 

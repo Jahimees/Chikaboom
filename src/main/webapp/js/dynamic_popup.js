@@ -60,6 +60,7 @@
                 dataType: "json",
                 data: JSON.stringify(accountJsonPatch),
                 success: function (data) {
+                    console.log("Endpoint 8 done::: ");
                     $("#editModal").modal('hide');
                     callMessagePopup("Изменения прошли успешно!", "Изменения прошли успешно!")
 
@@ -99,6 +100,7 @@
                 data: JSON.stringify(accountSettingsJson),
                 async: false,
                 success: function (data) {
+                    console.log("Endpoint 9 done::: ");
                     $("#editModal").modal('hide');
                     callMessagePopup("Изменения прошли успешно!", "Изменения прошли успешно!")
 

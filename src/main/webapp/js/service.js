@@ -26,6 +26,7 @@
             url: "/service-subtypes",
             async: false,
             success: function (data) {
+                console.log("Endpoint 15 done::: ");
                 serviceSubtypesFacade = data;
             },
             error: function () {
@@ -41,6 +42,7 @@
             contentType: "application/text",
             dataType: "text",
             success: function (data) {
+                console.log("Endpoint 16 done::: ");
                 servicesJson = JSON.parse(data);
                 fillServiceTable(servicesJson);
                 loadServiceTypeSelectOptions();
@@ -340,6 +342,7 @@
             async: false,
             url: "/accounts/" + idAccount + "/services",
             success: function (data) {
+                console.log("Endpoint 17 done::: ");
                 servicesFacadeJson = data;
             },
             error: function () {

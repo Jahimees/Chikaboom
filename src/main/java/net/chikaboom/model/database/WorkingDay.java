@@ -27,7 +27,7 @@ public class WorkingDay implements BaseEntity {
     /**
      * Ссылка на аккаунт, кому принадлежит рабочий день
      */
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = ID_ACCOUNT)
     private Account account;
 

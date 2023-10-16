@@ -83,6 +83,8 @@
                 dataType: "json",
                 async: false,
                 success: function (json) {
+                    // TODO optimize. Не нужны прошлые записи. Их догружать отдельно
+                    console.log("Endpoint 2 done::: ");
                     masterAppointmentsFacadeCache = json;
                     fillAppointmentsTable(
                         json,
@@ -153,7 +155,7 @@
     })
 
     $("#createIncomeAppointmentModal").on("show.bs.modal", function () {
-       initAppointmentModalWithClient(false);
+        initAppointmentModalWithClient(false);
     })
 
     function initAppointmentModalWithClient(isCalendar, masterServicesFacade, masterWorkingDaysFacade, masterAppointments, clientsDataFacade) {
@@ -162,9 +164,7 @@
             if (typeof clientsDataFacade === "undefined" || clientsDataFacade === null) {
                 clientsDataCache = loadClients(accountFacadeJson.idAccount)
             } else {
-                if (typeof clientsDataFacade === "undefined") {
-                    clientsDataCache = clientsDataFacade;
-                }
+                clientsDataCache = clientsDataFacade;
             }
         }
 
@@ -251,8 +251,8 @@
             clientSelect = $("#client-select-ev");
         } else {
             clientSelect = $clientSelectApp;
-
         }
+        clientSelect.html('')
 
         clientsJSON.forEach(client => {
             clientSelect.append($("<option></option>")
@@ -433,6 +433,7 @@
             dataType: "json",
             async: false,
             success: function (data) {
+                console.log("Endpoint 3 done::: ");
                 workingDaysFacadeFromServer = data;
             },
             error: function () {
@@ -453,6 +454,8 @@
             dataType: "json",
             async: false,
             success: function (data) {
+                console.log("Endpoint 4 error::: ")
+                console.log(data);
                 masterAppointmentsFacadeJson = data;
             },
             error: function () {

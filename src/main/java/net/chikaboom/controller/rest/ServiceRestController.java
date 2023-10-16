@@ -2,6 +2,7 @@ package net.chikaboom.controller.rest;
 
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.exception.NoSuchDataException;
+import net.chikaboom.facade.converter.ServiceFacadeConverter;
 import net.chikaboom.facade.dto.AccountFacade;
 import net.chikaboom.facade.dto.Facade;
 import net.chikaboom.facade.dto.ServiceFacade;
@@ -16,6 +17,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * REST контроллер для взаимодействия с сущностями типа {@link Service}
@@ -35,10 +38,18 @@ public class ServiceRestController {
 //    TODO выдает слишком много информации о мастере
     @PreAuthorize("permitAll()")
     @GetMapping("/services/{idService}")
-    public ResponseEntity<ServiceFacade> findService(@PathVariable int idService) {
-        ServiceFacade serviceFacade = serviceDataService.findById(idService);
+    public ResponseEntity<Facade> findService(@PathVariable int idService) {
+        Optional<Service> serviceOptional = serviceDataService.findById(idService);
 
-        return ResponseEntity.ok(serviceFacade);
+        if (!serviceOptional.isPresent()) {
+            return new ResponseEntity<>(new CustomResponseObject(
+                    HttpStatus.NOT_FOUND.value(),
+                    "There not found service with id " + idService,
+                    "GET:/services/" + idService
+            ), HttpStatus.NOT_FOUND);
+        }
+
+        return ResponseEntity.ok(ServiceFacadeConverter.convertToDto(serviceOptional.get()));
     }
 
     /**
@@ -51,7 +62,9 @@ public class ServiceRestController {
     @PreAuthorize("permitAll()")
     @GetMapping("/accounts/{idAccount}/services")
     public ResponseEntity<List<ServiceFacade>> findAllServicesByIdAccount(@PathVariable int idAccount) {
-        return ResponseEntity.ok(serviceDataService.findAllServicesByIdAccount(idAccount));
+
+        return ResponseEntity.ok(serviceDataService.findAllServicesByIdAccount(idAccount)
+                .stream().map(ServiceFacadeConverter::convertToDto).collect(Collectors.toList()));
     }
 
     /**
@@ -69,10 +82,10 @@ public class ServiceRestController {
      */
     @PreAuthorize("permitAll()")
     @GetMapping("/service-types/{idServiceType}/service-subtypes/services")
-    public ResponseEntity<List<? extends Facade>> findAllServicesByServiceSubtypeIds(
+    public ResponseEntity<List<Facade>> findAllServicesByServiceSubtypeIds(
             @PathVariable int idServiceType, @RequestParam int[] serviceSubtypeIds) {
 
-        List<ServiceFacade> serviceList;
+        List<Service> serviceList;
         try {
             serviceList = serviceDataService.findServicesByServiceSubtypeIds(serviceSubtypeIds, idServiceType);
         } catch (NoSuchDataException e) {
@@ -87,7 +100,8 @@ public class ServiceRestController {
             ), HttpStatus.NOT_FOUND);
         }
 
-        return ResponseEntity.ok(serviceList);
+        return ResponseEntity.ok(serviceList
+                .stream().map(ServiceFacadeConverter::toSearchResultPage).collect(Collectors.toList()));
     }
 
     /**
@@ -110,7 +124,10 @@ public class ServiceRestController {
             ), HttpStatus.FORBIDDEN);
         }
 
-        return ResponseEntity.ok(serviceDataService.create(serviceFacade));
+        Service creationService = ServiceFacadeConverter.convertToModel(serviceFacade);
+        Service createdService = serviceDataService.create(creationService);
+
+        return ResponseEntity.ok(ServiceFacadeConverter.convertToDto(createdService));
     }
 
     /**
@@ -123,12 +140,21 @@ public class ServiceRestController {
     @PreAuthorize("hasRole('MASTER')")
     @PutMapping("/services/{idService}")
     public ResponseEntity<Facade> replaceService(@PathVariable int idService, @RequestBody ServiceFacade serviceFacadeParam) {
-        ServiceFacade serviceFacadeDb = serviceDataService.findById(idService);
+
+        Optional<Service> serviceOptional = serviceDataService.findById(idService);
+
+        if (!serviceOptional.isPresent()) {
+            return new ResponseEntity<>(new CustomResponseObject(
+                    HttpStatus.NOT_FOUND.value(),
+                    "There not found service with id " + idService,
+                    "PUT:/service/" + idService
+            ), HttpStatus.NOT_FOUND);
+        }
 
         CustomPrincipal principal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (serviceFacadeParam.getAccountFacade().getIdAccount() != principal.getIdAccount()
-                || serviceFacadeDb.getAccountFacade().getIdAccount() != principal.getIdAccount()) {
+                || serviceOptional.get().getAccount().getIdAccount() != principal.getIdAccount()) {
 
             return new ResponseEntity<>(new CustomResponseObject(
                     HttpStatus.FORBIDDEN.value(),
@@ -139,7 +165,10 @@ public class ServiceRestController {
 
         serviceFacadeParam.setIdService(idService);
 
-        return ResponseEntity.ok(serviceDataService.update(serviceFacadeParam));
+        Service updatedService = serviceDataService.update(ServiceFacadeConverter.convertToModel(serviceFacadeParam));
+        ServiceFacade updatedServiceFacade = ServiceFacadeConverter.convertToDto(updatedService);
+
+        return ResponseEntity.ok(updatedServiceFacade);
     }
 
     /**
@@ -151,11 +180,19 @@ public class ServiceRestController {
     @PreAuthorize("hasRole('MASTER')")
     @DeleteMapping("/services/{idService}")
     public ResponseEntity<Facade> deleteService(@PathVariable int idService) {
-        ServiceFacade serviceFacade = serviceDataService.findById(idService);
+
+        Optional<Service> serviceOptional = serviceDataService.findById(idService);
+        if(!serviceOptional.isPresent()) {
+            return new ResponseEntity<>(new CustomResponseObject(
+                    HttpStatus.NOT_FOUND.value(),
+                    "There not found service with id " + idService,
+                    "DELETE:/services/" + idService
+            ), HttpStatus.NOT_FOUND);
+        }
 
         CustomPrincipal customPrincipal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (serviceFacade.getAccountFacade().getIdAccount() != customPrincipal.getIdAccount()) {
+        if (serviceOptional.get().getAccount().getIdAccount() != customPrincipal.getIdAccount()) {
 
             return new ResponseEntity<>(new CustomResponseObject(
                     HttpStatus.FORBIDDEN.value(),

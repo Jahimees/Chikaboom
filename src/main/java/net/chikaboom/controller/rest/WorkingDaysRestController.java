@@ -1,10 +1,12 @@
 package net.chikaboom.controller.rest;
 
 import lombok.RequiredArgsConstructor;
-import net.chikaboom.facade.dto.AccountFacade;
-import net.chikaboom.facade.dto.AccountSettingsFacade;
+import net.chikaboom.facade.converter.AccountFacadeConverter;
+import net.chikaboom.facade.converter.WorkingDayFacadeConverter;
 import net.chikaboom.facade.dto.Facade;
 import net.chikaboom.facade.dto.WorkingDayFacade;
+import net.chikaboom.model.database.Account;
+import net.chikaboom.model.database.AccountSettings;
 import net.chikaboom.model.database.WorkingDay;
 import net.chikaboom.model.response.CustomResponseObject;
 import net.chikaboom.service.data.AccountDataService;
@@ -16,6 +18,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * REST контроллер для взаимодействия с сущностями типа {@link WorkingDay}
@@ -36,8 +40,14 @@ public class WorkingDaysRestController {
      */
     @PreAuthorize("permitAll()")
     @GetMapping("/accounts/{idAccount}/working-days")
-    public ResponseEntity<List<WorkingDayFacade>> findWorkingDaysByIdAccount(@PathVariable int idAccount) {
-        return ResponseEntity.ok(workingDayDataService.findWorkingDaysByIdAccount(idAccount));
+    public ResponseEntity<List<WorkingDayFacade>> findWorkingDaysByIdAccount(@PathVariable int idAccount,
+                                                                             @RequestParam(required = false) boolean full) {
+
+        List<WorkingDay> workingDayList = full ? workingDayDataService.findWorkingDaysByIdAccount(idAccount) :
+                workingDayDataService.findWorkingDaysByIdAccountWithoutPast(idAccount);
+
+        return ResponseEntity.ok(workingDayList
+                .stream().map(WorkingDayFacadeConverter::convertToDto).collect(Collectors.toList()));
     }
 
     /**
@@ -49,23 +59,47 @@ public class WorkingDaysRestController {
      */
     @PreAuthorize("hasRole('MASTER') and #idAccount == authentication.principal.idAccount")
     @PostMapping("/accounts/{idAccount}/working-days")
-    public ResponseEntity<WorkingDayFacade> createWorkingDayForAccount(@PathVariable int idAccount,
+    public ResponseEntity<Facade> createWorkingDayForAccount(@PathVariable int idAccount,
                                                                        @RequestBody WorkingDayFacade workingDayFacade) {
-        AccountFacade accountFacade = accountDataService.findById(idAccount);
 
-        workingDayFacade.setAccountFacade(accountFacade);
+        Optional<Account> accountOptional = accountDataService.findById(idAccount);
 
-        AccountSettingsFacade accountSettingsFacade = accountSettingsDataService.findByIdAccount(idAccount);
+        if (!accountOptional.isPresent()) {
+            return new ResponseEntity<>(new CustomResponseObject(
+                    HttpStatus.NOT_FOUND.value(),
+                    "There not found account with id " + idAccount,
+                    "POST:/accounts/" + idAccount + "/working-days"
+            ), HttpStatus.NOT_FOUND);
+        }
+
+        Optional<AccountSettings> accountSettingsOptional = accountSettingsDataService.findByIdAccount(idAccount);
+
+        if (!accountSettingsOptional.isPresent()) {
+            return new ResponseEntity<>(new CustomResponseObject(
+                    HttpStatus.NOT_FOUND.value(),
+                    "There not found accountSettings with idAccount " + idAccount,
+                    "POST:/accounts/" + idAccount + "/working-days"
+            ), HttpStatus.NOT_FOUND);
+        }
+
+        AccountSettings accountSettingsFromDb = accountSettingsOptional.get();
+
 
         if (workingDayFacade.getWorkingDayStart() == null) {
-            workingDayFacade.setWorkingDayStart(accountSettingsFacade.getDefaultWorkingDayStart());
+            workingDayFacade.setWorkingDayStart(accountSettingsFromDb.getDefaultWorkingDayStart());
         }
 
         if (workingDayFacade.getWorkingDayEnd() == null) {
-            workingDayFacade.setWorkingDayEnd(accountSettingsFacade.getDefaultWorkingDayEnd());
+            workingDayFacade.setWorkingDayEnd(accountSettingsFromDb.getDefaultWorkingDayEnd());
         }
 
-        return ResponseEntity.ok(workingDayDataService.create(workingDayFacade));
+//        TODO warning place 1
+        workingDayFacade.setAccountFacade(AccountFacadeConverter.toDtoOnlyId(accountOptional.get()));
+        WorkingDay creationWorkingDay = WorkingDayFacadeConverter.convertToModel(workingDayFacade);
+        WorkingDayFacade createdWorkingDay = WorkingDayFacadeConverter.convertToDto(
+                workingDayDataService.create(creationWorkingDay));
+
+        return ResponseEntity.ok(createdWorkingDay);
     }
 
     /**
@@ -78,7 +112,7 @@ public class WorkingDaysRestController {
     @PreAuthorize("hasRole('MASTER') && #idAccount == authentication.principal.idAccount")
     @DeleteMapping("/accounts/{idAccount}/working-days/{idWorkingDay}")
     public ResponseEntity<Facade> deleteWorkingDay(@PathVariable int idAccount, @PathVariable int idWorkingDay) {
-        if (accountDataService.isAccountExistsById(idAccount)) {
+        if (!accountDataService.isAccountExistsById(idAccount)) {
             return new ResponseEntity<>(new CustomResponseObject(
                     HttpStatus.NOT_EXTENDED.value(),
                     "There not found account with id " + idAccount,

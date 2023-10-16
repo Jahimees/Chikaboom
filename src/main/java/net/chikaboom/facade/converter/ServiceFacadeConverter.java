@@ -12,6 +12,28 @@ public final class ServiceFacadeConverter implements FacadeConverter {
     }
 
     /**
+     * Поля все кроме accountFacade и serviceSubtypeFacade
+     */
+    public static ServiceFacade toDtoForAppointmentDataTable(Service model) {
+        ServiceFacade serviceFacade = convertToDto(model);
+
+        serviceFacade.setAccountFacade(null);
+        serviceFacade.setServiceSubtypeFacade(null);
+
+        return serviceFacade;
+    }
+
+    /**
+     * Нет поля serviceSubtypeFacade
+     */
+    public static ServiceFacade toSearchResultPage(Service model) {
+        ServiceFacade serviceFacade = convertToDto(model);
+        serviceFacade.setServiceSubtypeFacade(null);
+
+        return serviceFacade;
+    }
+
+    /**
      * Конвертирует объект базы данных в объект фасада - DTO
      *
      * @param model объект модели
@@ -24,8 +46,9 @@ public final class ServiceFacadeConverter implements FacadeConverter {
         serviceFacade.setName(model.getName());
         serviceFacade.setPrice(model.getPrice());
         serviceFacade.setTime(model.getTime());
+//        TODO warning place 5
         if (model.getAccount() != null) {
-            serviceFacade.setAccountFacade(AccountFacadeConverter.convertToDto(model.getAccount()));
+            serviceFacade.setAccountFacade(AccountFacadeConverter.toDtoOnlyId(model.getAccount()));
         }
         if (model.getServiceSubtype() != null) {
             serviceFacade.setServiceSubtypeFacade(ServiceSubtypeFacadeConverter.convertToDto(model.getServiceSubtype()));

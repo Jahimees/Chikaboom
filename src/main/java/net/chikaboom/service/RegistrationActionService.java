@@ -1,8 +1,8 @@
 package net.chikaboom.service;
 
 import lombok.RequiredArgsConstructor;
-import net.chikaboom.facade.dto.AccountFacade;
-import net.chikaboom.facade.dto.RoleFacade;
+import net.chikaboom.model.database.Account;
+import net.chikaboom.model.database.Role;
 import net.chikaboom.service.data.AccountDataService;
 import net.chikaboom.util.constant.ApplicationRole;
 import org.apache.log4j.Logger;
@@ -34,20 +34,20 @@ public class RegistrationActionService {
      * @return возвращает созданный аккаунт. В случае неудачи выбрасывает исключение попытки создания существующего
      * пользователя
      */
-    public AccountFacade register(AccountFacade accountFacade) {
+    public Account register(Account account) {
 
-        Set<RoleFacade> roleSet = new HashSet<>();
-        accountFacade.getRolesFacade().forEach(role -> {
+        Set<Role> roleSet = new HashSet<>();
+        account.getRoles().forEach(role -> {
             int idRole = ApplicationRole.valueOf(role.getName()).getValue();
-            roleSet.add(new RoleFacade(idRole));
+            roleSet.add(new Role(idRole));
         });
-        accountFacade.setRolesFacade(roleSet);
+        account.setRoles(roleSet);
 
-        accountFacade.setRegistrationDate(Timestamp.valueOf(LocalDateTime.now()));
-        accountFacade.setPassword(passwordEncoder.encode(accountFacade.getPassword()));
+        account.setRegistrationDate(Timestamp.valueOf(LocalDateTime.now()));
+        account.setPassword(passwordEncoder.encode(account.getPassword()));
 
         logger.info("Saving new account...");
 
-        return accountDataService.create(accountFacade);
+        return accountDataService.create(account);
     }
 }

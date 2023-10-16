@@ -25,14 +25,14 @@ public class AccountRoles implements BaseEntity {
     /**
      * Ссылка на аккаунт
      */
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = ID_ACCOUNT)
     private Account account;
 
     /**
      * Ссылка на роль
      */
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = ID_ROLE)
     private Role role;
 }

@@ -32,8 +32,9 @@ public final class AccountStatusFacadeConverter implements FacadeConverter {
         if (model.getStatus() != null) {
             accountStatusFacade.setStatusFacade(StatusFacadeConverter.convertToDto(model.getStatus()));
         }
+//        TODO warning place 3
         if (model.getAccount() != null) {
-            accountStatusFacade.setAccountFacade(AccountFacadeConverter.convertToDto(model.getAccount()));
+            accountStatusFacade.setAccountFacade(AccountFacadeConverter.toDtoOnlyId(model.getAccount()));
         }
 
         return accountStatusFacade;

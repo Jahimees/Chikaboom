@@ -41,6 +41,7 @@
             async: false,
             url: "/accounts/" + idAccount,
             success: function (data) {
+                console.log("Endpoint 1 done::: ");
                 return accountFacadeJson = data;
             },
             error: function () {

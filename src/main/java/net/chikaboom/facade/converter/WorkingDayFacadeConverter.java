@@ -33,8 +33,9 @@ public final class WorkingDayFacadeConverter implements FacadeConverter {
         if (model.getWorkingDayEnd() != null) {
             workingDayFacade.setWorkingDayEnd((Time) model.getWorkingDayEnd().clone());
         }
+//        TODO warning place 7
         if (model.getAccount() != null) {
-            workingDayFacade.setAccountFacade(AccountFacadeConverter.convertToDto(model.getAccount()));
+            workingDayFacade.setAccountFacade(AccountFacadeConverter.toDtoOnlyId(model.getAccount()));
         }
 
         return workingDayFacade;

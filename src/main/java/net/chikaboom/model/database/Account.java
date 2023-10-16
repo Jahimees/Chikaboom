@@ -119,13 +119,4 @@ public class Account implements BaseEntity, UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
-//    TODO Переделать
-    public void clearPersonalFields() {
-//        password = null;
-//        oldPassword = null;
-//        registrationDate = null;
-//        email = null;
-//        accountSettings = null;
-    }
 }

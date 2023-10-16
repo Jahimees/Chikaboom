@@ -2,10 +2,8 @@ package net.chikaboom.service.data;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import lombok.RequiredArgsConstructor;
-import net.chikaboom.facade.converter.UserDetailsFacadeConverter;
-import net.chikaboom.facade.dto.AboutFacade;
-import net.chikaboom.facade.dto.PhoneCodeFacade;
-import net.chikaboom.facade.dto.UserDetailsFacade;
+import net.chikaboom.model.database.About;
+import net.chikaboom.model.database.PhoneCode;
 import net.chikaboom.model.database.UserDetails;
 import net.chikaboom.repository.UserDetailsRepository;
 import net.chikaboom.util.PhoneNumberUtils;
@@ -16,14 +14,13 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Сервис предоставляет возможность обработки данных пользовательской информации.
  */
 @Service
 @RequiredArgsConstructor
-public class UserDetailsDataService implements DataService<UserDetailsFacade> {
+public class UserDetailsDataService implements DataService<UserDetails> {
 
     private final UserDetailsRepository userDetailsRepository;
     private final AboutDataService aboutDataService;
@@ -36,14 +33,8 @@ public class UserDetailsDataService implements DataService<UserDetailsFacade> {
      * @return пользовательскую информацию
      */
     @Override
-    public UserDetailsFacade findById(int idUserDetails) {
-        Optional<UserDetails> userDetailsOptional = userDetailsRepository.findById(idUserDetails);
-
-        if (!userDetailsOptional.isPresent()) {
-            throw new NotFoundException("There is no found user details with id " + idUserDetails);
-        }
-
-        return UserDetailsFacadeConverter.convertToDto(userDetailsOptional.get());
+    public Optional<UserDetails> findById(int idUserDetails) {
+        return userDetailsRepository.findById(idUserDetails);
     }
 
     /**
@@ -52,9 +43,8 @@ public class UserDetailsDataService implements DataService<UserDetailsFacade> {
      * @return список объектов пользовательской информации
      */
     @Override
-    public List<UserDetailsFacade> findAll() {
-        return userDetailsRepository.findAll().stream().map(
-                UserDetailsFacadeConverter::convertToDto).collect(Collectors.toList());
+    public List<UserDetails> findAll() {
+        return userDetailsRepository.findAll();
     }
 
     /**
@@ -70,54 +60,56 @@ public class UserDetailsDataService implements DataService<UserDetailsFacade> {
     /**
      * Производит обновление объекта в базе данных. Внимание! Полностью перезаписывает объект
      *
-     * @param userDetailsFacade объект пользовательской информации
+     * @param userDetails объект пользовательской информации
      * @return обновленный объект пользовательской информации
      */
     @Override
-    public UserDetailsFacade update(UserDetailsFacade userDetailsFacade) {
-        if (!userDetailsRepository.existsById(userDetailsFacade.getIdUserDetails())) {
+    public UserDetails update(UserDetails userDetails) {
+        if (!userDetailsRepository.existsById(userDetails.getIdUserDetails())) {
             throw new NotFoundException("Target userDetails not found in database");
         }
 
-        return UserDetailsFacadeConverter.convertToDto(
-                userDetailsRepository.saveAndFlush(
-                        UserDetailsFacadeConverter.convertToModel(userDetailsFacade)));
+        return userDetailsRepository.saveAndFlush(userDetails);
     }
 
     /**
      * Создает пользователськую информацию в базе данных
      *
-     * @param userDetailsFacade пользовательская информация, которая должна быть сохранена в базе
+     * @param userDetails пользовательская информация, которая должна быть сохранена в базе
      * @return созданную пользовательскую информацию
      */
     @Override
-    public UserDetailsFacade create(UserDetailsFacade userDetailsFacade) {
-        AboutFacade aboutFacade = userDetailsFacade.getAboutFacade();
-        if (aboutFacade != null) {
-            userDetailsFacade.setAboutFacade(aboutDataService.create(userDetailsFacade.getAboutFacade()));
+    public UserDetails create(UserDetails userDetails) {
+        About about = userDetails.getAbout();
+        if (about != null) {
+            userDetails.setAbout(aboutDataService.create(userDetails.getAbout()));
         } else {
-            userDetailsFacade.setAboutFacade(aboutDataService.create(new AboutFacade()));
+            userDetails.setAbout(aboutDataService.create(new About()));
         }
 
-        if (userDetailsFacade.getPhoneCodeFacade() != null) {
-            userDetailsFacade.setPhoneCodeFacade(
-                    phoneCodeDataService.findFirstByCountryCut(userDetailsFacade.getPhoneCodeFacade().getCountryCut()));
+        if (userDetails.getPhoneCode() != null) {
+            Optional<PhoneCode> phoneCodeOptional = phoneCodeDataService.findFirstByCountryCut(userDetails.getPhoneCode().getCountryCut());
+
+            if (!phoneCodeOptional.isPresent()) {
+                throw new NotFoundException("There not found phoneCode by country cut " +
+                        userDetails.getPhoneCode().getCountryCut());
+            }
+
+            userDetails.setPhoneCode(phoneCodeOptional.get());
         }
 
-        if (userDetailsFacade.getDisplayedPhone() != null && !userDetailsFacade.getDisplayedPhone().equals("")
-                && userDetailsFacade.getPhoneCodeFacade() != null) {
+        if (userDetails.getDisplayedPhone() != null && !userDetails.getDisplayedPhone().isEmpty()
+                && userDetails.getPhoneCode() != null) {
             try {
-                userDetailsFacade.setDisplayedPhone(PhoneNumberUtils.formatNumberInternational(
-                        userDetailsFacade.getDisplayedPhone(),
-                        userDetailsFacade.getPhoneCodeFacade().getCountryCut()));
+                userDetails.setDisplayedPhone(PhoneNumberUtils.formatNumberInternational(
+                        userDetails.getDisplayedPhone(),
+                        userDetails.getPhoneCode().getCountryCut()));
             } catch (NumberParseException e) {
                 throw new IllegalArgumentException("Cannot save user details. Phone is incorrect. " + e.getMessage());
             }
         }
 
-        return UserDetailsFacadeConverter.convertToDto(
-                userDetailsRepository.saveAndFlush(
-                        UserDetailsFacadeConverter.convertToModel(userDetailsFacade)));
+        return userDetailsRepository.saveAndFlush(userDetails);
     }
 
     /**
@@ -146,69 +138,77 @@ public class UserDetailsDataService implements DataService<UserDetailsFacade> {
      * @return найденную пользовательскую информацию
      * @throws NumberParseException возникает, когда невозможно отформатировать номер телефона
      */
-    public UserDetailsFacade findUserDetailsByPhone(String phone, String countryCut) throws NumberParseException,
+    public Optional<UserDetails> findUserDetailsByPhone(String phone, String countryCut) throws NumberParseException,
             BadCredentialsException {
         String formedPhone = PhoneNumberUtils.formatNumberInternational(phone, countryCut);
-        Optional<UserDetails> userDetailsOptional = userDetailsRepository.findUserDetailsByPhone(formedPhone);
 
-        if (!userDetailsOptional.isPresent()) {
-            throw new BadCredentialsException("There is not found userDetails with phone " + phone);
-        }
-
-        return UserDetailsFacadeConverter.convertToDto(userDetailsOptional.get());
+        return userDetailsRepository.findUserDetailsByPhone(formedPhone);
     }
 
     /**
      * Изменение данных пользовательской информации
      *
-     * @param userDetailsFacade обновляемая пользователская информация
+     * @param newUserDetails обновляемая пользователская информация
      * @return обновленная пользовательская информация
      */
-    public UserDetailsFacade patch(UserDetailsFacade userDetailsFacade) {
-        UserDetailsFacade userDetailsFacadeFromDb = findById(userDetailsFacade.getIdUserDetails());
+    public UserDetails patch(UserDetails newUserDetails) {
+        Optional<UserDetails> userDetailsOptional = findById(newUserDetails.getIdUserDetails());
 
-        if (userDetailsFacade.getLastName() != null && !userDetailsFacade.getLastName().isEmpty()) {
-            userDetailsFacadeFromDb.setLastName(userDetailsFacade.getLastName());
+        if (!userDetailsOptional.isPresent()) {
+            throw new NotFoundException("There not found userDetails with id " + newUserDetails.getIdUserDetails());
         }
 
-        if (userDetailsFacade.getFirstName() != null && !userDetailsFacade.getFirstName().isEmpty()) {
-            userDetailsFacadeFromDb.setFirstName(userDetailsFacade.getFirstName());
+        UserDetails userDetailsFromDb = userDetailsOptional.get();
+
+
+        if (newUserDetails.getLastName() != null && !newUserDetails.getLastName().isEmpty()) {
+            userDetailsFromDb.setLastName(newUserDetails.getLastName());
         }
 
-        if (userDetailsFacade.getDisplayedPhone() != null && !userDetailsFacade.getDisplayedPhone().isEmpty() &&
-                userDetailsFacade.getPhoneCodeFacade() != null &&
-                !userDetailsFacade.getPhoneCodeFacade().getCountryCut().isEmpty()) {
+        if (newUserDetails.getFirstName() != null && !newUserDetails.getFirstName().isEmpty()) {
+            userDetailsFromDb.setFirstName(newUserDetails.getFirstName());
+        }
+
+        if (newUserDetails.getDisplayedPhone() != null && !newUserDetails.getDisplayedPhone().isEmpty() &&
+                newUserDetails.getPhoneCode() != null &&
+                !newUserDetails.getPhoneCode().getCountryCut().isEmpty()) {
             try {
-                PhoneCodeFacade newPhoneCode = phoneCodeDataService.findFirstByCountryCut(
-                        userDetailsFacade.getPhoneCodeFacade().getCountryCut());
+                Optional<PhoneCode> newPhoneCodeOptional = phoneCodeDataService.findFirstByCountryCut(
+                        newUserDetails.getPhoneCode().getCountryCut());
 
-                userDetailsFacadeFromDb.setPhoneCodeFacade(newPhoneCode);
-                userDetailsFacadeFromDb.setDisplayedPhone(PhoneNumberUtils.formatNumberInternational(
-                        userDetailsFacade.getDisplayedPhone(), newPhoneCode.getCountryCut()));
+                if (!newPhoneCodeOptional.isPresent()) {
+                    throw new NotFoundException("There not found phoneCode by country cut " +
+                            newUserDetails.getPhoneCode().getCountryCut());
+                }
+
+                PhoneCode newPhoneCode = newPhoneCodeOptional.get();
+
+                userDetailsFromDb.setPhoneCode(newPhoneCode);
+                userDetailsFromDb.setDisplayedPhone(PhoneNumberUtils.formatNumberInternational(
+                        newUserDetails.getDisplayedPhone(), newPhoneCode.getCountryCut()));
             } catch (NumberParseException e) {
                 throw new IllegalArgumentException("Cannot save user details. Phone is incorrect. " + e.getMessage());
             }
         }
 
-        if (userDetailsFacade.getAboutFacade() != null) {
-            AboutFacade oldAboutFacade = userDetailsFacadeFromDb.getAboutFacade();
-            if (userDetailsFacade.getAboutFacade().getText() != null &&
-                    !userDetailsFacade.getAboutFacade().getText().isEmpty()) {
+        if (newUserDetails.getAbout() != null) {
+            About oldAbout = userDetailsFromDb.getAbout();
+            if (newUserDetails.getAbout().getText() != null &&
+                    !newUserDetails.getAbout().getText().isEmpty()) {
 
-                oldAboutFacade.setText(userDetailsFacade.getAboutFacade().getText());
+                oldAbout.setText(newUserDetails.getAbout().getText());
             }
 
-            if (userDetailsFacade.getAboutFacade().getProfession() != null &&
-                    !userDetailsFacade.getAboutFacade().getProfession().isEmpty()) {
+            if (newUserDetails.getAbout().getProfession() != null &&
+                    !newUserDetails.getAbout().getProfession().isEmpty()) {
 
-                oldAboutFacade.setProfession(userDetailsFacade.getAboutFacade().getProfession());
+                oldAbout.setProfession(newUserDetails.getAbout().getProfession());
             }
 
-            aboutDataService.update(oldAboutFacade);
+            aboutDataService.update(oldAbout);
         }
 
-        return UserDetailsFacadeConverter.convertToDto(userDetailsRepository.save(
-                UserDetailsFacadeConverter.convertToModel(userDetailsFacadeFromDb)));
+        return userDetailsRepository.save(userDetailsFromDb);
     }
 
     /**
@@ -218,7 +218,7 @@ public class UserDetailsDataService implements DataService<UserDetailsFacade> {
      * @param idMasterAccount идентификатор мастера
      * @return список клиентов мастера
      */
-    public List<UserDetailsFacade> findClientsWithExtraInfo(int idMasterAccount) {
+    public List<UserDetails> findClientsWithExtraInfo(int idMasterAccount) {
         List<UserDetailsRepository.ExtendedUserDetails> resultObjects =
                 userDetailsRepository.getListExtendedUserDetails(idMasterAccount);
 
@@ -241,7 +241,6 @@ public class UserDetailsDataService implements DataService<UserDetailsFacade> {
             }
         }
 
-        return resultUserDetailsList.stream().map(
-                UserDetailsFacadeConverter::convertToDto).collect(Collectors.toList());
+        return resultUserDetailsList;
     }
 }

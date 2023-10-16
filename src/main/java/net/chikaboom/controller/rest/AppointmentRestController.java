@@ -1,12 +1,14 @@
 package net.chikaboom.controller.rest;
 
 import lombok.RequiredArgsConstructor;
-import net.chikaboom.facade.dto.AccountFacade;
+import net.chikaboom.facade.converter.AppointmentFacadeConverter;
 import net.chikaboom.facade.dto.AppointmentFacade;
 import net.chikaboom.facade.dto.Facade;
 import net.chikaboom.facade.dto.UserDetailsFacade;
+import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.Appointment;
 import net.chikaboom.model.database.CustomPrincipal;
+import net.chikaboom.model.database.UserDetails;
 import net.chikaboom.model.response.CustomResponseObject;
 import net.chikaboom.service.data.AccountDataService;
 import net.chikaboom.service.data.AppointmentDataService;
@@ -19,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * REST контроллер для взаимодействия с сущностями типа {@link Appointment}
@@ -40,19 +44,36 @@ public class AppointmentRestController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/appointments/{idAppointment}")
     @Transactional(readOnly = true)
-    public ResponseEntity<AppointmentFacade> findAppointment(@PathVariable int idAppointment) {
-        AppointmentFacade appointmentFacade = appointmentDataService.findById(idAppointment);
+    public ResponseEntity<Facade> findAppointment(@PathVariable int idAppointment) {
+        Optional<Appointment> appointmentOptional = appointmentDataService.findById(idAppointment);
 
-        AccountFacade accountFacadeMaster = appointmentFacade.getMasterAccountFacade();
-        UserDetailsFacade clientDetailsFacade = appointmentFacade.getUserDetailsFacadeClient();
+        if (!appointmentOptional.isPresent()) {
+            return new ResponseEntity<>(new CustomResponseObject(
+                    HttpStatus.NOT_FOUND.value(),
+                    "There not found appointment with id " + idAppointment,
+                    "GET:/appointments/" + idAppointment
+            ), HttpStatus.NOT_FOUND);
+        }
+
+        Appointment appointmentFromDb = appointmentOptional.get();
+
+        Account accountFacadeMaster = appointmentFromDb.getMasterAccount();
+        UserDetails clientDetailsFacade = appointmentFromDb.getUserDetailsClient();
 
         CustomPrincipal principal = (CustomPrincipal) SecurityContextHolder
                 .getContext().getAuthentication().getPrincipal();
 
         if (principal.getIdAccount() != accountFacadeMaster.getIdAccount()
                 && principal.getIdUserDetails() != clientDetailsFacade.getIdUserDetails()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+            return new ResponseEntity<>(new CustomResponseObject(
+                    HttpStatus.FORBIDDEN.value(),
+                    "It's not allowed to find not your's appointment",
+                    "GET:/appointments/" + idAppointment
+            ), HttpStatus.FORBIDDEN);
         }
+
+        AppointmentFacade appointmentFacade = AppointmentFacadeConverter.convertToDto(appointmentFromDb);
 
         return ResponseEntity.ok(appointmentFacade);
     }
@@ -67,7 +88,8 @@ public class AppointmentRestController {
     @GetMapping("/appointments")
     @Deprecated
     public ResponseEntity<List<AppointmentFacade>> findAllAppointments() {
-        return ResponseEntity.ok(appointmentDataService.findAll());
+        return ResponseEntity.ok(appointmentDataService.findAll()
+                .stream().map(AppointmentFacadeConverter::convertToDto).collect(Collectors.toList()));
     }
 
     /**
@@ -76,7 +98,6 @@ public class AppointmentRestController {
      * @param idAccount идентификатор аккаунта мастера
      * @return список записей к указанному мастеру
      */
-//    TODO ВОЗВРАЩАЕТ СЛИШКОМ МНОГО ИНФОРМАЦИИ. Донастройка фасада
     @PreAuthorize("permitAll()")
     @GetMapping("/accounts/{idAccount}/income-appointments")
     public ResponseEntity<List<AppointmentFacade>> findIncomeAppointments(@PathVariable int idAccount) {
@@ -104,16 +125,38 @@ public class AppointmentRestController {
      */
     @PreAuthorize("isAuthenticated() && #idMasterAccount == authentication.principal.idAccount")
     @GetMapping("/accounts/{idMasterAccount}/appointments")
-    public ResponseEntity<List<AppointmentFacade>> clientAppointmentsByIdUserDetails(@PathVariable int idMasterAccount,
-                                                                                     @RequestParam int idUserDetails) {
-        UserDetailsFacade userDetailsFacade = userDetailsDataService.findById(idUserDetails);
+    public ResponseEntity<List<Facade>> clientAppointmentsByIdUserDetails(@PathVariable int idMasterAccount,
+                                                                          @RequestParam int idUserDetails) {
+        Optional<UserDetails> userDetailsOptional = userDetailsDataService.findById(idUserDetails);
 
-        AccountFacade masterAccountFacade = accountDataService.findById(idMasterAccount);
+        if (!userDetailsOptional.isPresent()) {
+            return new ResponseEntity<>(List.of(
+                    new CustomResponseObject(
+                            HttpStatus.NOT_FOUND.value(),
+                            "There not found userDetails with id " + idUserDetails,
+                            "GET:/accounts/" + idMasterAccount + "/appointments"
+                    )), HttpStatus.NOT_FOUND
+            );
+        }
 
-        return ResponseEntity.ok(
-                appointmentDataService.findAllByUserDetailsClientAndMasterAccount(
-                        userDetailsFacade,
-                        masterAccountFacade));
+        Optional<Account> accountOptional = accountDataService.findById(idMasterAccount);
+
+        if (!accountOptional.isPresent()) {
+            return new ResponseEntity<>(List.of(
+                    new CustomResponseObject(
+                            HttpStatus.NOT_FOUND.value(),
+                            "There not found account with id " + idMasterAccount,
+                            "GET:/accounts/" + idMasterAccount + "/appointments"
+                    )), HttpStatus.NOT_FOUND
+            );
+        }
+
+        List<Appointment> appointmentList = appointmentDataService.findAllByUserDetailsClientAndMasterAccount(
+                userDetailsOptional.get(),
+                accountOptional.get());
+
+        return ResponseEntity.ok(appointmentList
+                .stream().map(AppointmentFacadeConverter::toDtoForDataTableInModal).collect(Collectors.toList()));
     }
 
     /**
@@ -137,7 +180,10 @@ public class AppointmentRestController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorObject);
         }
 
-        return ResponseEntity.ok(appointmentDataService.create(appointmentFacade));
+        Appointment appointmentModel = AppointmentFacadeConverter.convertToModel(appointmentFacade);
+        Appointment createdAppointment = appointmentDataService.create(appointmentModel);
+
+        return ResponseEntity.ok(AppointmentFacadeConverter.convertToDto(createdAppointment));
     }
 
     /**
@@ -152,10 +198,21 @@ public class AppointmentRestController {
     @PutMapping("/appointments/{idAppointment}")
     public ResponseEntity<Facade> replaceAppointment(@PathVariable int idAppointment,
                                                      @RequestBody AppointmentFacade appointmentFacadeParam) {
-        AppointmentFacade appointmentFacadeDb = appointmentDataService.findById(idAppointment);
 
-        AccountFacade masterAccountFacade = appointmentFacadeDb.getMasterAccountFacade();
-        UserDetailsFacade clientDetailsFacade = appointmentFacadeDb.getUserDetailsFacadeClient();
+        Optional<Appointment> appointmentOptional = appointmentDataService.findById(idAppointment);
+
+        if (!appointmentOptional.isPresent()) {
+            return new ResponseEntity<>(new CustomResponseObject(
+                    HttpStatus.NOT_FOUND.value(),
+                    "There not found appointment with id " + idAppointment,
+                    "PUT:/appointments/" + idAppointment
+            ), HttpStatus.NOT_FOUND);
+        }
+
+        Appointment appointmentFromDb = appointmentOptional.get();
+
+        Account masterAccountFacade = appointmentFromDb.getMasterAccount();
+        UserDetails clientDetailsFacade = appointmentFromDb.getUserDetailsClient();
         CustomPrincipal principal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (principal.getIdAccount() != masterAccountFacade.getIdAccount()
@@ -169,9 +226,12 @@ public class AppointmentRestController {
                     "PUT:/appointments/" + idAppointment
             ), HttpStatus.FORBIDDEN);
         }
-        appointmentFacadeParam.setIdAppointment(idAppointment);
 
-        return ResponseEntity.ok(appointmentDataService.update(appointmentFacadeParam));
+        appointmentFacadeParam.setIdAppointment(idAppointment);
+        Appointment updatedAppointment = appointmentDataService.update(
+                AppointmentFacadeConverter.convertToModel(appointmentFacadeParam));
+
+        return ResponseEntity.ok(AppointmentFacadeConverter.convertToDto(updatedAppointment));
     }
 
     /**
@@ -184,14 +244,25 @@ public class AppointmentRestController {
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/appointments/{idAppointment}")
     public ResponseEntity<Facade> deleteAppointment(@PathVariable int idAppointment) {
-        AppointmentFacade appointmentFacade = appointmentDataService.findById(idAppointment);
+        Optional<Appointment> appointmentOptional = appointmentDataService.findById(idAppointment);
+
+        if (!appointmentOptional.isPresent()) {
+            return new ResponseEntity<>(new CustomResponseObject(
+                    HttpStatus.NOT_FOUND.value(),
+                    "There not found appointment with id " + idAppointment,
+                    "DELETE:/appointments/" + idAppointment
+            ), HttpStatus.NOT_FOUND);
+        }
+
+        Appointment appointmentFromDb = appointmentOptional.get();
+
 
         CustomPrincipal principal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        AccountFacade masterAccountFacade = appointmentFacade.getMasterAccountFacade();
-        UserDetailsFacade userDetailsFacadeClient = appointmentFacade.getUserDetailsFacadeClient();
+        Account masterAccount = appointmentFromDb.getMasterAccount();
+        UserDetails userDetailsClient = appointmentFromDb.getUserDetailsClient();
 
-        if (principal.getIdAccount() != masterAccountFacade.getIdAccount()
-                && principal.getIdUserDetails() != userDetailsFacadeClient.getIdUserDetails()) {
+        if (principal.getIdAccount() != masterAccount.getIdAccount()
+                && principal.getIdUserDetails() != userDetailsClient.getIdUserDetails()) {
 
             return new ResponseEntity<>(new CustomResponseObject(
                     HttpStatus.FORBIDDEN.value(),
@@ -218,11 +289,31 @@ public class AppointmentRestController {
     @PreAuthorize("hasRole('CLIENT') && #idAccount == authentication.principal.idAccount")
     @DeleteMapping("/accounts/{idAccount}/outcome-appointments/{idAppointment}")
     public ResponseEntity<Facade> deleteOutcomeAppointment(@PathVariable int idAccount, @PathVariable int idAppointment) {
-        AppointmentFacade appointmentFacade = appointmentDataService.findById(idAppointment);
 
-        AccountFacade accountFacadeFromDb = accountDataService.findById(idAccount);
+        Optional<Appointment> appointmentOptional = appointmentDataService.findById(idAppointment);
 
-        if (accountFacadeFromDb.getUserDetailsFacade() == null) {
+        if (!appointmentOptional.isPresent()) {
+            return new ResponseEntity<>(new CustomResponseObject(
+                    HttpStatus.NOT_FOUND.value(),
+                    "There not found appointment with id " + idAppointment,
+                    "DELETE:/accounts/" + idAccount + "/outcome-appointments/" + idAppointment
+            ), HttpStatus.NOT_FOUND);
+        }
+
+        Optional<Account> accountOptional = accountDataService.findById(idAccount);
+
+        if (!accountOptional.isPresent()) {
+            return new ResponseEntity<>(new CustomResponseObject(
+                    HttpStatus.NOT_FOUND.value(),
+                    "There not found account with idAccount " + idAccount,
+                    "DELETE:/accounts/" + idAccount + "/outcome-appointments/" + idAppointment
+            ), HttpStatus.NOT_FOUND);
+        }
+
+        Appointment appointmentFromDb = appointmentOptional.get();
+        Account accountFromDb = accountOptional.get();
+
+        if (accountFromDb.getUserDetails() == null) {
             return new ResponseEntity<>(new CustomResponseObject(
                     HttpStatus.NOT_FOUND.value(),
                     "There is empty userDetails in account with id " + idAccount,
@@ -230,8 +321,8 @@ public class AppointmentRestController {
             ), HttpStatus.NOT_FOUND);
         }
 
-        if (appointmentFacade.getUserDetailsFacadeClient().getIdUserDetails() !=
-                accountFacadeFromDb.getUserDetailsFacade().getIdUserDetails()) {
+        if (appointmentFromDb.getUserDetailsClient().getIdUserDetails() !=
+                accountFromDb.getUserDetails().getIdUserDetails()) {
 
             return new ResponseEntity<>(new CustomResponseObject(
                     HttpStatus.FORBIDDEN.value(),
@@ -260,9 +351,18 @@ public class AppointmentRestController {
     @PreAuthorize("hasRole('MASTER') && #idAccount == authentication.principal.idAccount")
     @DeleteMapping("/accounts/{idAccount}/income-appointments/{idAppointment}")
     public ResponseEntity<Facade> deleteIncomeAppointment(@PathVariable int idAccount, @PathVariable int idAppointment) {
-        AppointmentFacade appointmentFacade = appointmentDataService.findById(idAppointment);
 
-        if (appointmentFacade.getMasterAccountFacade().getIdAccount() != idAccount) {
+        Optional<Appointment> appointmentOptional = appointmentDataService.findById(idAppointment);
+
+        if (!appointmentOptional.isPresent()) {
+            return new ResponseEntity<>(new CustomResponseObject(
+                    HttpStatus.NOT_FOUND.value(),
+                    "There not found appointment with id " + idAppointment,
+                    "DELETE:/accounts/" + idAccount + "/income-appointments/" + idAppointment
+            ), HttpStatus.NOT_FOUND);
+        }
+
+        if (appointmentOptional.get().getMasterAccount().getIdAccount() != idAccount) {
 
             return new ResponseEntity<>(new CustomResponseObject(
                     HttpStatus.FORBIDDEN.value(),
@@ -289,9 +389,10 @@ public class AppointmentRestController {
      * @return список записей в виде json
      */
     private ResponseEntity<List<AppointmentFacade>> findAppointmentsByIdAccount(int idAccount, boolean isClient) {
-        List<AppointmentFacade> appointmentList = appointmentDataService.findAllByIdAccount(idAccount, isClient);
+        List<Appointment> appointmentList = appointmentDataService.findAllByIdAccount(idAccount, isClient);
 
-        return ResponseEntity.ok(appointmentList);
+        return ResponseEntity.ok(appointmentList
+                .stream().map(AppointmentFacadeConverter::toDtoForAppointmentDataTable).collect(Collectors.toList()));
     }
 }
 

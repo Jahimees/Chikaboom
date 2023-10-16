@@ -19,7 +19,6 @@ public class PersonalityController {
     @Value("${page.personality}")
     private String PERSONALITY_PAGE;
 
-
     /**
      * Производит подготовку данных и открытие страницы личного кабинета мастера. Также проверяет аутентификацию пользователя
      *

@@ -2,10 +2,9 @@ package net.chikaboom.service;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import lombok.RequiredArgsConstructor;
-import net.chikaboom.facade.converter.AccountFacadeConverter;
-import net.chikaboom.facade.dto.AccountFacade;
-import net.chikaboom.facade.dto.UserDetailsFacade;
+import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.CustomPrincipal;
+import net.chikaboom.model.database.UserDetails;
 import net.chikaboom.service.data.AccountDataService;
 import net.chikaboom.service.data.UserDetailsDataService;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -15,6 +14,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 /**
  * Собственная реализация аутентификации пользователя
@@ -40,30 +41,33 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String[] phoneDetails = phone.split("_");
         String password = authentication.getCredentials().toString();
 
-        UserDetailsFacade userDetailsFacade;
+        Optional<UserDetails> userDetailsOptional;
         try {
-            userDetailsFacade = userDetailsDataService.findUserDetailsByPhone(phoneDetails[0], phoneDetails[1]);
+            userDetailsOptional = userDetailsDataService.findUserDetailsByPhone(phoneDetails[0], phoneDetails[1]);
+            if (!userDetailsOptional.isPresent()) {
+                throw new BadCredentialsException("Unknown user with phone " + phone);
+            }
         } catch (NumberParseException e) {
             throw new IllegalArgumentException("Cannot find user details. Phone is incorrect");
-        } catch (BadCredentialsException e) {
-            throw new BadCredentialsException("Unknown user with phone " + phone);
-        }
-        AccountFacade accountFacade;
-        try {
-            accountFacade = accountDataService.findAccountByUserDetails(userDetailsFacade);
-        } catch (BadCredentialsException e) {
-            throw new BadCredentialsException("Unknown user with phone " + phone, e);
         }
 
-        if (!bCryptPasswordEncoder.matches(password, accountFacade.getPassword())) {
+        Optional<Account> accountOptional = accountDataService.findAccountByUserDetails(userDetailsOptional.get());
+
+        if (!accountOptional.isPresent()) {
+            throw new BadCredentialsException("Unknown user with phone " + phone);
+        }
+
+        Account account = accountOptional.get();
+
+
+        if (!bCryptPasswordEncoder.matches(password, account.getPassword())) {
             throw new BadCredentialsException("Bad password");
         }
 
-        CustomPrincipal principal = new CustomPrincipal(accountFacade.getIdAccount(),
-                accountFacade.getUserDetailsFacade().getIdUserDetails());
+        CustomPrincipal principal = new CustomPrincipal(account.getIdAccount(), account.getUserDetails().getIdUserDetails());
 
         return new UsernamePasswordAuthenticationToken(
-                principal, password, AccountFacadeConverter.convertToModel(accountFacade).getAuthorities());
+                principal, password, account.getAuthorities());
     }
 
     @Override

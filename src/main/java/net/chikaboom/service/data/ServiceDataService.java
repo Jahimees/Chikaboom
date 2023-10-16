@@ -1,10 +1,7 @@
 package net.chikaboom.service.data;
 
 import lombok.RequiredArgsConstructor;
-import net.chikaboom.facade.converter.AccountFacadeConverter;
-import net.chikaboom.facade.converter.ServiceFacadeConverter;
-import net.chikaboom.facade.dto.AccountFacade;
-import net.chikaboom.facade.dto.ServiceFacade;
+import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.Service;
 import net.chikaboom.repository.ServiceRepository;
 import net.chikaboom.repository.specification.ServiceSpecifications;
@@ -13,14 +10,13 @@ import org.springframework.security.acls.model.NotFoundException;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Сервис предоставляет возможность обработки данных пользовательских услуг
  */
 @RequiredArgsConstructor
 @org.springframework.stereotype.Service
-public class ServiceDataService implements DataService<ServiceFacade> {
+public class ServiceDataService implements DataService<Service> {
 
     private final ServiceRepository serviceRepository;
     private final AccountDataService accountDataService;
@@ -32,14 +28,8 @@ public class ServiceDataService implements DataService<ServiceFacade> {
      * @return найденную услугу
      */
     @Override
-    public ServiceFacade findById(int idService) {
-        Optional<Service> serviceOptional = serviceRepository.findById(idService);
-
-        if (!serviceOptional.isPresent()) {
-            throw new NotFoundException("There not found service with id " + idService);
-        }
-
-        return ServiceFacadeConverter.convertToDto(serviceOptional.get());
+    public Optional<Service> findById(int idService) {
+        return serviceRepository.findById(idService);
     }
 
     /**
@@ -48,9 +38,8 @@ public class ServiceDataService implements DataService<ServiceFacade> {
      * @return список всех услуг
      */
     @Override
-    public List<ServiceFacade> findAll() {
-        return serviceRepository.findAll().stream().map(
-                ServiceFacadeConverter::convertToDto).collect(Collectors.toList());
+    public List<Service> findAll() {
+        return serviceRepository.findAll();
     }
 
     /**
@@ -66,38 +55,35 @@ public class ServiceDataService implements DataService<ServiceFacade> {
     /**
      * Обновляет (полностью заменяет) услугу
      *
-     * @param serviceFacade новый объект услуги
+     * @param service новый объект услуги
      * @return измененный объект
      */
     @Override
-    public ServiceFacade update(ServiceFacade serviceFacade) {
-        Optional<Service> serviceOptional = serviceRepository.findById(serviceFacade.getIdService());
+    public Service update(Service service) {
+        Optional<Service> serviceOptional = serviceRepository.findById(service.getIdService());
 
         if (!serviceOptional.isPresent()) {
-            throw new NotFoundException("There not found service with id " + serviceFacade.getIdService());
+            throw new NotFoundException("There not found service with id " + service.getIdService());
         }
 
-        return ServiceFacadeConverter.convertToDto(
-                serviceRepository.save(
-                        ServiceFacadeConverter.convertToModel(serviceFacade)));
+        return serviceRepository.save(service);
     }
 
     /**
      * Создаёт новую пользовательскую услугу
      *
-     * @param serviceFacade создаваемый объект услуги
+     * @param service создаваемый объект услуги
      * @return созданный объект
      */
     @Override
-    public ServiceFacade create(ServiceFacade serviceFacade) {
-        if (isServiceExists(serviceFacade)) {
+    public Service create(Service service) {
+        if (isServiceExists(service)) {
             throw new AlreadyExistsException("This service already exists");
         }
-        serviceFacade.setIdService(0);
 
-        return ServiceFacadeConverter.convertToDto(
-                serviceRepository.save(
-                        ServiceFacadeConverter.convertToModel(serviceFacade)));
+        service.setIdService(0);
+
+        return serviceRepository.saveAndFlush(service);
     }
 
     /**
@@ -105,12 +91,16 @@ public class ServiceDataService implements DataService<ServiceFacade> {
      *
      * @return коллекцию пользовательских услуг (услуг мастера)
      */
-    public List<ServiceFacade> findAllServicesByIdAccount(int idAccount) {
-        AccountFacade accountFacade = accountDataService.findById(idAccount);
+    public List<Service> findAllServicesByIdAccount(int idAccount) {
+        Optional<Account> accountOptional = accountDataService.findById(idAccount);
 
-        return serviceRepository
-                .findAllByAccount(AccountFacadeConverter.convertToModel(accountFacade))
-                .stream().map(ServiceFacadeConverter::convertToDto).collect(Collectors.toList());
+        if (!accountOptional.isPresent()) {
+            throw new NotFoundException("There not found account with id " + idAccount);
+        }
+
+        Account accountFromDb = accountOptional.get();
+
+        return serviceRepository.findAllByAccount(accountFromDb);
     }
 
     /**
@@ -119,22 +109,18 @@ public class ServiceDataService implements DataService<ServiceFacade> {
      *
      * @return коллекцию пользовательских услуг
      */
-    public List<ServiceFacade> findServicesByServiceSubtypeIds(int[] serviceSubtypeIdArray, int idServiceType) {
-        List<Service> serviceList;
-        serviceList = serviceRepository.findAll(
-                ServiceSpecifications.servicesByServiceSubtypeIdArray(serviceSubtypeIdArray, idServiceType)
-        );
-
-        return serviceList.stream().map(ServiceFacadeConverter::convertToDto).collect(Collectors.toList());
+    public List<Service> findServicesByServiceSubtypeIds(int[] serviceSubtypeIdArray, int idServiceType) {
+        return serviceRepository.findAll(
+                ServiceSpecifications.servicesByServiceSubtypeIdArray(serviceSubtypeIdArray, idServiceType));
     }
 
     /**
      * Производит проверку на существование сервиса в базе данных.
      *
-     * @param serviceFacade проверяемая услуга
+     * @param service проверяемая услуга
      * @return true - если сервис уже существует, false - в противном случае
      */
-    public boolean isServiceExists(ServiceFacade serviceFacade) {
-        return serviceRepository.existsById(serviceFacade.getIdService());
+    public boolean isServiceExists(Service service) {
+        return serviceRepository.existsById(service.getIdService());
     }
 }

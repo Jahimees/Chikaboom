@@ -2,7 +2,9 @@ package net.chikaboom.controller;
 
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.controller.error.AdviceController;
+import net.chikaboom.facade.converter.AccountFacadeConverter;
 import net.chikaboom.facade.dto.AccountFacade;
+import net.chikaboom.model.database.Account;
 import net.chikaboom.service.RegistrationActionService;
 import org.apache.log4j.Logger;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +38,10 @@ public class RegistrationController {
     public ResponseEntity<AccountFacade> register(@RequestBody AccountFacade accountFacade) {
         logger.info("Start registration process.");
 
-        return ResponseEntity.ok(registrationActionService.register(accountFacade));
+        Account creationAccount =  AccountFacadeConverter.convertToModel(accountFacade);
+        AccountFacade createdAccount = AccountFacadeConverter.toDtoForAccountUser(
+                registrationActionService.register(creationAccount));
+
+        return ResponseEntity.ok(createdAccount);
     }
 }

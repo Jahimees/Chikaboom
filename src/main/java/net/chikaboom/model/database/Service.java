@@ -43,14 +43,14 @@ public class Service implements BaseEntity {
     /**
      * Аккаунт, владелец которого оказывает данную услугу
      */
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = ID_ACCOUNT)
     private Account account;
 
     /**
      * Родительский тип подуслуги для данной пользовательской услуги
      */
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = ID_SERVICE_SUBTYPE)
     private ServiceSubtype serviceSubtype;
 
@@ -70,21 +70,17 @@ public class Service implements BaseEntity {
         if (splittedServiceDurationTime.length == 1) {
 //            TODO булшит. Если число меньше 24, то это полюбому часы? Это будет работать пока шаг по времени = 30 минут
             if (Integer.parseInt(splittedServiceDurationTime[0]) <= 24) {
-                resultTime[0] = Integer.parseInt(splittedServiceDurationTime[0]);
+                resultTime[0] = Integer.parseInt(splittedServiceDurationTime[0].trim());
                 resultTime[1] = 0;
             } else {
                 resultTime[0] = 0;
-                resultTime[1] = Integer.parseInt(splittedServiceDurationTime[0]);
+                resultTime[1] = Integer.parseInt(splittedServiceDurationTime[0].trim());
             }
         } else {
-            resultTime[0] = Integer.parseInt(splittedServiceDurationTime[0]);
-            resultTime[1] = Integer.parseInt(splittedServiceDurationTime[1]);
+            resultTime[0] = Integer.parseInt(splittedServiceDurationTime[0].trim());
+            resultTime[1] = Integer.parseInt(splittedServiceDurationTime[1].trim());
         }
 
         return resultTime;
-    }
-
-    public void clearPersonalFields() {
-        account.clearPersonalFields();
     }
 }

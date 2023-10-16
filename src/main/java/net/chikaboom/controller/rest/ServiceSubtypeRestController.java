@@ -2,6 +2,7 @@ package net.chikaboom.controller.rest;
 
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.exception.NoSuchDataException;
+import net.chikaboom.facade.converter.ServiceSubtypeFacadeConverter;
 import net.chikaboom.facade.dto.Facade;
 import net.chikaboom.facade.dto.ServiceSubtypeFacade;
 import net.chikaboom.model.database.ServiceSubtype;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * REST контроллер для взаимодействия с сущностями типа {@link ServiceSubtype}
@@ -33,8 +36,18 @@ public class ServiceSubtypeRestController {
      */
     @PreAuthorize("permitAll()")
     @GetMapping("/service-subtypes/{idServiceSubtype}")
-    public ResponseEntity<ServiceSubtypeFacade> findServiceSubtype(int idServiceSubtype) {
-        return ResponseEntity.ok(serviceSubtypeDataService.findById(idServiceSubtype));
+    public ResponseEntity<Facade> findServiceSubtype(int idServiceSubtype) {
+        Optional<ServiceSubtype> serviceSubtypeOptional = serviceSubtypeDataService.findById(idServiceSubtype);
+
+        if (!serviceSubtypeOptional.isPresent()) {
+            return new ResponseEntity<>(new CustomResponseObject(
+                    HttpStatus.NOT_FOUND.value(),
+                    "There not found serviceSubtype with id " + idServiceSubtype,
+                    "GET:/service_subtypes/" + idServiceSubtype
+            ), HttpStatus.NOT_FOUND);
+        }
+
+        return ResponseEntity.ok(ServiceSubtypeFacadeConverter.convertToDto(serviceSubtypeOptional.get()));
     }
 
     /**
@@ -45,7 +58,8 @@ public class ServiceSubtypeRestController {
     @PreAuthorize("permitAll()")
     @GetMapping("/service-subtypes")
     public ResponseEntity<List<ServiceSubtypeFacade>> findAllServiceSubtypes() {
-        return ResponseEntity.ok(serviceSubtypeDataService.findAll());
+        return ResponseEntity.ok(serviceSubtypeDataService.findAll()
+                .stream().map(ServiceSubtypeFacadeConverter::convertToDto).collect(Collectors.toList()));
     }
 
     /**
@@ -56,8 +70,8 @@ public class ServiceSubtypeRestController {
      */
     @PreAuthorize("permitAll()")
     @GetMapping("/service-types/{idServiceType}/service-subtypes")
-    public ResponseEntity<List<? extends Facade>> findAllServiceSubtypesByIdServiceType(@PathVariable int idServiceType) {
-        List<ServiceSubtypeFacade> serviceSubtypeList;
+    public ResponseEntity<List<Facade>> findAllServiceSubtypesByIdServiceType(@PathVariable int idServiceType) {
+        List<ServiceSubtype> serviceSubtypeList;
         try {
             serviceSubtypeList = serviceSubtypeDataService.findAllServiceSubtypesByIdServiceType(idServiceType);
         } catch (NoSuchDataException e) {
@@ -69,6 +83,7 @@ public class ServiceSubtypeRestController {
             )), HttpStatus.NOT_FOUND);
         }
 
-        return ResponseEntity.ok(serviceSubtypeList);
+        return ResponseEntity.ok(serviceSubtypeList
+                .stream().map(ServiceSubtypeFacadeConverter::convertToDto).collect(Collectors.toList()));
     }
 }
