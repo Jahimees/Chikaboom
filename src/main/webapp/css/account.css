@@ -151,3 +151,6 @@ p {
 .review-text-block {
     margin-left: 10px;
 }
+.modal.and.carousel {
+    position: fixed; // Needed because the carousel overrides the position property
+}

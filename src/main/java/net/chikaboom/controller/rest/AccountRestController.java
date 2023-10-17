@@ -172,7 +172,12 @@ public class AccountRestController {
     }
 
     private AccountFacade convertToDto(int idAccount, Account account) {
-        CustomPrincipal customPrincipal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        CustomPrincipal customPrincipal;
+        if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof String) {
+            customPrincipal = new CustomPrincipal(0, 0);
+        } else {
+            customPrincipal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        }
 
         return customPrincipal.getIdAccount() == idAccount ? AccountFacadeConverter
                 .toDtoForAccountUser(account) : AccountFacadeConverter.toDtoForNotAccountUser(account);

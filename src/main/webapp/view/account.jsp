@@ -39,7 +39,8 @@
                 <div class="d-flex flex-row-reverse master-only">
                     <img src="../../image/icon/edit_icon.svg">
                     <!-- Кнопка-триггер модального окна -->
-                    <button id="make-appointment-btn" type="button" class="purple-button m-2 master-only" data-bs-toggle="modal"
+                    <button id="make-appointment-btn" type="button" class="purple-button m-2 master-only"
+                            data-bs-toggle="modal"
                             data-bs-target="#appointmentModal">
                         ЗАПИСАТЬСЯ
                     </button>
@@ -99,7 +100,7 @@
             <div class="chapter-header medium-text">
                 ГАЛЕРЕЯ ФОТО
             </div>
-            <div class="d-inline-flex w-100" style="justify-content: center;">
+            <div class="d-inline-flex w-100" onclick="{$('#galleryModal').modal('show')}" style="justify-content: center;">
                 <div>
                     <img class="gallery_image" src="../../image/serviceType/service_icon_4.png">
                 </div>
@@ -183,6 +184,7 @@
 
 <jsp:include page="/view/common/popup/login_popup.jsp"/>
 <jsp:include page="/view/common/popup/message_popup.jsp"/>
+<jsp:include page="/view/common/popup/gallery_modal.jsp"/>
 <script type="text/javascript" src="/js/static_popup.js"></script>
 <script type="text/javascript" src="/js/dynamic_popup.js"></script>
 <script type="text/javascript" src="/js/account.js"></script>
@@ -193,6 +195,13 @@
 <script>
 
     $(document).ready(function () {
-       initializePage(${idAccount});
+        initializePage(${idAccount});
+        $('.your-class').slick();
+
+    })
+
+    $('.modal').on('shown.bs.modal', function (e) {
+        $('.your-class').slick('setPosition');
+        $('.wrap-modal-slider').addClass('open');
     })
 </script>

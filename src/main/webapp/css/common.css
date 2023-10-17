@@ -94,6 +94,10 @@ a {
     width: 15%;
 }
 
+.w-50 {
+    width: 50% !important;
+}
+
 .w-80 {
     width: 80% !important;
 }

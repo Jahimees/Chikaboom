@@ -35,6 +35,12 @@ public class UploadFileService {
             new File(USER_FOLDER + idAccount).mkdirs();
         }
 
+        if (fileName.split("/").length > 1) {
+            if (!new File(USER_FOLDER + idAccount + "/gallery").exists()) {
+                new File(USER_FOLDER + idAccount + "/gallery").mkdirs();
+            }
+        }
+
         try (BufferedOutputStream stream = new BufferedOutputStream(
                 new FileOutputStream(
                         new File(USER_FOLDER + idAccount + "/" + fileName)))) {
@@ -42,6 +48,7 @@ public class UploadFileService {
             logger.info("Trying to save user file into system");
             byte[] bytes = multipartFile.getBytes();
             stream.write(bytes);
+            //saveToDb
 
         } catch (FileNotFoundException ex) {
             logger.error(ex);
