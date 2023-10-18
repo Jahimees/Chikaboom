@@ -1,6 +1,10 @@
 package net.chikaboom.service;
 
+import lombok.RequiredArgsConstructor;
 import net.chikaboom.exception.NoSuchDataException;
+import net.chikaboom.facade.dto.UserFileFacade;
+import net.chikaboom.facade.service.AccountFacadeService;
+import net.chikaboom.facade.service.UserFileFacadeService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,10 +18,13 @@ import java.io.*;
  */
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class UploadFileService {
 
     @Value("${url.user.folder}")
     private String USER_FOLDER;
+    private final UserFileFacadeService userFileFacadeService;
+    private final AccountFacadeService accountFacadeService;
 
     private final Logger logger = Logger.getLogger(this.getClass());
 
@@ -48,7 +55,11 @@ public class UploadFileService {
             logger.info("Trying to save user file into system");
             byte[] bytes = multipartFile.getBytes();
             stream.write(bytes);
-            //saveToDb
+
+            UserFileFacade userFileFacade = new UserFileFacade();
+            userFileFacade.setFilePath(USER_FOLDER + idAccount + "/" + fileName);
+            userFileFacade.setAccountFacade(accountFacadeService.findById(idAccount));
+            userFileFacadeService.create(userFileFacade);
 
         } catch (FileNotFoundException ex) {
             logger.error(ex);

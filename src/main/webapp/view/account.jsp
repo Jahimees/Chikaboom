@@ -100,19 +100,8 @@
             <div class="chapter-header medium-text">
                 ГАЛЕРЕЯ ФОТО
             </div>
-            <div class="d-inline-flex w-100" onclick="{$('#galleryModal').modal('show')}" style="justify-content: center;">
-                <div>
-                    <img class="gallery_image" src="../../image/serviceType/service_icon_4.png">
-                </div>
-                <div>
-                    <img class="gallery_image" src="../../image/serviceType/service_icon_2.png">
-                </div>
-                <div>
-                    <img class="gallery_image" src="../../image/serviceType/service_icon_6.png">
-                </div>
-                <div>
-                    <img class="gallery_image" src="../../image/serviceType/service_icon_10.png">
-                </div>
+            <div class="d-inline-flex w-100" id="photo-container"  style="justify-content: center;">
+
             </div>
         </div>
 
@@ -184,24 +173,23 @@
 
 <jsp:include page="/view/common/popup/login_popup.jsp"/>
 <jsp:include page="/view/common/popup/message_popup.jsp"/>
-<jsp:include page="/view/common/popup/gallery_modal.jsp"/>
 <script type="text/javascript" src="/js/static_popup.js"></script>
 <script type="text/javascript" src="/js/dynamic_popup.js"></script>
 <script type="text/javascript" src="/js/account.js"></script>
 <script type="text/javascript" src="/js/service.js"></script>
 <script type="text/javascript" src="/js/appointment.js"></script>
 <script type="text/javascript" src="/js/client.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/bs5-lightbox@1.8.3/dist/index.bundle.min.js"></script>
 <script>
 
     $(document).ready(function () {
         initializePage(${idAccount});
-        $('.your-class').slick();
 
-    })
+        document.querySelectorAll('.my-lightbox-toggle').forEach((el) => el.addEventListener('click', (e) => {
+            e.preventDefault();
+            const lightbox = new Lightbox(el);
+            lightbox.show();
+        }));
 
-    $('.modal').on('shown.bs.modal', function (e) {
-        $('.your-class').slick('setPosition');
-        $('.wrap-modal-slider').addClass('open');
     })
 </script>

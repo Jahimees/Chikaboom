@@ -6,6 +6,7 @@ import net.chikaboom.controller.RegistrationController;
 import net.chikaboom.facade.converter.AccountFacadeConverter;
 import net.chikaboom.facade.dto.AccountFacade;
 import net.chikaboom.facade.dto.Facade;
+import net.chikaboom.facade.service.AccountFacadeService;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.CustomPrincipal;
 import net.chikaboom.model.response.CustomResponseObject;
@@ -20,8 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * REST контроллер для взаимодействия с сущностями типа {@link Account}
@@ -32,6 +31,7 @@ import java.util.stream.Collectors;
 public class AccountRestController {
 
     private final AccountDataService accountDataService;
+    private final AccountFacadeService accountFacadeService;
 
     /**
      * Производит поиск аккаунта по его id
@@ -42,16 +42,7 @@ public class AccountRestController {
     @PreAuthorize("permitAll()")
     @GetMapping("/{idAccount}")
     public ResponseEntity<Facade> findAccount(@PathVariable int idAccount) {
-        Optional<Account> accountOptional = accountDataService.findById(idAccount);
-
-        return accountOptional.<ResponseEntity<Facade>>map(account -> ResponseEntity.ok(
-                convertToDto(idAccount, account))).orElseGet(
-                () -> new ResponseEntity<>(new CustomResponseObject(
-                        HttpStatus.NOT_FOUND.value(),
-                        "There not found account with id " + idAccount,
-                        "GET:/accounts/" + idAccount
-                ), HttpStatus.NOT_FOUND));
-
+        return ResponseEntity.ok(accountFacadeService.findById(idAccount));
     }
 
     /**
@@ -63,8 +54,7 @@ public class AccountRestController {
     @GetMapping
     public ResponseEntity<List<AccountFacade>> findAllAccounts() {
 
-        List<AccountFacade> accountFacades = accountDataService.findAll()
-                .stream().map(AccountFacadeConverter::toDtoForNotAccountUser).collect(Collectors.toList());
+        List<AccountFacade> accountFacades = accountFacadeService.findAll();
 
         return new ResponseEntity<>(accountFacades, HttpStatus.OK);
     }
@@ -80,11 +70,10 @@ public class AccountRestController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<AccountFacade> createAccount(@RequestBody AccountFacade accountFacade) {
-        Account accountModel = AccountFacadeConverter.convertToModel(accountFacade);
 
-        Account createdAccount = accountDataService.create(accountModel);
+        AccountFacade resultAccountFacade = accountFacadeService.create(accountFacade);
 
-        return ResponseEntity.ok(AccountFacadeConverter.toDtoForAccountUser(createdAccount));
+        return ResponseEntity.ok(resultAccountFacade);
     }
 
     /**
@@ -124,7 +113,6 @@ public class AccountRestController {
         } catch (NumberParseException e) {
             return ResponseEntity.badRequest().build();
         }
-
 
         if (!patchedAccount.getUsername().equals(accountFacadeFromDb.getUsername()) ||
                 !patchedAccount.getUserDetails().getPhone().equals(accountFacadeFromDb.getUserDetailsFacade().getPhone()) ||

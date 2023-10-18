@@ -265,7 +265,7 @@
             contentType: false,
             processData: false,
             async: false,
-            url: "/chikaboom/upload/file/" + idAccount,
+            url: "/accounts/" + idAccount + "/user_files",
             data: formData,
             statusCode: {
                 201: function () {
