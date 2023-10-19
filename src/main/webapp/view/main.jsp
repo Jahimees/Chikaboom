@@ -160,6 +160,7 @@
     <jsp:include page="common/popup/message_popup.jsp"/>
     <jsp:include page="common/footer.jsp"/>
 </div>
+
 </body>
 </html>
 
@@ -182,5 +183,7 @@
         if (hash == '#register') {
             $("#registerModal").modal('show');
         }
+
+
     });
 </script>

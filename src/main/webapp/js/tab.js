@@ -22,6 +22,21 @@
         })
     }
 
+    function loadAnalyticsConcreteTab(tabName, idAccount) {
+        $.ajax({
+            type: "get",
+            url: "/chikaboom/personality/" + idAccount + "/analytics/" + tabName,
+            contentType: "application/text",
+            dataType: "text",
+            success: function (data) {
+                $("#analytics-tab-placeholder").html(data);
+            },
+            error: function () {
+                callMessagePopup("Ошибка!", "Невозможно загрузить информацию о настройках!")
+            }
+        });
+    }
+
     function loadSettingTab(tabName, idAccount) {
         $.ajax({
             type: "get",

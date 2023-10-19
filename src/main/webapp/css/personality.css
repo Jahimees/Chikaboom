@@ -215,3 +215,11 @@
     background: #674D85 !important;
     color: white !important;
 }
+
+.ct-series-a .ct-point {
+    stroke: #674D85 !important;
+}
+
+.ct-series-a .ct-line{
+    stroke: #674D85 !important;
+}

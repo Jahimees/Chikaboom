@@ -1,4 +1,8 @@
 {
+    Date.prototype.daysInMonth = function() {
+        return 32 - new Date(this.getFullYear(), this.getMonth(), 32).getDate();
+    };
+
     function loadConcreteTab(idAccount, thisObj, tabName) {
         selectCurrent(thisObj)
 
@@ -15,11 +19,6 @@
                 callMessagePopup("Ошибка", "Невозможно загрузить вкладку " + tabName + "!")
             }
         });
-    }
-
-    function loadStatistic(idAccount, thisObj) {
-        selectCurrent(thisObj);
-        underConstruction();
     }
 
     function loadMessages(idAccount, thisObj) {

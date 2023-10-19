@@ -71,7 +71,7 @@
                     <div><img class="small-icon" src="../../image/icon/service_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Услуги</a></div>
                 </div>
-                <div id="statistic-btn" onclick="loadStatistic(${idAccount}, this)" class="menu-child button"
+                <div id="statistic-btn" onclick="loadConcreteTab(${idAccount}, this, 'analytics')" class="menu-child button"
                      selected="false">
                     <div><img class="small-icon" src="../../image/icon/statistic_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Статистика</a></div>
