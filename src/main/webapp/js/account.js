@@ -32,18 +32,20 @@
             if (typeof userFilesCache !== "undefined") {
 
                 for (let i = userFilesCache.length - 1; i >= 0; i--) {
-                    let a = $('<a href="' + userFilesCache[i].filePath.replace("src/main/webapp/", "../../") + '" ' +
-                        'data-toggle="lightbox" ' +
-                        'data-gallery="example-gallery" class="col-sm-2 my-lightbox-toggle"> ' +
-                        '</a>');
-                    let img = $('<img src="' + userFilesCache[i].filePath.replace("src/main/webapp/", "../../") +'" ' +
-                        'class="img-fluid">');
-                    if (i < userFilesCache.length - 5) {
-                        a.attr("hidden", true);
-                    }
+                    if (!userFilesCache[i].filePath.includes("avatar")) {
+                        let a = $('<a href="' + userFilesCache[i].filePath.replace("src/main/webapp", "") + '" ' +
+                            'data-toggle="lightbox" ' +
+                            'data-gallery="example-gallery" class="col-sm-2 my-lightbox-toggle"> ' +
+                            '</a>');
+                        let img = $('<img src="' + userFilesCache[i].filePath.replace("src/main/webapp", "") + '" ' +
+                            'class="img-fluid">');
+                        if (i < userFilesCache.length - 5) {
+                            a.attr("hidden", true);
+                        }
 
-                    a.append(img);
-                    $("#photo-container").append(a);
+                        a.append(img);
+                        $("#photo-container").append(a);
+                    }
                 }
             }
         } else {

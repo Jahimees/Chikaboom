@@ -255,7 +255,7 @@
     function uploadAvatarImage(idAccount) {
         let formData = new FormData();
         formData.append("file", $("#avatar-input")[0].files[0]);
-        formData.append("fileName", "avatar.jpeg");
+        formData.append("fileName", "avatar");
         if (window.FormData === undefined) {
             alert('В вашем браузере FormData не поддерживается')
         }

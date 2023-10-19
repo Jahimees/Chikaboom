@@ -189,17 +189,21 @@
         userFilesCache = loadUserFiles(idAccount);
         $("#user-files-table").html('');
 
-        userFilesCache.reverse().forEach((userFile) => {
-            let tr = $("<tr></tr>");
-            let td1 = $("<td class='col-md-3'></td>");
-            let img = $("<img style='width: 150px; height: 150px; object-fit: cover' src='" + userFile.filePath.replace('src/main/webapp/', '../../') + "'>")
-            let td2 = $("<td class='margin-0-10 col-md-2 violet-button'>X</td>");
-            tr.append(td1);
-            tr.append(td2);
-            td1.append(img);
-            td2.attr("onclick", "callConfirmDeleteUserFile(" + userFile.idUserFile + ")");
-            $("#user-files-table").append(tr);
-        });
+        if (typeof userFilesCache != "undefined") {
+            userFilesCache.reverse().forEach((userFile) => {
+                if (!userFile.filePath.includes("avatar")) {
+                    let tr = $("<tr></tr>");
+                    let td1 = $("<td class='col-md-3'></td>");
+                    let img = $("<img style='width: 150px; height: 150px; object-fit: cover' src='" + userFile.filePath.replace('src/main/webapp', '') + "'>")
+                    let td2 = $("<td class='margin-0-10 col-md-2 violet-button'>X</td>");
+                    tr.append(td1);
+                    tr.append(td2);
+                    td1.append(img);
+                    td2.attr("onclick", "callConfirmDeleteUserFile(" + userFile.idUserFile + ")");
+                    $("#user-files-table").append(tr);
+                }
+            });
+        }
     }
 
     function callConfirmDeleteUserFile(idUserFile) {

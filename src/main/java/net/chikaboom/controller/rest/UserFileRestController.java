@@ -17,13 +17,24 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+/**
+ * REST-контроллер для управления сущностью {@link net.chikaboom.model.database.UserFile}
+ */
 @RestController
 @RequiredArgsConstructor
 public class UserFileRestController {
 
     private final UserFileFacadeService userFileFacadeService;
     private final AccountFacadeService accountFacadeService;
+    private final UploadFileService uploadFileService;
+    private final Logger logger = Logger.getLogger(this.getClass());
 
+    /**
+     * Находит все файлы пользователя
+     *
+     * @param idAccount идентификатор пользователя
+     * @return коллекцию файлов пользователя
+     */
     @PreAuthorize("permitAll()")
     @GetMapping("/accounts/{idAccount}/user_files")
     public ResponseEntity<List<UserFileFacade>> findAllUserFiles(@PathVariable int idAccount) {
@@ -31,35 +42,36 @@ public class UserFileRestController {
         return ResponseEntity.ok(userFileFacadeService.findAllByAccount(accountFacade));
     }
 
-
-    private final UploadFileService uploadFileService;
-    private final Logger logger = Logger.getLogger(this.getClass());
-
     /**
      * Получает данные файла с клиента и передает их на обработку на сервис
      *
      * @param idAccount идентификатор пользователя
-     * @param fileName  наименование файла
      * @param file      сохраняемый файл
      * @return объект ответа с кодом 201, если файл загружен успешно, 400 - в ином случае
      */
     @PreAuthorize("hasAnyRole('MASTER', 'CLIENT') and #idAccount == authentication.principal.idAccount")
     @PostMapping("/accounts/{idAccount}/user_files")
-    public ResponseEntity<String> handleImageUpload(@PathVariable int idAccount,
-                                                    @RequestParam String fileName,
-                                                    @RequestParam MultipartFile file) {
+    public ResponseEntity<UserFileFacade> handleImageUpload(@PathVariable int idAccount,
+                                                            @RequestParam MultipartFile file,
+                                                            @RequestParam(required = false) String fileName) {
         logger.info("Start to upload file");
         if (!file.isEmpty()) {
 
-            uploadFileService.uploadFile(idAccount, fileName, file);
+            UserFileFacade userFileFacade = uploadFileService.uploadFile(idAccount, file, fileName);
 
-            return new ResponseEntity<>("File successfully uploaded", HttpStatus.CREATED);
+            return new ResponseEntity<>(userFileFacade, HttpStatus.CREATED);
         } else {
             throw new NoSuchElementException("File is empty. User has not chosen it");
         }
-//        TODO если неверный формат данных
     }
 
+    /**
+     * Удаляет пользовательский файл и из базы данных и из системы
+     *
+     * @param idAccount  идентификатор аккаунта
+     * @param idUserFile идентификатор пользовательского файла
+     * @return json-ответ
+     */
     @PreAuthorize("isAuthenticated() && #idAccount == authentication.principal.idAccount")
     @DeleteMapping("/accounts/{idAccount}/user_files/{idUserFile}")
     public ResponseEntity<CustomResponseObject> deleteUserFile(@PathVariable int idAccount, @PathVariable int idUserFile) {
@@ -75,13 +87,12 @@ public class UserFileRestController {
             );
         }
 
-//        TODO delete
         userFileFacadeService.deleteById(idUserFile);
 
         return ResponseEntity.ok(new CustomResponseObject(
                 HttpStatus.OK.value(),
                 "File deleted",
                 "DELETE:/accounts/" + idAccount + "/user_files/" + idUserFile
-                ));
+        ));
     }
 }
