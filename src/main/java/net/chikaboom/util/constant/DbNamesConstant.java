@@ -81,6 +81,10 @@ public final class DbNamesConstant {
 
     public static final String DATE = "date";
 
+    public static final String USER_FILE = "user_file";
+    public static final String ID_USER_FILE = "iduser_file";
+    public static final String FILE_PATH = "file_path";
+
     private DbNamesConstant() {
     }
 }

@@ -39,7 +39,8 @@
                 <div class="d-flex flex-row-reverse master-only">
                     <img src="../../image/icon/edit_icon.svg">
                     <!-- Кнопка-триггер модального окна -->
-                    <button id="make-appointment-btn" type="button" class="purple-button m-2 master-only" data-bs-toggle="modal"
+                    <button id="make-appointment-btn" type="button" class="purple-button m-2 master-only"
+                            data-bs-toggle="modal"
                             data-bs-target="#appointmentModal">
                         ЗАПИСАТЬСЯ
                     </button>
@@ -99,19 +100,8 @@
             <div class="chapter-header medium-text">
                 ГАЛЕРЕЯ ФОТО
             </div>
-            <div class="d-inline-flex w-100" style="justify-content: center;">
-                <div>
-                    <img class="gallery_image" src="../../image/serviceType/service_icon_4.png">
-                </div>
-                <div>
-                    <img class="gallery_image" src="../../image/serviceType/service_icon_2.png">
-                </div>
-                <div>
-                    <img class="gallery_image" src="../../image/serviceType/service_icon_6.png">
-                </div>
-                <div>
-                    <img class="gallery_image" src="../../image/serviceType/service_icon_10.png">
-                </div>
+            <div class="d-inline-flex w-100" id="photo-container"  style="justify-content: center;">
+
             </div>
         </div>
 
@@ -189,10 +179,17 @@
 <script type="text/javascript" src="/js/service.js"></script>
 <script type="text/javascript" src="/js/appointment.js"></script>
 <script type="text/javascript" src="/js/client.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/bs5-lightbox@1.8.3/dist/index.bundle.min.js"></script>
 <script>
 
     $(document).ready(function () {
-       initializePage(${idAccount});
+        initializePage(${idAccount});
+
+        document.querySelectorAll('.my-lightbox-toggle').forEach((el) => el.addEventListener('click', (e) => {
+            e.preventDefault();
+            const lightbox = new Lightbox(el);
+            lightbox.show();
+        }));
+
     })
 </script>

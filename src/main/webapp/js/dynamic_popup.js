@@ -175,10 +175,6 @@
         fields.push(inputField);
 
         if (isPhoneCode) {
-            // let span = $("<div id='error-msg-edit-phone'>asddd</div>")
-
-            // console.log(span)
-            // inputField.append(span);
             initPhoneCodeWidget("edit-phone");
         }
 

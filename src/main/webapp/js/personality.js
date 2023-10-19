@@ -182,4 +182,81 @@
             }
         })
     })
+
+//////////////////////////////Images controls///////////////////////////////
+
+    function loadUserFilesToTable(idAccount) {
+        userFilesCache = loadUserFiles(idAccount);
+        $("#user-files-table").html('');
+
+        if (typeof userFilesCache != "undefined") {
+            userFilesCache.reverse().forEach((userFile) => {
+                if (!userFile.filePath.includes("avatar")) {
+                    let tr = $("<tr></tr>");
+                    let td1 = $("<td class='col-md-3'></td>");
+                    let img = $("<img style='width: 150px; height: 150px; object-fit: cover' src='" + userFile.filePath.replace('src/main/webapp', '') + "'>")
+                    let td2 = $("<td class='margin-0-10 col-md-2 violet-button'>X</td>");
+                    tr.append(td1);
+                    tr.append(td2);
+                    td1.append(img);
+                    td2.attr("onclick", "callConfirmDeleteUserFile(" + userFile.idUserFile + ")");
+                    $("#user-files-table").append(tr);
+                }
+            });
+        }
+    }
+
+    function callConfirmDeleteUserFile(idUserFile) {
+        callMessagePopup("Удаление", "Вы действительно хотите удалить фотографию?")
+
+        $("#decline-message-btn").css("display", "block");
+        $("#confirm-message-btn").attr("onclick", "deleteUserFile(" + idUserFile + ")");
+    }
+
+    function deleteUserFile(idUserFile) {
+        $.ajax({
+            method: 'delete',
+            url: '/accounts/' + accountFacadeJson.idAccount +'/user_files/' + idUserFile,
+            success: () => {
+                callMessagePopup("Удалено", "Фотография успешно удалена")
+                reloadUserFiles(accountFacadeJson.idAccount);
+                loadUserFilesToTable(accountFacadeJson.idAccount);
+            },
+            error: () => {
+                callMessagePopup("Ошибка", "Произошла ошибка удаления")
+            }
+        })
+    }
+    function uploadImage(idAccount) {
+        let formData = new FormData();
+        formData.append("file", $("#image-input")[0].files[0]);
+        let uuid = self.crypto.randomUUID();
+        formData.append("fileName", "gallery/" + uuid + ".jpeg");
+        if (window.FormData === undefined) {
+            alert('В вашем браузере FormData не поддерживается')
+        }
+        $.ajax({
+            method: "POST",
+            dataType: "json",
+            contentType: false,
+            processData: false,
+            async: false,
+            url: "/accounts/" + idAccount + "/user_files",
+            data: formData,
+            statusCode: {
+                201: function () {
+                    callMessagePopup("Фотография успешно загружена!", "Ваше новое фото профиля успешно было загружено!");
+                    reloadUserFiles(idAccount);
+                    loadUserFilesToTable(idAccount)
+                },
+                400: function () {
+                    callMessagePopup("Ошибка!", "Произошла ошибка! Фотографию не удалось загрузить!");
+                }
+            }
+        })
+    }
+
+    function chooseNewImage() {
+        $("#image-input").click();
+    }
 }
