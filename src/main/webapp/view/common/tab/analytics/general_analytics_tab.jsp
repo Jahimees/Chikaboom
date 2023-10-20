@@ -3,79 +3,66 @@
 
 <link rel="stylesheet" href="../../../css/chartist/chartist.min.css">
 <div class="content">
-    <div>
-        <div class="ct-chart ct-perfect-fourth"></div>
+    <div style="display: flex">
+        <div class="w-45">
+            <div class="medium-text">График записей за месяц</div>
+            <div id="select-box-appointments" class="flex-box-white">
+                <select id="month-selector-appointments" class="form-control">
+                    <option value="0">Январь</option>
+                    <option value="1">Февраль</option>
+                    <option value="2">Март</option>
+                    <option value="3">Апрель</option>
+                    <option value="4">Май</option>
+                    <option value="5">Июнь</option>
+                    <option value="6">Июль</option>
+                    <option value="7">Август</option>
+                    <option value="8">Сентябрь</option>
+                    <option value="9">Октябрь</option>
+                    <option value="10">Ноябрь</option>
+                    <option value="11">Декабрь</option>
+                </select>
+                <select id="year-selector-appointments" class="form-control">
+                    <option>
+
+                    </option>
+                </select>
+            </div>
+            <div class="ct-chart-appointments ct-perfect-fourth"></div>
+        </div>
+        <div class="w-45">
+            <div class="medium-text">% записей на конкретную услугу (за все время и за месяц)</div>
+            <div id="select-box-appointments-percent" class="flex-box-white">
+                <select id="month-selector-appointments-percent" class="form-control">
+                    <option value="0">Январь</option>
+                    <option value="1">Февраль</option>
+                    <option value="2">Март</option>
+                    <option value="3">Апрель</option>
+                    <option value="4">Май</option>
+                    <option value="5">Июнь</option>
+                    <option value="6">Июль</option>
+                    <option value="7">Август</option>
+                    <option value="8">Сентябрь</option>
+                    <option value="9">Октябрь</option>
+                    <option value="10">Ноябрь</option>
+                    <option value="11">Декабрь</option>
+                </select>
+                <select id="year-selector-appointments-percent" class="form-control">
+                    <option>
+
+                    </option>
+                </select>
+            </div>
+            <div class="ct-chart-appointments-percent ct-perfect-fourth"></div>
+        </div>
     </div>
 </div>
+
 <script src="../../../js/chartist/chartist.min.js"></script>
-
+<script src="../../../js/analytics.js"></script>
 <script>
+
     $(document).ready(function () {
-        let labels = []
-        let series = []
-        for (var i = 1; i <= new Date().daysInMonth(); i++) {
-            labels.push(i);
-            series.push(0);//{x: i, y: 0}
-        }
-
-        let appointmentsData
-        $.ajax({
-            method: "get",
-            url: "/accounts/" + ${idAccount} +"/income-appointments",
-            contentType: "application/json",
-            dataType: "json",
-            async: false,
-            success: function (json) {
-                // TODO optimize. Не нужны прошлые записи. Их догружать отдельно
-                appointmentsData = json
-            }
-        })
-
-        appointmentsData.forEach(appointment => {
-            let appointmentDate = new Date(appointment.appointmentDateTime);
-            if (appointmentDate.getMonth() === new Date().getMonth()) {
-                series[appointmentDate.getDate() - 1] += 1;
-                // series[appointmentDate.getDate() - 1].y += 1;
-            }
-        })
-
-        // TEST
-        var data = {
-            labels: labels,
-            series: [
-                series
-            ]
-        };
-
-        // var options = {
-        //     width: 800,
-        //     height: 300,
-        //     scaleMinSpace: 125,
-        //     // Can be set to true or false. If set to true, the scale will be generated with whole numbers only.
-        //     onlyInteger: true,
-        //     // The reference value can be used to make sure that this value will always be on the chart. This is especially useful on bipolar charts where the bipolar center always needs to be part of the chart.
-        //     divisor: 4,
-        // };
-
-        // new Chartist.Line('.ct-chart', data, options);
-        new Chartist.Line('.ct-chart',
-            data
-        , {
-            width: 600,
-            height: 300,
-            // axisX: {
-                // type: Chartist.AutoScaleAxis,
-                // onlyInteger: true
-            // },
-            axisY: {
-                type: Chartist.AutoScaleAxis,
-                // ticks: [1,2,3,4,5,6,7,8,9,10,30],
-                onlyInteger: true,
-                low: 0
-            },
-            // lineSmooth: Chartist.Interpolation.step(),
-            // showPoint: false,
-            lineSmooth: false
-        });
+        initFullChart("appointments", ${idAccount});
+        initFullChart("appointments-percent", ${idAccount});
     })
 </script>

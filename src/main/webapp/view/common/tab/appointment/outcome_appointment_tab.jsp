@@ -36,7 +36,12 @@
 
 <script>
     $(document).ready(function () {
-        loadAppointmentsData(${idAccount}, false);
+        let appointmentsData = loadAppointmentsData(${idAccount}, false);
+        fillAppointmentsTable(
+            appointmentsData,
+            false,
+            ${idAccount},
+            "appointment")
 
         $("#default_table_wrapper, #past-appointment-toggle").on("click", function () {
             $("#appointment_table").DataTable().draw();
