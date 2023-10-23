@@ -35,7 +35,7 @@
 </div>
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(() => {
         let appointmentsData = loadAppointmentsData(${idAccount}, false);
         fillAppointmentsTable(
             appointmentsData,

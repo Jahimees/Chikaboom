@@ -1,10 +1,12 @@
 {
     let fields = []
+    const $confirmMessageBtn = $("#confirm-message-btn");
+    const $confirmEditBtn = $("#confirmEditBtn");
 
     function repairDefaultMessagePopup() {
         $("#decline-message-btn").css("display", "none");
-        $("#confirm-message-btn").attr("data-bs-dismiss", "modal");
-        $("#confirm-message-btn").attr("onclick", "");
+        $confirmMessageBtn.attr("data-bs-dismiss", "modal");
+        $confirmMessageBtn.attr("onclick", "");
     }
 
     function callMessagePopup(title, text) {
@@ -20,9 +22,9 @@
      */
     function confirmEdit() {
         if (validateAllFields()) {
-            let url = "/accounts/" + accountFacadeJson.idAccount;
+            const url = "/accounts/" + accountFacadeJson.idAccount;
 
-            let accountJsonPatch = {
+            const accountJsonPatch = {
                 userDetailsFacade: {}
             }
 
@@ -35,8 +37,8 @@
                         accountJsonPatch.userDetailsFacade[field.name] = fieldValue;
 
                         if (field.id === "edit-phone") {
-                            let countryData = window.intlTelInputGlobals.getInstance(
-                                document.querySelector("#edit-phone")).getSelectedCountryData();
+                            const countryData = window.intlTelInputGlobals.getInstance(
+                                $("#edit-phone")[0].getSelectedCountryData());
                             accountJsonPatch.userDetailsFacade["phoneCodeFacade"] = {
                                 phoneCode: countryData.dialCode,
                                 countryCut: countryData.iso2
@@ -78,7 +80,7 @@
 
     function confirmAccountSettingsEdit() {
         if (validateAllFields()) {
-            let url = "/accounts/" + accountFacadeJson.idAccount + "/settings";
+            const url = "/accounts/" + accountFacadeJson.idAccount + "/settings";
 
             let accountSettingsJson = {
                 idAccountSettings: accountFacadeJson.accountSettingsFacade.idAccountSettings,
@@ -119,12 +121,10 @@
      * Уничтожает все поля в всплывающем окне
      */
     function dropAllFields() {
-        $("#confirmEditBtn").unbind();
-        $("#confirmEditBtn").on("click", confirmEdit);
+        $confirmEditBtn.unbind();
+        $confirmEditBtn.on("click", confirmEdit);
 
         $("#field-box-placeholder").html("");
-        countryCache = null;
-        countryRequesting = false;
         fields = [];
     }
 
@@ -139,9 +139,9 @@
      * @param validations массив правил валидации поля
      */
     function addField(labelText, fieldName, inputType, placeHolderText, isPhoneCode, validations, fieldType, nestedObjectType) {
-        let divLabel = $("<div class='common-black-text'></div>").text(labelText)
+        const divLabel = $("<div class='common-black-text'></div>").text(labelText)
 
-        let inputField = document.createElement(fieldType ? fieldType : "input");
+        const inputField = document.createElement(fieldType ? fieldType : "input");
         if (isPhoneCode) {
             inputField.id = "edit-phone";
         }
@@ -155,7 +155,7 @@
         inputField.name = fieldName;
         inputField.placeholder = placeHolderText ? placeHolderText : '';
 
-        let fieldPlaceholder = $("#field-box-placeholder")
+        const fieldPlaceholder = $("#field-box-placeholder")
         fieldPlaceholder.append(divLabel);
         if (typeof (validations) !== "undefined") {
             validations.forEach(function (validation) {
@@ -186,8 +186,8 @@
      * @returns {boolean}
      */
     function validateAllFields() {
-        var flag = true;
-        for (var field of fields) {
+        let flag = true;
+        for (let field of fields) {
             if (field.getAttribute("valid") === 'false') {
                 if (!validateField(field)) {
                     flag = false;
@@ -206,8 +206,8 @@
      * @param thisField конкретное поле, которое должно быть проверено
      */
     function validateField(thisField) {
-        let thisFieldName = thisField.name;
-        let invalidLabels = $("label[id|='" + thisFieldName + "']");
+        const thisFieldName = thisField.name;
+        const invalidLabels = $("label[id|='" + thisFieldName + "']");
         let isReasonShouldBeEmpty = true;
         for (let label of invalidLabels) {
             switch (label.getAttribute("reason")) {

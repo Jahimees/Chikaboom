@@ -23,7 +23,7 @@
 <script src="/js/client.js"></script>
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(() => {
         loadAppointmentConcreteTab("outcome", ${idAccount});
     })
 

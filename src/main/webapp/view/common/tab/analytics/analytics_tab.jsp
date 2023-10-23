@@ -21,7 +21,7 @@
 <script src="/js/client.js"></script>
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(() => {
         selectCurrentTab($("#appointment-analytics-tab")[0]);
         loadAnalyticsConcreteTab("appointment", ${idAccount});
     })

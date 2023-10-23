@@ -173,7 +173,7 @@
         crossorigin="anonymous"></script>
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(() => {
         var hash = window.location.hash;
 
         if (hash == '#login') {

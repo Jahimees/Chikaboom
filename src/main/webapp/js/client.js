@@ -2,16 +2,16 @@
     let loadedClientsDetails = [];
 
     function addRowToDataTable(clientDetails, tableId) {
-        let tableName = tableId ? tableId : "default";
+        const tableName = tableId ? tableId : "default";
 
         loadedClientsDetails.push(clientDetails);
-        let phoneText = clientDetails.displayedPhone ? clientDetails.displayedPhone : "Номер не указан";
+        const phoneText = clientDetails.displayedPhone ? clientDetails.displayedPhone : "Номер не указан";
 
         let name = (clientDetails.firstName ? clientDetails.firstName + " " : "")
             + (clientDetails.lastName ? clientDetails.lastName : "");
         name = name ? name : "Безымянный";
 
-        let nameDiv = "<div class='light-button btn m-2 master-only' data-bs-toggle='modal' user-details-id='"
+        const nameDiv = "<div class='light-button btn m-2 master-only' data-bs-toggle='modal' user-details-id='"
             + clientDetails.idUserDetails + "' data-bs-target='#clientInfoModal'>" + secureCleanValue(name) + "</div>";
 
         let deleteBtn = "";
@@ -66,18 +66,18 @@
     }
 
     function createClient(idAccount) {
-        let firstNameVal = $("#client-first-name-input").val();
-        let lastNameVal = $("#client-last-name-input").val();
-        let phoneVal = $("#client-phone-input").val();
-        let aboutVal = $("#client-about-input").val();
+        const firstNameVal = $("#client-first-name-input").val();
+        const lastNameVal = $("#client-last-name-input").val();
+        const phoneVal = $("#client-phone-input").val();
+        const aboutVal = $("#client-about-input").val();
 
-        let selectedCountryData = window.intlTelInputGlobals.getInstance(
+        const selectedCountryData = window.intlTelInputGlobals.getInstance(
             document.querySelector("#client-phone-input")).getSelectedCountryData();
-        let phoneCode = selectedCountryData.dialCode;
-        let countryCut = selectedCountryData.iso2;
+        const phoneCode = selectedCountryData.dialCode;
+        const countryCut = selectedCountryData.iso2;
 
         if (validateFields(firstNameVal, lastNameVal, phoneVal, aboutVal)) {
-            let userDetailsObject = {
+            const userDetailsObject = {
                 displayedPhone: phoneVal,
                 firstName: firstNameVal,
                 lastName: lastNameVal,
@@ -182,8 +182,8 @@
     }
 
     function fillClientsTable(clientsJSON, tableId) {
-        let tableName = tableId ? tableId : "default"
-        let $dataTable = $("#" + tableName + "_table");
+        const tableName = tableId ? tableId : "default"
+        const $dataTable = $("#" + tableName + "_table");
         loadedClientsDetails = [];
 
         if (!$.fn.DataTable.isDataTable('#' + tableName)) {
@@ -202,20 +202,20 @@
     let shownUserDetails;
 
     $(document).ready(() => {
-        let $clientInfoModal = $("#clientInfoModal");
-        let $clientAppointmentsTable = $("#client_appointments_table")
+        const $clientInfoModal = $("#clientInfoModal");
+        const $clientAppointmentsTable = $("#client_appointments_table")
 
         //on open client info modal
         $clientInfoModal.unbind();
         $clientInfoModal.on("show.bs.modal", function (event) {
-            let idUserDetails = event.relatedTarget.getAttribute("user-details-id");
-            let $saveClientInfoBtn = $("#save-client-info-btn");
+            const idUserDetails = event.relatedTarget.getAttribute("user-details-id");
+            const $saveClientInfoBtn = $("#save-client-info-btn");
             $saveClientInfoBtn.remove();
 
-            let $clientFirstNameInput = $("#client-first-name-input-upd");
-            let $clientLastNameInput = $("#client-last-name-input-upd");
-            let $clintAboutInput = $("#client-about-input-upd");
-            let $clientPhoneInput = $("#client-phone-input-upd");
+            const $clientFirstNameInput = $("#client-first-name-input-upd");
+            const $clientLastNameInput = $("#client-last-name-input-upd");
+            const $clintAboutInput = $("#client-about-input-upd");
+            const $clientPhoneInput = $("#client-phone-input-upd");
 
             loadedClientsDetails.forEach(function (detailsFacade) {
                 if (detailsFacade.idUserDetails == idUserDetails) {
@@ -232,7 +232,7 @@
                             .setCountry(detailsFacade.phoneCodeFacade.countryCut);
                     }
 
-                    let lastVisitDate = detailsFacade.lastVisitDate ? new Date(detailsFacade.lastVisitDate).toLocaleDateString('ru') : "-"
+                    const lastVisitDate = detailsFacade.lastVisitDate ? new Date(detailsFacade.lastVisitDate).toLocaleDateString('ru') : "-"
                     $("#client-visit-count-upd").text("Количество посещений: " + detailsFacade.visitCount);
                     $("#client-last-visit-date-upd").text("Последнее посещение: " + lastVisitDate);
 
@@ -240,7 +240,7 @@
 
                     if (detailsFacade.masterOwnerFacade != null && typeof detailsFacade.masterOwnerFacade != 'undefined') {
                         shownUserDetails = detailsFacade;
-                        let $closeClientInfoBtn = $("#close-client-info-btn");
+                        const $closeClientInfoBtn = $("#close-client-info-btn");
 
                         $closeClientInfoBtn.before("<button id='save-client-info-btn' class='popup-btn' type='button' " +
                             "onClick='saveUserDetails()' " +
@@ -268,26 +268,20 @@
 
     function saveUserDetails() {
         if (validateClientInfoFields()) {
-            let selectedCountryData = window.intlTelInputGlobals.getInstance(
-                document.querySelector("#client-phone-input-upd")).getSelectedCountryData();
+            const $clientPhoneInputUpd = $("#client-phone-input-upd");
+            const selectedCountryData = window.intlTelInputGlobals.getInstance(
+                $clientPhoneInputUpd[0]).getSelectedCountryData();
 
-            let phoneCode = selectedCountryData.dialCode;
-            let countryCut = selectedCountryData.iso2;
-            let phone = $("#client-phone-input-upd").val();
-            let firstName = $("#client-first-name-input-upd").val();
-            let lastName = $("#client-last-name-input-upd").val();
-            let aboutText = $("#client-about-input-upd").val();
-
-            let updatedUserDetails = {
-                firstName: firstName,
-                lastName: lastName,
-                displayedPhone: phone,
+            const updatedUserDetails = {
+                firstName: $("#client-first-name-input-upd").val(),
+                lastName: $("#client-last-name-input-upd").val(),
+                displayedPhone: $clientPhoneInputUpd.val(),
                 phoneCode: {
-                    phoneCode: phoneCode,
-                    countryCut: countryCut
+                    phoneCode: selectedCountryData.dialCode,
+                    countryCut: selectedCountryData.iso2
                 },
                 aboutFacade: {
-                    text: aboutText
+                    text: $("#client-about-input-upd").val()
                 },
                 masterOwnerFacade: shownUserDetails.masterOwnerFacade
             }
@@ -301,7 +295,7 @@
                 success: () => {
                     $("#close-client-info-btn").click();
                     callMessagePopup("Данные сохранены", "Данные клиента успешно сохранены!");
-                    let clientsJSON = loadClients(shownUserDetails.masterOwnerFacade.idAccount);
+                    const clientsJSON = loadClients(shownUserDetails.masterOwnerFacade.idAccount);
                     fillClientsTable(clientsJSON, 'client');
                 },
                 error: () => {
@@ -366,8 +360,8 @@
     }
 
     function fillClientAppointmentsTableForModal(appointmentsJSON, tableId) {
-        let tableName = tableId ? tableId : "default";
-        let $dataTable = $("#" + tableName + "_table");
+        const tableName = tableId ? tableId : "default";
+        const $dataTable = $("#" + tableName + "_table");
 
         if (!$.fn.DataTable.isDataTable('#' + tableName)) {
             $dataTable.DataTable().data().clear();
@@ -377,11 +371,11 @@
         initDataTable(tableName);
 
         appointmentsJSON.forEach(function (appointmentFacade) {
-            let serviceNameVal = appointmentFacade.serviceFacade.name;
-            let appointmentDateVal = new Date(appointmentFacade.appointmentDateTime).toLocaleDateString('ru');
-            let appointmentTimeVal = new Date(appointmentFacade.appointmentDateTime).toLocaleTimeString('ru');
-            let durationTimeVal = appointmentFacade.serviceFacade.time;
-            let priceVal = appointmentFacade.serviceFacade.price;
+            const serviceNameVal = appointmentFacade.serviceFacade.name;
+            const appointmentDateVal = new Date(appointmentFacade.appointmentDateTime).toLocaleDateString('ru');
+            const appointmentTimeVal = new Date(appointmentFacade.appointmentDateTime).toLocaleTimeString('ru');
+            const durationTimeVal = appointmentFacade.serviceFacade.time;
+            const priceVal = appointmentFacade.serviceFacade.price;
 
             $dataTable.DataTable().row.add([
                 serviceNameVal,

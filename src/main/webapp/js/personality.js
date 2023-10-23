@@ -1,5 +1,5 @@
 {
-    Date.prototype.daysInMonth = function() {
+    Date.prototype.daysInMonth = () => {
         return 32 - new Date(this.getFullYear(), this.getMonth(), 32).getDate();
     };
 
@@ -73,7 +73,7 @@
 ///////////////////////////////FILLING PROGRESS BAR///////////////////////////
 
     function progressView() {
-        let diagramBox = document.querySelectorAll('.diagram.progress');
+        const diagramBox = document.querySelectorAll('.diagram.progress');
         diagramBox.forEach((box) => {
             let deg = (360 * box.dataset.percent / 100) + 180;
             if (box.dataset.percent >= 50) {
@@ -86,11 +86,11 @@
     }
 
     function countPercentage() {
-        let usernameVal = $("#username-placeholder").val();
-        let emailVal = $("#email-placeholder").val();
-        let phoneVal = $("#phone-placeholder").val();
-        let photoSrc = $(".personality-avatar-image").attr("src");
-        let nameVal = $("#name-placeholder").val();
+        const usernameVal = $("#username-placeholder").val();
+        const emailVal = $("#email-placeholder").val();
+        const phoneVal = $("#phone-placeholder").val();
+        const photoSrc = $(".personality-avatar-image").attr("src");
+        const nameVal = $("#name-placeholder").val();
 
         let addressVal = false;
 
@@ -153,20 +153,20 @@
             }
         }
 
-        let percentage = Math.round(((piecesCount - emptyPiecesCount) * 100) / piecesCount);
+        const percentage = Math.round(((piecesCount - emptyPiecesCount) * 100) / piecesCount);
         $("#progress-percent-placeholder").text(percentage + "%");
         $(".diagram").attr("data-percent", percentage);
         progressView();
     }
 
 ///////////////////////////////WINDOW VIEW (RESIZE, STYLE)////////////////////////////////////////
-    $(document).ready(function () {
+    $(document).ready(() => {
         resizeFlexBox();
     })
 
 
     function resizeFlexBox() {
-        let height = $(window).height();
+        const height = $(window).height();
         $(".flex-box-purple").attr("style", "height: " + height + "px");
     }
 
@@ -191,10 +191,10 @@
         if (typeof userFilesCache != "undefined") {
             userFilesCache.reverse().forEach((userFile) => {
                 if (!userFile.filePath.includes("avatar")) {
-                    let tr = $("<tr></tr>");
-                    let td1 = $("<td class='col-md-3'></td>");
-                    let img = $("<img style='width: 150px; height: 150px; object-fit: cover' src='" + userFile.filePath.replace('src/main/webapp', '') + "'>")
-                    let td2 = $("<td class='margin-0-10 col-md-2 violet-button'>X</td>");
+                    const tr = $("<tr></tr>");
+                    const td1 = $("<td class='col-md-3'></td>");
+                    const img = $("<img style='width: 150px; height: 150px; object-fit: cover' src='" + userFile.filePath.replace('src/main/webapp', '') + "'>")
+                    const td2 = $("<td class='margin-0-10 col-md-2 violet-button'>X</td>");
                     tr.append(td1);
                     tr.append(td2);
                     td1.append(img);
@@ -215,7 +215,7 @@
     function deleteUserFile(idUserFile) {
         $.ajax({
             method: 'delete',
-            url: '/accounts/' + accountFacadeJson.idAccount +'/user_files/' + idUserFile,
+            url: '/accounts/' + accountFacadeJson.idAccount + '/user_files/' + idUserFile,
             success: () => {
                 callMessagePopup("Удалено", "Фотография успешно удалена")
                 reloadUserFiles(accountFacadeJson.idAccount);
@@ -226,10 +226,11 @@
             }
         })
     }
+
     function uploadImage(idAccount) {
-        let formData = new FormData();
+        const formData = new FormData();
         formData.append("file", $("#image-input")[0].files[0]);
-        let uuid = self.crypto.randomUUID();
+        const uuid = self.crypto.randomUUID();
         formData.append("fileName", "gallery/" + uuid + ".jpeg");
         if (window.FormData === undefined) {
             alert('В вашем браузере FormData не поддерживается')

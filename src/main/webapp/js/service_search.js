@@ -59,7 +59,7 @@
     }
 
     function fillResultSearchTable(serviceFacadeListJson) {
-        let searchResultPlaceHolder = $("#search-result-placeholder");
+        const searchResultPlaceHolder = $("#search-result-placeholder");
         searchResultPlaceHolder.html("");
 
         if (serviceFacadeListJson.length !== 0) {
@@ -84,7 +84,7 @@
                 searchResultPlaceHolder.append(accountLink);
             })
         } else {
-            let divLbl = $("<div class='common-text'></div>").text("Поиск не дал результатов...");
+            const divLbl = $("<div class='common-text'></div>").text("Поиск не дал результатов...");
 
             searchResultPlaceHolder.append(divLbl);
         }

@@ -1,20 +1,21 @@
 {
     $("#confirm-register").on("click", function () {
         if (validateAllRegisterFields()) {
-            let selectedCountryData = window.intlTelInputGlobals.getInstance(
-                document.querySelector("#r-input-phone")).getSelectedCountryData();
+            const $rInputPhone = $("#r-input-phone");
+            const selectedCountryData = window.intlTelInputGlobals.getInstance(
+                $rInputPhone[0]).getSelectedCountryData();
 
-            let phoneCodeFacade = {
+            const phoneCodeFacade = {
                 phoneCode: selectedCountryData.dialCode,
                 countryCut: selectedCountryData.iso2
             }
-            let phone = $("#r-input-phone").val();
-            let password = $("#r-input-password").val();
-            let username = $("#r-input-username").val();
-            let roles = $("role :checked, :radio")[0].checked ?
+            const phone = $rInputPhone.val();
+            const password = $("#r-input-password").val();
+            const username = $("#r-input-username").val();
+            const roles = $("role :checked, :radio")[0].checked ?
                 [{name: "ROLE_CLIENT"}] : [{name: "ROLE_CLIENT"}, {name: "ROLE_MASTER"}];
 
-            let accountFacade = {
+            const accountFacade = {
                 userDetailsFacade: {
                     phoneCodeFacade: phoneCodeFacade,
                     phone: phone,
@@ -64,6 +65,7 @@
     $("#l-input-phone").on("keyup", function () {
         validateAuthorizeField(this);
     })
+
     $("#l-input-password").on("keyup", function () {
         validateAuthorizeField(this);
     });
@@ -80,9 +82,9 @@
         validateRegisterField(this);
     });
 
-    let register_fields = $(".r-popup-input-field");
-    let login_fields = $(".l-popup-input-field");
-    let reasons = ["empty", "incorrect", "different", "short"];
+    const register_fields = $(".r-popup-input-field");
+    const login_fields = $(".l-popup-input-field");
+    const reasons = ["empty", "incorrect", "different", "short"];
 
     function validateRegisterField(field) {
         for (let reason of reasons) {
@@ -115,8 +117,8 @@
         for (let reason of reasons) {
             $("#" + field.id + "-" + reason).css("display", "none");
         }
-        let intlInstance = window.intlTelInputGlobals.getInstance(
-            document.querySelector("#l-input-phone"));
+        const intlInstance = window.intlTelInputGlobals.getInstance(
+            $("#l-input-phone")[0]);
 
         if (field.value == null || field.value === "") {
             field.setAttribute("reason", "empty");
@@ -144,8 +146,8 @@
     }
 
     function validateAllRegisterFields() {
-        var flag = true;
-        for (var field of register_fields) {
+        let flag = true;
+        for (let field of register_fields) {
             if (field.getAttribute("valid") === 'false') {
                 validateRegisterField(field);
                 flag = false;
@@ -182,11 +184,12 @@
 
     $("#login-submit-btn").on("click", () => {
         if (validateAllAuthorizeFields()) {
-            let selectedCountryData = window.intlTelInputGlobals.getInstance(
-                document.querySelector("#l-input-phone")).getSelectedCountryData();
-            let $inputUsername = $("#l-input-phone");
-            let $hiddenInput = $("#l-hidden-input-phone");
-            let $loginForm = $("#login-form");
+            const $inputUsername = $("#l-input-phone");
+            const $hiddenInput = $("#l-hidden-input-phone");
+            const $loginForm = $("#login-form");
+            const selectedCountryData = window.intlTelInputGlobals.getInstance(
+                $inputUsername[0]).getSelectedCountryData();
+
             $hiddenInput.val($inputUsername.val() + "_" + selectedCountryData.iso2);
             $loginForm.append("<input name='isRequestFromUI' value='true' hidden='hidden'>")
             $loginForm.submit();

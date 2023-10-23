@@ -35,7 +35,7 @@
 
 <script>
 
-    $(document).ready(function () {
+    $(document).ready(() => {
         $("#default-working-time-placeholder")
             .attr("placeholder", accountFacadeJson.accountSettingsFacade.defaultWorkingDayStart +
                 " - " + accountFacadeJson.accountSettingsFacade.defaultWorkingDayEnd);

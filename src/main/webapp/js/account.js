@@ -5,7 +5,6 @@
     function initializePage(idAccount) {
         accountFacadeJson = loadAccount(idAccount);
 
-        let nameText;
         if (accountFacadeJson.userDetailsFacade != null) {
             nameText = (accountFacadeJson.userDetailsFacade.firstName ? accountFacadeJson.userDetailsFacade.firstName + " " : "")
                 + (accountFacadeJson.userDetailsFacade.lastName ? accountFacadeJson.userDetailsFacade.lastName + " " : "")
@@ -20,7 +19,7 @@
             fillServiceTable(servicesFacadeJson, true);
             initAppointmentModal(false, servicesFacadeJson)
 
-            let addressData = accountFacadeJson.address != null ? accountFacadeJson.address : "";
+            const addressData = accountFacadeJson.address != null ? accountFacadeJson.address : "";
             $("#address-placeholder").text("Адрес: " + addressData);
             $("#profession-placeholder").text(typeof accountFacadeJson.userDetailsFacade.aboutFacade !== "undefined" ?
                 accountFacadeJson.userDetailsFacade.aboutFacade.profession : "");
@@ -33,11 +32,11 @@
 
                 for (let i = userFilesCache.length - 1; i >= 0; i--) {
                     if (!userFilesCache[i].filePath.includes("avatar")) {
-                        let a = $('<a href="' + userFilesCache[i].filePath.replace("src/main/webapp", "") + '" ' +
+                        const a = $('<a href="' + userFilesCache[i].filePath.replace("src/main/webapp", "") + '" ' +
                             'data-toggle="lightbox" ' +
                             'data-gallery="example-gallery" class="col-sm-2 my-lightbox-toggle"> ' +
                             '</a>');
-                        let img = $('<img src="' + userFilesCache[i].filePath.replace("src/main/webapp", "") + '" ' +
+                        const img = $('<img src="' + userFilesCache[i].filePath.replace("src/main/webapp", "") + '" ' +
                             'class="img-fluid">');
                         if (i < userFilesCache.length - 5) {
                             a.attr("hidden", true);
@@ -62,13 +61,16 @@
     function loadUserFiles(idAccount) {
         let userFiles;
         if (typeof userFilesCache !== "undefined") {
+            console.log("using cache")
             userFiles = userFilesCache;
         } else {
+            console.log("loading files")
             $.ajax({
                 method: 'get',
                 url: '/accounts/' + idAccount + '/user_files',
                 async: false,
                 success: (data) => {
+                    userFilesCache = data;
                     userFiles = data;
                 },
                 error: () => {
@@ -91,7 +93,7 @@
             url: "/accounts/" + idAccount,
             success: function (data) {
                 console.log("Endpoint 1 done::: ");
-                return accountFacadeJson = data;
+                accountFacadeJson = data;
             },
             error: function () {
                 location.href = "/chikaboom/404";
@@ -102,7 +104,7 @@
     }
 
     function isMaster(accountFacadeJson) {
-        var result = false;
+        let result = false;
 
         accountFacadeJson.rolesFacade.forEach(function (role) {
             if (role.name === "ROLE_MASTER") {

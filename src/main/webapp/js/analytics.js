@@ -13,21 +13,21 @@
             case "appointments": {
                 loadAppointmentsCache(idAccount);
 
-                let data = reloadAppointmentsStatistics(chartName)
+                const data = reloadAppointmentsStatistics(chartName)
                 new Chartist.Line('.ct-chart-' + chartName, data, getOptions());
                 break;
             }
             case "appointments-percent": {
                 loadAppointmentsCache(idAccount);
 
-                let data = reloadAppointmentPercentStatistics(chartName)
+                const data = reloadAppointmentPercentStatistics(chartName)
                 new Chartist.Bar('.ct-chart-' + chartName, data, getOptions());
                 break;
             }
             case "new-clients": {
                 loadClientsCache(idAccount);
 
-                let data = reloadClientsNewStatistics(chartName);
+                const data = reloadClientsNewStatistics(chartName);
                 Chartist.Line('.ct-chart-' + chartName, data, getOptions(1000));
             }
         }
@@ -59,7 +59,7 @@
         let monthSeries = []
 
         appointmentsDataCache.forEach(appointment => {
-            let appointmentDate = new Date(appointment.appointmentDateTime);
+            const appointmentDate = new Date(appointment.appointmentDateTime);
 
             if (!labels.includes(appointment.serviceFacade.name)) {
                 labels.push(appointment.serviceFacade.name);
@@ -99,7 +99,7 @@
             series.push(0);
         }
         appointmentsDataCache.forEach(appointment => {
-            let appointmentDate = new Date(appointment.appointmentDateTime);
+            const appointmentDate = new Date(appointment.appointmentDateTime);
             if (appointmentDate.getMonth().toString() === $("#month-selector-" + chartName).val().toString()
                 && appointmentDate.getFullYear().toString() === $("#year-selector-" + chartName).val().toString()) {
 
@@ -154,9 +154,9 @@
 
         clientsDataCache.forEach(clientData => {
             if (typeof clientData.firstVisitDate !== "undefined") {
-                let clientFirstVisitDate = new Date(clientData.firstVisitDate);
+                const clientFirstVisitDate = new Date(clientData.firstVisitDate);
                 labels.forEach(lbl => {
-                    let lblDate = new Date(lbl.split('.')[1], lbl.split('.')[0] - 1, 10)
+                    const lblDate = new Date(lbl.split('.')[1], lbl.split('.')[0] - 1, 10)
                     if (lblDate.getMonth() === clientFirstVisitDate.getMonth()
                         && lblDate.getFullYear() === clientFirstVisitDate.getFullYear()) {
                         series[labels.indexOf(lbl)]++;
@@ -186,7 +186,7 @@
             $("#month-selector-" + ch).val(new Date().getMonth())
             $("#year-selector-" + ch).html('');
             for (let i = -5; i < 5; i++) {
-                let year = new Date().getFullYear() + i;
+                const year = new Date().getFullYear() + i;
                 if (i === 0) {
                     $("#year-selector-" + ch).append($("<option value='" + year + "' selected>"
                         + year + "</option>"))
