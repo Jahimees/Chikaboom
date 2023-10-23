@@ -26,6 +26,14 @@
         </div>
         <div id="actual-news" style="height: 600px; overflow: auto" >
             <div class="news-block" style="display: inline-flex">
+                <img src="../../../../image/test/analytics-news.png" style="width: 100px;">
+                <div class="small-black-text" style="margin: auto 0 auto 20px;">
+                    <b>Цифры и буквы 23.10.2023</b>
+                    <br>
+                    <div>Добавлен новый раздел статистики! В вашем распоряжении 3 графика с аналитикой!</div>
+                </div>
+            </div>
+            <div class="news-block" style="display: inline-flex">
                 <img src="../../../../image/test/gallery-news.png" style="width: 100px;">
                 <div class="small-black-text" style="margin: auto 0 auto 20px;">
                     <b>Ого, Ваши работы неотразимы! 19.10.2023</b>

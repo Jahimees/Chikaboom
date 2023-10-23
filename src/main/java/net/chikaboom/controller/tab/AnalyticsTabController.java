@@ -14,8 +14,10 @@ public class AnalyticsTabController {
 
     @Value("${tab.analytics}")
     private String ANALYTICS_TAB;
-    @Value("${tab.analytics.general}")
-    private String GENERAL_ANALYTICS_TAB;
+    @Value("${tab.analytics.appointment}")
+    private String APPOINTMENT_ANALYTICS_TAB;
+    @Value("${tab.analytics.client}")
+    private String CLIENT_ANALYTICS_TAB;
 
     @LoggableViewController
     @PreAuthorize("#idAccount == authentication.principal.idAccount")
@@ -26,8 +28,15 @@ public class AnalyticsTabController {
 
     @LoggableViewController
     @PreAuthorize("#idAccount == authentication.principal.idAccount")
-    @GetMapping(value = "/analytics/general")
-    public String openGeneralAnalyticsTab(@PathVariable int idAccount) {
-        return GENERAL_ANALYTICS_TAB;
+    @GetMapping(value = "/analytics/appointment")
+    public String openAppointmentAnalyticsTab(@PathVariable int idAccount) {
+        return APPOINTMENT_ANALYTICS_TAB;
+    }
+
+    @LoggableViewController
+    @PreAuthorize("#idAccount == authentication.principal.idAccount")
+    @GetMapping(value = "/analytics/client")
+    public String openClientAnalyticsTab(@PathVariable int idAccount) {
+        return CLIENT_ANALYTICS_TAB;
     }
 }

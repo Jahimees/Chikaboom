@@ -60,6 +60,11 @@ public class UserDetailsFacade implements Facade {
     private String lastName;
 
     /**
+     * Дата первого визита к мастеру (не хранится в базе)
+     */
+    private Timestamp firstVisitDate;
+
+    /**
      * Дата последнего визита к мастеру (не хранится в базе)
      */
     private Timestamp lastVisitDate;

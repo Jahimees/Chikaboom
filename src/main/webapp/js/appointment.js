@@ -75,6 +75,7 @@
     }
 
     function loadAppointmentsData(idAccount, isIncomeAppointments) {
+        let appointmentsData;
         if (typeof isIncomeAppointments !== 'undefined' && isIncomeAppointments !== null) {
             $.ajax({
                 method: "get",
@@ -85,17 +86,14 @@
                 success: function (json) {
                     // TODO optimize. Не нужны прошлые записи. Их догружать отдельно
                     console.log("Endpoint 2 done::: ");
-                    masterAppointmentsFacadeCache = json;
-                    fillAppointmentsTable(
-                        json,
-                        isIncomeAppointments,
-                        idAccount,
-                        "appointment")
+                    appointmentsData = json;
                 }
             })
         } else {
             callMessagePopup("Ошибка!", "Невозможно загрузить записи на услуги")
         }
+
+        return appointmentsData;
     }
 
     function callConfirmDeleteIncomeAppointmentPopup(idAccountMaster, idAppointment) {
@@ -112,7 +110,12 @@
             dataType: "text",
             success: function () {
                 callMessagePopup("Удалено", "Запись успешно удалена");
-                loadAppointmentsData(idAccountMaster, true);
+                let appointmentsData = loadAppointmentsData(idAccountMaster, true);
+                fillAppointmentsTable(
+                    appointmentsData,
+                    true,
+                    idAccountMaster,
+                    "appointment")
             },
             error: function () {
                 callMessagePopup("Ошибка!", "Невозможно удалить запись!");
@@ -135,7 +138,12 @@
             dataType: "text",
             success: function () {
                 callMessagePopup("Удалено", "Запись успешно удалена!")
-                loadAppointmentsData(idAccountClient, false)
+                let appointmentsData = loadAppointmentsData(idAccountClient, false)
+                fillAppointmentsTable(
+                    appointmentsData,
+                    false,
+                    idAccountClient,
+                    "appointment")
             },
             error: function () {
                 callMessagePopup("Ошибка!", "Невозможно удалить запись!")

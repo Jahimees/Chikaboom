@@ -22,9 +22,9 @@
 
             let addressData = accountFacadeJson.address != null ? accountFacadeJson.address : "";
             $("#address-placeholder").text("Адрес: " + addressData);
-            $("#profession-placeholder").text(accountFacadeJson.userDetailsFacade.aboutFacade !== null ?
+            $("#profession-placeholder").text(typeof accountFacadeJson.userDetailsFacade.aboutFacade !== "undefined" ?
                 accountFacadeJson.userDetailsFacade.aboutFacade.profession : "");
-            $("#about-text-placeholder").text(accountFacadeJson.userDetailsFacade.aboutFacade !== null ?
+            $("#about-text-placeholder").text(typeof accountFacadeJson.userDetailsFacade.aboutFacade !== "undefined" ?
                 accountFacadeJson.userDetailsFacade.aboutFacade.text : "");
 
             $("#photo-container").html('');

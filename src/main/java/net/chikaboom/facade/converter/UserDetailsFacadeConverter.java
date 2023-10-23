@@ -10,7 +10,8 @@ import java.sql.Timestamp;
  */
 public final class UserDetailsFacadeConverter implements FacadeConverter {
 
-    private UserDetailsFacadeConverter() {}
+    private UserDetailsFacadeConverter() {
+    }
 
     /**
      * Для таблицы с записями на услуги
@@ -46,6 +47,7 @@ public final class UserDetailsFacadeConverter implements FacadeConverter {
         userDetailsFacade.setVisitCount(0);
         userDetailsFacade.setMasterOwnerFacade(null);
         userDetailsFacade.setLastVisitDate(null);
+        userDetailsFacade.setFirstVisitDate(null);
 
         return userDetailsFacade;
     }
@@ -63,6 +65,9 @@ public final class UserDetailsFacadeConverter implements FacadeConverter {
         userDetailsFacade.setVisitCount(model.getVisitCount());
         if (model.getLastVisitDate() != null) {
             userDetailsFacade.setLastVisitDate((Timestamp) model.getLastVisitDate().clone());
+        }
+        if (model.getFirstVisitDate() != null) {
+            userDetailsFacade.setFirstVisitDate((Timestamp) model.getFirstVisitDate().clone());
         }
         if (model.getMasterOwner() != null) {
             userDetailsFacade.setMasterOwnerFacade(AccountFacadeConverter.toDtoOnlyId(model.getMasterOwner()));
@@ -91,6 +96,9 @@ public final class UserDetailsFacadeConverter implements FacadeConverter {
         userDetailsFacade.setVisitCount(model.getVisitCount());
         if (model.getLastVisitDate() != null) {
             userDetailsFacade.setLastVisitDate((Timestamp) model.getLastVisitDate().clone());
+        }
+        if (model.getFirstVisitDate() != null) {
+            userDetailsFacade.setFirstVisitDate((Timestamp) model.getFirstVisitDate().clone());
         }
 //        TODO warning place 6 what case??
         if (model.getMasterOwner() != null) {
@@ -126,6 +134,9 @@ public final class UserDetailsFacadeConverter implements FacadeConverter {
         userDetails.setVisitCount(facade.getVisitCount());
         if (facade.getLastVisitDate() != null) {
             userDetails.setLastVisitDate((Timestamp) facade.getLastVisitDate().clone());
+        }
+        if (facade.getFirstVisitDate() != null) {
+            userDetails.setFirstVisitDate((Timestamp) facade.getFirstVisitDate().clone());
         }
         if (facade.getMasterOwnerFacade() != null) {
             userDetails.setMasterOwner(AccountFacadeConverter.convertToModel(facade.getMasterOwnerFacade()));

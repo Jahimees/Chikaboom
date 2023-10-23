@@ -12,6 +12,11 @@
     margin: 20px;
 }
 
+.flex-box-neutral {
+    display: inline-flex;
+    width: 100%;
+}
+
 .content-box {
     font-size: 35px;
     display: block;
@@ -45,6 +50,10 @@
 
 .margin-35-0-0-0-px {
     margin-top: 35px;
+}
+
+.margin-0-10px {
+    margin: 0 20px;
 }
 
 .padding-0-5 {
@@ -92,6 +101,10 @@ a {
 
 .w-15 {
     width: 15%;
+}
+
+.w-45 {
+    width: 45% !important;
 }
 
 .w-50 {
