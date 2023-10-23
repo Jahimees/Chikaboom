@@ -38,11 +38,13 @@ public interface UserDetailsRepository extends JpaRepository<UserDetails, Intege
         int getVisitCount();
         int getIdUserDetails();
         Timestamp getLastVisitDate();
+        Timestamp getFirstVisitDate();
     }
 
     @Query(nativeQuery = true, value = "SELECT count(appointment.idappointment) as visitCount, " +
             "user_details.iduser_details as idUserDetails, " +
-            "max(appointment.appointment_date_time) as lastVisitDate " +
+            "max(appointment.appointment_date_time) as lastVisitDate, " +
+            "min(appointment.appointment_date_time) as firstVisitDate " +
             "from user_details left join appointment " +
             "on user_details.iduser_details = appointment.iduser_details_client " +
             "where appointment.idaccount_master = :idAccount " +

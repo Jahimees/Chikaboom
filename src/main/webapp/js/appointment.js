@@ -86,7 +86,6 @@
                 success: function (json) {
                     // TODO optimize. Не нужны прошлые записи. Их догружать отдельно
                     console.log("Endpoint 2 done::: ");
-                    masterAppointmentsFacadeCache = json;
                     appointmentsData = json;
                 }
             })

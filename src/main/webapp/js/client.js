@@ -162,7 +162,7 @@
 ///////////////////////////////////////////CLIENTS DATATABLE///////////////////////////////////////
 
     function loadClients(idMasterAccount) {
-        let response;
+        let clientsData;
         $.ajax({
             type: "get",
             url: "/accounts/" + idMasterAccount + "/clients",
@@ -171,14 +171,14 @@
             async: false,
             success: function (data) {
                 console.log("Endpoint 6 done:::")
-                response = data;
+                clientsData = data;
             },
             error: function () {
                 callMessagePopup("Ошибка", "Невозможно загрузить информацию о клиентах!")
             }
         })
 
-        return response;
+        return clientsData;
     }
 
     function fillClientsTable(clientsJSON, tableId) {

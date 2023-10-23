@@ -4,8 +4,8 @@
 <link rel="stylesheet" href="../../../css/chartist/chartist.min.css">
 <div class="content">
     <div style="display: flex">
-        <div class="w-45">
-            <div class="medium-text">График записей за месяц</div>
+        <div class="w-45 margin-0-10px">
+            <div class="medium-text">Количество записей за месяц</div>
             <div id="select-box-appointments" class="flex-box-white">
                 <select id="month-selector-appointments" class="form-control">
                     <option value="0">Январь</option>
@@ -22,9 +22,6 @@
                     <option value="11">Декабрь</option>
                 </select>
                 <select id="year-selector-appointments" class="form-control">
-                    <option>
-
-                    </option>
                 </select>
             </div>
             <div class="ct-chart-appointments ct-perfect-fourth"></div>
@@ -47,9 +44,6 @@
                     <option value="11">Декабрь</option>
                 </select>
                 <select id="year-selector-appointments-percent" class="form-control">
-                    <option>
-
-                    </option>
                 </select>
             </div>
             <div class="ct-chart-appointments-percent ct-perfect-fourth"></div>

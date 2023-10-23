@@ -120,7 +120,7 @@ public class UserDetailsDataService implements DataService<UserDetails> {
      * @return true - если существует, false - в противном случае
      */
     public boolean existsUserDetailsByPhone(String phone, String countryCut) {
-        String formattedPhone = "";
+        String formattedPhone;
         try {
             formattedPhone = PhoneNumberUtils.formatNumberInternational(phone, countryCut);
         } catch (NumberParseException e) {
@@ -237,6 +237,7 @@ public class UserDetailsDataService implements DataService<UserDetails> {
                     resultUserDetailsList.add(userDetails);
                     userDetails.setVisitCount(resultObject.getVisitCount());
                     userDetails.setLastVisitDate(resultObject.getLastVisitDate());
+                    userDetails.setFirstVisitDate(resultObject.getFirstVisitDate());
                 }
             }
         }
