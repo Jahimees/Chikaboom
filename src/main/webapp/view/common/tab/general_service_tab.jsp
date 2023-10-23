@@ -54,8 +54,8 @@
 
 <script>
 
-    $(document).ready(function () {
-        loadServiceTab(${idAccount});
+    $(document).ready(() => {
+        loadServiceTab(${idAccount}, false);
     })
 
     function setTwoNumberDecimal(thisObj) {

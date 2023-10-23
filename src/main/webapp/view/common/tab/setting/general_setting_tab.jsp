@@ -102,7 +102,7 @@
 
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(() => {
         fillGeneralSettingTab(${idAccount});
 
         setTimeout(countPercentage, 500);

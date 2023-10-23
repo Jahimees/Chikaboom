@@ -55,7 +55,7 @@
 ///////////////////////////////////DATATABLE///////////////////////////////////////////////
 
     function initDataTable(tableId) {
-        let tableName = tableId ? tableId : "default";
+        const tableName = tableId ? tableId : "default";
         new DataTable('#' + tableName + "_table", {
             order: [[1, 'asc'], [2, 'asc']],
             "language": {
@@ -92,11 +92,11 @@
     function initFilter() {
         $.fn.dataTable.ext.search.push(
             function (settings, data, dataIndex) {
-                let $pastAppointmentToggle = $("#past-appointment-toggle");
+                const $pastAppointmentToggle = $("#past-appointment-toggle");
 
-                let appDateArr = data[1].split(".");
-                let appointmentDate = new Date(appDateArr[2], appDateArr[1] - 1, appDateArr[0]);
-                let appTimeArr = data[2].split(":");
+                const appDateArr = data[1].split(".");
+                const appointmentDate = new Date(appDateArr[2], appDateArr[1] - 1, appDateArr[0]);
+                const appTimeArr = data[2].split(":");
                 appointmentDate.setHours(appTimeArr[0]);
                 appointmentDate.setMinutes(appTimeArr[1]);
 
@@ -165,10 +165,10 @@
 
     function openEditAboutPopup() {
         dropAllFields();
-        let professionInputField = addField("Вид деятельности", "profession", "text", "Мастер по маникюру", false,
+        const professionInputField = addField("Вид деятельности", "profession", "text", "Мастер по маникюру", false,
             [new Validation("Название слишком длинное", InvalidReason.LONG)],
             "input", "aboutFacade");
-        let aboutTextInputField = addField("О себе", "text", "text",
+        const aboutTextInputField = addField("О себе", "text", "text",
             "Напишите пару слов о себе", false, [], "textarea", "aboutFacade");
         professionInputField.value = accountFacadeJson.userDetailsFacade.aboutFacade != null ?
             accountFacadeJson.userDetailsFacade.aboutFacade.profession : "";
@@ -179,11 +179,11 @@
 
     function openEditFirstAndLastNamesPopup() {
         dropAllFields();
-        let firstNameInputField = addField("Имя", "firstName", "text", "Валерия", false,
+        const firstNameInputField = addField("Имя", "firstName", "text", "Валерия", false,
             [new Validation("Название слишком длинное", InvalidReason.LONG),
                 new Validation("Имя может содержать только буквы", InvalidReason.NAME)],
             "input", 'userDetailsFacade');
-        let lastNameInputField = addField("Фамилия", "lastName", "text", "Лаврушкина", false,
+        const lastNameInputField = addField("Фамилия", "lastName", "text", "Лаврушкина", false,
             [new Validation("Название слишком длинное", InvalidReason.LONG),
                 new Validation("Фамилия может содержать только буквы", InvalidReason.NAME)],
             "input", 'userDetailsFacade');
@@ -199,7 +199,7 @@
 
     function openEditAddressPopup() {
         dropAllFields();
-        let addressInputField = addField("Адрес", "address", "text",
+        const addressInputField = addField("Адрес", "address", "text",
             "Укажите свой адрес работы", false, [], "input");
         addressInputField.id = "address-input";
 
@@ -245,7 +245,7 @@
         $("#phone-placeholder").val(phoneText);
         $("#phone-invisible-toggle").prop("checked", accountFacadeJson.accountSettingsFacade.phoneVisible)
         $("#username-placeholder").val(accountFacadeJson.username);
-        let nameText = (accountFacadeJson.userDetailsFacade.firstName ? accountFacadeJson.userDetailsFacade.firstName + " " : "") +
+        const nameText = (accountFacadeJson.userDetailsFacade.firstName ? accountFacadeJson.userDetailsFacade.firstName + " " : "") +
             (accountFacadeJson.userDetailsFacade.lastName ? accountFacadeJson.userDetailsFacade.lastName : "");
         $("#name-placeholder").val(nameText);
         $("#greeting-info-box").text("Добро пожаловать, " + (nameText ? nameText : accountFacadeJson.username) + "!");
@@ -253,11 +253,11 @@
         if (accountFacadeJson.rolesFacade.length === 2 &&
             (accountFacadeJson.rolesFacade[0].name === "ROLE_MASTER" ||
                 accountFacadeJson.rolesFacade[1].name === "ROLE_MASTER")) {
-            let aboutProfession = accountFacadeJson.userDetailsFacade.aboutFacade != null
+            const aboutProfession = accountFacadeJson.userDetailsFacade.aboutFacade != null
             && typeof accountFacadeJson.userDetailsFacade.aboutFacade != 'undefined'
                 ? accountFacadeJson.userDetailsFacade.aboutFacade.profession : "";
 
-            let aboutText = accountFacadeJson.userDetailsFacade.aboutFacade != null
+            const aboutText = accountFacadeJson.userDetailsFacade.aboutFacade != null
             && typeof accountFacadeJson.userDetailsFacade.aboutFacade != 'undefined' ?
                 accountFacadeJson.userDetailsFacade.aboutFacade.text : "";
 
@@ -268,7 +268,7 @@
     }
 
     function uploadAvatarImage(idAccount) {
-        let formData = new FormData();
+        const formData = new FormData();
         formData.append("file", $("#avatar-input")[0].files[0]);
         formData.append("fileName", "avatar");
         if (window.FormData === undefined) {
@@ -285,8 +285,8 @@
             statusCode: {
                 201: function () {
                     callMessagePopup("Фотография успешно загружена!", "Ваше новое фото профиля успешно было загружено!");
-                    let $img = $(".personality-avatar-image");
-                    let $small_image = $(".small-avatar-image");
+                    const $img = $(".personality-avatar-image");
+                    const $small_image = $(".small-avatar-image");
                     $img.attr("src", $img.attr("src").split("?")[0] + "?" + Math.random());
                     $small_image.attr("src", $small_image.attr("src").split("?")[0] + "?" + Math.random());
                 },

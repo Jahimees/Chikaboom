@@ -12,7 +12,7 @@
 </div>
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(() => {
         loadWorkingDaysDataAndLoadCalendar(${idAccount});
         reloadWorkingDayDuration(accountFacadeJson.accountSettingsFacade);
     });

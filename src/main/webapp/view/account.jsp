@@ -182,7 +182,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bs5-lightbox@1.8.3/dist/index.bundle.min.js"></script>
 <script>
 
-    $(document).ready(function () {
+    $(document).ready(() => {
         initializePage(${idAccount});
 
         document.querySelectorAll('.my-lightbox-toggle').forEach((el) => el.addEventListener('click', (e) => {

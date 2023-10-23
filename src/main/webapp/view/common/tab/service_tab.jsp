@@ -12,7 +12,7 @@
 <script src="../../../../js/service.js"></script>
 <script>
 
-    $(document).ready(function () {
+    $(document).ready(() => {
         loadConcreteServiceTab("general", "${idAccount}");
     })
 </script>

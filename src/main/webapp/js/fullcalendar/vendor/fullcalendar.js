@@ -242,7 +242,7 @@ FC.getScrollbarWidths = getScrollbarWidths;
 // borrowed from https://github.com/jquery/jquery-ui/blob/1.11.0/ui/core.js#L51
 function getScrollParent(el) {
 	var position = el.css('position'),
-		scrollParent = el.parents().filter(function() {
+		scrollParent = el.parents().filter(() => {
 			var parent = $(this);
 			return (/(auto|scroll)/).test(
 				parent.css('overflow') + parent.css('overflow-y') + parent.css('overflow-x')

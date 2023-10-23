@@ -78,7 +78,7 @@
         doSearch(${idServiceType});
     })
 
-    $(document).ready(function () {
+    $(document).ready(() => {
         loadSubtypeData(${idServiceType});
         doSearch(${idServiceType});
     })

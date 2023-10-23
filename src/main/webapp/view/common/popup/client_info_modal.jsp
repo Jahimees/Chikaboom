@@ -69,7 +69,7 @@
 </div>
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(() => {
         initPhoneCodeWidget("client-phone-input-upd");
     });
 </script>

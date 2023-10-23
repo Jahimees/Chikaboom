@@ -45,7 +45,7 @@
 <script src="../../../../js/client.js"></script>
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(() => {
         selectCurrentTab($("#client-tab")[0])
 
         setTimeout(function () {

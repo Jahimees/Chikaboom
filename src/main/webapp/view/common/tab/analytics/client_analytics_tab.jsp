@@ -53,7 +53,7 @@
 <script src="../../../js/analytics.js"></script>
 <script>
 
-    $(document).ready(function () {
+    $(document).ready(() => {
         initFullChart("new-clients", ${idAccount});
     })
 </script>

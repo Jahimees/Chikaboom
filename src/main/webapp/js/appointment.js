@@ -13,8 +13,8 @@
     let $serviceTimePlaceholder = $("#service-time-placeholder");
 
     function fillAppointmentsTable(appointmentsFacadeJson, isIncomeAppointment, idCurrentAccount, tableId) {
-        let tableName = tableId ? tableId : "default";
-        let $dataTable = $("#" + tableName + "_table");
+        const tableName = tableId ? tableId : "default";
+        const $dataTable = $("#" + tableName + "_table");
 
         if (!$.fn.DataTable.isDataTable('#' + tableName)) {
             $dataTable.DataTable().data().clear();
@@ -39,26 +39,25 @@
                 phoneText = appointmentFacade.userDetailsFacadeClient.displayedPhone ?
                     appointmentFacade.userDetailsFacadeClient.displayedPhone : " ";
             } else {
-                let firstName = secureCleanValue(appointmentFacade.masterAccountFacade.userDetailsFacade.firstName ?
+                const firstName = secureCleanValue(appointmentFacade.masterAccountFacade.userDetailsFacade.firstName ?
                     appointmentFacade.masterAccountFacade.userDetailsFacade.firstName + " " : " ")
-                let lastName = secureCleanValue(appointmentFacade.masterAccountFacade.userDetailsFacade.lastName ?
+                const lastName = secureCleanValue(appointmentFacade.masterAccountFacade.userDetailsFacade.lastName ?
                     appointmentFacade.masterAccountFacade.userDetailsFacade.lastName : "")
-                let visibleName = (firstName + " " + lastName).trim() ?
+                const visibleName = (firstName + " " + lastName).trim() ?
                     (firstName + " " + lastName).trim() : appointmentFacade.masterAccountFacade.username;
                 nameText = "<a href='/chikaboom/account/" + appointmentFacade.masterAccountFacade.idAccount + "'>" + visibleName + "</a>";
                 phoneText = appointmentFacade.masterAccountFacade.userDetailsFacade.displayedPhone ?
                     appointmentFacade.masterAccountFacade.userDetailsFacade.displayedPhone : " ";
             }
 
-            let rowNode = $dataTable.DataTable().row.add([
+            const rowNode = $dataTable.DataTable().row.add([
                 secureCleanValue(appointmentFacade.serviceFacade.name),
                 new Date(appointmentFacade.appointmentDateTime).toLocaleDateString('ru'),
                 new Date(appointmentFacade.appointmentDateTime).toLocaleTimeString("ru", timeOptions),
                 secureCleanValue(appointmentFacade.serviceFacade.price),
                 secureCleanValue(appointmentFacade.serviceFacade.time),
                 secureCleanValue(phoneText),
-                nameText,
-                isIncomeAppointment ?
+                nameText, isIncomeAppointment ?
                     "<img onclick='callConfirmDeleteIncomeAppointmentPopup(" + appointmentFacade.masterAccountFacade.idAccount
                     + "," + appointmentFacade.idAppointment + ")' src='/image/icon/cross_icon.svg' style='cursor: pointer; width: 15px' >"
 
@@ -110,7 +109,7 @@
             dataType: "text",
             success: function () {
                 callMessagePopup("Удалено", "Запись успешно удалена");
-                let appointmentsData = loadAppointmentsData(idAccountMaster, true);
+                const appointmentsData = loadAppointmentsData(idAccountMaster, true);
                 fillAppointmentsTable(
                     appointmentsData,
                     true,
@@ -138,7 +137,7 @@
             dataType: "text",
             success: function () {
                 callMessagePopup("Удалено", "Запись успешно удалена!")
-                let appointmentsData = loadAppointmentsData(idAccountClient, false)
+                const appointmentsData = loadAppointmentsData(idAccountClient, false)
                 fillAppointmentsTable(
                     appointmentsData,
                     false,
@@ -222,7 +221,7 @@
         serviceSelect.html('')
 
         servicesJson.forEach(function (service) {
-            let option = $("<option></option>").val(service.idService).text(service.name);
+            const option = $("<option></option>").val(service.idService).text(service.name);
 
             serviceSelect.append(option);
         })
@@ -233,7 +232,7 @@
 
         workingDaysFacade.forEach(function (workingDay) {
             let today = new Date();
-            let workingDayObj = new Date(workingDay.date);
+            const workingDayObj = new Date(workingDay.date);
             if ((today.getFullYear() < workingDayObj.getFullYear())
                 || (today.getFullYear() === workingDayObj.getFullYear()
                     && today.getMonth() < workingDayObj.getMonth())
@@ -241,7 +240,7 @@
                     && today.getMonth() === workingDayObj.getMonth()
                     && today.getDate() <= workingDayObj.getDate())) {
 
-                let option = $("<option></option>")
+                const option = $("<option></option>")
                     .attr("start-time", workingDay.workingDayStart)
                     .attr("end-time", workingDay.workingDayEnd)
                     .text(workingDayObj.getDate() +
@@ -256,7 +255,7 @@
     function fillClientsToModal(clientsJSON, isCalendar) {
         let clientSelect;
         if (isCalendar) {
-            clientSelect = $("#client-select-ev");
+            clientSelect = $client-select-ev;
         } else {
             clientSelect = $clientSelectApp;
         }
@@ -300,14 +299,14 @@
         }
 
         let workingCells = [];
-        let iterator = new Date();
+        const iterator = new Date();
         iterator.setHours(prevWorkingDayStart.getHours());
         iterator.setMinutes(prevWorkingDayStart.getMinutes());
 
-        let splittedDate = $workingDaySelect.val().split('.')
-        let chosenDate = new Date(splittedDate[1] + "." + splittedDate[0] + "." + splittedDate[2]);
+        const splittedDate = $workingDaySelect.val().split('.')
+        const chosenDate = new Date(splittedDate[1] + "." + splittedDate[0] + "." + splittedDate[2]);
         let todayIsChosenDay = false;
-        let today = new Date();
+        const today = new Date();
 
         if (today.getDate() === chosenDate.getDate()
             && today.getMonth() === chosenDate.getMonth()
@@ -324,7 +323,7 @@
             };
 
             if (todayIsChosenDay) {
-                let todayTimeValue = today.getHours() * 60 + today.getMinutes();
+                const todayTimeValue = today.getHours() * 60 + today.getMinutes();
                 let iteratorTimeValue = iterator.getHours() * 60 + iterator.getMinutes();
                 if (todayTimeValue >= iteratorTimeValue - 60) {
                     workingCells[i].value = false;
@@ -336,7 +335,7 @@
 
         // masterAppointmentsJson
         masterAppointmentsFacadeCache.forEach(function (masterAppointmentFacade) {
-            let appointmentDateTime = new Date(masterAppointmentFacade.appointmentDateTime);
+            const appointmentDateTime = new Date(masterAppointmentFacade.appointmentDateTime);
 
             if (appointmentDateTime.getDate() === chosenDate.getDate()
                 && appointmentDateTime.getMonth() === chosenDate.getMonth()
@@ -356,8 +355,8 @@
                         // Подсчёт количества клеточек со свободным временем (каждая клетка - полчаса)
                         workingCells[i].value = false;
 
-                        let serviceTime = masterAppointmentFacade.serviceFacade.time;
-                        let serviceDurationTime = serviceTime.replace(' минут', '').split(' час');
+                        const serviceTime = masterAppointmentFacade.serviceFacade.time;
+                        const serviceDurationTime = serviceTime.replace(' минут', '').split(' час');
 
                         if (serviceDurationTime.length === 1) {
                             trueTimer = 1;
@@ -412,9 +411,8 @@
                     posReminder = i;
                 }
                 if (durationCounter === serviceDurationNumber) {
-                    let option = document.createElement("option");
-                    option.value = workingCells[posReminder].time;
-                    option.innerHTML = workingCells[posReminder].time;
+                    const option = $("<option value='" + workingCells[posReminder].time + "'>"
+                        + workingCells[posReminder].time + "</option>");
 
                     $workingTimeSelect.append(option);
                     durationCounter = 0;
@@ -476,10 +474,10 @@
 
     /////////////////////////////DO MAKE APPOINTMENT////////////////////////
     function doMakeAppointment(clientPrincipal, accountMasterFacadeJson) {
-        let masterId = accountMasterFacadeJson.idAccount;
+        const masterId = accountMasterFacadeJson.idAccount;
 
-        let workingDayVal = $workingDaySelect.val();
-        let workingTimeVal = $workingTimeSelect.val();
+        const workingDayVal = $workingDaySelect.val();
+        const workingTimeVal = $workingTimeSelect.val();
 
         if (workingTimeVal === '' || workingTimeVal === null) {
             $appointmentWarn.css("display", "block");
@@ -494,27 +492,27 @@
             $closeModalBtn.click();
             callMessagePopup("Запись отклонена!", "Нельзя записываться самому к себе на услуги!")
         } else {
-            let splittedWorkingDayVal = workingDayVal.split('.');
-            let reversedWorkingDayVal = splittedWorkingDayVal[1] + "." + splittedWorkingDayVal[0] + "." + splittedWorkingDayVal[2]
-            let appointmentDateTime = new Date(reversedWorkingDayVal);
-            let splittedTime = workingTimeVal.split(":");
+            const splittedWorkingDayVal = workingDayVal.split('.');
+            const reversedWorkingDayVal = splittedWorkingDayVal[1] + "." + splittedWorkingDayVal[0] + "." + splittedWorkingDayVal[2]
+            const appointmentDateTime = new Date(reversedWorkingDayVal);
+            const splittedTime = workingTimeVal.split(":");
 
             appointmentDateTime.setHours(splittedTime[0]);
             appointmentDateTime.setMinutes(splittedTime[1]);
 
             $appointmentWarn.css("display", "none");
-            let master = accountMasterFacadeJson;
+            const master = accountMasterFacadeJson;
 
-            let idService = parseInt($serviceSelectApp.val());
+            const idService = parseInt($serviceSelectApp.val());
             let service;
-            let servicesJson = loadMastersServices(masterId);
+            const servicesJson = loadMastersServices(masterId);
             servicesJson.forEach(function (serv) {
                 if (serv.idService === idService) {
                     service = serv
                 }
             })
 
-            let appointmentToSend = {
+            const appointmentToSend = {
                 masterAccountFacade: master,
                 userDetailsFacadeClient: {
                     idUserDetails: clientPrincipal.idUserDetails

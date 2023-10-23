@@ -19,6 +19,9 @@
     }
 
     function loadServiceSubtypes() {
+        if (typeof serviceSubtypesFacade !== "undefined") {
+            return serviceSubtypesFacade;
+        }
         $.ajax({
             contentType: "application/json",
             dataType: "json",
@@ -35,17 +38,22 @@
         })
     }
 
-    function loadServiceTab(idAccount) {
+    function loadServiceData(idAccount, reload) {
+        if (typeof servicesJson === "undefined" || reload) {
+            reloadServiceData(idAccount);
+        }
+    }
+
+    function reloadServiceData(idAccount) {
         $.ajax({
             type: "get",
             url: "/accounts/" + idAccount + "/services",
             contentType: "application/text",
             dataType: "text",
+            async: false,
             success: function (data) {
                 console.log("Endpoint 16 done::: ");
                 servicesJson = JSON.parse(data);
-                fillServiceTable(servicesJson);
-                loadServiceTypeSelectOptions();
             },
             error: function () {
                 loadUnderConstruction();
@@ -53,13 +61,19 @@
         });
     }
 
+    function loadServiceTab(idAccount, reload) {
+        loadServiceData(idAccount, reload)
+        fillServiceTable(servicesJson);
+        loadServiceTypeSelectOptions();
+    }
+
     function fillServiceTable(servicesFacadeJson, isAccountPage) {
         if (servicesFacadeJson == null) {
             return;
         }
 
-        let serviceTypeFacadeSet = new Set();
-        let serviceSubtypeFacadeSet = new Set();
+        const serviceTypeFacadeSet = new Set();
+        const serviceSubtypeFacadeSet = new Set();
 
         $("#service-placeholder").html("");
 
@@ -75,54 +89,54 @@
         })
 
         serviceTypeFacadeSet.forEach(function (serviceTypeFacade) {
-            let serviceBlock = $("#service-placeholder");
+            const serviceBlock = $("#service-placeholder");
 
-            let idServiceType = "service-type-" + serviceTypeFacade.idServiceType
+            const idServiceType = "service-type-" + serviceTypeFacade.idServiceType
 
-            let serviceTypeBlock = $("<div class='service-type-block' id='" + idServiceType + "'></div>");
-            let serviceTypeBlockHeader = $("<div class='service-type-header medium-text'></div>").text(serviceTypeFacade.name.toUpperCase());
-            let serviceUnderLine = $("<div class='horizontal-blue-line'></div>")
+            const serviceTypeBlock = $("<div class='service-type-block' id='" + idServiceType + "'></div>");
+            const serviceTypeBlockHeader = $("<div class='service-type-header medium-text'></div>").text(serviceTypeFacade.name.toUpperCase());
+            const serviceUnderLine = $("<div class='horizontal-blue-line'></div>")
             serviceTypeBlock.append(serviceTypeBlockHeader).append(serviceUnderLine);
 
             serviceBlock.append(serviceTypeBlock);
         })
 
         serviceSubtypeFacadeSet.forEach(function (serviceSubtypeFacade) {
-            let serviceTypeFacade = serviceSubtypeFacade.serviceTypeFacade;
+            const serviceTypeFacade = serviceSubtypeFacade.serviceTypeFacade;
 
-            let serviceTypeTag = $("#service-type-" + serviceTypeFacade.idServiceType);
-            let serviceSubtypeBlockHeader = $("<div class='service-type-header medium-text' id='service-subtype-" +
+            const serviceTypeTag = $("#service-type-" + serviceTypeFacade.idServiceType);
+            const serviceSubtypeBlockHeader = $("<div class='service-type-header medium-text' id='service-subtype-" +
                 serviceSubtypeFacade.idServiceSubtype + "'></div>").text(serviceTypeFacade.name);
 
             serviceTypeTag.append(serviceSubtypeBlockHeader);
         })
 
         servicesFacadeJson.forEach(function (serviceFacade) {
-            let idServiceSubtype = serviceFacade.serviceSubtypeFacade.idServiceSubtype;
-            let serviceSubtypeTag = $("#service-subtype-" + idServiceSubtype)
+            const idServiceSubtype = serviceFacade.serviceSubtypeFacade.idServiceSubtype;
+            const serviceSubtypeTag = $("#service-subtype-" + idServiceSubtype)
 
-            let rowTag = $("<div class='service-row row medium-text'></div>")
-            let nameTag = $("<div class='col-5'></div>").text(serviceFacade.name);
-            let timeTag = $("<div class='col-3'></div>").text(serviceFacade.time);
-            let priceTag = $("<div class='col-2'></div>").text(serviceFacade.price + " BYN");
+            const rowTag = $("<div class='service-row row medium-text'></div>")
+            const nameTag = $("<div class='col-5'></div>").text(serviceFacade.name);
+            const timeTag = $("<div class='col-3'></div>").text(serviceFacade.time);
+            const priceTag = $("<div class='col-2'></div>").text(serviceFacade.price + " BYN");
 
             rowTag.append(nameTag, timeTag, priceTag);
 
             if (!isAccountPage) {
 
-                let editTag = $("<div class='edit-button col-1' idService='" +
+                const editTag = $("<div class='edit-button col-1' idService='" +
                     serviceFacade.idService + "' onclick='editService(this.getAttribute(\"idService\"))'></div>")
-                let editIcon = $("<img src='/image/icon/edit_icon.svg'>")
+                const editIcon = $("<img src='/image/icon/edit_icon.svg'>")
                 editTag.append(editIcon);
 
-                let deleteTag = $("<div class='edit-button col-1' onclick='callConfirmDeletePopup(" +
+                const deleteTag = $("<div class='edit-button col-1' onclick='callConfirmDeletePopup(" +
                     "this.getAttribute(\"idService\"))' idService='" + serviceFacade.idService + "'></div>")
-                let crossIcon = $("<img src='/image/icon/cross_icon.svg' width='22px'>")
+                const crossIcon = $("<img src='/image/icon/cross_icon.svg' width='22px'>")
                 deleteTag.append(crossIcon);
 
                 rowTag.append(editTag, deleteTag);
             } else {
-                let orderTag = $("<div class='purple-button col-2' style='font-size: 20px; padding: 0' " +
+                const orderTag = $("<div class='purple-button col-2' style='font-size: 20px; padding: 0' " +
                     "data-bs-toggle='modal' data-bs-target='#appointmentModal'></div>").text("Записаться")
 
                 orderTag.onclick = function () {
@@ -138,8 +152,8 @@
     function loadServiceTypeSelectOptions() {
         clearServiceTypeOptions();
 
-        let serviceTypesFacade = new Set();
-        let serviceTypeSelect = $("#service-type-select");
+        const serviceTypesFacade = new Set();
+        const $serviceTypeSelect = $("#service-type-select");
 
         serviceSubtypesFacade.forEach(function (serviceSubtypeFacade) {
             if (!isObjectInSet(serviceSubtypeFacade.serviceTypeFacade, serviceTypesFacade, "serviceTypeFacade")) {
@@ -148,9 +162,9 @@
         })
 
         serviceTypesFacade.forEach(function (serviceTypeFacade) {
-            let option = $("<option></option>").val(serviceTypeFacade.idServiceType).text(serviceTypeFacade.name);
+            const option = $("<option></option>").val(serviceTypeFacade.idServiceType).text(serviceTypeFacade.name);
 
-            serviceTypeSelect.append(option);
+            $serviceTypeSelect.append(option);
         })
 
         reloadServiceSubtypeSelectOptions();
@@ -159,8 +173,8 @@
     function reloadServiceSubtypeSelectOptions() {
         clearServiceSubtypeOptions()
 
-        let serviceSubtypeFacadeSet = new Set();
-        let $serviceSubtypeSelect = $("#service-subtype-select");
+        const serviceSubtypeFacadeSet = new Set();
+        const $serviceSubtypeSelect = $("#service-subtype-select");
 
         serviceSubtypesFacade.forEach(function (serviceSubtypeFacade) {
             if (serviceSubtypeFacade.serviceTypeFacade.idServiceType === Number($("#service-type-select").val())) {
@@ -169,7 +183,7 @@
         })
 
         serviceSubtypeFacadeSet.forEach(function (serviceSubtypeFacade) {
-            let option = $("<option></option>").val(serviceSubtypeFacade.idServiceSubtype).text(serviceSubtypeFacade.name);
+            const option = $("<option></option>").val(serviceSubtypeFacade.idServiceSubtype).text(serviceSubtypeFacade.name);
 
             $serviceSubtypeSelect.append(option);
         })
@@ -207,7 +221,7 @@
     function editService(idService) {
         showEditRow();
 
-        let serviceFacade = searchService(idService);
+        const serviceFacade = searchService(idService);
 
         $("#service-id-input").val(serviceFacade.idService);
         $("#service-type-select").val(serviceFacade.serviceSubtypeFacade.serviceTypeFacade.idServiceType);
@@ -219,11 +233,11 @@
     }
 
     function saveService() {
-        let idServiceSubtype = Number($("#service-subtype-select").val());
-        let serviceName = $("#service-name-input").val();
-        let servicePrice = $("#service-price-input").val();
-        let serviceTime = $("#service-time-select").val();
-        let idService = $("#service-id-input").val();
+        const idServiceSubtype = Number($("#service-subtype-select").val());
+        const serviceName = $("#service-name-input").val();
+        const servicePrice = $("#service-price-input").val();
+        const serviceTime = $("#service-time-select").val();
+        const idService = $("#service-id-input").val();
 
         if (serviceName == null || serviceName === "") {
             callMessagePopup("Не все поля заполнены!", "Поле с названием должно быть заполнено!");
@@ -243,7 +257,7 @@
             }
         })
 
-        let serviceFacadeToSend = {
+        const serviceFacadeToSend = {
             accountFacade: accountFacadeJson,
             serviceSubtypeFacade: serviceSubtypeToSend,
             price: servicePrice,
@@ -269,7 +283,7 @@
             data: JSON.stringify(serviceFacadeToSend),
             success: function () {
                 callMessagePopup("Данные сохранены", "Данные успешно сохранены!");
-                loadServiceTab(accountFacadeJson.idAccount);
+                loadServiceTab(accountFacadeJson.idAccount, true);
             },
             error: function () {
                 callMessagePopup("Данные не сохранены", "Произошла ошибка! Данные не были сохранены!")
@@ -291,7 +305,7 @@
             url: "/services/" + idService,
             success: function () {
                 callMessagePopup("Услуга удалена!", "Удаление прошло успешно!")
-                loadServiceTab(accountFacadeJson.idAccount);
+                loadServiceTab(accountFacadeJson.idAccount, true);
             },
             error: function () {
                 callMessagePopup("Услуга не удалена!", "Услуга не удалена! Произошла неизвестная ошибка")

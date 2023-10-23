@@ -131,7 +131,7 @@
 <script>
     let accountFacadeJson;
 
-    $(document).ready(function () {
+    $(document).ready(() => {
         accountFacadeJson = loadAccount(${idAccount});
         let url = new URL(window.location.href);
         var currentTab = url.searchParams.get("tabName")
