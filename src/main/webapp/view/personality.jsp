@@ -98,6 +98,11 @@
                     <div class="menu-text"><a href="#">Отзывы</a></div>
                 </div>
             </sec:authorize>
+            <div id="favorites-btn" onclick="loadFavorites(${idAccount}, this)" class="menu-child button"
+                 selected="false">
+                <div><img class="small-icon" src="../../image/icon/favorites_icon.png" alt="no_image"></div>
+                <div class="menu-text"><a href="#">Избранное</a></div>
+            </div>
             <form id="logout-form">
                 <div onclick="$('#logout-form').submit()" id="logout-btn" class="menu-child button" selected="false">
                     <div><img class="small-icon" src="../../image/icon/exit_icon.svg" alt="no_image"></div>
