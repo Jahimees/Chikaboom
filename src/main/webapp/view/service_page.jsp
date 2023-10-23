@@ -13,7 +13,6 @@
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/media/common_media.css">
     <link rel="stylesheet" href="../css/account.css">
-    <link rel="stylesheet" href="../css/personality.css">
     <link rel="stylesheet" href="../css/popup.css">
     <link rel="stylesheet" href="../css/media/popup_media.css">
     <link rel="stylesheet" href="../css/addition/menu_bar.css">
@@ -25,11 +24,11 @@
 
     <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script rel="script" src="../js/jquery-ui-1.10.4.custom.min.js"></script>
-    <script src="../../../js/static_popup.js"></script>
 
+    <script src="../../../js/countrycode/countryCode.js"></script>
 </head>
 <body>
+
 <jsp:include page="common/common_header.jsp"/>
 <div class="big-text padding-0-5">
     Услуги
@@ -55,11 +54,14 @@
         </div>
         <c:set var="counter" value="${counter + 1}"/>
     </c:forTokens>
-    <jsp:include page="common/popup/message_popup.jsp"/>
-    <jsp:include page="common/popup/login_popup.jsp"/>
 </div>
+<jsp:include page="common/popup/login_popup.jsp"/>
+<jsp:include page="common/popup/message_popup.jsp"/>
 </body>
 </html>
+
+<script src="../../../js/dynamic_popup.js"></script>
+<script src="../../../js/static_popup.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
