@@ -6,4 +6,9 @@
 
         return value;
     }
+
+    Date.prototype.daysInMonth = () => {
+        const date = new Date();
+        return 32 - new Date(date.getFullYear(), date.getMonth(), 32).getDate();
+    };
 }

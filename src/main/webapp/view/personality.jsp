@@ -98,7 +98,7 @@
                     <div class="menu-text"><a href="#">Отзывы</a></div>
                 </div>
             </sec:authorize>
-            <div id="favorites-btn" onclick="loadFavorites(${idAccount}, this)" class="menu-child button"
+            <div id="favorites-btn" onclick="loadConcreteTab(${idAccount}, this, 'favorite')" class="menu-child button"
                  selected="false">
                 <div><img class="small-icon" src="../../image/icon/favorites_icon.png" alt="no_image"></div>
                 <div class="menu-text"><a href="#">Избранное</a></div>

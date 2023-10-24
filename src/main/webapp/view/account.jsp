@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <!DOCTYPE HTML>
 <html lang="ru">
@@ -37,7 +38,12 @@
                      onerror="this.src='../../../image/user/no_photo.jpg'"
                      alt="error on load">
                 <div class="d-flex flex-row-reverse master-only">
-                    <img src="../../image/icon/edit_icon.svg">
+                    <sec:authorize access="hasRole('ROLE_CLIENT')">
+                        <div id="add-remove-favorite" data-tooltip="Добавить в избранное"
+                             style="display: block; margin: auto; cursor:pointer;">
+                            <img style="width: 70px" src="../../image/icon/favorite_star.png">
+                        </div>
+                    </sec:authorize>
                     <!-- Кнопка-триггер модального окна -->
                     <button id="make-appointment-btn" type="button" class="purple-button m-2 master-only"
                             data-bs-toggle="modal"
@@ -100,7 +106,7 @@
             <div class="chapter-header medium-text">
                 ГАЛЕРЕЯ ФОТО
             </div>
-            <div class="d-inline-flex w-100" id="photo-container"  style="justify-content: center;">
+            <div class="d-inline-flex w-100" id="photo-container" style="justify-content: center;">
 
             </div>
         </div>
@@ -176,6 +182,7 @@
 <script type="text/javascript" src="/js/static_popup.js"></script>
 <script type="text/javascript" src="/js/dynamic_popup.js"></script>
 <script type="text/javascript" src="/js/account.js"></script>
+<script type="text/javascript" src="/js/favorite.js"></script>
 <script type="text/javascript" src="/js/service.js"></script>
 <script type="text/javascript" src="/js/appointment.js"></script>
 <script type="text/javascript" src="/js/client.js"></script>
@@ -183,7 +190,7 @@
 <script>
 
     $(document).ready(() => {
-        initializePage(${idAccount});
+        initializePage(${idAccount}, ${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.idAccount});
 
         document.querySelectorAll('.my-lightbox-toggle').forEach((el) => el.addEventListener('click', (e) => {
             e.preventDefault();

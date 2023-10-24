@@ -53,6 +53,14 @@
     }
 
 ///////////////////////////////////DATATABLE///////////////////////////////////////////////
+    function destroyAndInitDataTable(tableName, $dataTable) {
+        if (!$.fn.DataTable.isDataTable('#' + tableName)) {
+            $dataTable.DataTable().data().clear();
+            $dataTable.DataTable().destroy();
+        }
+
+        initDataTable(tableName);
+    }
 
     function initDataTable(tableId) {
         const tableName = tableId ? tableId : "default";

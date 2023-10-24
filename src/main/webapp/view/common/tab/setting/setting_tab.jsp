@@ -105,7 +105,7 @@
             </sec:authorize>
         </div>
 
-        <div id="setting-content-placeholder" class="setting-content-placeholder">
+        <div id="setting-content-placeholder" class="inner-content-placeholder">
 
         </div>
     </div>

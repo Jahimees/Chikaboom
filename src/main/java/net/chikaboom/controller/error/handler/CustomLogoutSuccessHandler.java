@@ -34,7 +34,7 @@ public class CustomLogoutSuccessHandler implements org.springframework.security.
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
         if (((CustomWebAuthenticationDetails) authentication.getDetails()).isRequestFromUI()) {
-            redirectStrategy.sendRedirect(request, response, "/chikaboom/service/search/2");
+            redirectStrategy.sendRedirect(request, response, "/chikaboom/main");
         } else {
             redirectStrategy.sendRedirect(request, response, "/success/logout");
         }

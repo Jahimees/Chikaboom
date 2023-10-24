@@ -2,7 +2,7 @@
     let servicesFacadeJson;
     let userFilesCache;
 
-    function initializePage(idAccount) {
+    function initializePage(idAccount, idLoggedAccount) {
         accountFacadeJson = loadAccount(idAccount);
 
         if (accountFacadeJson.userDetailsFacade != null) {
@@ -47,6 +47,8 @@
                     }
                 }
             }
+
+            initStarImage(idAccount, idLoggedAccount)
         } else {
             $(".master-only").remove();
             $(".main-information").css("height", "auto");
@@ -61,10 +63,8 @@
     function loadUserFiles(idAccount) {
         let userFiles;
         if (typeof userFilesCache !== "undefined") {
-            console.log("using cache")
             userFiles = userFilesCache;
         } else {
-            console.log("loading files")
             $.ajax({
                 method: 'get',
                 url: '/accounts/' + idAccount + '/user_files',

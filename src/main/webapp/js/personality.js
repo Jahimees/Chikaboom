@@ -1,7 +1,4 @@
 {
-    Date.prototype.daysInMonth = () => {
-        return 32 - new Date(this.getFullYear(), this.getMonth(), 32).getDate();
-    };
 
     function loadConcreteTab(idAccount, thisObj, tabName) {
         selectCurrent(thisObj)
@@ -180,9 +177,10 @@
         $.ajax({
             method: "post",
             url: "/logout?isRequestFromUI=true",
+            async: false,
             success: () => {
                 console.log("logout...")
-                location.href = '/chikaboom/service/search/2';
+                location.href = '/chikaboom/main';
             }
         })
     })

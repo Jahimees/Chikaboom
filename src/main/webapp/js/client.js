@@ -186,12 +186,7 @@
         const $dataTable = $("#" + tableName + "_table");
         loadedClientsDetails = [];
 
-        if (!$.fn.DataTable.isDataTable('#' + tableName)) {
-            $dataTable.DataTable().data().clear();
-            $dataTable.DataTable().destroy();
-        }
-
-        initDataTable(tableName);
+        destroyAndInitDataTable(tableName, $dataTable)
 
         clientsJSON.forEach(function (clientDetailsFacade) {
             addRowToDataTable(clientDetailsFacade, 'client')
@@ -363,12 +358,7 @@
         const tableName = tableId ? tableId : "default";
         const $dataTable = $("#" + tableName + "_table");
 
-        if (!$.fn.DataTable.isDataTable('#' + tableName)) {
-            $dataTable.DataTable().data().clear();
-            $dataTable.DataTable().destroy();
-        }
-
-        initDataTable(tableName);
+        destroyAndInitDataTable(tableName, $dataTable)
 
         appointmentsJSON.forEach(function (appointmentFacade) {
             const serviceNameVal = appointmentFacade.serviceFacade.name;
