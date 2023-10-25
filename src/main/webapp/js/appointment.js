@@ -54,10 +54,10 @@
                 secureCleanValue(phoneText),
                 nameText, isIncomeAppointment ?
                     "<img onclick='callConfirmDeleteIncomeAppointmentPopup(" + appointmentFacade.masterAccountFacade.idAccount
-                    + "," + appointmentFacade.idAppointment + ")' src='/image/icon/cross_icon.svg' style='cursor: pointer; width: 15px' >"
+                    + "," + appointmentFacade.idAppointment + ")' src='/image/icon/cross_icon.svg' class='delete-button'>"
 
                     : "<img onclick='callConfirmDeleteOutcomeAppointmentPopup(" + idCurrentAccount
-                    + "," + appointmentFacade.idAppointment + ")' src='/image/icon/cross_icon.svg' style='cursor: pointer; width: 15px'>",
+                    + "," + appointmentFacade.idAppointment + ")' src='/image/icon/cross_icon.svg' class='delete-button'>",
             ])
                 .draw()
                 .node();

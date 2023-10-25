@@ -220,6 +220,12 @@
     stroke: #674D85 !important;
 }
 
-.ct-series-a .ct-line{
+.ct-series-a .ct-line {
     stroke: #674D85 !important;
+}
+
+.gallery-img-settings {
+    width: 150px;
+    height: 150px;
+    object-fit: cover
 }

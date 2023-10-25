@@ -72,6 +72,10 @@
     padding-bottom: 10px;
 }
 
+.padding-0-0-30px {
+    padding: 0 0 30px;
+}
+
 .w-flex_mrgn-2 {
     display: -webkit-flex;
     margin: 2%;
@@ -93,6 +97,10 @@
 
 a {
     text-decoration: none;
+}
+
+.w-70px {
+    width: 70px;
 }
 
 .w-20 {
@@ -284,6 +292,11 @@ a {
     padding: 30px 0 10px 0;
 }
 
+.delete-button {
+    cursor: pointer;
+    width: 15px
+}
+
 /*HEADER*/
 
 .header {
@@ -308,6 +321,11 @@ a {
 
 .middle-box {
     margin: 0 auto;
+    display: block;
+}
+
+.full-middle-box {
+    margin: auto;
     display: block;
 }
 
@@ -368,11 +386,13 @@ a {
 [data-tooltip] {
     position: relative; /* Относительное позиционирование */
 }
+
 [data-tooltip]::after {
     content: attr(data-tooltip);
     position: absolute;
     width: 300px;
-    left: 0; top: 0;
+    left: 0;
+    top: 0;
     background: #6f42c1;
     color: #fff;
     padding: 0.5em;
@@ -384,6 +404,7 @@ a {
     text-align: center;
     border-radius: 5px;
 }
+
 [data-tooltip]:hover::after {
     opacity: 1;
     top: -2.5em;

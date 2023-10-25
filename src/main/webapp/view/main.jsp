@@ -77,7 +77,7 @@
             </c:forTokens>
         </div>
 
-        <div style="display: flex">
+        <div class="flex-box-neutral">
             <a class="service-type-block-button" href="/chikaboom/service">ВСЕ УСЛУГИ</a>
         </div>
 

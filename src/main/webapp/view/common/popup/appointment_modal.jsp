@@ -16,11 +16,11 @@
                    style="display: none">Все поля должны быть заполнены! Выберете услугу, день, а затем время!</label>
             <div id="appointment-fields" class="modal-body">
                 <div>Услуга</div>
-                <select class="middle-box w-80" style="display: block" id="service-select-app"></select>
+                <select class="middle-box w-80" id="service-select-app"></select>
                 <div>Дата</div>
-                <select class="middle-box w-80" style="display: block" id="working-day-select"></select>
+                <select class="middle-box w-80" id="working-day-select"></select>
                 <div>Время</div>
-                <select class="middle-box w-80" style="display: block" id="working-time-select"></select>
+                <select class="middle-box w-80" id="working-time-select"></select>
                 <hr>
                 <div id="service-time-placeholder"></div>
                 <div id="service-cost-placeholder"></div>

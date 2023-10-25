@@ -33,15 +33,16 @@
     <%-- БЛОК ИНФОРМАЦИИ --%>
     <div class="content" style="width: 95%">
         <div class="d-flex divided-background padding-0-0-0-5 ">
-            <div style="padding: 0 0 30px;">
+            <div class="padding-0-0-30px">
                 <img class="avatar-image" src="../../image/user/${idAccount}/avatar.jpeg"
                      onerror="this.src='../../../image/user/no_photo.jpg'"
                      alt="error on load">
                 <div class="d-flex flex-row-reverse master-only">
                     <sec:authorize access="hasRole('ROLE_CLIENT')">
                         <div id="add-remove-favorite" data-tooltip="Добавить в избранное"
-                             style="display: block; margin: auto; cursor:pointer;">
-                            <img style="width: 70px" src="../../image/icon/favorite_star.png">
+                             class="full-middle-box"
+                             style="cursor:pointer;">
+                            <img class="w-70px" src="../../image/icon/favorite_star.png">
                         </div>
                     </sec:authorize>
                     <!-- Кнопка-триггер модального окна -->

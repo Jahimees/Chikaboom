@@ -46,7 +46,7 @@
             </select>
             <input type="button" onclick="saveService()" class="edit-button col-1" value="Сохранить">
             <div onclick="hideEditRow()" class="btn col-1">
-                <img width="22px" src="../../../image/icon/cross_icon.svg">
+                <img class="delete-button" src="../../../image/icon/cross_icon.svg">
             </div>
         </div>
     </div>

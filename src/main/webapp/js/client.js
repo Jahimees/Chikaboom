@@ -21,7 +21,7 @@
                 "onclick='callConfirmDeleteClientUserDetails(" +
                 clientDetails.idUserDetails + "," + clientDetails.masterOwnerFacade.idAccount + ")' " +
                 "idUserDetails='" + clientDetails.idUserDetails + "'>" +
-                "<img src='/image/icon/cross_icon.svg' width='22px'>" +
+                "<img src='/image/icon/cross_icon.svg' class='delete-button'>" +
                 "</div>"
         }
 

@@ -57,16 +57,7 @@
                 }
             })
         } else {
-            $.ajax({
-                method: "delete",
-                url: "/accounts/" + idAccountClient + "/favorites/" + currentFavoriteCache.idFavorite,
-                contentType: "application/json",
-                success: () => {
-                    setStar(true);
-                    currentFavoriteCache = undefined;
-                }
-
-            })
+            deleteFavorite(currentFavoriteCache.idFavorite, idAccountClient);
         }
     })
 
@@ -74,9 +65,9 @@
         $addOrRemoveFavorite.children(0).remove();
         let img;
         if (empty) {
-            img = $("<img style='width: 70px;' src='../../image/icon/favorite_star.png'>");
+            img = $("<img class='w-70px' src='../../image/icon/favorite_star.png'>");
         } else {
-            img = $("<img style='width: 70px;' src='../../image/icon/favorite_star_filled.png'>");
+            img = $("<img class='w-70px' src='../../image/icon/favorite_star_filled.png'>");
         }
         $addOrRemoveFavorite.append(img);
     }
@@ -116,14 +107,44 @@
             const phone = favoriteFacade.favoriteMasterFacade.userDetailsFacade.displayedPhone;
             phoneText = phone ? phone : "Номер скрыт";
             const rowNode = $dataTable.DataTable().row.add([
-                nameText,
+                "<img class='favorite-master-img' src='../../image/user/" + favoriteFacade.favoriteMasterFacade.idAccount + "/avatar.jpeg'>",
                 nameText,
                 phoneText,
-                "<img onclick='' src='/image/icon/cross_icon.svg' style='cursor: pointer; width: 15px'>"
+                "<img onclick='callConfirmDeleteFavorite(" + favoriteFacade.idFavorite + ")' src='/image/icon/cross_icon.svg' " +
+                "class='delete-button'>"
             ])
                 .draw()
                 .node();
         });
     }
 
+    function callConfirmDeleteFavorite(idFavorite) {
+        callMessagePopup("Удаление", "Вы действительно хотите удалить мастера из избранного?")
+
+        $("#decline-message-btn").css("display", "block");
+        $("#confirm-message-btn").attr("onclick", "deleteFavorite(" + idFavorite + ")");
+    }
+
+    function deleteFavorite(idFavorite, idAccount) {
+        let isPersonalityPage = typeof idAccount === "undefined";
+
+        idAccount = idAccount ? idAccount : accountFacadeJson.idAccount;
+
+        $.ajax({
+            method: "delete",
+            url: "/accounts/" + idAccount + "/favorites/" + idFavorite,
+            contentType: "application/json",
+            success: () => {
+                if (isPersonalityPage) {
+                    loadFavoritesTable(idAccount);
+                } else {
+                    setStar(true);
+                    currentFavoriteCache = undefined;
+                }
+            },
+            error: () => {
+                callMessagePopup("Ошибка", "Не удалось удалить мастера из избранного");
+            }
+        })
+    }
 }
