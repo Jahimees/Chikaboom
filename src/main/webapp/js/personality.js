@@ -1,7 +1,4 @@
 {
-    Date.prototype.daysInMonth = () => {
-        return 32 - new Date(this.getFullYear(), this.getMonth(), 32).getDate();
-    };
 
     function loadConcreteTab(idAccount, thisObj, tabName) {
         selectCurrent(thisObj)
@@ -22,6 +19,11 @@
     }
 
     function loadMessages(idAccount, thisObj) {
+        selectCurrent(thisObj)
+        underConstruction();
+    }
+
+    function loadFavorites(idAccount, thisObj) {
         selectCurrent(thisObj)
         underConstruction();
     }
@@ -175,9 +177,10 @@
         $.ajax({
             method: "post",
             url: "/logout?isRequestFromUI=true",
+            async: false,
             success: () => {
                 console.log("logout...")
-                location.href = '/chikaboom/service/search/2';
+                location.href = '/chikaboom/main';
             }
         })
     })
@@ -193,7 +196,7 @@
                 if (!userFile.filePath.includes("avatar")) {
                     const tr = $("<tr></tr>");
                     const td1 = $("<td class='col-md-3'></td>");
-                    const img = $("<img style='width: 150px; height: 150px; object-fit: cover' src='" + userFile.filePath.replace('src/main/webapp', '') + "'>")
+                    const img = $("<img class='gallery-img-settings' src='" + userFile.filePath.replace('src/main/webapp', '') + "'>")
                     const td2 = $("<td class='margin-0-10 col-md-2 violet-button'>X</td>");
                     tr.append(td1);
                     tr.append(td2);

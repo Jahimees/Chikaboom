@@ -6,7 +6,7 @@
     </div>
 </div>
 
-<div id="service-type-content-placeholder" class="setting-content-placeholder">
+<div id="service-type-content-placeholder" class="inner-content-placeholder">
 </div>
 
 <script src="../../../../js/service.js"></script>

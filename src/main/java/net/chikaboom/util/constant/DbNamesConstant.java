@@ -85,6 +85,11 @@ public final class DbNamesConstant {
     public static final String ID_USER_FILE = "iduser_file";
     public static final String FILE_PATH = "file_path";
 
+    public static final String FAVORITE = "favorite";
+    public static final String ID_FAVORITE = "idfavorite";
+    public static final String ID_FAVORITE_OWNER = "idfavorite_owner";
+    public static final String ID_FAVORITE_MASTER = "idfavorite_master";
+
     private DbNamesConstant() {
     }
 }

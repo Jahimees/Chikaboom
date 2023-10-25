@@ -85,16 +85,6 @@ public class AdviceController extends ResponseEntityExceptionHandler {
     public ResponseEntity<CustomResponseObject> noSuchData(NoSuchDataException ex) {
         logger.error("Trying to get not existing data");
         logger.error(ex.getMessage());
-//        logger.info("Redirecting to 404 page...");
-
-//        URI location = null;
-//        try {
-//            location = new URI("/404");
-//        } catch (URISyntaxException e) {
-//            logger.error(e.getMessage());
-//        }
-//        HttpHeaders responseHeaders = new HttpHeaders();
-//        responseHeaders.setLocation(location);
 
         return new ResponseEntity<>(new CustomResponseObject(
                 HttpStatus.NOT_FOUND.value(),

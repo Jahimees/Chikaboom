@@ -3,7 +3,7 @@
 
 <link rel="stylesheet" href="../../../css/chartist/chartist.min.css">
 <div class="content">
-    <div style="display: flex">
+    <div class="flex-box-neutral">
         <div class="w-45 margin-0-10px">
             <div class="medium-text">Количество записей за месяц</div>
             <div id="select-box-appointments" class="flex-box-white">

@@ -131,7 +131,7 @@
 
                 const deleteTag = $("<div class='edit-button col-1' onclick='callConfirmDeletePopup(" +
                     "this.getAttribute(\"idService\"))' idService='" + serviceFacade.idService + "'></div>")
-                const crossIcon = $("<img src='/image/icon/cross_icon.svg' width='22px'>")
+                const crossIcon = $("<img src='/image/icon/cross_icon.svg' class='delete-button'>")
                 deleteTag.append(crossIcon);
 
                 rowTag.append(editTag, deleteTag);

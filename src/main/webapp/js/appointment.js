@@ -13,15 +13,10 @@
     let $serviceTimePlaceholder = $("#service-time-placeholder");
 
     function fillAppointmentsTable(appointmentsFacadeJson, isIncomeAppointment, idCurrentAccount, tableId) {
-        const tableName = tableId ? tableId : "default";
-        const $dataTable = $("#" + tableName + "_table");
+        const tableName = "appointment"
+        const $dataTable = $("#appointment_table");
 
-        if (!$.fn.DataTable.isDataTable('#' + tableName)) {
-            $dataTable.DataTable().data().clear();
-            $dataTable.DataTable().destroy();
-        }
-
-        initDataTable(tableName);
+        destroyAndInitDataTable(tableName, $dataTable)
 
         let timeOptions = {
             hour: 'numeric',
@@ -32,19 +27,19 @@
             let nameText, phoneText;
 
             if (isIncomeAppointment) {
-                nameText = (appointmentFacade.userDetailsFacadeClient.firstName ?
-                        appointmentFacade.userDetailsFacadeClient.firstName + " " : " ") +
-                    (appointmentFacade.userDetailsFacadeClient.lastName ?
-                        appointmentFacade.userDetailsFacadeClient.lastName : "");
+                let firstName = secureCleanValue(appointmentFacade.userDetailsFacadeClient.firstName);
+                let lastName = secureCleanValue(appointmentFacade.userDetailsFacadeClient.lastName);
+                let visibleName = ((firstName ? firstName + " " : "") + (lastName ? lastName : "")).trim();
+                nameText = visibleName ? visibleName : "Неизвестный";
+
                 phoneText = appointmentFacade.userDetailsFacadeClient.displayedPhone ?
                     appointmentFacade.userDetailsFacadeClient.displayedPhone : " ";
             } else {
-                const firstName = secureCleanValue(appointmentFacade.masterAccountFacade.userDetailsFacade.firstName ?
-                    appointmentFacade.masterAccountFacade.userDetailsFacade.firstName + " " : " ")
-                const lastName = secureCleanValue(appointmentFacade.masterAccountFacade.userDetailsFacade.lastName ?
-                    appointmentFacade.masterAccountFacade.userDetailsFacade.lastName : "")
-                const visibleName = (firstName + " " + lastName).trim() ?
-                    (firstName + " " + lastName).trim() : appointmentFacade.masterAccountFacade.username;
+                let firstName = secureCleanValue(appointmentFacade.masterAccountFacade.userDetailsFacade.firstName);
+                let lastName = secureCleanValue(appointmentFacade.masterAccountFacade.userDetailsFacade.lastName);
+                let visibleName = ((firstName ? firstName + " " : "") + (lastName ? lastName : "")).trim();
+                visibleName = visibleName ? visibleName : appointmentFacade.masterAccountFacade.username;
+
                 nameText = "<a href='/chikaboom/account/" + appointmentFacade.masterAccountFacade.idAccount + "'>" + visibleName + "</a>";
                 phoneText = appointmentFacade.masterAccountFacade.userDetailsFacade.displayedPhone ?
                     appointmentFacade.masterAccountFacade.userDetailsFacade.displayedPhone : " ";
@@ -59,10 +54,10 @@
                 secureCleanValue(phoneText),
                 nameText, isIncomeAppointment ?
                     "<img onclick='callConfirmDeleteIncomeAppointmentPopup(" + appointmentFacade.masterAccountFacade.idAccount
-                    + "," + appointmentFacade.idAppointment + ")' src='/image/icon/cross_icon.svg' style='cursor: pointer; width: 15px' >"
+                    + "," + appointmentFacade.idAppointment + ")' src='/image/icon/cross_icon.svg' class='delete-button'>"
 
                     : "<img onclick='callConfirmDeleteOutcomeAppointmentPopup(" + idCurrentAccount
-                    + "," + appointmentFacade.idAppointment + ")' src='/image/icon/cross_icon.svg' style='cursor: pointer; width: 15px'>",
+                    + "," + appointmentFacade.idAppointment + ")' src='/image/icon/cross_icon.svg' class='delete-button'>",
             ])
                 .draw()
                 .node();

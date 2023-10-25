@@ -9,7 +9,7 @@
     </sec:authorize>
 </div>
 
-<div id="client-tab-placeholder" class="setting-content-placeholder">
+<div id="client-tab-placeholder" class="inner-content-placeholder">
 
     <div class="content">
         <div>
