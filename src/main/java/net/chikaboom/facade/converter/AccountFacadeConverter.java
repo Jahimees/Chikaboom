@@ -16,6 +16,7 @@ public final class AccountFacadeConverter implements FacadeConverter {
 
     /**
      * Объект только с его id
+     *
      * @return объект только с его id
      */
     public static AccountFacade toDtoOnlyId(Account model) {
@@ -31,7 +32,7 @@ public final class AccountFacadeConverter implements FacadeConverter {
      * idAccount, username, userDetails(idUserDetails, displayedPhone, firstName, lastName,
      * socialNetwork(all), phoneCode(all), accountOwner(idAccount))
      */
-    public static AccountFacade toDtoAppointmentDataTable(Account model) {
+    public static AccountFacade toDtoDataTable(Account model) {
         AccountFacade accountFacade = new AccountFacade();
         accountFacade.setIdAccount(model.getIdAccount());
         accountFacade.setUsername(model.getUsername());

@@ -47,7 +47,7 @@ public final class AppointmentFacadeConverter implements FacadeConverter {
             appointmentFacade.setServiceFacade(ServiceFacadeConverter.toDtoForAppointmentDataTable(model.getService()));
         }
         if (model.getMasterAccount() != null) {
-            appointmentFacade.setMasterAccountFacade(AccountFacadeConverter.toDtoAppointmentDataTable(model.getMasterAccount()));
+            appointmentFacade.setMasterAccountFacade(AccountFacadeConverter.toDtoDataTable(model.getMasterAccount()));
         }
         if (model.getUserDetailsClient() != null) {
             appointmentFacade.setUserDetailsFacadeClient(UserDetailsFacadeConverter.toDtoAppointmentDataTable(model.getUserDetailsClient()));
