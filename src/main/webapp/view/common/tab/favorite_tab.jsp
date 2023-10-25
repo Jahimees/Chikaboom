@@ -22,6 +22,9 @@
             </tbody>
         </table>
     </div>
+    <div id="unicorn-run" style="position:absolute; bottom: 20px; left: -150px">
+        <img style="width: 200px;" src="../../image/test/unicorn.gif">
+    </div>
 </div>
 
 <link href="https://cdn.datatables.net/v/dt/dt-1.13.6/fh-3.4.0/sb-1.5.0/sp-2.2.0/datatables.min.css" rel="stylesheet"/>
@@ -33,5 +36,7 @@
         setTimeout(function () {
             loadFavoritesTable(${idAccount});
         }, 100);
+
+        $("#unicorn-run").css("left", "2000px");
     })
 </script>
