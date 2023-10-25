@@ -44,13 +44,14 @@
                              style="cursor:pointer;">
                             <img class="w-70px" src="../../image/icon/favorite_star.png">
                         </div>
+
+                        <!-- Кнопка-триггер модального окна -->
+                        <button id="make-appointment-btn" type="button" class="purple-button m-2 master-only"
+                                data-bs-toggle="modal"
+                                data-bs-target="#appointmentModal">
+                            ЗАПИСАТЬСЯ
+                        </button>
                     </sec:authorize>
-                    <!-- Кнопка-триггер модального окна -->
-                    <button id="make-appointment-btn" type="button" class="purple-button m-2 master-only"
-                            data-bs-toggle="modal"
-                            data-bs-target="#appointmentModal">
-                        ЗАПИСАТЬСЯ
-                    </button>
                 </div>
             </div>
             <div class="main-information-block">

@@ -49,7 +49,7 @@ function loadMasterAppointments() {
             initializeRightCalendar();
             initializeLeftCalendar();
             disableEnter();
-            $(".fc-head > tr > .fc-widget-header").css("overflow", "hidden scroll");
+            // $(".fc-head > tr > .fc-widget-header").css("overflow", "hidden scroll");
         }
     })
 }

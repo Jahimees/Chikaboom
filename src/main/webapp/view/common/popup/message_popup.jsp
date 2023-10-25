@@ -5,9 +5,9 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="messageModalLabel">Sample text</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Закрыть">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <div class="close close-button" data-bs-dismiss="modal" aria-label="Закрыть">
+                    <span aria-hidden="true">X</span>
+                </div>
             </div>
             <div class="modal-body">
                 <div id="messageModalText" class="message-text-popup">

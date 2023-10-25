@@ -6,8 +6,8 @@
 </head>
 <body>
     <div style="display: inline-flex; width: 100%">
-        <img style="width: 30%" src="../../../image/under_construction.png">
-        <div style="font-size: 150px">Under construction...</div>
+        <img style="width: 30%" src="../../../image/test/animated-gears.gif">
+        <div style="font-size: 150px; font-family: 'Poor Richard', sans-serif;">Under construction...</div>
     </div>
 </body>
 </html>

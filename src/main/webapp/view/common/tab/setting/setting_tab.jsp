@@ -26,6 +26,14 @@
         </div>
         <div id="actual-news" style="height: 600px; overflow: auto" >
             <div class="news-block" style="display: inline-flex">
+                <img src="../../../../image/test/favorite-news.gif" style="width: 100px;">
+                <div class="small-black-text" style="margin: auto 0 auto 20px;">
+                    <b>Звёздный мастер 25.10.2023</b>
+                    <br>
+                    <div>Добавлен раздел "Избранное". Сохраняйте любимых мастеров и не теряйте их</div>
+                </div>
+            </div>
+            <div class="news-block" style="display: inline-flex">
                 <img src="../../../../image/test/analytics-news.png" style="width: 100px;">
                 <div class="small-black-text" style="margin: auto 0 auto 20px;">
                     <b>Цифры и буквы 23.10.2023</b>

@@ -297,6 +297,11 @@ a {
     width: 15px
 }
 
+.close-button {
+    cursor: pointer;
+    font-weight: bold;
+}
+
 /*HEADER*/
 
 .header {
