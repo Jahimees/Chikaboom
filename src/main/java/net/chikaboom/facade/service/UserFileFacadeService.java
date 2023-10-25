@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * Фасадный сервис-прослойка между контроллером и сервисом
+ * Фасадный сервис-прослойка между контроллером и сервисом для работы с объектами пользовательских файлов
  */
 @Service
 @RequiredArgsConstructor
@@ -44,6 +44,7 @@ public class UserFileFacadeService {
 
     /**
      * Производит поиск всех файлов
+     *
      * @return список пользовательских файлов
      * @deprecated Не думаю, что этот метод когда-нибудь понадобится
      */
