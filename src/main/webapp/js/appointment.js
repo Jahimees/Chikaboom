@@ -250,7 +250,7 @@
     function fillClientsToModal(clientsJSON, isCalendar) {
         let clientSelect;
         if (isCalendar) {
-            clientSelect = $client-select-ev;
+            clientSelect = $clientSelectEv;
         } else {
             clientSelect = $clientSelectApp;
         }

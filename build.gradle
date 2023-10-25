@@ -68,7 +68,7 @@ dependencies {
 }
 
 group = 't-and-j-team'
-version = '0.3.3.2-BETA'
+version = '0.3.3.3-BETA'
 description = 'Extra_Mileiux'
 java.sourceCompatibility = JavaVersion.VERSION_17
 

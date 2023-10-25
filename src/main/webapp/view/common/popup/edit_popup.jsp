@@ -5,9 +5,9 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editModalLabel">Редактирование</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Закрыть">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <div class="close close-button" data-bs-dismiss="modal" aria-label="Закрыть">
+                    <span aria-hidden="true">X</span>
+                </div>
             </div>
             <div class="modal-body">
                 <label class="invalid-field-label-popup" id="e-input-data-incorrect-label" style="display: none">

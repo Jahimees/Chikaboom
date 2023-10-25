@@ -113,6 +113,7 @@ body {
     color: #523870;
     width: 100%;
     font-size: 25px;
+    border-radius: 10px;
 }
 
 .country-phone-selected > span {
