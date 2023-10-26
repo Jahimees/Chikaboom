@@ -133,45 +133,40 @@
             </div>
 
             <div class="margin-0-20">
-                <div class="d-inline-flex margin-0-10">
-                    <div>
-                        <img class="feedback-image" src="../../../image/user/no_photo.jpg">
-                        <div class="small-text">01 янв 2001</div>
-                    </div>
-                    <div class="review-text-block">
-                        <div style="white-space: nowrap" class="medium-text">
-                            Алина Булавкина
+                <div class="margin-5-10">
+                    <div class="d-inline-flex margin-0-10px">
+                        <div class="radio_group d-inline-flex">
+                            <input type="radio" id="like" checked value="true" name="like">
+                            <label for="like">
+                                <i class="fas fa-thumbs-up"></i>
+                            </label>
                         </div>
-                        <div class="horizontal-blue-line"></div>
-                        <div>
-                            Как всегда все очень аккуратно и красиво! Ногтик к ногтику, ручки аккуратно обработаны. Ну и
-                            в конце масло и кремик - верх блаженства!
-                        </div>
-                    </div>
-                </div>
-                <div class="d-inline-flex margin-0-10">
-                    <div>
-                        <img class="feedback-image" src="../../../image/user/no_photo.jpg">
-                        <div class="small-text">01 янв 2001</div>
-                    </div>
-                    <div class="review-text-block">
-                        <div style="white-space: nowrap" class="medium-text">
-                            Алина Булавкина
-                        </div>
-                        <div class="horizontal-blue-line"></div>
-                        <div>
-                            Юлечка спасибо огромное за работу которую вы делаете,моя жизнь становится более краше после
-                            посещения моего любимого мастера по маникюру.🤗
-                        </div>
-                    </div>
-                </div>
 
+                        <div class="radio_group">
+                            <input type="radio" id="dislike" value="false" name="like">
+                            <label for="dislike">
+                                <i class="fas fa-thumbs-down"></i>
+                            </label>
+                        </div>
+                        <label class="invalid-field-label-popup" style="display: none" id="invalid-text-lbl"
+                               for="comment-text-area">Поле не должно превышать 500 символов и не может быть
+                            пустым
+                        </label>
+                    </div>
+                    <div data-tooltip="Оставить отзыв" class="d-inline-flex">
+
+                        <textarea id="comment-text-area" style="width: 500px;" class="margin-0-10px"></textarea>
+                        <div id="send-comment" class="purple-button">Отправить</div>
+                    </div>
+                </div>
+                <div id="comments-container">
+                </div>
             </div>
         </div>
-
     </div>
 </div>
 
+<script src="https://kit.fontawesome.com/1fc4ea1c6a.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
@@ -191,6 +186,59 @@
 <script src="https://cdn.jsdelivr.net/npm/bs5-lightbox@1.8.3/dist/index.bundle.min.js"></script>
 <script>
 
+    function initComments(idAccount) {
+        $.ajax({
+            method: "get",
+            url: "/accounts/" + idAccount + "/comments",
+            async: false,
+            contentType: "application/json",
+            success: (commentsJson) => {
+                const commentsContainer = $("#comments-container");
+                commentsContainer.html("");
+
+                commentsJson.forEach(comment => {
+
+                    const divImageContainer = $("<div>" +
+                        "<img class='feedback-image' src='../../../image/user/" +
+                        comment.accountClientFacade.idAccount + "/avatar.jpeg'>" +
+                        "<div class='small-text'>" + new Date(comment.date).toLocaleDateString('ru') + "</div>" +
+                        "</div>");
+
+                    const firstName = comment.accountClientFacade.userDetailsFacade.firstName;
+                    const lastName = comment.accountClientFacade.userDetailsFacade.lastName;
+                    let totalName = typeof firstName === "undefined" ? "" : firstName.trim() + " "
+                        + typeof lastName === "undefined" ? "" : lastName.trim();
+
+                    if (totalName.trim() === "") {
+                        totalName = comment.accountClientFacade.username
+                    }
+
+                    const isGoodImg = comment.good ?
+                        "<i style='padding-left: 5px' class='fas fa-thumbs-up'></i>" : "<i style='padding-left: 5px' class='fas fa-thumbs-down'></i>"
+
+                    const divReview = $("<div class='review-text-block'>" +
+                        "<div style='white-space: nowrap' class='medium-text'>"  + totalName + isGoodImg + "</div>" +
+                        "<div class='horizontal-blue-line'></div>" +
+                        "<div>" + comment.text + "</div>" +
+                        "</div>");
+
+                    const divContainer = $("<div class='d-inline-flex margin-10-20-px' " +
+                        "style='width: 500px; " +
+                        "white-space: normal; " +
+                        "word-break: break-all;'></div>")
+                    divContainer.append(divImageContainer);
+                    divContainer.append(divReview);
+
+                    commentsContainer.append(divContainer);
+                })
+            },
+            error: (data) => {
+                console.log(data)
+            }
+        })
+
+    }
+
     $(document).ready(() => {
         initializePage(${idAccount}, ${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.idAccount});
 
@@ -199,6 +247,54 @@
             const lightbox = new Lightbox(el);
             lightbox.show();
         }));
+
+        initComments(${idAccount});
+
+        $("#send-comment").on("click", () => {
+            const commentText = $("#comment-text-area").val();
+            if (commentText.length > 500 || commentText.length === 0) {
+                $("#invalid-text-lbl").show();
+                return;
+            } else {
+                $("#invalid-text-lbl").hide();
+            }
+
+            const isGood = $("input[name='like']:checked:radio").val();
+            const idAccountClient = "${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.idAccount}";
+            if (idAccountClient === "") {
+                callMessagePopup("Авторизация", "Чтобы оставлять комментарии необходимо авторизоваться!");
+                return;
+            }
+
+            const newComment = {
+                accountClientFacade: {
+                    idAccount: idAccountClient,
+                },
+                accountMasterFacade: {
+                    idAccount: ${idAccount}
+                },
+                text: secureCleanValue(commentText),
+                good: isGood
+            }
+
+            $.ajax({
+                method: "post",
+                url: "/accounts/${idAccount}/comments",
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify(newComment),
+                success: (createdComment) => {
+                    console.log(createdComment)
+                },
+                error: () => {
+                    callMessagePopup("Ошибка", "Невозможно создать комментарий. Возможно, Вы пытаетесь создать комментарий" +
+                        " пользователю, которому Вы уже ранее оставляли комментарий. Вы можете изменить свой предыдущий комментарий" +
+                        " или удалить его.");
+                }
+
+            })
+        })
+
 
     })
 </script>

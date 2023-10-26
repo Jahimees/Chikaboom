@@ -90,6 +90,11 @@ public final class DbNamesConstant {
     public static final String ID_FAVORITE_OWNER = "idfavorite_owner";
     public static final String ID_FAVORITE_MASTER = "idfavorite_master";
 
+    public static final String COMMENT = "comment";
+    public static final String ID_COMMENT = "idcomment";
+    public static final String ID_ACCOUNT_CLIENT = "idaccount_client";
+    public static final String IS_GOOD = "isgood";
+
     private DbNamesConstant() {
     }
 }

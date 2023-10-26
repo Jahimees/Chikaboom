@@ -40,6 +40,14 @@
     margin: 0 10%;
 }
 
+.margin-5-10 {
+    margin: 5% 10%;
+}
+
+.margin-10-20-px {
+    margin: 10px 20px;
+}
+
 .margin-0-20 {
     margin: 0 20%;
 }
@@ -125,6 +133,10 @@ a {
 
 .w-250-px {
     width: 250px;
+}
+
+.w-300-px {
+    width: 300px;
 }
 
 .max-w-80 {
@@ -281,6 +293,7 @@ a {
     text-align: center;
     padding: 5px 15px;
     border-radius: 20px;
+    height: 50px;
 }
 
 .purple-button:hover {
@@ -384,10 +397,6 @@ a {
     border-color: white;
 }
 
-.iti {
-    width: 100%;
-}
-
 [data-tooltip] {
     position: relative; /* Относительное позиционирование */
 }
@@ -414,3 +423,39 @@ a {
     opacity: 1;
     top: -2.5em;
 }
+
+.radio_group{
+    width: 50px;
+    height: 50px;
+    margin: 5px;
+    position: relative;
+    text-align: center;
+    line-height: 50px;
+    font-size: 40px;
+}
+.radio_group input[type="radio"]{
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    margin: 0;
+    padding: 0;
+    z-index: 1;
+    cursor: pointer;
+}
+.radio_group input[type="radio"] + label{
+    color: #95a5a6;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform: scale(.8);
+}
+.radio_group input[type="radio"]:checked + label{
+    color:#3498db;
+    transform: scale(1.1);
+}
+
