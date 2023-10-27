@@ -5,11 +5,21 @@ import net.chikaboom.model.database.Comment;
 
 import java.sql.Timestamp;
 
+/**
+ * DOCS {@link FacadeConverter}
+ */
 public final class CommentFacadeConverter implements FacadeConverter {
 
     private CommentFacadeConverter() {
     }
 
+    /**
+     * Конвертирует entity объект в объект-dto. Некоторые поля объектов Account убираются в целях безопасности
+     * и производительности
+     *
+     * @param model конвертируемый объект
+     * @return сконвертированный объект
+     */
     public static CommentFacade convertToDto(Comment model) {
         CommentFacade commentFacade = new CommentFacade();
 
@@ -29,6 +39,11 @@ public final class CommentFacadeConverter implements FacadeConverter {
         return commentFacade;
     }
 
+    /**
+     * Конвертирует dto-объект в объект entity
+     * @param facade конвертируемый dto-объект
+     * @return конвертированный entity-объект
+     */
     public static Comment convertToModel(CommentFacade facade) {
         Comment comment = new Comment();
 

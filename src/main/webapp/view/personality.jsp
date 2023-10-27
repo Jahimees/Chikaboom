@@ -93,7 +93,7 @@
                     <div><img class="small-icon" src="../../image/icon/message_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Сообщения</a></div>
                 </div>
-                <div id="reviews-btn" onclick="loadReviews(${idAccount}, this)" class="menu-child button"
+                <div id="reviews-btn" onclick="loadConcreteTab(${idAccount}, this, 'comment')" class="menu-child button"
                      selected="false">
                     <div><img class="small-icon" src="../../image/icon/review_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Отзывы</a></div>

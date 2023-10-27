@@ -7,6 +7,7 @@ import net.chikaboom.repository.ServiceRepository;
 import net.chikaboom.repository.specification.ServiceSpecifications;
 import org.springframework.security.acls.model.AlreadyExistsException;
 import org.springframework.security.acls.model.NotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +17,7 @@ import java.util.Optional;
  */
 @RequiredArgsConstructor
 @org.springframework.stereotype.Service
+@Transactional
 public class ServiceDataService implements DataService<Service> {
 
     private final ServiceRepository serviceRepository;

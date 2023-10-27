@@ -54,6 +54,7 @@
                     </sec:authorize>
                 </div>
             </div>
+
             <div class="main-information-block">
                 <b>
                     <div id="username-placeholder" class="common-black-text">
@@ -75,6 +76,19 @@
             </div>
         </div>
 
+        <%--    СТАТИСТИКА    --%>
+        <div class="d-inline-flex w-100 statistic-line master-only">
+            <div id="avg-rating" class="light-medium-text light-statistic-elem">
+                ОБЩИЙ РЕЙТИНГ: -
+            </div>
+            <div id="pos-rating" class="light-medium-text statistic-elem">
+                - <i class="fas fa-thumbs-up"></i>
+            </div>
+            <div id="neg-rating" class="light-medium-text statistic-elem">
+                - <i class="fas fa-thumbs-down"></i>
+            </div>
+        </div>
+
         <%--    ЯКОРЯ    --%>
         <div class="d-inline-flex medium-text margin-2-10-0-10 master-only">
             <a href="#price-block">
@@ -89,7 +103,6 @@
                 ОТЗЫВЫ
             </a>
         </div>
-
         <hr>
 
         <%--    ЦЕНЫ И УСЛУГИ    --%>
@@ -110,19 +123,6 @@
             </div>
             <div class="d-inline-flex w-100" id="photo-container" style="justify-content: center;">
 
-            </div>
-        </div>
-
-        <%--    СТАТИСТИКА    --%>
-        <div class="d-inline-flex w-100 statistic-line master-only">
-            <div class="light-medium-text statistic-elem">
-                ХХХ ПОДТВЕРЖДЕННЫХ ЗАПИСЕЙ
-            </div>
-            <div class="light-medium-text light-statistic-elem">
-                БОЛЕЕ ХХХ ПОЛОЖИТЕЛЬНЫХ ОТЗВЫВОВ
-            </div>
-            <div class="light-medium-text statistic-elem">
-                ХХХ КЛИЕНТ ДОБАВИЛ В ИЗБРАННОЕ
             </div>
         </div>
 
@@ -153,7 +153,7 @@
                             пустым
                         </label>
                     </div>
-                    <div data-tooltip="Оставить отзыв" class="d-inline-flex">
+                    <div data-tooltip="Оставить отзыв. 500 символов максимум" class="d-inline-flex">
 
                         <textarea id="comment-text-area" style="width: 500px;" class="margin-0-10px"></textarea>
                         <div id="send-comment" class="purple-button">Отправить</div>
@@ -186,58 +186,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bs5-lightbox@1.8.3/dist/index.bundle.min.js"></script>
 <script>
 
-    function initComments(idAccount) {
-        $.ajax({
-            method: "get",
-            url: "/accounts/" + idAccount + "/comments",
-            async: false,
-            contentType: "application/json",
-            success: (commentsJson) => {
-                const commentsContainer = $("#comments-container");
-                commentsContainer.html("");
-
-                commentsJson.forEach(comment => {
-
-                    const divImageContainer = $("<div>" +
-                        "<img class='feedback-image' src='../../../image/user/" +
-                        comment.accountClientFacade.idAccount + "/avatar.jpeg'>" +
-                        "<div class='small-text'>" + new Date(comment.date).toLocaleDateString('ru') + "</div>" +
-                        "</div>");
-
-                    const firstName = comment.accountClientFacade.userDetailsFacade.firstName;
-                    const lastName = comment.accountClientFacade.userDetailsFacade.lastName;
-                    let totalName = typeof firstName === "undefined" ? "" : firstName.trim() + " "
-                        + typeof lastName === "undefined" ? "" : lastName.trim();
-
-                    if (totalName.trim() === "") {
-                        totalName = comment.accountClientFacade.username
-                    }
-
-                    const isGoodImg = comment.good ?
-                        "<i style='padding-left: 5px' class='fas fa-thumbs-up'></i>" : "<i style='padding-left: 5px' class='fas fa-thumbs-down'></i>"
-
-                    const divReview = $("<div class='review-text-block'>" +
-                        "<div style='white-space: nowrap' class='medium-text'>"  + totalName + isGoodImg + "</div>" +
-                        "<div class='horizontal-blue-line'></div>" +
-                        "<div>" + comment.text + "</div>" +
-                        "</div>");
-
-                    const divContainer = $("<div class='d-inline-flex margin-10-20-px' " +
-                        "style='width: 500px; " +
-                        "white-space: normal; " +
-                        "word-break: break-all;'></div>")
-                    divContainer.append(divImageContainer);
-                    divContainer.append(divReview);
-
-                    commentsContainer.append(divContainer);
-                })
-            },
-            error: (data) => {
-                console.log(data)
-            }
-        })
-
-    }
+    let commentsCache;
 
     $(document).ready(() => {
         initializePage(${idAccount}, ${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.idAccount});
@@ -248,53 +197,10 @@
             lightbox.show();
         }));
 
-        initComments(${idAccount});
-
-        $("#send-comment").on("click", () => {
-            const commentText = $("#comment-text-area").val();
-            if (commentText.length > 500 || commentText.length === 0) {
-                $("#invalid-text-lbl").show();
-                return;
-            } else {
-                $("#invalid-text-lbl").hide();
-            }
-
-            const isGood = $("input[name='like']:checked:radio").val();
-            const idAccountClient = "${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.idAccount}";
-            if (idAccountClient === "") {
-                callMessagePopup("Авторизация", "Чтобы оставлять комментарии необходимо авторизоваться!");
-                return;
-            }
-
-            const newComment = {
-                accountClientFacade: {
-                    idAccount: idAccountClient,
-                },
-                accountMasterFacade: {
-                    idAccount: ${idAccount}
-                },
-                text: secureCleanValue(commentText),
-                good: isGood
-            }
-
-            $.ajax({
-                method: "post",
-                url: "/accounts/${idAccount}/comments",
-                dataType: "json",
-                contentType: "application/json",
-                data: JSON.stringify(newComment),
-                success: (createdComment) => {
-                    console.log(createdComment)
-                },
-                error: () => {
-                    callMessagePopup("Ошибка", "Невозможно создать комментарий. Возможно, Вы пытаетесь создать комментарий" +
-                        " пользователю, которому Вы уже ранее оставляли комментарий. Вы можете изменить свой предыдущий комментарий" +
-                        " или удалить его.");
-                }
-
-            })
-        })
-
-
+        const idAccountMaster = "${idAccount}";
+        const idAccountClient = "${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.idAccount}";
+        loadComments(idAccountMaster, idAccountClient);
+        initDeleteCommentBind(idAccountClient);
+        initCreateCommentBind(idAccountMaster, idAccountClient);
     })
 </script>

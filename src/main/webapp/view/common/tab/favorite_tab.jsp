@@ -38,5 +38,8 @@
         }, 100);
 
         $("#unicorn-run").css("left", "2000px");
+        $("#unicorn-run").on("click", () => {
+            callMessagePopup("Эээээээээээй!", "Не чапай котика!!!! :3")
+        })
     })
 </script>

@@ -15,18 +15,33 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * REST контроллер для взаимодействия с сущностями типа {@link net.chikaboom.model.database.Comment}
+ */
 @RestController
 @RequiredArgsConstructor
 public class CommentRestController {
 
+//    TODO REST DOCS
     private final CommentFacadeService commentFacadeService;
 
+    /**
+     * Возвращает все комментарии, оставленные мастеру
+     * @param idAccount идентификатор аккаунта мастера
+     * @return коллекцию комментариев
+     */
     @GetMapping("/accounts/{idAccount}/comments")
     @PreAuthorize("permitAll()")
     public ResponseEntity<List<CommentFacade>> findAllMastersComments(@PathVariable int idAccount) {
         return ResponseEntity.ok(commentFacadeService.findAllByIdAccountMaster(idAccount));
     }
 
+    /**
+     * Создает комментарий мастеру
+     * @param idAccount идентификатор аккаунта мастера
+     * @param commentFacade создаваемый комментарий
+     * @return созданный комментарий
+     */
     @PostMapping("/accounts/{idAccount}/comments")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Facade> createComment(@PathVariable int idAccount,
@@ -36,7 +51,7 @@ public class CommentRestController {
                 (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (clientAccount.getIdAccount() != customPrincipal.getIdAccount()
-        || clientAccount.getIdAccount() == idAccount) {
+                || clientAccount.getIdAccount() == idAccount) {
             return new ResponseEntity<>(new CustomResponseObject(
                     HttpStatus.FORBIDDEN.value(),
                     "You can't create comment under different account",
@@ -49,24 +64,14 @@ public class CommentRestController {
         return ResponseEntity.ok(commentFacadeService.create(commentFacade));
     }
 
-    @PatchMapping("/accounts/{idAccount}/comments")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Facade> patchComment(@PathVariable int idAccount, @RequestBody CommentFacade commentFacade) {
-        CustomPrincipal customPrincipal =
-                (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (commentFacade == null || commentFacade.getAccountClientFacade() == null ||
-                commentFacade.getAccountClientFacade().getIdAccount() != customPrincipal.getIdAccount()) {
-            return new ResponseEntity<>(new CustomResponseObject(
-                    HttpStatus.FORBIDDEN.value(),
-                    "You can't change not yours comment",
-                    "PATCH:/accounts/" + idAccount + "/comments"
-            ), HttpStatus.FORBIDDEN);
-        }
-
-        return ResponseEntity.ok(commentFacadeService.patch(commentFacade));
-    }
-
+    /**
+     * Удаляет созданный пользователем комментарий. Комментарий может удалить только сам пользователь,
+     * который написал его
+     *
+     * @param idAccount идентификатор аккаунта мастера, которому оставляется комментарий
+     * @param idComment идентификатор удаляемого комментария
+     * @return json-ответ об удалении комментария
+     */
     @DeleteMapping("/accounts/{idAccount}/comments/{idComment}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Facade> deleteComment(@PathVariable int idAccount, @PathVariable int idComment) {

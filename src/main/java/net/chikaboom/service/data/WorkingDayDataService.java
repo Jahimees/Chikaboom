@@ -7,6 +7,7 @@ import net.chikaboom.repository.WorkingDaysRepository;
 import org.springframework.security.acls.model.AlreadyExistsException;
 import org.springframework.security.acls.model.NotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Time;
 import java.util.List;
@@ -20,6 +21,7 @@ import static net.chikaboom.util.constant.UtilConstant.DEFAULT_WORKING_DAY_START
  */
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class WorkingDayDataService implements DataService<WorkingDay> {
 
     private final WorkingDaysRepository workingDaysRepository;

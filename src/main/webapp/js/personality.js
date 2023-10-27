@@ -23,16 +23,6 @@
         underConstruction();
     }
 
-    function loadFavorites(idAccount, thisObj) {
-        selectCurrent(thisObj)
-        underConstruction();
-    }
-
-    function loadReviews(idAccount, thisObj) {
-        selectCurrent(thisObj)
-        underConstruction();
-    }
-
     function underConstruction() {
         $.ajax({
             type: "get",

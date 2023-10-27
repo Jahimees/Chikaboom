@@ -293,7 +293,7 @@ a {
     text-align: center;
     padding: 5px 15px;
     border-radius: 20px;
-    height: 50px;
+    height: max-content;
 }
 
 .purple-button:hover {
@@ -313,6 +313,17 @@ a {
 .close-button {
     cursor: pointer;
     font-weight: bold;
+}
+
+.small-text-button {
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.8em;
+    color: cornflowerblue;
+}
+
+.small-text-button:hover {
+    color: #674D85;
 }
 
 /*HEADER*/
@@ -446,6 +457,7 @@ a {
     cursor: pointer;
 }
 .radio_group input[type="radio"] + label{
+    transition: 0.5s;
     color: #95a5a6;
     width: 100%;
     height: 100%;
@@ -455,7 +467,21 @@ a {
     transform: scale(.8);
 }
 .radio_group input[type="radio"]:checked + label{
-    color:#3498db;
+    color:#6f42c1;
     transform: scale(1.1);
+    transition: 0.5s;
 }
 
+.table-like {
+    font-size: xx-large;
+    color: darkgreen;
+    display: table !important;
+    margin: auto;
+}
+
+.table-dislike {
+    font-size: xx-large;
+    color: darkred;
+    display: table !important;
+    margin: auto;
+}

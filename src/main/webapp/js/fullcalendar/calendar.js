@@ -28,7 +28,6 @@ function loadMasterAppointments() {
         dataType: "json",
         success: function (masterAppointmentsFacade) {
             console.log("Endpoint 11 conflict ep 2 ep 4::: ");
-            console.log(masterAppointmentsFacade);
             masterAppointmentsFacade.forEach(function (masterAppointment) {
                 let visitorName = masterAppointment.userDetailsFacadeClient.firstName ? masterAppointment.userDetailsFacadeClient.firstName : "Неизвестный";
                 let title = masterAppointment.serviceFacade.name + " - " + visitorName;
