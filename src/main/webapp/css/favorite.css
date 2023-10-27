@@ -6,3 +6,10 @@
     margin: 0 auto;
     border-radius: 20px
 }
+
+#unicorn-run {
+    position:absolute;
+    left: 230px;
+    bottom: 20px;
+    transition: left 10s cubic-bezier(0, 0, 1, 1);
+}

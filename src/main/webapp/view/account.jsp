@@ -54,6 +54,7 @@
                     </sec:authorize>
                 </div>
             </div>
+
             <div class="main-information-block">
                 <b>
                     <div id="username-placeholder" class="common-black-text">
@@ -75,6 +76,19 @@
             </div>
         </div>
 
+        <%--    СТАТИСТИКА    --%>
+        <div class="d-inline-flex w-100 statistic-line master-only">
+            <div id="avg-rating" class="light-medium-text light-statistic-elem">
+                ОБЩИЙ РЕЙТИНГ: -
+            </div>
+            <div id="pos-rating" class="light-medium-text statistic-elem">
+                - <i class="fas fa-thumbs-up"></i>
+            </div>
+            <div id="neg-rating" class="light-medium-text statistic-elem">
+                - <i class="fas fa-thumbs-down"></i>
+            </div>
+        </div>
+
         <%--    ЯКОРЯ    --%>
         <div class="d-inline-flex medium-text margin-2-10-0-10 master-only">
             <a href="#price-block">
@@ -89,7 +103,6 @@
                 ОТЗЫВЫ
             </a>
         </div>
-
         <hr>
 
         <%--    ЦЕНЫ И УСЛУГИ    --%>
@@ -113,19 +126,6 @@
             </div>
         </div>
 
-        <%--    СТАТИСТИКА    --%>
-        <div class="d-inline-flex w-100 statistic-line master-only">
-            <div class="light-medium-text statistic-elem">
-                ХХХ ПОДТВЕРЖДЕННЫХ ЗАПИСЕЙ
-            </div>
-            <div class="light-medium-text light-statistic-elem">
-                БОЛЕЕ ХХХ ПОЛОЖИТЕЛЬНЫХ ОТЗВЫВОВ
-            </div>
-            <div class="light-medium-text statistic-elem">
-                ХХХ КЛИЕНТ ДОБАВИЛ В ИЗБРАННОЕ
-            </div>
-        </div>
-
         <%--    ОТЗЫВЫ    --%>
         <div id="review-block" class="d-flex margin-2-10-0-10 master-only">
             <div class="chapter-header medium-text">
@@ -133,45 +133,40 @@
             </div>
 
             <div class="margin-0-20">
-                <div class="d-inline-flex margin-0-10">
-                    <div>
-                        <img class="feedback-image" src="../../../image/user/no_photo.jpg">
-                        <div class="small-text">01 янв 2001</div>
-                    </div>
-                    <div class="review-text-block">
-                        <div style="white-space: nowrap" class="medium-text">
-                            Алина Булавкина
+                <div class="margin-5-10">
+                    <div class="d-inline-flex margin-0-10px">
+                        <div class="radio_group d-inline-flex">
+                            <input type="radio" id="like" checked value="true" name="like">
+                            <label for="like">
+                                <i class="fas fa-thumbs-up"></i>
+                            </label>
                         </div>
-                        <div class="horizontal-blue-line"></div>
-                        <div>
-                            Как всегда все очень аккуратно и красиво! Ногтик к ногтику, ручки аккуратно обработаны. Ну и
-                            в конце масло и кремик - верх блаженства!
-                        </div>
-                    </div>
-                </div>
-                <div class="d-inline-flex margin-0-10">
-                    <div>
-                        <img class="feedback-image" src="../../../image/user/no_photo.jpg">
-                        <div class="small-text">01 янв 2001</div>
-                    </div>
-                    <div class="review-text-block">
-                        <div style="white-space: nowrap" class="medium-text">
-                            Алина Булавкина
-                        </div>
-                        <div class="horizontal-blue-line"></div>
-                        <div>
-                            Юлечка спасибо огромное за работу которую вы делаете,моя жизнь становится более краше после
-                            посещения моего любимого мастера по маникюру.🤗
-                        </div>
-                    </div>
-                </div>
 
+                        <div class="radio_group">
+                            <input type="radio" id="dislike" value="false" name="like">
+                            <label for="dislike">
+                                <i class="fas fa-thumbs-down"></i>
+                            </label>
+                        </div>
+                        <label class="invalid-field-label-popup" style="display: none" id="invalid-text-lbl"
+                               for="comment-text-area">Поле не должно превышать 500 символов и не может быть
+                            пустым
+                        </label>
+                    </div>
+                    <div data-tooltip="Оставить отзыв. 500 символов максимум" class="d-inline-flex">
+
+                        <textarea id="comment-text-area" style="width: 500px;" class="margin-0-10px"></textarea>
+                        <div id="send-comment" class="purple-button">Отправить</div>
+                    </div>
+                </div>
+                <div id="comments-container">
+                </div>
             </div>
         </div>
-
     </div>
 </div>
 
+<script src="https://kit.fontawesome.com/1fc4ea1c6a.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
@@ -191,6 +186,8 @@
 <script src="https://cdn.jsdelivr.net/npm/bs5-lightbox@1.8.3/dist/index.bundle.min.js"></script>
 <script>
 
+    let commentsCache;
+
     $(document).ready(() => {
         initializePage(${idAccount}, ${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.idAccount});
 
@@ -200,5 +197,10 @@
             lightbox.show();
         }));
 
+        const idAccountMaster = "${idAccount}";
+        const idAccountClient = "${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.idAccount}";
+        loadComments(idAccountMaster, idAccountClient);
+        initDeleteCommentBind(idAccountClient);
+        initCreateCommentBind(idAccountMaster, idAccountClient);
     })
 </script>

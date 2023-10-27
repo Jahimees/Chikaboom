@@ -269,6 +269,10 @@
             e.target.selectedOptions[0].getAttribute("end-time"));
     })
 
+    $serviceSelectApp.on("click", (e) => {
+        updateValueLabels(undefined, e.target.selectedOptions[0].value);
+    });
+
     let prevWorkingDayStart
     let prevWorkingDayEnd
 
@@ -380,9 +384,6 @@
         let serviceDurationTime = currentServiceFacade.time.replace(' минут', '').split(' час');
         let serviceDurationNumber;
 
-        $serviceCostPlaceholder.text("Стоимость услуги: " + currentServiceFacade.price + " р.");
-        $serviceTimePlaceholder.text("Время услуги: " + currentServiceFacade.time);
-
         if (serviceDurationTime.length === 1) {
             serviceDurationNumber = 1;
         } else {
@@ -422,6 +423,23 @@
                 posReminder = -1;
             }
         }
+
+        updateValueLabels(currentServiceFacade)
+    }
+
+    function updateValueLabels(serviceFacade, idService) {
+        let currentServiceFacade
+        if (typeof serviceFacade === "undefined") {
+            masterServicesCache.forEach((service) => {
+                if (service.idService === +idService) {
+                    currentServiceFacade = service;
+                }
+            })
+        } else {
+            currentServiceFacade = serviceFacade;
+        }
+        $serviceCostPlaceholder.text("Стоимость услуги: " + currentServiceFacade.price + " р.");
+        $serviceTimePlaceholder.text("Время услуги: " + currentServiceFacade.time);
     }
 
     //////////////////////////////// LOADING DATA/////////////////////
@@ -456,7 +474,6 @@
             async: false,
             success: function (data) {
                 console.log("Endpoint 4 error::: ")
-                console.log(data);
                 masterAppointmentsFacadeJson = data;
             },
             error: function () {

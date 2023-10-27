@@ -12,7 +12,7 @@
             const phone = $rInputPhone.val();
             const password = $("#r-input-password").val();
             const username = $("#r-input-username").val();
-            const roles = $("role :checked, :radio")[0].checked ?
+            const roles = $("roles :checked, :radio")[0].checked ?
                 [{name: "ROLE_CLIENT"}] : [{name: "ROLE_CLIENT"}, {name: "ROLE_MASTER"}];
 
             const accountFacade = {

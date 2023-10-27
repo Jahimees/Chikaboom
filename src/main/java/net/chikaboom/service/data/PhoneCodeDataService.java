@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import net.chikaboom.model.database.PhoneCode;
 import net.chikaboom.repository.PhoneCodeRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -12,6 +13,7 @@ import java.util.Optional;
  */
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PhoneCodeDataService {
 
     private final PhoneCodeRepository phoneCodeRepository;

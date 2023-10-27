@@ -9,7 +9,6 @@ import net.chikaboom.service.data.AccountDataService;
 import org.springframework.security.acls.model.NotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +23,6 @@ public class AccountFacadeService {
 
     private final AccountDataService accountDataService;
 
-    @Transactional
     public AccountFacade findById(int idAccount) {
         Optional<Account> accountOptional = accountDataService.findById(idAccount);
 
@@ -35,13 +33,11 @@ public class AccountFacadeService {
         return convertToDto(idAccount, accountOptional.get());
     }
 
-    @Transactional
     public List<AccountFacade> findAll() {
         return accountDataService.findAll()
                 .stream().map(AccountFacadeConverter::toDtoForNotAccountUser).collect(Collectors.toList());
     }
 
-    @Transactional
     public AccountFacade create(AccountFacade accountFacade) {
 
         Account account = accountDataService.create(AccountFacadeConverter.convertToModel(accountFacade));

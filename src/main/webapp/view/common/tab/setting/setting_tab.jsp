@@ -24,7 +24,18 @@
                 <div class="small-black-text">Заполненный профиль вызывает доверие клиента!</div>
             </div>
         </div>
-        <div id="actual-news" style="height: 600px; overflow: auto" >
+
+        <div id="actual-news" style="height: 600px; overflow: auto">
+            <div class="news-block" style="display: inline-flex">
+                <img src="../../../../image/test/comment-news.png" style="width: 100px; height: 100px">
+                <div class="small-black-text" style="margin: auto 0 auto 20px;">
+                    <b>Ставьте лайки, оставляйте комментарии! 27.10.2023</b>
+                    <br>
+                    <div>Оставляйте свои комментарии любимым мастерам и узнайте, что думают люди про ваши работы!
+                        Количество комментариев, а также соотношение лайков и дизлайков влияют на рейтинг аккаунта!
+                    </div>
+                </div>
+            </div>
             <div class="news-block" style="display: inline-flex">
                 <img src="../../../../image/test/favorite-news.gif" style="width: 100px;">
                 <div class="small-black-text" style="margin: auto 0 auto 20px;">
@@ -46,7 +57,9 @@
                 <div class="small-black-text" style="margin: auto 0 auto 20px;">
                     <b>Ого, Ваши работы неотразимы! 19.10.2023</b>
                     <br>
-                    <div>Загружайте свои работы на вкладке персонализации в настройках и смотрите их на своей странице!</div>
+                    <div>Загружайте свои работы на вкладке персонализации в настройках и смотрите их на своей
+                        странице!
+                    </div>
                 </div>
             </div>
             <div class="news-block" style="display: inline-flex">
@@ -62,7 +75,9 @@
                 <div class="small-black-text" style="margin: auto 0 auto 20px;">
                     <b>Опа! Наводочка! 25.09.2023</b>
                     <br>
-                    <div data-tooltip="Подсказка (всплываеть)">Добавлены всплывающие подсказки, чтобы было легче ориентироваться! (тык)</div>
+                    <div data-tooltip="Подсказка (всплываеть)">Добавлены всплывающие подсказки, чтобы было легче
+                        ориентироваться! (тык)
+                    </div>
                 </div>
             </div>
             <div class="news-block" style="display: inline-flex">

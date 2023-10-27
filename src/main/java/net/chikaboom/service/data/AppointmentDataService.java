@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 @org.springframework.stereotype.Service
+@Transactional
 public class AppointmentDataService implements DataService<Appointment> {
 
     @Value("${one_hour_millis}")
