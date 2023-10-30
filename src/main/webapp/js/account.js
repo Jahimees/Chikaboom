@@ -235,7 +235,7 @@
 
             const divImageContainer = $("<div>" +
                 "<img class='feedback-image' src='../../../image/user/" +
-                comment.accountClientFacade.idAccount + "/avatar.jpeg'>" +
+                comment.accountClientFacade.idAccount + "/avatar.jpeg' onerror=\"this.src='../../../image/user/no_photo.jpg'\">" +
                 "<div class='small-text'>" + new Date(comment.date).toLocaleDateString('ru') + "</div>" +
                 "</div>");
 

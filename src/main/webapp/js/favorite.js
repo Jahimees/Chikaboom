@@ -107,7 +107,8 @@
             const phone = favoriteFacade.favoriteMasterFacade.userDetailsFacade.displayedPhone;
             phoneText = phone ? phone : "Номер скрыт";
             const rowNode = $dataTable.DataTable().row.add([
-                "<img class='favorite-master-img' src='../../image/user/" + favoriteFacade.favoriteMasterFacade.idAccount + "/avatar.jpeg'>",
+                "<img class='favorite-master-img' onerror=\"this.src='../../image/user/no_photo.jpg'\" " +
+                "src='../../image/user/" + favoriteFacade.favoriteMasterFacade.idAccount + "/avatar.jpeg'>",
                 nameText,
                 phoneText,
                 "<img onclick='callConfirmDeleteFavorite(" + favoriteFacade.idFavorite + ")' src='/image/icon/cross_icon.svg' " +

@@ -25,7 +25,7 @@
 
                 <div class="common-black-text">Номер телефона</div>
                 <div class="popup-input middle-box w-80">
-                    <input id="r-input-phone" class="phone-input-popup" name="phone" required
+                    <input id="r-input-phone" class="r-popup-input-field" name="phone" required
                            valid="false" maxlength="30">
                     <span id="error-msg-r-input-phone" class="hide"></span>
                 </div>
