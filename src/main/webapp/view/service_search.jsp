@@ -40,7 +40,7 @@
     <a href="/chikaboom/main" style="text-decoration: none; color: #523870">Главная</a>
     <div style="padding: 0 15px">></div>
     <a href="/chikaboom/service" style="text-decoration: none; color: #523870">
-    Услуги</a>
+        Услуги</a>
     <div style="padding: 0 15px">></div>
     <div id="service-type-name-placeholder"></div>
 </div>
@@ -58,7 +58,7 @@
         </div>
     </div>
     <div class="col-8">
-        <div id="search-result-placeholder" class="row">
+        <div id="search-result-placeholder" style="display: inline-flex; flex-wrap: wrap;">
         </div>
     </div>
 
@@ -68,6 +68,8 @@
 </body>
 </html>
 
+<script src="../../../js/util.js"></script>
+<script src="https://kit.fontawesome.com/1fc4ea1c6a.js"></script>
 <script src="../../../js/static_popup.js"></script>
 <script src="../../../js/dynamic_popup.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"

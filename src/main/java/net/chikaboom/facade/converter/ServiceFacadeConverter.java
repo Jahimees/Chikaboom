@@ -27,8 +27,15 @@ public final class ServiceFacadeConverter implements FacadeConverter {
      * Нет поля serviceSubtypeFacade
      */
     public static ServiceFacade toSearchResultPage(Service model) {
-        ServiceFacade serviceFacade = convertToDto(model);
-        serviceFacade.setServiceSubtypeFacade(null);
+        ServiceFacade serviceFacade = new ServiceFacade();
+
+        serviceFacade.setIdService(model.getIdService());
+        serviceFacade.setName(model.getName());
+        serviceFacade.setPrice(model.getPrice());
+        serviceFacade.setTime(model.getTime());
+        if (model.getAccount() != null) {
+            serviceFacade.setAccountFacade(AccountFacadeConverter.toDtoForNotAccountUser(model.getAccount()));
+        }
 
         return serviceFacade;
     }

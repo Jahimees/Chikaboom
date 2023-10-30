@@ -18,6 +18,7 @@
             url: "/service-types/" + idServiceType + "/service-subtypes/services",
             contentType: "application/json",
             dataType: "json",
+            async: false,
             data: {
                 serviceSubtypeIds: serviceSubtypeIdListStr
             },
@@ -64,29 +65,103 @@
 
         if (serviceFacadeListJson.length !== 0) {
             serviceFacadeListJson.forEach(function (serviceFacade) {
-                let price = serviceFacade.price;
-                let serviceName = serviceFacade.name;
-                let idMasterAccount = serviceFacade.accountFacade.idAccount
-                let masterName = serviceFacade.accountFacade.username;
+                let idMasterAccount = serviceFacade.accountFacade.idAccount;
 
-                let accountLink = $("<a class='col-xl-3 non-decorated-link' href='/chikaboom/account/" + idMasterAccount + "'></a>")
-                let imgAvatar = $("<img class='result-image' src='/image/user/" + idMasterAccount + "/avatar.jpeg'>")
-                let divName = $("<div class='result-item-name'></div>")
-                let pName = $("<p class='small-white-text'></p>").text(masterName);
-                let divInfo = $("<div class='result-item'></div>");
-                let pServiceName = $("<p class='small-white-text'></p>").text(serviceName);
-                let pPrice = $("<p class='small-text' style='background-color: antiquewhite; " +
-                    "border-radius: 2px; text-align: center; font-weight: bold'></p>").text(price + " руб.");
+                if (typeof $("#card-" + idMasterAccount)[0] === "undefined") {
+                    const firstName = serviceFacade.accountFacade.userDetailsFacade?.firstName;
+                    const lastName = serviceFacade.accountFacade.userDetailsFacade?.lastName;
+                    let totalName = (firstName ? firstName.trim() + " " : "") + (lastName ? lastName.trim() : "");
+                    totalName = totalName ? totalName : serviceFacade.accountFacade.username;
 
-                divName.append(pName);
-                divInfo.append(pServiceName, pPrice);
-                accountLink.append(imgAvatar, divName, divInfo);
-                searchResultPlaceHolder.append(accountLink);
+                    const divCard = $('<div id="card-' + idMasterAccount + '" style="margin: 0 20px 10px 0"></div>');
+                    const divFront = $('<div class="front-side"></div>');
+                    const imgAvatar = $("<img class='result-image' onerror=\"this.src='../../../image/user/no_photo.jpg'\" " +
+                        "src='/image/user/" + idMasterAccount + "/avatar.jpeg'>")
+                    const divName = $("<div class='result-item-name'>" + totalName + "</div>")
+
+                    const divBack = $('<div class="back-side"></div>');
+                    const accLink = $('<a href="/chikaboom/account/' + idMasterAccount + '" ' +
+                        'class="btn btn-light non-decorated-link">Ссылка на аккаунт</a>')
+                    const hr = $('<hr style="margin: 10px 0 0 0">')
+
+                    divFront.append(imgAvatar);
+                    divFront.append(divName);
+
+                    divBack.append(accLink);
+                    divBack.append(hr);
+
+                    divCard.append(divFront);
+                    divCard.append(divBack);
+
+                    $("#search-result-placeholder").append(divCard);
+
+                    $.ajax({
+                        method: "get",
+                        url: "/accounts/" + idMasterAccount + "/comments",
+                        contentType: "application/json",
+                        success: (commentsJson) => {
+                            let positive = 0;
+                            let negative = 0;
+                            commentsJson.forEach(comment => {
+                                if (comment.good) {
+                                    positive++;
+                                } else {
+                                    negative++;
+                                }
+                            })
+
+                            const avg = wilson_score(positive, negative);
+                            const divInfo = $("<div class='result-item'><p class='small-text card-rating-text'>" +
+                                "Рейтинг: " + Math.round(avg * 100) / 100 + " | " + positive + " <i style='color: darkgreen' class='fas fa-thumbs-up'></i> " +
+                                negative + "<i style='color: darkred' class='fas fa-thumbs-down'></i>" +
+                                "</p></div>");
+                            divFront.append(divInfo);
+                            $("#card-" + idMasterAccount).attr('avg', avg);
+                            sortCards();
+                        },
+                        error: () => {
+                            callMessagePopup("Ошибка", "Что-то пошло не так. Невозможно загрузить отзывы");
+                        }
+                    })
+                }
+
+                $("#card-" + idMasterAccount + " > .back-side").append(
+                    $('<div class="service-elem">' + serviceFacade.name + ' - '
+                        + serviceFacade.price + 'р.</div>')
+                )
             })
+            sortCards();
+            rebindCards();
         } else {
             const divLbl = $("<div class='common-text'></div>").text("Поиск не дал результатов...");
 
             searchResultPlaceHolder.append(divLbl);
         }
     }
+
+    function sortCards() {
+        let cardArray = $( "div[id^=card-]" ).sort(function(a, b) {
+            return b.getAttribute('avg') - a.getAttribute('avg');
+        })
+        cardArray.each(function (index) {
+            $("#search-result-placeholder").append($(this))
+        })
+    }
+
+    function rebindCards() {
+        $(".back-side").unbind();
+        $(".back-side").on("click", (e) => {
+            $(e.currentTarget).fadeOut(100, () => {
+                $(e.currentTarget.previousElementSibling).fadeIn(100);
+            });
+        })
+
+        $(".front-side").unbind();
+        $(".front-side").on("click", (e) => {
+            $(e.currentTarget).fadeOut(100, () => {
+                $(e.currentTarget.nextElementSibling).fadeIn(100)
+            });
+        })
+    }
+
 }

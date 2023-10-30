@@ -27,6 +27,15 @@
 
         <div id="actual-news" style="height: 600px; overflow: auto">
             <div class="news-block" style="display: inline-flex">
+                <img src="../../../../image/test/rating-news.png" style="width: 100px; height: 100px">
+                <div class="small-black-text" style="margin: auto 0 auto 20px;">
+                    <b>Не просто цифры 30.10.2023</b>
+                    <br>
+                    <div>Рейтинг мастера теперь напрямую влияет на позицию в поиске!
+                    </div>
+                </div>
+            </div>
+            <div class="news-block" style="display: inline-flex">
                 <img src="../../../../image/test/comment-news.png" style="width: 100px; height: 100px">
                 <div class="small-black-text" style="margin: auto 0 auto 20px;">
                     <b>Ставьте лайки, оставляйте комментарии! 27.10.2023</b>
