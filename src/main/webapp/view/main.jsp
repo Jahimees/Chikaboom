@@ -21,6 +21,9 @@
 
     <link href="https://fonts.cdnfonts.com/css/source-sans-pro" rel="stylesheet">
 
+    <script type="module"
+            src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script rel="script" src="../js/jquery-ui-1.10.4.custom.min.js"></script>
@@ -149,6 +152,10 @@
         </ol>
     </div>
 
+    <button id="connect">connect</button>
+    <button id="disconnect">disconnect</button>
+    <button id="send">send</button>
+
     <iframe class="yt-video" src="https://www.youtube.com/embed/dQw4w9WgXcQ"
             title="YouTube video player"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -164,7 +171,10 @@
 </body>
 </html>
 
-
+<%--<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>--%>
+<%--<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>--%>
+<%--<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>--%>
+<script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
 <script type="text/javascript" src="../js/dynamic_popup.js"></script>
 
 <script type="text/javascript" src="../js/static_popup.js"></script>
@@ -177,13 +187,125 @@
         var hash = window.location.hash;
 
         if (hash == '#login') {
-             $("#loginModal").modal('show');
+            $("#loginModal").modal('show');
         }
 
         if (hash == '#register') {
             $("#registerModal").modal('show');
         }
 
+        // const connect = () => {
+        //     // const Stomp = require("stompjs");
+        //     // var SockJS = require("sockjs-client");
+        //     var SockJS = new SockJS("http://localhost:8080/subscription");
+        //     let stompClient = new Stomp().over(SockJS);
+        //     stompClient.connect({}, onConnected, onError);
+        // };
+        //
+        // connect();
+        //
+        // const onConnected = () => {
+        //     console.log("connected");
+        //
+        //     stompClient.subscribe(
+        //         "/accounts/" + currentUser.id + "/queue/messages",
+        //         onMessageReceived
+        //     );
+        // };
+        //
+        // const sendMessage = (msg) => {
+        //     if (msg.trim() !== "") {
+        //         const message = {
+        //             senderFacade: {
+        //                 idAccount: 13
+        //             },
+        //             recipientFacade: {
+        //                 idAccount: 14
+        //             },
+        //             message: msg,
+        //             dateTime: new Date(),
+        //         };
+        //
+        //         stompClient.send("/app/chat", {}, JSON.stringify(message));
+        //     }
+        // };
+        //
+        // sendMessage("hello wrot")
+        //
+        // const onMessageReceived = (msg) => {
+        //     console.log("received");
+        //     console.log(msg);
+        // }
+
+        const stompClient = new StompJs.Client({
+            brokerURL: 'ws://localhost:8080/subscription'
+        });
+
+        stompClient.onConnect = (frame) => {
+            setConnected(true);
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/accounts/queue/messages', (greeting) => {
+                showGreeting(JSON.parse(greeting.body));
+            });
+        };
+
+        stompClient.onWebSocketError = (error) => {
+            console.error('Error with websocket', error);
+        };
+
+        stompClient.onStompError = (frame) => {
+            console.error('Broker reported error: ' + frame.headers['message']);
+            console.error('Additional details: ' + frame.body);
+        };
+
+        function setConnected(connected) {
+            $("#connect").prop("disabled", connected);
+            $("#disconnect").prop("disabled", !connected);
+            if (connected) {
+                $("#conversation").show();
+            } else {
+                $("#conversation").hide();
+            }
+            $("#greetings").html("");
+        }
+
+        function connect() {
+            stompClient.activate();
+        }
+
+        function disconnect() {
+            stompClient.deactivate();
+            setConnected(false);
+            console.log("Disconnected");
+        }
+
+        function sendName() {
+            stompClient.publish({
+                destination: "/app/chat",
+                body: JSON.stringify({
+                    senderFacade: {
+                        idAccount: 13
+                    },
+                    recipientFacade: {
+                        idAccount: 14
+                    },
+                    message: "HELLO",
+                    dateTime: new Date(),
+                })
+            });
+        }
+
+        function showGreeting(message) {
+            console.log(message)
+            // $("#greetings").append("<tr><td>" + message + "</td></tr>");
+        }
+
+        $(function () {
+            $("form").on('submit', (e) => e.preventDefault());
+            $("#connect").click(() => connect());
+            $("#disconnect").click(() => disconnect());
+            $("#send").click(() => sendName());
+        });
 
     });
 </script>

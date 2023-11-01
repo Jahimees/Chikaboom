@@ -95,6 +95,16 @@ public final class DbNamesConstant {
     public static final String ID_ACCOUNT_CLIENT = "idaccount_client";
     public static final String IS_GOOD = "isgood";
 
+    public static final String CHAT_MESSAGE = "chat_message";
+    public static final String ID_CHAT_MESSAGE = "idchat_message";
+    public static final String ID_ACCOUNT_SENDER = "idaccount_sender";
+    public static final String ID_ACCOUNT_RECIPIENT = "idaccount_recipient";
+    public static final String MESSAGE = "message";
+    public static final String DATE_TIME = "date_time";
+
+    public static final String MESSAGE_STATUS = "message_status";
+    public static final String ID_MESSAGE_STATUS = "idmessage_status";
+
     private DbNamesConstant() {
     }
 }
