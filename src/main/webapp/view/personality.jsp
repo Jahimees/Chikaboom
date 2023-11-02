@@ -88,7 +88,7 @@
                     <div><img class="small-icon" src="../../image/icon/cleitns_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Мои клиенты</a></div>
                 </div>
-                <div id="messages-btn" onclick="loadMessages(${idAccount}, this)" class="menu-child button"
+                <div id="messages-btn" onclick="loadConcreteTab(${idAccount}, this, 'chats')" class="menu-child button"
                      selected="false">
                     <div><img class="small-icon" src="../../image/icon/message_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Сообщения</a></div>
@@ -112,7 +112,7 @@
             </form>
         </div>
     </div>
-
+<button onclick="sendMessage()">Test send</button>
     <div id="content-placeholder" class="w-100 content-placeholder">
     </div>
 
@@ -130,6 +130,8 @@
         crossorigin="anonymous">
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
+<script type="text/javascript" src="../../js/chat.js"></script>
 <script type="text/javascript" src="../../js/personality.js"></script>
 <script type="text/javascript" src="../../js/account.js"></script>
 <script type="text/javascript" src="../../js/dynamic_popup.js"></script>
@@ -147,5 +149,7 @@
         } else {
             $("#" + currentTab + "-btn").click();
         }
-    })
+
+        connect();
+    });
 </script>

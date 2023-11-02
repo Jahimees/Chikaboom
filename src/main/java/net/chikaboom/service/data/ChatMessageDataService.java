@@ -3,6 +3,7 @@ package net.chikaboom.service.data;
 import lombok.RequiredArgsConstructor;
 import net.chikaboom.model.database.Account;
 import net.chikaboom.model.database.ChatMessage;
+import net.chikaboom.model.database.MessageStatus;
 import net.chikaboom.repository.ChatMessageRepository;
 import org.springframework.security.acls.model.NotFoundException;
 import org.springframework.stereotype.Service;
@@ -11,12 +12,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static net.chikaboom.util.constant.DbNamesConstant.NOT_VIEWED;
+
 @Service
 @RequiredArgsConstructor
 public class ChatMessageDataService {
 
     private final ChatMessageRepository chatMessageRepository;
     private final AccountDataService accountDataService;
+    public final MessageStatusDataService messageStatusDataService;
 
     public List<ChatMessage> findByIdRecipient(int idAccount) {
         Optional<Account> accountOptional = accountDataService.findById(idAccount);
@@ -26,6 +30,16 @@ public class ChatMessageDataService {
         }
 
         return chatMessageRepository.findByRecipient(accountOptional.get());
+    }
+
+    public List<ChatMessage> findByIdRecipientOrIdSender(int idAccount) {
+        Optional<Account> accountOptional = accountDataService.findById(idAccount);
+
+        if (!accountOptional.isPresent()) {
+            throw new NotFoundException("Account not found");
+        }
+
+        return chatMessageRepository.findByRecipientOrSender(accountOptional.get(), accountOptional.get());
     }
 
     public Optional<ChatMessage> findById(int idChatMessage) {
@@ -53,6 +67,13 @@ public class ChatMessageDataService {
     }
 
     public ChatMessage create(ChatMessage chatMessage) {
+        Optional<MessageStatus> messageStatus = messageStatusDataService.findByName(NOT_VIEWED);
+
+        if (!messageStatus.isPresent()) {
+            throw new NotFoundException("There not found message status");
+        }
+
+        chatMessage.setMessageStatus(messageStatus.get());
         return chatMessageRepository.saveAndFlush(chatMessage);
     }
 }

@@ -33,6 +33,11 @@ public class ChatMessageFacadeService {
                 .stream().map(ChatMessageFacadeConverter::convertToDto).collect(Collectors.toList());
     }
 
+    public List<ChatMessageFacade> findMessagesByIdRecipientOrIdSender(int idAccount) {
+        return chatMessageDataService.findByIdRecipientOrIdSender(idAccount)
+                .stream().map(ChatMessageFacadeConverter::convertToDto).collect(Collectors.toList());
+    }
+
     public List<ChatMessageFacade> findChatByAccountIds(int idFirstAccount, int idSecondAccount) {
         return chatMessageDataService.findChatByAccountIds(idFirstAccount, idSecondAccount)
                 .stream().map(ChatMessageFacadeConverter::convertToDto).collect(Collectors.toList());

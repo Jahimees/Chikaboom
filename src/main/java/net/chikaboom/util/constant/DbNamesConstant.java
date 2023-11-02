@@ -105,6 +105,9 @@ public final class DbNamesConstant {
     public static final String MESSAGE_STATUS = "message_status";
     public static final String ID_MESSAGE_STATUS = "idmessage_status";
 
+    public static final String VIEWED = "viewed";
+    public static final String NOT_VIEWED = "not_viewed";
+
     private DbNamesConstant() {
     }
 }

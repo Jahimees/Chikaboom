@@ -43,3 +43,9 @@ DELETE
 NO ACTION
   ON
 UPDATE NO ACTION;
+
+INSERT INTO `chikaboom`.`message_status` (`name`)
+VALUES ('not_viewed');
+INSERT INTO `chikaboom`.`message_status` (`name`)
+VALUES ('viewed');
+

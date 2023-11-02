@@ -21,9 +21,6 @@
 
     <link href="https://fonts.cdnfonts.com/css/source-sans-pro" rel="stylesheet">
 
-    <script type="module"
-            src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
-    <script type="module" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script rel="script" src="../js/jquery-ui-1.10.4.custom.min.js"></script>
@@ -152,9 +149,9 @@
         </ol>
     </div>
 
-    <button id="connect">connect</button>
-    <button id="disconnect">disconnect</button>
-    <button id="send">send</button>
+<%--    <button id="connect">connect</button>--%>
+<%--    <button id="disconnect">disconnect</button>--%>
+<%--    <button id="send">send</button>--%>
 
     <iframe class="yt-video" src="https://www.youtube.com/embed/dQw4w9WgXcQ"
             title="YouTube video player"
@@ -174,6 +171,7 @@
 <%--<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>--%>
 <%--<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>--%>
 <%--<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>--%>
+
 <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
 <script type="text/javascript" src="../js/dynamic_popup.js"></script>
 
@@ -237,6 +235,7 @@
         //     console.log(msg);
         // }
 
+        //!!!!!
         const stompClient = new StompJs.Client({
             brokerURL: 'ws://localhost:8080/subscription'
         });
@@ -244,7 +243,7 @@
         stompClient.onConnect = (frame) => {
             setConnected(true);
             console.log('Connected: ' + frame);
-            stompClient.subscribe('/accounts/queue/messages', (greeting) => {
+            stompClient.subscribe('/accounts/14/queue/messages', (greeting) => {
                 showGreeting(JSON.parse(greeting.body));
             });
         };
@@ -281,7 +280,7 @@
 
         function sendName() {
             stompClient.publish({
-                destination: "/app/chat",
+                destination: "/app/chat/14",
                 body: JSON.stringify({
                     senderFacade: {
                         idAccount: 13
