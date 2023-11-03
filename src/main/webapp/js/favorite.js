@@ -95,12 +95,7 @@
         favoritesCache.forEach(function (favoriteFacade) {
             let nameText, phoneText;
 
-            let firstName = secureCleanValue(favoriteFacade.favoriteMasterFacade.userDetailsFacade.firstName);
-            let lastName = secureCleanValue(favoriteFacade.favoriteMasterFacade.userDetailsFacade.lastName);
-            firstName = firstName ? firstName + " " : "";
-            lastName = lastName ? lastName : "";
-            const visibleName = (firstName + lastName).trim() ? (firstName + lastName).trim()
-                : favoriteFacade.favoriteMasterFacade.username;
+            const visibleName = extractTotalName(favoriteFacade.favoriteMasterFacade);
             nameText = "<a href='/chikaboom/account/" + favoriteFacade.favoriteMasterFacade.idAccount + "'>"
                 + visibleName + "</a>";
 

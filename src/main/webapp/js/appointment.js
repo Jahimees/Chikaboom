@@ -29,16 +29,13 @@
             if (isIncomeAppointment) {
                 let firstName = secureCleanValue(appointmentFacade.userDetailsFacadeClient.firstName);
                 let lastName = secureCleanValue(appointmentFacade.userDetailsFacadeClient.lastName);
-                let visibleName = ((firstName ? firstName + " " : "") + (lastName ? lastName : "")).trim();
+                const visibleName = ((firstName ? firstName + " " : "") + (lastName ? lastName : "")).trim();
                 nameText = visibleName ? visibleName : "Неизвестный";
 
                 phoneText = appointmentFacade.userDetailsFacadeClient.displayedPhone ?
                     appointmentFacade.userDetailsFacadeClient.displayedPhone : " ";
             } else {
-                let firstName = secureCleanValue(appointmentFacade.masterAccountFacade.userDetailsFacade.firstName);
-                let lastName = secureCleanValue(appointmentFacade.masterAccountFacade.userDetailsFacade.lastName);
-                let visibleName = ((firstName ? firstName + " " : "") + (lastName ? lastName : "")).trim();
-                visibleName = visibleName ? visibleName : appointmentFacade.masterAccountFacade.username;
+                const visibleName = extractTotalName(appointmentFacade.masterAccountFacade);
 
                 nameText = "<a href='/chikaboom/account/" + appointmentFacade.masterAccountFacade.idAccount + "'>" + visibleName + "</a>";
                 phoneText = appointmentFacade.masterAccountFacade.userDetailsFacade.displayedPhone ?

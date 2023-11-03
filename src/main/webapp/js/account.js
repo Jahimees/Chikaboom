@@ -239,14 +239,7 @@
                 "<div class='small-text'>" + new Date(comment.date).toLocaleDateString('ru') + "</div>" +
                 "</div>");
 
-            const firstName = comment.accountClientFacade.userDetailsFacade.firstName;
-            const lastName = comment.accountClientFacade.userDetailsFacade.lastName;
-            let totalName = (typeof firstName === "undefined" ? "" : firstName.trim()) + " "
-                + (typeof lastName === "undefined" ? "" : lastName.trim());
-
-            if (totalName.trim() === "") {
-                totalName = comment.accountClientFacade.username
-            }
+            let totalName = extractTotalName(comment.accountClientFacade);
 
             let isGoodImg
             if (comment.good) {

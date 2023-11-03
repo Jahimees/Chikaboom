@@ -18,8 +18,6 @@ public class ChatController {
     @MessageMapping("/chat/{idRecipient}")
     @SendTo("/accounts/{idRecipient}/queue/messages")
     public ChatMessageFacade processMessage(@DestinationVariable int idRecipient, @RequestBody ChatMessageFacade chatMessageFacade) {
-        ChatMessageFacade chatMessageFacade1 = chatMessageFacadeService.create(chatMessageFacade);
-
-        return chatMessageFacade1;
+        return chatMessageFacadeService.create(chatMessageFacade);
     }
 }

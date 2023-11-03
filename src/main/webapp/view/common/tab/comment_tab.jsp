@@ -65,11 +65,8 @@
         commentsJson.forEach(comment => {
             if (typeof comment.accountClientFacade != "undefined"
                 && typeof comment.accountClientFacade.userDetailsFacade != "undefined") {
-                let firstName = comment.accountClientFacade.userDetailsFacade.firstName;
-                let lastName = comment.accountClientFacade.userDetailsFacade.lastName;
-                let totalName = (typeof firstName != "undefined" ? firstName.trim() + " " : "") +
-                    (typeof lastName != "undefined" ? lastName.trim() : "");
-                totalName = secureCleanValue(totalName !== "" ? totalName : comment.accountClientFacade.username);
+
+                const totalName = extractTotalName(comment.accountClientFacade);
 
                 const date = new Date(comment.date).toLocaleDateString('ru');
                 const text = secureCleanValue(comment.text);

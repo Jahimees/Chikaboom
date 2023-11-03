@@ -17,8 +17,8 @@
     <link rel="stylesheet" href="../../css/popup.css">
     <link rel="stylesheet" href="../../css/media/popup_media.css">
     <link rel="stylesheet" href="../../css/addition/menu_bar.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
-    <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/source-sans-pro">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css"/>
+    <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/source-sans-pro"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/css/suggestions.min.css"/>
 
     <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
@@ -41,7 +41,7 @@
 
         <a href="/chikaboom/account/${idAccount}">
             <div id="menu-photo-placeholder">
-                <img class="small-avatar-image" src="../../image/user/${idAccount}/avatar.jpeg"
+                <img class="small-avatar-image middle-box" src="../../image/user/${idAccount}/avatar.jpeg"
                      onerror="this.src='../../../image/user/no_photo.jpg'" alt="error on load">
             </div>
         </a>
@@ -88,17 +88,17 @@
                     <div><img class="small-icon" src="../../image/icon/cleitns_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Мои клиенты</a></div>
                 </div>
-                <div id="messages-btn" onclick="loadConcreteTab(${idAccount}, this, 'chats')" class="menu-child button"
-                     selected="false">
-                    <div><img class="small-icon" src="../../image/icon/message_icon.svg" alt="no_image"></div>
-                    <div class="menu-text"><a href="#">Сообщения</a></div>
-                </div>
                 <div id="reviews-btn" onclick="loadConcreteTab(${idAccount}, this, 'comment')" class="menu-child button"
                      selected="false">
                     <div><img class="small-icon" src="../../image/icon/review_icon.svg" alt="no_image"></div>
                     <div class="menu-text"><a href="#">Отзывы</a></div>
                 </div>
             </sec:authorize>
+            <div id="messages-btn" onclick="loadConcreteTab(${idAccount}, this, 'chats')" class="menu-child button"
+                 selected="false">
+                <div><img class="small-icon" src="../../image/icon/message_icon.svg" alt="no_image"></div>
+                <div class="menu-text"><a href="#">Сообщения</a></div>
+            </div>
             <div id="favorites-btn" onclick="loadConcreteTab(${idAccount}, this, 'favorite')" class="menu-child button"
                  selected="false">
                 <div><img class="small-icon" src="../../image/icon/favorites_icon.png" alt="no_image"></div>
@@ -112,7 +112,6 @@
             </form>
         </div>
     </div>
-<button onclick="sendMessage()">Test send</button>
     <div id="content-placeholder" class="w-100 content-placeholder">
     </div>
 
@@ -151,5 +150,7 @@
         }
 
         connect();
+        loadMessages(${idAccount});
     });
+
 </script>

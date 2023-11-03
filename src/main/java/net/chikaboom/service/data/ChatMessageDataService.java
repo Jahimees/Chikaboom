@@ -74,6 +74,19 @@ public class ChatMessageDataService {
         }
 
         chatMessage.setMessageStatus(messageStatus.get());
-        return chatMessageRepository.saveAndFlush(chatMessage);
+        ChatMessage createdMessage = chatMessageRepository.saveAndFlush(chatMessage);
+
+        Optional<Account> accountSenderOptional = accountDataService.findById(createdMessage.getSender().getIdAccount());
+        Optional<Account> accountRecipientOptional = accountDataService.findById(createdMessage.getRecipient().getIdAccount());
+
+        if (!accountRecipientOptional.isPresent()
+                || !accountSenderOptional.isPresent()) {
+            throw new NotFoundException("There not found account");
+        }
+
+        createdMessage.setSender(accountSenderOptional.get());
+        createdMessage.setRecipient(accountRecipientOptional.get());
+
+        return createdMessage;
     }
 }
