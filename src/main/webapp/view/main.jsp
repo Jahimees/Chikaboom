@@ -149,10 +149,6 @@
         </ol>
     </div>
 
-<%--    <button id="connect">connect</button>--%>
-<%--    <button id="disconnect">disconnect</button>--%>
-<%--    <button id="send">send</button>--%>
-
     <iframe class="yt-video" src="https://www.youtube.com/embed/dQw4w9WgXcQ"
             title="YouTube video player"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -168,11 +164,6 @@
 </body>
 </html>
 
-<%--<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>--%>
-<%--<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>--%>
-<%--<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>--%>
-
-<script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
 <script type="text/javascript" src="../js/dynamic_popup.js"></script>
 
 <script type="text/javascript" src="../js/static_popup.js"></script>

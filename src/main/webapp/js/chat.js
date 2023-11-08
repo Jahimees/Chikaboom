@@ -21,6 +21,9 @@
                 $messagesContainer[0].scrollBy(0, Number.MAX_SAFE_INTEGER)
             }
 
+            const messageCountPlaceholder = $("#chat-" + messageJson.senderFacade.idAccount + " > div > b");
+            const messageCount = 1 + +messageCountPlaceholder.text();
+            messageCountPlaceholder.text(" +" + messageCount);
             messagesCache.push(messageJson);
             recountNotViewedMessages(accountFacadeJson.idAccount)
         });
@@ -45,21 +48,25 @@
     }
 
     function sendMessage(idRecipient, message) {
+        let messageObjToSend = {
+            senderFacade: {
+                idAccount: accountFacadeJson.idAccount
+            },
+            recipientFacade: {
+                idAccount: idRecipient
+            },
+            message: message,
+            dateTime: new Date()
+        }
+
         stompClient.publish({
             destination: "/app/chat/" + idRecipient,
-            body: JSON.stringify({
-                senderFacade: {
-                    idAccount: accountFacadeJson.idAccount
-                },
-                recipientFacade: {
-                    idAccount: idRecipient
-                },
-                message: message,
-                dateTime: new Date(),
-            })
+            body: JSON.stringify(messageObjToSend)
         });
 
-        // ??? add new ,message to cache
+        messageObjToSend.senderFacade = accountFacadeJson;
+
+        messagesCache.push(messageObjToSend)
         $(".messages-container").append(
             getMessageHtml(extractTotalName(accountFacadeJson), message, false));
     }
@@ -104,23 +111,56 @@
             }
         })
 
+        const clientsData = loadClients(accountFacadeJson.idAccount);
+        clientsData.forEach(client => {
+            if (typeof client.masterOwnerFacade === "undefined") {
+                let account;
+                $.ajax({
+                    method: "get",
+                    url: "/accounts?idUserDetails=" + client.idUserDetails,
+                    contentType: "application/json",
+                    async: false,
+                    success: (accountData) => {
+                        account = accountData;
+                    },
+                    error: () => {
+                        callMessagePopup("Ошибка", "Невозможно загрузить чаты клиентов");
+                    }
+                })
+
+                if (!chatAccs.get(account.idAccount)) {
+                    chatAccs.set(account.idAccount, account);
+                    chats.set(account.idAccount, 0);
+                }
+            }
+        })
+
+        let favoriteAccounts = loadFavorites(accountFacadeJson.idAccount);
+        favoriteAccounts.forEach(favorite => {
+            if (!chatAccs.get(favorite.favoriteMasterFacade.idAccount)) {
+                chatAccs.set(favorite.favoriteMasterFacade.idAccount, favorite.favoriteMasterFacade);
+                chats.set(favorite.favoriteMasterFacade.idAccount, 0);
+            }
+        })
 
         const $chatsPlaceholder = $("#chats-placeholder");
         $chatsPlaceholder.html('');
         chatAccs.forEach(acc => {
             let totalName = extractTotalName(acc);
 
+            let messageCount = chats.get(acc.idAccount) !== 0 ? "+" + chats.get(acc.idAccount) : '';
+
             const divChatCard = $("<div id='chat-" + acc.idAccount + "' class='chat-card'></div>");
             const divAvatar = $("<div><img src='../../../image/user/" + acc.idAccount + "/avatar.jpeg' " +
+                "onerror=\"this.src='../../../image/user/no_photo.jpg'\"" +
                 "class='smallest-avatar-image'/></div>");
             const divName = $("<div style='margin: auto; font-size: 20px'>" + totalName +
-                "<b> +" + chats.get(acc.idAccount) + "</b></div>")
+                "<b> " + messageCount + "</b></div>")
 
             divChatCard.append(divAvatar);
             divChatCard.append(divName);
 
             $chatsPlaceholder.append(divChatCard);
-
 
             //////////////INIT DIALOG
             const $currentChat = $("#chat-" + acc.idAccount);
@@ -128,11 +168,13 @@
             ////////BIND DIALOG
             $currentChat.unbind()
             $currentChat.on('click', function () {
+                $("#chats-placeholder > div").css('background-color', '#fff')
+                $currentChat.css('background-color', '#ddd')
+
                 const $messagesContainer = $(".messages-container");
                 $("#messages-placeholder").attr('current-chat', acc.idAccount);
 
                 $messagesContainer.html('');
-                console.log(messagesCache)
                 messagesCache.forEach((message) => {
                         const totalName = extractTotalName(message.senderFacade);
                         if (message.senderFacade.idAccount === acc.idAccount
@@ -144,19 +186,38 @@
                                     isLeft,
                                     message.dateTime)
                             );
+                            message.messageStatusFacade = {
+                                idMessageStatus: 2,
+                                name: 'viewed'
+                            }
                         }
                     }
                 )
+
+                $.ajax({
+                    method: "patch",
+                    url: "/accounts/" + accountFacadeJson.idAccount + "/messages/chat/" + acc.idAccount,
+                    contentType: "application/json",
+                    success: () => {
+                        $("#chat-" + acc.idAccount + " > div > b").text('');
+                        recountNotViewedMessages(accountFacadeJson.idAccount)
+                    },
+                    error: () => {
+                        callMessagePopup("Ошибка", "Ошибка прочтения сообщений")
+                    }
+                })
 
                 const $sendBtn = $(".send-btn");
                 const $messageTextarea = $(".message-textarea");
                 $sendBtn.unbind();
                 $sendBtn.on('click', () => {
-                    const text = $messageTextarea.val();
+                    const text = secureCleanValue($messageTextarea.val());
 
                     if (text.trim() !== '' &&
                         text.trim().length <= 500) {
                         sendMessage(acc.idAccount, text);
+                    } else {
+                        callMessagePopup('Ошибка', 'Нельзя отправить пустое сообщение')
                     }
                     $messageTextarea.val('');
                     $messagesContainer[0].scrollBy(0, Number.MAX_SAFE_INTEGER)
@@ -190,12 +251,13 @@
     function recountNotViewedMessages(idAccount) {
         messageCount = 0;
         messagesCache.forEach(message => {
-            if (message.senderFacade.idAccount != idAccount
-            && message.messageStatusFacade.name === 'not_viewed') {
+            if (message.senderFacade.idAccount !== idAccount
+                && message.messageStatusFacade.name === 'not_viewed') {
                 messageCount++;
             }
         })
 
-        $("#messages-btn > div > a").text('Сообщения +' + messageCount);
+        const messagesText = messageCount !== 0 ? 'Сообщения +' + messageCount : 'Сообщения';
+        $("#messages-btn > div > a").text(messagesText);
     }
 }

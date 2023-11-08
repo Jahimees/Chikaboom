@@ -485,3 +485,13 @@ a {
     display: table !important;
     margin: auto;
 }
+
+.simple-text-area {
+    margin: 10px auto;
+    width: 90%;
+    padding: 10px;
+    border-radius: 10px;
+    display: block;
+    resize: none;
+    bottom: 0;
+}

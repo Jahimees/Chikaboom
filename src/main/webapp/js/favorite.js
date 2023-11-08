@@ -72,7 +72,7 @@
         $addOrRemoveFavorite.append(img);
     }
 
-    function loadFavoritesTable(idAccount) {
+    function loadFavorites(idAccount) {
         $.ajax({
             method: "get",
             url: "/accounts/" + idAccount + "/favorites",
@@ -83,7 +83,7 @@
             }
         })
 
-        fillFavoritesTable()
+        return favoritesCache;
     }
 
     function fillFavoritesTable() {
@@ -132,7 +132,9 @@
             contentType: "application/json",
             success: () => {
                 if (isPersonalityPage) {
-                    loadFavoritesTable(idAccount);
+                    loadFavorites(idAccount);
+                    fillFavoritesTable()
+
                 } else {
                     setStar(true);
                     currentFavoriteCache = undefined;

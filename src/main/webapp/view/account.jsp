@@ -46,10 +46,10 @@
                         </div>
 
                         <!-- Кнопка-триггер модального окна -->
-                        <button id="make-appointment-btn" type="button" class="purple-button m-2 master-only"
+                        <button type="button" class="purple-button m-2 master-only"
                                 data-bs-toggle="modal"
-                                data-bs-target="#appointmentModal">
-                            ЗАПИСАТЬСЯ
+                                data-bs-target="#sendMessageModal">
+                            Написать мастеру
                         </button>
                     </sec:authorize>
                 </div>
@@ -173,9 +173,10 @@
 </body>
 
 </html>
-
 <jsp:include page="/view/common/popup/login_popup.jsp"/>
 <jsp:include page="/view/common/popup/message_popup.jsp"/>
+<jsp:include page="/view/common/popup/send_message_modal.jsp"/>
+<script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
 <script type="text/javascript" src="/js/static_popup.js"></script>
 <script type="text/javascript" src="/js/dynamic_popup.js"></script>
 <script type="text/javascript" src="/js/account.js"></script>

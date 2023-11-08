@@ -13,16 +13,26 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 import java.util.List;
 
+/**
+ * Конфигурация сокета для канала сообщений между пользователями
+ */
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
+    /**
+     * Создание точки подключения к каналу
+     */
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry
                 .addEndpoint("/subscription");
     }
 
+    /**
+     * Настройка конвертера сообщений с помощью ObjectMapper
+     * @param messageConverters the converters to configure (initially an empty list)
+     */
     @Override
     public boolean configureMessageConverters(List<MessageConverter> messageConverters) {
         DefaultContentTypeResolver resolver = new DefaultContentTypeResolver();
@@ -34,10 +44,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         return false;
     }
 
+    /**
+     * Настройка непосредственно брокера и путь по которому отправляются сообщения
+     */
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.enableSimpleBroker("/accounts");
         registry.setApplicationDestinationPrefixes("/app");
-//        registry.setUserDestinationPrefix("/accounts");
     }
 }

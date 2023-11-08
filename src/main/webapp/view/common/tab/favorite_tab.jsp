@@ -34,7 +34,8 @@
 <script>
     $(document).ready(() => {
         setTimeout(function () {
-            loadFavoritesTable(${idAccount});
+            loadFavorites(${idAccount});
+            fillFavoritesTable()
         }, 100);
 
         $("#unicorn-run").css("left", "2000px");
