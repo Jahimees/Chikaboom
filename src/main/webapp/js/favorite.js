@@ -72,7 +72,7 @@
         $addOrRemoveFavorite.append(img);
     }
 
-    function loadFavoritesTable(idAccount) {
+    function loadFavorites(idAccount) {
         $.ajax({
             method: "get",
             url: "/accounts/" + idAccount + "/favorites",
@@ -83,7 +83,7 @@
             }
         })
 
-        fillFavoritesTable()
+        return favoritesCache;
     }
 
     function fillFavoritesTable() {
@@ -95,12 +95,7 @@
         favoritesCache.forEach(function (favoriteFacade) {
             let nameText, phoneText;
 
-            let firstName = secureCleanValue(favoriteFacade.favoriteMasterFacade.userDetailsFacade.firstName);
-            let lastName = secureCleanValue(favoriteFacade.favoriteMasterFacade.userDetailsFacade.lastName);
-            firstName = firstName ? firstName + " " : "";
-            lastName = lastName ? lastName : "";
-            const visibleName = (firstName + lastName).trim() ? (firstName + lastName).trim()
-                : favoriteFacade.favoriteMasterFacade.username;
+            const visibleName = extractTotalName(favoriteFacade.favoriteMasterFacade);
             nameText = "<a href='/chikaboom/account/" + favoriteFacade.favoriteMasterFacade.idAccount + "'>"
                 + visibleName + "</a>";
 
@@ -137,7 +132,9 @@
             contentType: "application/json",
             success: () => {
                 if (isPersonalityPage) {
-                    loadFavoritesTable(idAccount);
+                    loadFavorites(idAccount);
+                    fillFavoritesTable()
+
                 } else {
                     setStar(true);
                     currentFavoriteCache = undefined;

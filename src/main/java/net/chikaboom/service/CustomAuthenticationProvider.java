@@ -51,7 +51,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             throw new IllegalArgumentException("Cannot find user details. Phone is incorrect");
         }
 
-        Optional<Account> accountOptional = accountDataService.findAccountByUserDetails(userDetailsOptional.get());
+        Optional<Account> accountOptional = accountDataService.findAccountByIdUserDetails(
+                userDetailsOptional.get().getIdUserDetails());
 
         if (!accountOptional.isPresent()) {
             throw new BadCredentialsException("Unknown user with phone " + phone);

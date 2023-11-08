@@ -316,9 +316,15 @@ public class AccountDataService implements UserDetailsService, DataService<Accou
         return accountRepository.existsById(idAccount);
     }
 
-    public Optional<Account> findAccountByUserDetails(net.chikaboom.model.database.UserDetails userDetails)
+    public Optional<Account> findAccountByIdUserDetails(int idUserDetails)
             throws BadCredentialsException {
+        Optional<net.chikaboom.model.database.UserDetails> userDetailsOptional =
+                userDetailsDataService.findById(idUserDetails);
 
-        return accountRepository.findAccountByUserDetails(userDetails);
+        if (!userDetailsOptional.isPresent()) {
+            throw new NotFoundException("UserDetails not found");
+        }
+
+        return accountRepository.findAccountByUserDetails(userDetailsOptional.get());
     }
 }

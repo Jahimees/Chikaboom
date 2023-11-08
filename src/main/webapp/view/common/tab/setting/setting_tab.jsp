@@ -27,6 +27,16 @@
 
         <div id="actual-news" style="height: 600px; overflow: auto">
             <div class="news-block" style="display: inline-flex">
+                <img src="../../../../image/test/messages-news.gif" style="width: 100px; height: 100px">
+                <div class="small-black-text" style="margin: auto 0 auto 20px; object-fit: cover">
+                    <b>Вошёл в чат 08.11.2023</b>
+                    <br>
+                    <div>Вы можете написать своему клиенту, мастеру в избранном,
+                        а также любому мастеру на его странице аккаунта!
+                    </div>
+                </div>
+            </div>
+            <div class="news-block" style="display: inline-flex">
                 <img src="../../../../image/test/rating-news.png" style="width: 100px; height: 100px">
                 <div class="small-black-text" style="margin: auto 0 auto 20px;">
                     <b>Не просто цифры 30.10.2023</b>

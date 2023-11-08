@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 
 /**
  * REST контроллер для взаимодействия с сущностями типа {@link Account}
@@ -50,13 +49,10 @@ public class AccountRestController {
      *
      * @return возвращает все аккаунты
      */
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('MASTER')")
     @GetMapping
-    public ResponseEntity<List<AccountFacade>> findAllAccounts() {
-
-        List<AccountFacade> accountFacades = accountFacadeService.findAll();
-
-        return new ResponseEntity<>(accountFacades, HttpStatus.OK);
+    public ResponseEntity<AccountFacade> findAccountByIdUserDetails(@RequestParam int idUserDetails) {
+        return ResponseEntity.ok(accountFacadeService.findByIdUserDetails(idUserDetails));
     }
 
     /**

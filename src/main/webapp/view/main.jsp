@@ -164,7 +164,6 @@
 </body>
 </html>
 
-
 <script type="text/javascript" src="../js/dynamic_popup.js"></script>
 
 <script type="text/javascript" src="../js/static_popup.js"></script>
@@ -177,13 +176,11 @@
         var hash = window.location.hash;
 
         if (hash == '#login') {
-             $("#loginModal").modal('show');
+            $("#loginModal").modal('show');
         }
 
         if (hash == '#register') {
             $("#registerModal").modal('show');
         }
-
-
     });
 </script>

@@ -239,14 +239,7 @@
                 "<div class='small-text'>" + new Date(comment.date).toLocaleDateString('ru') + "</div>" +
                 "</div>");
 
-            const firstName = comment.accountClientFacade.userDetailsFacade.firstName;
-            const lastName = comment.accountClientFacade.userDetailsFacade.lastName;
-            let totalName = (typeof firstName === "undefined" ? "" : firstName.trim()) + " "
-                + (typeof lastName === "undefined" ? "" : lastName.trim());
-
-            if (totalName.trim() === "") {
-                totalName = comment.accountClientFacade.username
-            }
+            let totalName = extractTotalName(comment.accountClientFacade);
 
             let isGoodImg
             if (comment.good) {
@@ -290,5 +283,34 @@
         $("#avg-rating").text("ОБЩИЙ РЕЙТИНГ: " + Math.round(avg * 100) / 100);
         $("#pos-rating").html(positiveCount + " <i class='fas fa-thumbs-up'></i>")
         $("#neg-rating").html(negativeCount + " <i class='fas fa-thumbs-down'></i>")
+    }
+
+
+    ///////////////////SEND MESSAGE
+
+    const stompClient = new StompJs.Client({
+        brokerURL: 'ws://localhost:8080/subscription'
+    });
+
+    function connectToStomp() {
+        stompClient.activate();
+    }
+
+    function sendMessage(idSender, message) {
+        let messageObjToSend = {
+            senderFacade: {
+                idAccount: idSender
+            },
+            recipientFacade: {
+                idAccount: accountFacadeJson.idAccount
+            },
+            message: message,
+            dateTime: new Date()
+        }
+
+        stompClient.publish({
+            destination: "/app/chat/" + accountFacadeJson.idAccount,
+            body: JSON.stringify(messageObjToSend)
+        });
     }
 }

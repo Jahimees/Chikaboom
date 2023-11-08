@@ -28,8 +28,13 @@
     width: 100px;
     object-fit: cover;
     border-radius: 100px;
-    margin: 0 auto;
-    display: block;
+}
+
+.smallest-avatar-image {
+    height: 75px;
+    width: 75px;
+    object-fit: cover;
+    border-radius: 100px;
 }
 
 .setting-placeholder-text-decorator {

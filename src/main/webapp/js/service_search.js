@@ -68,10 +68,7 @@
                 let idMasterAccount = serviceFacade.accountFacade.idAccount;
 
                 if (typeof $("#card-" + idMasterAccount)[0] === "undefined") {
-                    const firstName = serviceFacade.accountFacade.userDetailsFacade?.firstName;
-                    const lastName = serviceFacade.accountFacade.userDetailsFacade?.lastName;
-                    let totalName = (firstName ? firstName.trim() + " " : "") + (lastName ? lastName.trim() : "");
-                    totalName = totalName ? totalName : serviceFacade.accountFacade.username;
+                    const totalName = extractTotalName(serviceFacade.accountFacade);
 
                     const divCard = $('<div id="card-' + idMasterAccount + '" style="margin: 0 20px 10px 0"></div>');
                     const divFront = $('<div class="front-side"></div>');

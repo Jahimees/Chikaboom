@@ -33,6 +33,16 @@ public class AccountFacadeService {
         return convertToDto(idAccount, accountOptional.get());
     }
 
+    public AccountFacade findByIdUserDetails(int idUserDetails) {
+        Optional<Account> accountOptional = accountDataService.findAccountByIdUserDetails(idUserDetails);
+
+        if (!accountOptional.isPresent()) {
+            throw new NotFoundException("Account with idUserDetails " + idUserDetails + " not found");
+        }
+
+        return AccountFacadeConverter.toDtoDataTable(accountOptional.get());
+    }
+
     public List<AccountFacade> findAll() {
         return accountDataService.findAll()
                 .stream().map(AccountFacadeConverter::toDtoForNotAccountUser).collect(Collectors.toList());
